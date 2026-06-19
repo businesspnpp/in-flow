@@ -38,7 +38,8 @@ export type Business = {
   categories: string[];
   address: string;
   email: string;
-  whatsapp_number: string;
+  whatsapp_number?: string;
+  whatsapp_verified?: boolean;
   created_at: string;
   updated_at: string;
 };

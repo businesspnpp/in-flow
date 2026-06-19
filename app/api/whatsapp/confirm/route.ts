@@ -35,7 +35,13 @@ export async function POST(request: Request) {
     }
 
     if (!Array.isArray(rows) || rows.length === 0) {
-      return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
+      return NextResponse.json({
+        error: 'Invalid or expired authorization code',
+        details: {
+          suggestion:
+            'This usually means the code expired or the WhatsApp number was not authorized for messaging. Make sure the number is connected and allowed in WhatsApp settings.',
+        },
+      }, { status: 400 });
     }
 
     const codeRow = rows[0];
