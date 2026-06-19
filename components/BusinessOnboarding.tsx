@@ -15,28 +15,6 @@ const CATEGORY_OPTIONS = [
 ] as const;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneDigitsRegex = /^\+\d{8,15}$/;
-
-function normalizeWhatsAppNumber(value: string) {
-  const cleaned = value.replace(/[^\d+]/g, '');
-  const digitsOnly = cleaned.replace(/\D/g, '');
-  if (!digitsOnly) return '';
-  return `+${digitsOnly}`;
-}
-
-function formatWhatsAppNumber(value: string) {
-  const digits = value.replace(/\D/g, '');
-  if (!digits) return '';
-
-  if (digits.length <= 3) {
-    return `+${digits}`;
-  }
-
-  const country = digits.slice(0, 3);
-  const rest = digits.slice(3);
-  const groups = rest.match(/.{1,3}/g) ?? [];
-  return `+${country} ${groups.join(' ')}`;
-}
 
 interface BusinessOnboardingProps {
   onCompleted: (business: Business) => void;
@@ -47,8 +25,6 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
-  // onboarding no longer requires linking WhatsApp — that's done from dashboard
-  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -95,37 +71,46 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
     setSaving(true);
     setError('');
 
-    const { data, error: insertError } = await supabase
-      .from('businesses')
-      .insert([
-        {
-          business_name: businessName.trim(),
-          categories: selectedCategories,
-          address: address.trim(),
-          email: email.trim(),
-        },
-      ])
-      .select()
-      .single();
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    setSaving(false);
-
-    if (insertError || !data) {
-      console.error('[BusinessOnboarding] insert error', insertError);
-      if (
-        insertError?.code === 'PGRST205' ||
-        insertError?.message?.toLowerCase().includes('could not find')
-      ) {
-        setError(
-          'Database table not found. Please create the businesses table in Supabase before continuing.'
-        );
-      } else {
-        setError('Unable to create your account right now. Please try again.');
+      if (userError || !user) {
+        setError('Authentication session missing. Please log in again.');
+        setSaving(false);
+        return;
       }
-      return;
-    }
 
-    onCompleted(data as Business);
+      const { data, error: insertError } = await supabase
+        .from('businesses')
+        .insert([
+          {
+            id: user.id, 
+            business_name: businessName.trim(),
+            categories: selectedCategories,
+            address: address.trim(),
+            email: email.trim(),
+            updated_at: new Date().toISOString()
+          },
+        ])
+        .select()
+        .single();
+
+      if (insertError || !data) {
+        console.error('[BusinessOnboarding] insert error', insertError);
+        if (insertError?.code === '23505') {
+          setError('A business profile has already been initialized for this account.');
+        } else {
+          setError('Unable to save profile metrics right now. Please try again.');
+        }
+        return;
+      }
+
+      onCompleted(data as Business);
+    } catch (err) {
+      setError('An unexpected error occurred during profile assignment.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -135,81 +120,81 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
           <p className="text-sm uppercase tracking-[0.24em] text-[#6c63ff]">Welcome to inFlow</p>
           <h1 className="mt-3 text-3xl font-semibold text-white">Set up your business account</h1>
           <p className="mt-2 text-sm text-[#9090a8]">
-            Create your business profile, choose your categories, and connect your WhatsApp Business number.
+            Create your business profile. You will link your communication channels inside the main dashboard.
           </p>
         </div>
 
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm text-[#e8e8f0]">
-                <span>Business name</span>
-                <input
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="e.g. Sunrise Salon"
-                  className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff]"
-                />
-              </label>
-              <label className="space-y-2 text-sm text-[#e8e8f0]">
-                <span>Email address</span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="hello@business.com"
-                  className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff]"
-                />
-              </label>
-            </div>
-
+          <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2 text-sm text-[#e8e8f0]">
-              <span>Address</span>
+              <span>Business name</span>
               <input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="123 Business Avenue, City"
-                className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff]"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="e.g. Sunrise Salon"
+                className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff] transition-colors"
               />
             </label>
+            <label className="space-y-2 text-sm text-[#e8e8f0]">
+              <span>Email address</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="hello@business.com"
+                className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff] transition-colors"
+              />
+            </label>
+          </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-white">Categories</p>
-                  <p className="text-xs text-[#9090a8]">Choose up to 2 categories that match your business.</p>
-                </div>
-                <span className="text-xs text-[#6c63ff]">{selectedCategories.length}/2 selected</span>
+          <label className="space-y-2 text-sm text-[#e8e8f0]">
+            <span>Address</span>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="123 Business Avenue, City"
+              className="w-full rounded-2xl border border-[#2a2a3a] bg-[#15151d] px-4 py-3 text-sm text-white outline-none focus:border-[#6c63ff] transition-colors"
+            />
+          </label>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-white">Categories</p>
+                <p className="text-xs text-[#9090a8]">Select up to 2 categories that match your business.</p>
               </div>
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                {CATEGORY_OPTIONS.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => toggleCategory(category)}
-                    className={`rounded-2xl border px-4 py-3 text-left text-sm transition-colors ${
-                      selectedCategories.includes(category)
-                        ? 'border-[#6c63ff] bg-[#1f1b38] text-white'
-                        : 'border-[#2a2a3a] bg-[#12121b] text-[#c8c8d0] hover:border-[#6c63ff] hover:text-white'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
+              <span className="text-xs text-[#6c63ff]">{selectedCategories.length}/2 selected</span>
             </div>
-
-            {error && <p className="text-sm text-[#ff6b6b]">{error}</p>}
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleCreateAccount}
-                disabled={saving}
-                className="rounded-2xl bg-[#6c63ff] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#7c73ff] disabled:opacity-50"
-              >
-                Finish setup
-              </button>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {CATEGORY_OPTIONS.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => toggleCategory(category)}
+                  className={`rounded-2xl border px-4 py-3 text-left text-sm transition-all duration-200 ${
+                    selectedCategories.includes(category)
+                      ? 'border-[#6c63ff] bg-[#1f1b38] text-white'
+                      : 'border-[#2a2a3a] bg-[#12121b] text-[#c8c8d0] hover:border-[#6c63ff]/50 hover:text-white'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
           </div>
+
+          {error && <p className="text-sm text-[#ff6b6b] bg-[#2a1414] p-3 rounded-xl border border-[#4a1a1a]">{error}</p>}
+
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={handleCreateAccount}
+              disabled={saving}
+              className="rounded-2xl bg-[#6c63ff] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#7c73ff] disabled:opacity-50"
+            >
+              {saving ? 'Creating profile...' : 'Finish setup'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
