@@ -42,55 +42,75 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     setError('');
     setSuccess('');
     setLoading(true);
-
     if (!window.FB) {
       setError('Facebook SDK failed to load. Please refresh the page.');
       setLoading(false);
       return;
     }
 
-    window.FB.login(
-      async (response: any) => {
-        if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-          
-          try {
-            const apiRes = await fetch('/api/whatsapp/connect', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                business_id: business.id,
-                access_token: accessToken,
-              }),
-            });
+    // Timeout in case the FB dialog is blocked or the callback never fires
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      setLoading(false);
+      setError('Login timed out — the auth dialog may be blocked by your browser. Please allow popups and try again.');
+    }, 20000);
 
-            const data = await apiRes.json();
+    try {
+      window.FB.login(
+        async (response: any) => {
+          clearTimeout(timer);
+          if (timedOut) return;
 
-            if (!apiRes.ok) throw new Error(data.error || 'Failed to link account');
+          if (response?.authResponse) {
+            const accessToken = response.authResponse.accessToken;
+            try {
+              const apiRes = await fetch('/api/whatsapp/connect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  business_id: business.id,
+                  access_token: accessToken,
+                }),
+              });
 
-            setSuccess('Your WhatsApp Business channel has been successfully tied to inFlow!');
-            if (data.business) onUpdated(data.business);
-          } catch (err: any) {
-            setError(err.message || 'An error occurred during onboarding.');
-          } finally {
+              let data: any = {};
+              try { data = await apiRes.json(); } catch (e) { /* ignore JSON parse errors */ }
+
+              if (!apiRes.ok) {
+                const message = data?.error || data?.message || `Server responded with status ${apiRes.status}`;
+                throw new Error(message);
+              }
+
+              setSuccess('Your WhatsApp Business channel has been successfully tied to inFlow!');
+              if (data.business) onUpdated(data.business);
+            } catch (err: any) {
+              setError(err.message || 'An error occurred during onboarding.');
+            } finally {
+              setLoading(false);
+            }
+          } else {
+            setError('Onboarding cancelled or permissions were not fully authorized.');
             setLoading(false);
           }
-        } else {
-          setError('Onboarding cancelled or permissions were not fully authorized.');
-          setLoading(false);
-        }
-      },
-      {
-        scope: 'whatsapp_business_management, whatsapp_business_messaging, business_management',
-        extras: {
-          feature: 'whatsapp_embedded_signup',
         },
-      }
-    );
+        {
+          scope: 'whatsapp_business_management, whatsapp_business_messaging, business_management',
+          extras: { feature: 'whatsapp_embedded_signup' },
+        }
+      );
+    } catch (err: any) {
+      clearTimeout(timer);
+      setLoading(false);
+      setError(err?.message || 'Facebook login failed to start.');
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      {/* fb-root for SDK rendering */}
+      <div id="fb-root" />
+      <div className="space-y-6">
       <div>
         <h3 className="text-sm font-semibold text-white">WhatsApp Integration</h3>
         <p className="text-sm text-[#9090a8] mt-1">
@@ -130,7 +150,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           <li>Inbound client messages will stream natively into your inFlow smart inbox.</li>
         </ul>
       </div>
-    </div>
-  
+      </div>
+    </>
   );
 }
