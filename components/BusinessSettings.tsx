@@ -169,18 +169,14 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           
           <div className="flex items-center gap-2">
             <button
-              onClick={handleEmbeddedSignup}
+              onClick={() => attemptConnectWithDiagnostics()}
               disabled={loading}
               className="rounded-xl bg-[#6c63ff] px-4 py-2.5 text-xs font-medium text-white hover:bg-[#7c73ff] disabled:opacity-50 transition-colors"
             >
               {loading ? 'Connecting...' : business.whatsapp_phone_number_id ? 'Reconnect Channel' : 'Connect WhatsApp'}
             </button>
             <button
-              onClick={() => {
-                setError('');
-                setSuccess('');
-                handleEmbeddedSignup();
-              }}
+              onClick={() => attemptConnectWithDiagnostics()}
               disabled={loading}
               className="rounded-xl border border-[#2a2a3a] px-3 py-2 text-xs text-[#e8e8f0] hover:bg-[#1a1a24] disabled:opacity-50"
             >
