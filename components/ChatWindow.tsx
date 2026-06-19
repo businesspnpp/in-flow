@@ -124,29 +124,29 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
   return (
     <div className="flex flex-col h-full bg-[#0a0a0f]">
       {/* Chat header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#2a2a3a] bg-[#13131a]">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#9c93ff] flex items-center justify-center">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-[#2a2a3a] bg-[#13131a]">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#9c93ff] flex items-center justify-center">
           <span className="text-white text-xs font-semibold">
             {(activeChat.name ?? activeChat.id).slice(0, 2).toUpperCase()}
           </span>
         </div>
         <div>
-          <p className="text-sm font-medium text-[#e8e8f0]">
+          <p className="text-sm font-medium text-[#e8e8f0] truncate max-w-[180px]">
             {activeChat.name ?? activeChat.id}
           </p>
-          <p className="text-xs text-[#9090a8]">+{activeChat.id}</p>
+          <p className="text-[11px] text-[#9090a8] truncate max-w-[180px]">+{activeChat.id}</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+      <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex ${msg.sender === 'business' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[70%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+              className={`max-w-[85%] sm:max-w-[70%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
                 msg.sender === 'business'
                   ? 'bg-[#6c63ff] text-white rounded-br-sm'
                   : 'bg-[#1a1a24] text-[#e8e8f0] rounded-bl-sm'

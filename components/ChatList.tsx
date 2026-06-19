@@ -78,8 +78,8 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
   return (
     <div className="flex flex-col h-full bg-[#13131a]">
       {/* Search bar */}
-      <div className="p-3 border-b border-[#2a2a3a]">
-        <div className="flex items-center gap-2 bg-[#1a1a24] rounded-lg px-3 py-2">
+      <div className="p-2 border-b border-[#2a2a3a]">
+        <div className="flex items-center gap-2 bg-[#1a1a24] rounded-lg px-2 py-1">
           <Search size={14} className="text-[#9090a8]" />
           <input
             type="text"
@@ -103,12 +103,12 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
           <button
             key={chat.id}
             onClick={() => onSelectChat(chat)}
-            className={`w-full flex items-center gap-3 px-3 py-3 border-b border-[#1a1a24] hover:bg-[#1a1a24] transition-colors text-left ${
+            className={`w-full flex items-center gap-3 px-3 py-2 border-b border-[#1a1a24] hover:bg-[#1a1a24] transition-colors text-left ${
               activeChat?.id === chat.id ? 'bg-[#1a1a24] border-l-2 border-l-[#6c63ff]' : ''
             }`}
           >
             {/* Avatar */}
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#9c93ff] flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#9c93ff] flex items-center justify-center flex-shrink-0">
               <span className="text-white text-xs font-semibold">
                 {initials(chat.name, chat.id)}
               </span>

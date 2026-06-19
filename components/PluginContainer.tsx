@@ -58,13 +58,13 @@ export default function PluginContainer({ activeChat, business, onBusinessUpdate
   return (
     <div className="flex flex-col h-full bg-[#13131a]">
       {/* Tab bar */}
-      <div className="flex border-b border-[#2a2a3a] bg-[#0a0a0f]">
+      <div className="flex flex-nowrap overflow-x-auto border-b border-[#2a2a3a] bg-[#0a0a0f]">
         {TABS.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             title={label}
-            className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
+            className={`min-w-[80px] flex flex-col items-center gap-1 px-3 py-3 text-center transition-colors ${
               activeTab === id
                 ? 'text-[#6c63ff] border-b-2 border-[#6c63ff]'
                 : 'text-[#4a4a5a] hover:text-[#9090a8]'
