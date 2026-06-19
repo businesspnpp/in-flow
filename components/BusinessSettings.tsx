@@ -103,7 +103,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         },
         {
           scope: 'whatsapp_business_management, whatsapp_business_messaging, business_management',
-          extras: { feature: 'whatsapp_embedded_signup' },
+          auth_type: 'rerequest',
+          return_scopes: true,
         }
       );
     } catch (err: any) {
