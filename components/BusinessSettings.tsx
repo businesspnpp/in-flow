@@ -108,40 +108,41 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   };
 
   // Run diagnostics first, then attempt login if diagnostics pass
-  const attemptConnectWithDiagnostics = async () => {
+  const attemptConnectWithDiagnostics = () => {
     setError('');
     setSuccess('');
     setLoading(true);
-    try {
-      const res = await fetch('/api/whatsapp/diagnostics', { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok || !data?.ok) {
-        setError(data?.error || 'Diagnostics failed.');
-        setLoading(false);
-        return;
-      }
+    fetch('/api/whatsapp/diagnostics', { method: 'POST' })
+      .then((res) => res.json().then(data => ({ res, data })))
+      .then(({ res, data }) => {
+        if (!res.ok || !data?.ok) {
+          setError(data?.error || 'Diagnostics failed.');
+          setLoading(false);
+          return;
+        }
 
-      const diag = data.result;
-      // If any required env is missing or supabase check failed, show details
-      const missing = Object.entries(diag.env).filter(([, v]) => !v).map(([k]) => k);
-      if (missing.length > 0) {
-        setError(`Missing env: ${missing.join(', ')}.`);
-        setLoading(false);
-        return;
-      }
+        const diag = data.result;
+        // If any required env is missing or supabase check failed, show details
+        const missing = Object.entries(diag.env).filter(([, v]) => !v).map(([k]) => k);
+        if (missing.length > 0) {
+          setError(`Missing env: ${missing.join(', ')}.`);
+          setLoading(false);
+          return;
+        }
 
-      if (!diag.supabase?.ok) {
-        setError(`Supabase connectivity issue: ${diag.supabase?.error || 'unknown'}`);
-        setLoading(false);
-        return;
-      }
+        if (!diag.supabase?.ok) {
+          setError(`Supabase connectivity issue: ${diag.supabase?.error || 'unknown'}`);
+          setLoading(false);
+          return;
+        }
 
-      // Diagnostics passed — proceed with embedded signup
-      handleEmbeddedSignup();
-    } catch (err: any) {
-      setError(err?.message || 'Diagnostics request failed');
-      setLoading(false);
-    }
+        // Diagnostics passed — proceed with embedded signup
+        handleEmbeddedSignup();
+      })
+      .catch((err: any) => {
+        setError(err?.message || 'Diagnostics request failed');
+        setLoading(false);
+      });
   };
 
   return (
@@ -169,14 +170,14 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           
           <div className="flex items-center gap-2">
             <button
-              onClick={() => attemptConnectWithDiagnostics()}
+              onClick={attemptConnectWithDiagnostics}
               disabled={loading}
               className="rounded-xl bg-[#6c63ff] px-4 py-2.5 text-xs font-medium text-white hover:bg-[#7c73ff] disabled:opacity-50 transition-colors"
             >
               {loading ? 'Connecting...' : business.whatsapp_phone_number_id ? 'Reconnect Channel' : 'Connect WhatsApp'}
             </button>
             <button
-              onClick={() => attemptConnectWithDiagnostics()}
+              onClick={attemptConnectWithDiagnostics}
               disabled={loading}
               className="rounded-xl border border-[#2a2a3a] px-3 py-2 text-xs text-[#e8e8f0] hover:bg-[#1a1a24] disabled:opacity-50"
             >
