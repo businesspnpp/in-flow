@@ -23,7 +23,8 @@ export default function Auth({ onSignedIn }: AuthProps) {
   async function handleSignUp() {
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({ email, password });
+    const redirectUrl = (process.env.NEXT_PUBLIC_APP_URL as string) || (typeof window !== 'undefined' ? window.location.origin : undefined);
+    const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectUrl } });
     setLoading(false);
     if (error) setError(error.message);
     else onSignedIn();
