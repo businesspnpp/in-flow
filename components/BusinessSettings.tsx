@@ -59,37 +59,43 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
     try {
       window.FB.login(
-        async (response: any) => {
+        (response: any) => {
           clearTimeout(timer);
           if (timedOut) return;
 
           if (response?.authResponse) {
             const accessToken = response.authResponse.accessToken;
-            try {
-              const apiRes = await fetch('/api/whatsapp/connect', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  business_id: business.id,
-                  access_token: accessToken,
-                }),
+
+            fetch('/api/whatsapp/connect', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                business_id: business.id,
+                access_token: accessToken,
+              }),
+            })
+              .then(async (apiRes) => {
+                let data: any = {};
+                try {
+                  data = await apiRes.json();
+                } catch (e) {
+                  // ignore JSON parse errors
+                }
+
+                if (!apiRes.ok) {
+                  const message = data?.error || data?.message || `Server responded with status ${apiRes.status}`;
+                  throw new Error(message);
+                }
+
+                setSuccess('Your WhatsApp Business channel has been successfully tied to inFlow!');
+                if (data.business) onUpdated(data.business);
+              })
+              .catch((err: any) => {
+                setError(err?.message || 'An error occurred during onboarding.');
+              })
+              .finally(() => {
+                setLoading(false);
               });
-
-              let data: any = {};
-              try { data = await apiRes.json(); } catch (e) { /* ignore JSON parse errors */ }
-
-              if (!apiRes.ok) {
-                const message = data?.error || data?.message || `Server responded with status ${apiRes.status}`;
-                throw new Error(message);
-              }
-
-              setSuccess('Your WhatsApp Business channel has been successfully tied to inFlow!');
-              if (data.business) onUpdated(data.business);
-            } catch (err: any) {
-              setError(err.message || 'An error occurred during onboarding.');
-            } finally {
-              setLoading(false);
-            }
           } else {
             setError('Onboarding cancelled or permissions were not fully authorized.');
             setLoading(false);
