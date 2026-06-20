@@ -102,7 +102,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           }
         },
         {
-          scope: 'whatsapp_business_management, whatsapp_business_messaging, business_management',
+          scope: 'whatsapp_business_management,whatsapp_business_messaging,business_management',
           auth_type: 'rerequest',
           return_scopes: true,
         }
