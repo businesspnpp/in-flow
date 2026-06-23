@@ -1,124 +1,200 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { z } from 'zod';
+import { sanitizePhoneNumber } from '@/lib/sanitize';
 
-type ConnectRequest = {
-  business_id?: string;
-  code?: string;
-  waba_id?: string;
-  phone_number_id?: string;
-};
+/**
+ * Validation schema for WhatsApp connection request
+ */
+const WhatsAppConnectSchema = z.object({
+  business_id: z.string().min(1, 'Business ID is required').max(255),
+  code: z.string().min(1, 'Authorization code is required'),
+  waba_id: z.string().max(255).optional(),
+  phone_number_id: z.string().max(255).optional(),
+});
 
-export async function POST(request: Request) {
+type ConnectRequest = z.infer<typeof WhatsAppConnectSchema>;
+
+/**
+ * POST /api/whatsapp/connect
+ * Secure WhatsApp Business Account OAuth connection with token exchange
+ */
+export async function POST(request: NextRequest) {
   try {
-    const body: ConnectRequest = await request.json();
-    const { business_id, code, waba_id, phone_number_id } = body;
+    // Parse request body
+    const body = await request.json();
 
-    if (!business_id || !code) {
-      return NextResponse.json({ error: 'Missing business_id or code' }, { status: 400 });
+    // Validate input against schema
+    const validationResult = WhatsAppConnectSchema.safeParse(body);
+    if (!validationResult.success) {
+      const errors = validationResult.error.errors.map((e) => e.message).join(', ');
+      console.error('[WhatsApp Connect] Validation error:', errors);
+      return NextResponse.json({ error: `Validation failed: ${errors}` }, { status: 400 });
     }
 
+    const { business_id, code, waba_id, phone_number_id } = validationResult.data;
+
+    // Verify environment variables
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const metaAppSecret = process.env.META_APP_SECRET;
     const metaAppId = process.env.NEXT_PUBLIC_META_APP_ID;
 
-    if (!supabaseUrl || !serviceKey) {
-      return NextResponse.json({ error: 'Server database configuration missing' }, { status: 500 });
+    if (!supabaseUrl || !serviceKey || !metaAppSecret || !metaAppId) {
+      console.error('[WhatsApp Connect] Missing server configuration');
+      return NextResponse.json({ error: 'Server configuration incomplete' }, { status: 500 });
     }
 
-    // Step 1: Exchange the authorization code for a user access token.
-    // Note: config_id-based Facebook Login for Business returns a `code`,
-    // not a token directly — this is a standard OAuth code exchange.
-    const tokenUrl = `https://graph.facebook.com/v20.0/oauth/access_token?client_id=${metaAppId}&client_secret=${metaAppSecret}&code=${code}`;
+    // Verify user is authenticated (optional but recommended)
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll() {},
+        },
+      }
+    );
 
-    const tokenRes = await fetch(tokenUrl);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized: User not authenticated' }, { status: 401 });
+    }
+
+    // Step 1: Exchange authorization code for user access token (OAuth code exchange)
+    const tokenUrl = new URL('https://graph.facebook.com/v20.0/oauth/access_token');
+    tokenUrl.searchParams.append('client_id', metaAppId);
+    tokenUrl.searchParams.append('client_secret', metaAppSecret);
+    tokenUrl.searchParams.append('code', code);
+
+    const tokenRes = await fetch(tokenUrl.toString());
     const tokenData = await tokenRes.json();
 
     if (!tokenRes.ok || !tokenData.access_token) {
-      console.error('Meta Code Exchange Error:', tokenData);
-      return NextResponse.json({ error: 'Failed Meta token validation check' }, { status: 502 });
+      console.error('[WhatsApp Connect] Meta code exchange failed:', tokenData);
+      return NextResponse.json({ error: 'Failed to exchange authorization code' }, { status: 502 });
     }
 
     const shortLivedToken = tokenData.access_token;
 
-    // Step 2: Exchange for a long-lived token
-    const exchangeUrl = `https://graph.facebook.com/v20.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${metaAppId}&client_secret=${metaAppSecret}&fb_exchange_token=${shortLivedToken}`;
+    // Step 2: Exchange short-lived token for long-lived token
+    const exchangeUrl = new URL('https://graph.facebook.com/v20.0/oauth/access_token');
+    exchangeUrl.searchParams.append('grant_type', 'fb_exchange_token');
+    exchangeUrl.searchParams.append('client_id', metaAppId);
+    exchangeUrl.searchParams.append('client_secret', metaAppSecret);
+    exchangeUrl.searchParams.append('fb_exchange_token', shortLivedToken);
 
-    const exchangeRes = await fetch(exchangeUrl);
+    const exchangeRes = await fetch(exchangeUrl.toString());
     const exchangeData = await exchangeRes.json();
 
     if (!exchangeRes.ok || !exchangeData.access_token) {
-      console.error('Meta Long-Lived Token Exchange Error:', exchangeData);
-      return NextResponse.json({ error: 'Failed Meta long-lived token exchange' }, { status: 502 });
+      console.error('[WhatsApp Connect] Long-lived token exchange failed:', exchangeData);
+      return NextResponse.json({ error: 'Failed to obtain long-lived access token' }, { status: 502 });
     }
 
     const longLivedToken = exchangeData.access_token;
 
-    // Step 3: Resolve WABA ID — prefer the value captured during Embedded
-    // Signup (most reliable), fall back to API lookup if it's missing.
+    // Step 3: Resolve WABA ID (WhatsApp Business Account)
     let resolvedWabaId = waba_id;
     if (!resolvedWabaId) {
-      const wabaUrl = `https://graph.facebook.com/v20.0/me/whatsapp_business_accounts?access_token=${longLivedToken}`;
-      const wabaRes = await fetch(wabaUrl);
+      const wabaUrl = new URL('https://graph.facebook.com/v20.0/me/whatsapp_business_accounts');
+      wabaUrl.searchParams.append('access_token', longLivedToken);
+
+      const wabaRes = await fetch(wabaUrl.toString());
       const wabaData = await wabaRes.json();
 
       if (!wabaRes.ok || !wabaData.data || wabaData.data.length === 0) {
-        return NextResponse.json({ error: 'No authorized WhatsApp Business Accounts found.' }, { status: 400 });
+        console.error('[WhatsApp Connect] No WABA found:', wabaData);
+        return NextResponse.json(
+          { error: 'No WhatsApp Business Accounts found for this account' },
+          { status: 400 }
+        );
       }
-      resolvedWabaId = wabaData.data[0].id;
+
+      resolvedWabaId = String(wabaData.data[0].id);
     }
 
-    // Step 4: Resolve phone number ID — same preference order as above.
+    // Step 4: Resolve phone number ID
     let resolvedPhoneNumberId = phone_number_id;
     let displayPhoneNumber: string | undefined;
 
     if (!resolvedPhoneNumberId) {
-      const phoneUrl = `https://graph.facebook.com/v20.0/${resolvedWabaId}/phone_numbers?access_token=${longLivedToken}`;
-      const phoneRes = await fetch(phoneUrl);
+      const phoneUrl = new URL(`https://graph.facebook.com/v20.0/${resolvedWabaId}/phone_numbers`);
+      phoneUrl.searchParams.append('access_token', longLivedToken);
+
+      const phoneRes = await fetch(phoneUrl.toString());
       const phoneData = await phoneRes.json();
 
       if (!phoneRes.ok || !phoneData.data || phoneData.data.length === 0) {
-        return NextResponse.json({ error: 'No active phone lines discovered on that account.' }, { status: 400 });
+        console.error('[WhatsApp Connect] No phone numbers found:', phoneData);
+        return NextResponse.json(
+          { error: 'No active phone lines found on this WhatsApp Business Account' },
+          { status: 400 }
+        );
       }
 
-      resolvedPhoneNumberId = phoneData.data[0].id;
+      resolvedPhoneNumberId = String(phoneData.data[0].id);
       displayPhoneNumber = phoneData.data[0].display_phone_number;
     } else {
-      // We have the phone_number_id from Embedded Signup already —
-      // fetch its display number for storage/display purposes.
-      const phoneDetailUrl = `https://graph.facebook.com/v20.0/${resolvedPhoneNumberId}?fields=display_phone_number&access_token=${longLivedToken}`;
-      const phoneDetailRes = await fetch(phoneDetailUrl);
+      // Fetch display phone number for the provided phone_number_id
+      const phoneDetailUrl = new URL(`https://graph.facebook.com/v20.0/${resolvedPhoneNumberId}`);
+      phoneDetailUrl.searchParams.append('fields', 'display_phone_number');
+      phoneDetailUrl.searchParams.append('access_token', longLivedToken);
+
+      const phoneDetailRes = await fetch(phoneDetailUrl.toString());
       const phoneDetailData = await phoneDetailRes.json();
       displayPhoneNumber = phoneDetailData?.display_phone_number;
     }
 
-    // Step 5: Save metadata mapping directly to your Supabase business profile
-    const updateRes = await fetch(`${supabaseUrl}/rest/v1/businesses?id=eq.${business_id}`, {
-      method: 'PATCH',
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({
+    // Sanitize and validate phone number
+    if (!displayPhoneNumber) {
+      console.error('[WhatsApp Connect] No display phone number found');
+      return NextResponse.json({ error: 'Could not determine phone number' }, { status: 400 });
+    }
+
+    const sanitizedPhone = sanitizePhoneNumber(displayPhoneNumber);
+    if (!sanitizedPhone) {
+      console.error('[WhatsApp Connect] Invalid phone number format:', displayPhoneNumber);
+      return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 });
+    }
+
+    // Step 5: Save to database using Supabase client with parameterized queries
+    const { data: updateData, error: updateError } = await supabase
+      .from('businesses')
+      .update({
         whatsapp_number: displayPhoneNumber,
         whatsapp_waba_id: resolvedWabaId,
         whatsapp_phone_number_id: resolvedPhoneNumberId,
-        whatsapp_access_token: longLivedToken,
+        whatsapp_access_token: longLivedToken, // Ideally encrypt this before storage
         whatsapp_verified: true,
         updated_at: new Date().toISOString(),
-      }),
-    });
+      })
+      .eq('id', business_id)
+      .select();
 
-    const updateJson = await updateRes.json();
-    if (!updateRes.ok) {
-      console.error('Database write error:', updateJson);
-      return NextResponse.json({ error: 'Failed to record secure channel state.' }, { status: 502 });
+    if (updateError) {
+      console.error('[WhatsApp Connect] Database update failed:', updateError);
+      return NextResponse.json({ error: 'Failed to save WhatsApp connection' }, { status: 502 });
     }
 
-    return NextResponse.json({ success: true, business: updateJson[0] });
+    return NextResponse.json({
+      success: true,
+      message: 'WhatsApp Business Account connected successfully',
+      business: updateData?.[0],
+    });
   } catch (err) {
-    console.error('WhatsApp connect route error:', err);
-    return NextResponse.json({ error: 'Invalid processing request' }, { status: 400 });
+    console.error('[WhatsApp Connect] Error:', err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'An unexpected error occurred' },
+      { status: 500 }
+    );
   }
 }

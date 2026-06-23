@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { supabase, Chat, Message } from '@/lib/supabase';
-import { Send, MessageSquare } from 'lucide-react';
+import { sanitizeInput } from '@/lib/sanitize';
+import { ChatMessageSchema, type ChatMessageInput } from '@/lib/validation';
+import { Send, MessageSquare, AlertCircle } from 'lucide-react';
 
 interface ChatWindowProps {
   activeChat: Chat | null;
@@ -12,6 +14,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Load messages when chat changes
@@ -63,13 +66,36 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
 
   async function sendMessage() {
     if (!input.trim() || !activeChat || sending) return;
-    const body = input.trim();
-    setInput('');
-    setSending(true);
+
+    setError('');
 
     try {
+      // Sanitize the input
+      const sanitizedBody = sanitizeInput(input.trim(), 4096);
+
+      if (!sanitizedBody) {
+        setError('Message cannot be empty after sanitization');
+        return;
+      }
+
+      // Validate the message using Zod schema
+      const validationResult = ChatMessageSchema.safeParse({
+        body: sanitizedBody,
+        chat_id: activeChat.id,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map((e) => e.message).join(', ');
+        setError(`Validation error: ${errors}`);
+        return;
+      }
+
+      const { body, chat_id } = validationResult.data;
+      setInput('');
+      setSending(true);
+
       // Send via Meta WhatsApp API
-      await fetch(
+      const metaResponse = await fetch(
         `https://graph.facebook.com/v20.0/${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER_ID}/messages`,
         {
           method: 'POST',
@@ -79,27 +105,52 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
           },
           body: JSON.stringify({
             messaging_product: 'whatsapp',
-            to: activeChat.id,
+            to: chat_id,
             type: 'text',
             text: { body },
           }),
         }
       );
 
-      // Record outbound message in Supabase
-      await supabase.from('messages').insert({
-        chat_id: activeChat.id,
+      if (!metaResponse.ok) {
+        const metaError = await metaResponse.json();
+        console.error('[WhatsApp API] Error:', metaError);
+        setError('Failed to send message via WhatsApp');
+        setSending(false);
+        return;
+      }
+
+      // Record outbound message in Supabase using parameterized query
+      const { error: insertError } = await supabase.from('messages').insert({
+        chat_id: chat_id,
         sender: 'business',
-        body,
+        body: body,
       });
 
-      // Update chat last_message
-      await supabase
+      if (insertError) {
+        console.error('[Database] Insert error:', insertError);
+        setError('Failed to save message');
+        setSending(false);
+        return;
+      }
+
+      // Update chat last_message and timestamp
+      const { error: updateError } = await supabase
         .from('chats')
-        .update({ last_message: body, updated_at: new Date().toISOString() })
-        .eq('id', activeChat.id);
+        .update({
+          last_message: body,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', chat_id);
+
+      if (updateError) {
+        console.error('[Database] Update error:', updateError);
+        // Don't fail silently - message was sent but metadata wasn't updated
+        setError('Message sent but failed to update chat metadata');
+      }
     } catch (err) {
-      console.error('[send]', err);
+      console.error('[Send] Unexpected error:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setSending(false);
     }
@@ -168,12 +219,21 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
 
       {/* Input area */}
       <div className="p-4 border-t border-zinc-200 bg-white">
+        {error && (
+          <div className="mb-2 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <AlertCircle size={14} className="text-red-600 flex-shrink-0" />
+            <p className="text-xs text-red-600">{error}</p>
+          </div>
+        )}
         <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2">
           <textarea
             rows={1}
-            placeholder="Type a reply..."
+            placeholder="Type a reply... (text only, HTML/scripts will be sanitized)"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (error) setError('');
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -181,6 +241,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
               }
             }}
             className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none resize-none max-h-32"
+            maxLength={4096}
           />
           <button
             onClick={sendMessage}
