@@ -18,42 +18,48 @@ export default function Home() {
 
   // Monitor auth state on mount
   useEffect(() => {
-    try {
-      // Check if user is already signed in
-      supabase.auth
-        .getSession()
-        .then(({ data: { session } }) => {
-          if (session?.user) {
-            setIsSignedIn(true);
-          } else {
-            setIsSignedIn(false);
-          }
+    const checkAuth = async () => {
+      try {
+        // First, refresh the session from cookies to ensure they're valid
+        const { data, error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError || !data.session) {
+          // Session is invalid or expired - user is logged out
+          setIsSignedIn(false);
           setIsLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error checking session:', err);
-          setError('Failed to load authentication');
-          setIsLoading(false);
-        });
+          return;
+        }
 
-      // Subscribe to auth state changes
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((event, session) => {
-        if (session?.user) {
+        // Session is valid
+        if (data.session?.user) {
           setIsSignedIn(true);
         } else {
           setIsSignedIn(false);
         }
-        setError(null);
-      });
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error refreshing session:', err);
+        setIsSignedIn(false);
+        setIsLoading(false);
+      }
+    };
 
-      return () => subscription?.unsubscribe();
-    } catch (err) {
-      console.error('Auth setup error:', err);
-      setError('Failed to initialize authentication');
-      setIsLoading(false);
-    }
+    checkAuth();
+
+    // Subscribe to auth state changes for any subsequent changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      if (session?.user) {
+        setIsSignedIn(true);
+      } else {
+        setIsSignedIn(false);
+      }
+      setError(null);
+    });
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   const handleSignedIn = () => {

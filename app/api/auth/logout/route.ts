@@ -37,31 +37,35 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Get current session
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    // Sign out from Supabase (invalidates server-side session)
+    await supabase.auth.signOut();
 
-    // Sign out from Supabase
-    if (session) {
-      await supabase.auth.signOut();
-    }
+    // Explicitly clear ALL auth-related cookies
+    const cookiesToClear = [
+      'supabase-auth',
+      'sb-access-token',
+      'sb-refresh-token',
+      'sb-user',
+      'sb-auth-token',
+    ];
 
-    // Explicitly clear auth cookies
-    cookieStore.delete('supabase-auth');
-    cookieStore.delete('sb-access-token');
-    cookieStore.delete('sb-refresh-token');
+    cookiesToClear.forEach((name) => {
+      cookieStore.delete(name);
+    });
 
-    // Return success response
+    // Create response with logout success
     const response = NextResponse.json(
       { success: true, message: 'Successfully logged out' },
       { status: 200 }
     );
 
-    // Ensure cookies are cleared in the response as well
-    response.cookies.delete('supabase-auth');
-    response.cookies.delete('sb-access-token');
-    response.cookies.delete('sb-refresh-token');
+    // Clear all cookies in the response as well
+    cookiesToClear.forEach((name) => {
+      response.cookies.delete(name);
+    });
+
+    // Add header to instruct client to clear localStorage
+    response.headers.set('X-Clear-Storage', 'true');
 
     return response;
   } catch (err) {

@@ -160,6 +160,19 @@ export default function Dashboard() {
         throw new Error(`Logout failed: ${response.status}`);
       }
 
+      // Clear all Supabase-related localStorage items
+      const keysToRemove = Object.keys(localStorage).filter(
+        (key) =>
+          key.includes('supabase') ||
+          key.includes('sb-') ||
+          key.includes('auth') ||
+          key.includes('sb:')
+      );
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+      // Also remove any remaining session storage
+      sessionStorage.clear();
+
       // Force a hard page reload to clear client-side state
       window.location.href = '/';
     } catch (err) {
