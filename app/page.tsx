@@ -56,9 +56,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen w-screen flex-col overflow-hidden bg-zinc-50">
+    <div className="h-[100dvh] w-screen flex flex-col overflow-hidden bg-zinc-50">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3">
+      <div className="flex-shrink-0 sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
             <span className="text-white text-xs font-bold">iF</span>
@@ -76,9 +76,9 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex flex-1 min-h-0 overflow-hidden md:flex-row flex-col pt-12 pb-12 md:pt-0 md:pb-0">
+      <div className="flex-1 min-h-0 overflow-y-auto md:flex-row flex-col pt-0 pb-20 md:pt-0 md:pb-0">
         {/* Column 1 – Chat List */}
-        <div className={`${panel === 'chats' ? 'flex' : 'hidden'} min-h-0 md:flex md:w-1/4 md:min-w-[240px] md:flex-col md:border-r md:border-zinc-200`}>
+        <div className={`${panel === 'chats' ? 'flex' : 'hidden'} min-h-0 w-full md:flex md:w-1/4 md:min-w-[240px] md:flex-col md:border-r md:border-zinc-200`}>
           <ChatList
             activeChat={activeChat}
             onSelectChat={(chat) => {
@@ -94,30 +94,44 @@ export default function Home() {
         </div>
 
         {/* Column 3 – Plugin Container */}
-        <div className={`${panel === 'plugins' ? 'flex' : 'hidden'} min-h-0 md:flex md:w-1/4 md:min-w-[280px] md:flex-col`}>
+        <div className={`${panel === 'plugins' ? 'flex' : 'hidden'} min-h-0 w-full md:flex md:w-1/4 md:min-w-[280px] md:flex-col`}>
           <PluginContainer activeChat={activeChat} business={business} onBusinessUpdate={setBusiness} />
         </div>
       </div>
-
-      <div className="flex items-center justify-between border-t border-zinc-200 bg-white p-2 md:hidden gap-2">
-        <button
-          onClick={() => setPanel('chats')}
-          className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition ${panel === 'chats' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'}`}
-        >
-          Chats
-        </button>
-        <button
-          onClick={() => setPanel('chat')}
-          className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition ${panel === 'chat' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'}`}
-        >
-          Conversation
-        </button>
-        <button
-          onClick={() => setPanel('plugins')}
-          className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition ${panel === 'plugins' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'}`}
-        >
-          Tools
-        </button>
+      {/* Fixed bottom nav for mobile: occupies safe area and is always visible */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-zinc-200"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="max-w-full mx-auto flex items-center gap-2 px-2 py-2">
+          <button
+            onClick={() => setPanel('chats')}
+            className={`flex-1 flex items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold transition ${
+              panel === 'chats' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
+            style={{ minHeight: 44 }}
+          >
+            Chats
+          </button>
+          <button
+            onClick={() => setPanel('chat')}
+            className={`flex-1 flex items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold transition ${
+              panel === 'chat' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
+            style={{ minHeight: 44 }}
+          >
+            Conversation
+          </button>
+          <button
+            onClick={() => setPanel('plugins')}
+            className={`flex-1 flex items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold transition ${
+              panel === 'plugins' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
+            style={{ minHeight: 44 }}
+          >
+            Tools
+          </button>
+        </div>
       </div>
     </div>
   );

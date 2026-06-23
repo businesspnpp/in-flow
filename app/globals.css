@@ -36,6 +36,20 @@ body {
   background: #A1A1AA;
 }
 
+/* Utility: hide scrollbars visually but keep scrolling functional */
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Utility: enable touch momentum scrolling on iOS */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Clean minimal button styles */
 button {
   font-family: inherit;
@@ -60,4 +74,9 @@ textarea::placeholder {
 ::selection {
   background-color: #D97706;
   color: white;
+}
+
+/* Ensure no accidental horizontal overflow on root */
+html, body {
+  overflow-x: hidden;
 }

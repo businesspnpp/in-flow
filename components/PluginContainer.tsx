@@ -57,23 +57,27 @@ export default function PluginContainer({ activeChat, business, onBusinessUpdate
 
   return (
     <div className="flex flex-col h-full bg-zinc-50">
-      {/* Tab bar */}
-      <div className="flex flex-nowrap overflow-x-auto border-b border-zinc-200 bg-white">
-        {TABS.map(({ id, icon: Icon, label }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            title={label}
-            className={`min-w-[80px] flex flex-col items-center gap-1.5 px-3 py-3 text-center border-b-2 transition-colors ${
-              activeTab === id
-                ? 'text-amber-600 border-b-amber-600'
-                : 'text-zinc-600 border-b-transparent hover:text-zinc-900'
-            }`}
-          >
-            <Icon size={16} />
-            <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
-          </button>
-        ))}
+      {/* Tab bar: mobile-first horizontal scrolling, touch-friendly */}
+      <div className="relative">
+        <div className="w-full overflow-x-auto whitespace-nowrap scrollbar-none touch-scroll flex flex-row items-center gap-2 px-3 py-2 bg-white border-b border-zinc-200 md:overflow-visible md:flex-wrap">
+          {TABS.map(({ id, icon: Icon, label }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              title={label}
+              className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-4 py-3 min-h-[44px] text-center transition-colors rounded-lg ${
+                activeTab === id
+                  ? 'text-amber-600 bg-amber-50 border border-amber-100'
+                  : 'text-zinc-600 hover:text-zinc-900 bg-white border border-transparent'
+              }`}
+            >
+              <Icon size={18} />
+              <span className="text-[10px] font-semibold uppercase tracking-wider">{label}</span>
+            </button>
+          ))}
+        </div>
+        {/* subtle fade to indicate scrollable content on mobile */}
+        <div className="pointer-events-none absolute top-0 right-0 h-full w-8 md:hidden" style={{ background: 'linear-gradient(to left, rgba(255,255,255,1), rgba(255,255,255,0))' }} />
       </div>
 
       {/* Plugin area */}

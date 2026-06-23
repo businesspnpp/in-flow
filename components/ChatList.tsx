@@ -76,10 +76,10 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-zinc-200">
+    <div className="flex flex-col h-full w-full bg-white border-r border-zinc-200">
       {/* Search bar */}
       <div className="p-3 border-b border-zinc-200">
-        <div className="flex items-center gap-2 bg-zinc-50 rounded-lg px-3 py-2 border border-zinc-200">
+        <div className="flex items-center gap-2 bg-zinc-50 rounded-lg px-3 py-2 border border-zinc-200 w-full">
           <Search size={16} className="text-zinc-400" />
           <input
             type="text"
@@ -87,16 +87,17 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent text-sm text-zinc-900 placeholder-zinc-500 outline-none flex-1"
+            aria-label="Search conversations"
           />
         </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto w-full">
         {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-zinc-400">
-            <MessageCircle size={32} />
-            <span className="text-xs">No conversations yet</span>
+          <div className="flex flex-col items-center justify-center h-full w-full gap-3 text-zinc-400 p-6">
+            <MessageCircle size={40} />
+            <span className="text-sm">No conversations yet</span>
           </div>
         )}
         {filtered.map((chat) => (
