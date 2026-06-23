@@ -381,4 +381,32 @@ export default function Dashboard() {
               setShowThread(false);
             }}
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-              globalTab === 'chats' ? 'bg-amber-
+              globalTab === 'chats' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:bg-zinc-100'
+            }`}
+          >
+            <MessageSquare size={18} />
+            <span className="hidden sm:inline">Chats</span>
+          </button>
+          <button
+            onClick={() => setGlobalTab('tools')}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              globalTab === 'tools' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:bg-zinc-100'
+            }`}
+          >
+            <Zap size={18} />
+            <span className="hidden sm:inline">Tools</span>
+          </button>
+          <button
+            onClick={() => setGlobalTab('settings')}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              globalTab === 'settings' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:bg-zinc-100'
+            }`}
+          >
+            <Settings size={18} />
+            <span className="hidden sm:inline">Settings</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  );
+}
