@@ -48,7 +48,7 @@ export default function PluginContainer({ activeChat, business, onBusinessUpdate
             {business ? (
               <BusinessSettings business={business} onUpdated={(b) => onBusinessUpdate?.(b)} />
             ) : (
-              <div className="text-sm text-[#9090a8]">No business profile found.</div>
+              <div className="text-sm text-zinc-500">No business profile found.</div>
             )}
           </div>
         );
@@ -56,28 +56,28 @@ export default function PluginContainer({ activeChat, business, onBusinessUpdate
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#13131a]">
+    <div className="flex flex-col h-full bg-zinc-50">
       {/* Tab bar */}
-      <div className="flex flex-nowrap overflow-x-auto border-b border-[#2a2a3a] bg-[#0a0a0f]">
+      <div className="flex flex-nowrap overflow-x-auto border-b border-zinc-200 bg-white">
         {TABS.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             title={label}
-            className={`min-w-[80px] flex flex-col items-center gap-1 px-3 py-3 text-center transition-colors ${
+            className={`min-w-[80px] flex flex-col items-center gap-1.5 px-3 py-3 text-center border-b-2 transition-colors ${
               activeTab === id
-                ? 'text-[#6c63ff] border-b-2 border-[#6c63ff]'
-                : 'text-[#4a4a5a] hover:text-[#9090a8]'
+                ? 'text-amber-600 border-b-amber-600'
+                : 'text-zinc-600 border-b-transparent hover:text-zinc-900'
             }`}
           >
             <Icon size={16} />
-            <span className="text-[9px] font-medium uppercase tracking-wider">{label}</span>
+            <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
           </button>
         ))}
       </div>
 
       {/* Plugin area */}
-      <div className="flex-1 overflow-y-auto p-3">{renderPlugin()}</div>
+      <div className="flex-1 overflow-y-auto p-4">{renderPlugin()}</div>
     </div>
   );
 }

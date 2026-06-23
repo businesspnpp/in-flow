@@ -8,15 +8,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#0a0a0f',
-        surface: '#13131a',
-        panel: '#1a1a24',
-        border: '#2a2a3a',
-        accent: '#6c63ff',
-        'accent-hover': '#7c73ff',
-        muted: '#4a4a5a',
-        text: '#e8e8f0',
-        'text-dim': '#9090a8',
+        background: '#FAFAFA',
+        surface: '#FFFFFF',
+        panel: '#F5F5F5',
+        border: '#E4E4E7',
+        accent: '#D97706',
+        'accent-hover': '#B45309',
+        muted: '#A1A1AA',
+        text: '#18181B',
+        'text-dim': '#71717A',
+        statusActive: '#059669',
+      },
+      borderRadius: {
+        card: '10px',
+        button: '8px',
+      },
+      boxShadow: {
+        'none': 'none',
+        'border': '0 0 0 1px var(--tw-border-color)',
       },
     },
   },

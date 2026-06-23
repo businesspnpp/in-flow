@@ -203,17 +203,17 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       <div id="fb-root" />
       <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-semibold text-white">WhatsApp Integration</h3>
-        <p className="text-sm text-[#9090a8] mt-1">
+        <h3 className="text-sm font-bold text-zinc-900">WhatsApp Integration</h3>
+        <p className="text-sm text-zinc-600 mt-2">
           Link your WhatsApp Business profile seamlessly via Meta Secure OAuth.
         </p>
       </div>
 
-      <div className="bg-[#12121b] border border-[#1f1f2e] rounded-xl p-5 space-y-4">
+      <div className="bg-white border border-zinc-200 rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Status</p>
-            <p className="text-xs text-[#9090a8] mt-0.5">
+            <p className="text-sm font-medium text-zinc-900">Status</p>
+            <p className="text-xs text-zinc-500 mt-1">
               {business.whatsapp_phone_number_id 
                 ? `Connected to ${business.whatsapp_number}` 
                 : 'Not integrated'}
@@ -224,50 +224,50 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
             <button
               onClick={attemptConnectWithDiagnostics}
               disabled={loading}
-              className="rounded-xl bg-[#6c63ff] px-4 py-2.5 text-xs font-medium text-white hover:bg-[#7c73ff] disabled:opacity-50 transition-colors"
+              className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Connecting...' : business.whatsapp_phone_number_id ? 'Reconnect Channel' : 'Connect WhatsApp'}
             </button>
             <button
               onClick={attemptConnectWithDiagnostics}
               disabled={loading}
-              className="rounded-xl border border-[#2a2a3a] px-3 py-2 text-xs text-[#e8e8f0] hover:bg-[#1a1a24] disabled:opacity-50"
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
             >
               Retry
             </button>
             <button
               onClick={() => setShowTroubleshoot(true)}
-              className="rounded-xl border border-[#2a2a3a] px-3 py-2 text-xs text-[#9090a8] hover:bg-[#1a1a24]"
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50"
             >
               Troubleshoot
             </button>
           </div>
         </div>
 
-        {error && <p className="text-xs text-[#ff6b6b] bg-[#2a1414] p-2.5 rounded-lg border border-[#4a1a1a]">{error}</p>}
-        {success && <p className="text-xs text-[#7be495] bg-[#142a1e] p-2.5 rounded-lg border border-[#1a4a2e]">{success}</p>}
+        {error && <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>}
+        {success && <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200">{success}</p>}
       </div>
 
-      <div className="rounded-xl border border-[#1f1f2e] bg-[#0f0f16] p-4">
-        <p className="text-xs font-medium text-white">How it works</p>
-        <ul className="mt-2 space-y-2 text-xs text-[#9090a8] list-disc list-inside">
+      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-5">
+        <p className="text-xs font-semibold text-zinc-900">How it works</p>
+        <ul className="mt-3 space-y-2 text-xs text-zinc-600 list-disc list-inside">
           <li>Authenticate your official business account via Meta's dialog securely.</li>
           <li>Select the specific active WhatsApp phone number you want to track.</li>
           <li>Inbound client messages will stream natively into your inFlow smart inbox.</li>
         </ul>
       </div>
       {showTroubleshoot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-[90%] max-w-lg rounded-xl bg-[#0f0f16] border border-[#2a2a3a] p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
+          <div className="w-[90%] max-w-lg rounded-lg bg-white border border-zinc-200 p-6">
             <div className="flex items-start justify-between">
               <div>
-                <h4 className="text-sm font-semibold text-white">WhatsApp Troubleshooting</h4>
-                <p className="text-xs text-[#9090a8] mt-1">Steps to resolve common connection issues.</p>
+                <h4 className="text-sm font-bold text-zinc-900">WhatsApp Troubleshooting</h4>
+                <p className="text-xs text-zinc-500 mt-1">Steps to resolve common connection issues.</p>
               </div>
-              <button onClick={() => setShowTroubleshoot(false)} className="text-[#9090a8]">Close</button>
+              <button onClick={() => setShowTroubleshoot(false)} className="text-zinc-400 hover:text-zinc-600">✕</button>
             </div>
 
-            <ol className="mt-3 space-y-2 text-xs text-[#e8e8f0] list-decimal list-inside">
+            <ol className="mt-4 space-y-2 text-xs text-zinc-700 list-decimal list-inside">
               <li>Allow popups and redirects for this site in your browser.</li>
               <li>Make sure third-party cookies are enabled or try in a private window.</li>
               <li>Check that your Meta app ID (NEXT_PUBLIC_META_APP_ID) is configured and correct.</li>
@@ -275,8 +275,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
               <li>Try again with the <strong>Retry</strong> button after applying the steps above.</li>
             </ol>
 
-            <div className="mt-4 flex justify-end gap-2">
-              <button onClick={() => setShowTroubleshoot(false)} className="rounded-md px-3 py-2 text-xs border border-[#2a2a3a]">Done</button>
+            <div className="mt-6 flex justify-end gap-2">
+              <button onClick={() => setShowTroubleshoot(false)} className="rounded-lg px-4 py-2 text-xs border border-zinc-300 text-zinc-700 hover:bg-zinc-50">Done</button>
             </div>
           </div>
         </div>

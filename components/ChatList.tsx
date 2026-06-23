@@ -76,17 +76,17 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#13131a]">
+    <div className="flex flex-col h-full bg-white border-r border-zinc-200">
       {/* Search bar */}
-      <div className="p-2 border-b border-[#2a2a3a]">
-        <div className="flex items-center gap-2 bg-[#1a1a24] rounded-lg px-2 py-1">
-          <Search size={14} className="text-[#9090a8]" />
+      <div className="p-3 border-b border-zinc-200">
+        <div className="flex items-center gap-2 bg-zinc-50 rounded-lg px-3 py-2 border border-zinc-200">
+          <Search size={16} className="text-zinc-400" />
           <input
             type="text"
             placeholder="Search conversations..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent text-sm text-[#e8e8f0] placeholder-[#9090a8] outline-none flex-1"
+            className="bg-transparent text-sm text-zinc-900 placeholder-zinc-500 outline-none flex-1"
           />
         </div>
       </div>
@@ -94,7 +94,7 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
       {/* List */}
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-[#4a4a5a]">
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-zinc-400">
             <MessageCircle size={32} />
             <span className="text-xs">No conversations yet</span>
           </div>
@@ -103,27 +103,27 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
           <button
             key={chat.id}
             onClick={() => onSelectChat(chat)}
-            className={`w-full flex items-center gap-3 px-3 py-2 border-b border-[#1a1a24] hover:bg-[#1a1a24] transition-colors text-left ${
-              activeChat?.id === chat.id ? 'bg-[#1a1a24] border-l-2 border-l-[#6c63ff]' : ''
+            className={`w-full flex items-center gap-3 px-4 py-3 border-b border-zinc-100 hover:bg-zinc-50 transition-colors text-left ${
+              activeChat?.id === chat.id ? 'bg-zinc-50 border-l-4 border-l-amber-600' : ''
             }`}
           >
             {/* Avatar */}
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#9c93ff] flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xs font-semibold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-xs font-bold">
                 {initials(chat.name, chat.id)}
               </span>
             </div>
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-[#e8e8f0] truncate">
+                <span className="text-sm font-medium text-zinc-900 truncate">
                   {chat.name ?? chat.id}
                 </span>
-                <span className="text-[10px] text-[#9090a8] ml-1 flex-shrink-0">
+                <span className="text-[10px] text-zinc-500 ml-2 flex-shrink-0">
                   {timeAgo(chat.updated_at)}
                 </span>
               </div>
-              <p className="text-xs text-[#9090a8] truncate mt-0.5">
+              <p className="text-xs text-zinc-600 truncate mt-1">
                 {chat.last_message ?? '—'}
               </p>
             </div>

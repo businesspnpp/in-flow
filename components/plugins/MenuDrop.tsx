@@ -72,8 +72,8 @@ export default function MenuDrop({ activeChat }: MenuDropProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <ShoppingBag size={16} className="text-[#6c63ff]" />
-        <h3 className="text-sm font-semibold text-[#e8e8f0]">MenuDrop</h3>
+        <ShoppingBag size={16} className="text-amber-600" />
+        <h3 className="text-sm font-bold text-zinc-900">MenuDrop</h3>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -82,29 +82,29 @@ export default function MenuDrop({ activeChat }: MenuDropProps) {
           return (
             <div
               key={item.id}
-              className="flex items-center justify-between bg-[#1a1a24] rounded-lg px-3 py-2"
+              className="flex items-center justify-between bg-white border border-zinc-200 rounded-lg px-3 py-2.5"
             >
               <div>
-                <p className="text-xs text-[#e8e8f0] font-medium">{item.name}</p>
-                <p className="text-[10px] text-[#9090a8]">R{item.price}</p>
+                <p className="text-xs font-medium text-zinc-900">{item.name}</p>
+                <p className="text-[10px] text-zinc-600">R{item.price}</p>
               </div>
               <div className="flex items-center gap-2">
                 {qty > 0 && (
                   <button
                     onClick={() => adjust(item.id, -1)}
-                    className="w-6 h-6 rounded-md bg-[#2a2a3a] hover:bg-[#3a3a4a] flex items-center justify-center transition-colors"
+                    className="w-6 h-6 rounded-md bg-zinc-200 hover:bg-zinc-300 flex items-center justify-center transition-colors"
                   >
-                    <Minus size={10} className="text-[#e8e8f0]" />
+                    <Minus size={10} className="text-zinc-700" />
                   </button>
                 )}
                 {qty > 0 && (
-                  <span className="text-xs text-[#6c63ff] font-semibold w-4 text-center">
+                  <span className="text-xs text-amber-600 font-bold w-4 text-center">
                     {qty}
                   </span>
                 )}
                 <button
                   onClick={() => adjust(item.id, 1)}
-                  className="w-6 h-6 rounded-md bg-[#6c63ff] hover:bg-[#7c73ff] flex items-center justify-center transition-colors"
+                  className="w-6 h-6 rounded-md bg-amber-600 hover:bg-amber-700 flex items-center justify-center transition-colors"
                 >
                   <Plus size={10} className="text-white" />
                 </button>
@@ -116,18 +116,18 @@ export default function MenuDrop({ activeChat }: MenuDropProps) {
 
       {/* Subtotal */}
       {orderItems.length > 0 && (
-        <div className="bg-[#0a0a0f] rounded-lg p-3 border border-[#2a2a3a] flex justify-between items-center">
-          <span className="text-xs text-[#9090a8]">
+        <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-200 flex justify-between items-center">
+          <span className="text-xs text-zinc-600">
             {orderItems.length} item{orderItems.length > 1 ? 's' : ''}
           </span>
-          <span className="text-sm font-semibold text-[#6c63ff]">R{subtotal}</span>
+          <span className="text-sm font-bold text-amber-600">R{subtotal}</span>
         </div>
       )}
 
       <button
         onClick={handleSend}
         disabled={orderItems.length === 0 || !activeChat || sending}
-        className="flex items-center justify-center gap-2 bg-[#6c63ff] hover:bg-[#7c73ff] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
       >
         <Send size={14} />
         Send Order Summary

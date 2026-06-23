@@ -50,20 +50,20 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <FileText size={16} className="text-[#6c63ff]" />
-        <h3 className="text-sm font-semibold text-[#e8e8f0]">Fast Invoice</h3>
+        <FileText size={16} className="text-amber-600" />
+        <h3 className="text-sm font-bold text-zinc-900">Fast Invoice</h3>
       </div>
 
       {!activeChat && (
-        <p className="text-xs text-[#4a4a5a] text-center py-4">
+        <p className="text-xs text-zinc-500 text-center py-4">
           Select a chat to send an invoice
         </p>
       )}
 
       {activeChat && (
         <>
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] text-[#9090a8] uppercase tracking-wider">
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
               Service Description
             </label>
             <input
@@ -71,16 +71,16 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
               placeholder="e.g. Car Service — Full"
               value={service}
               onChange={(e) => setService(e.target.value)}
-              className="bg-[#1a1a24] border border-[#2a2a3a] rounded-lg px-3 py-2 text-sm text-[#e8e8f0] placeholder-[#4a4a5a] outline-none focus:border-[#6c63ff] transition-colors"
+              className="bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] text-[#9090a8] uppercase tracking-wider">
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
               Amount (ZAR)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#9090a8]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500 font-medium">
                 R
               </span>
               <input
@@ -88,14 +88,14 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-[#1a1a24] border border-[#2a2a3a] rounded-lg pl-7 pr-3 py-2 text-sm text-[#e8e8f0] placeholder-[#4a4a5a] outline-none focus:border-[#6c63ff] transition-colors"
+                className="w-full bg-white border border-zinc-200 rounded-lg pl-7 pr-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
               />
             </div>
           </div>
 
           {/* Preview */}
           {service && amount && (
-            <div className="bg-[#0a0a0f] rounded-lg p-3 border border-[#2a2a3a] text-xs text-[#9090a8] whitespace-pre-line leading-relaxed">
+            <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-200 text-xs text-zinc-600 whitespace-pre-line leading-relaxed font-mono">
               {`📄 INVOICE — inFlow\n━━━━━━━━━━━━━━━━━\nService: ${service}\nAmount: R${amount}\n━━━━━━━━━━━━━━━━━\nPlease use EFT / PayFast to settle.`}
             </div>
           )}
@@ -103,7 +103,7 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
           <button
             onClick={handleSend}
             disabled={!service.trim() || !amount.trim() || sending || sent}
-            className="flex items-center justify-center gap-2 bg-[#6c63ff] hover:bg-[#7c73ff] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+            className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
           >
             {sent ? (
               <>

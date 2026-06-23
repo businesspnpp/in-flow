@@ -69,26 +69,26 @@ export default function QuoteCraft({ activeChat }: QuoteCraftProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Calculator size={16} className="text-[#6c63ff]" />
-        <h3 className="text-sm font-semibold text-[#e8e8f0]">QuoteCraft</h3>
+        <Calculator size={16} className="text-amber-600" />
+        <h3 className="text-sm font-bold text-zinc-900">QuoteCraft</h3>
       </div>
 
       <div className="flex flex-col gap-2">
         {ITEMS.map((item) => (
           <label
             key={item.id}
-            className="flex items-center justify-between bg-[#1a1a24] rounded-lg px-3 py-2.5 cursor-pointer hover:bg-[#22223a] transition-colors"
+            className="flex items-center justify-between bg-white border border-zinc-200 rounded-lg px-3 py-2.5 cursor-pointer hover:bg-amber-50 transition-colors"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <input
                 type="checkbox"
                 checked={checked.has(item.id)}
                 onChange={() => toggle(item.id)}
-                className="accent-[#6c63ff] w-3.5 h-3.5"
+                className="accent-amber-600 w-4 h-4 cursor-pointer"
               />
-              <span className="text-xs text-[#e8e8f0]">{item.label}</span>
+              <span className="text-xs text-zinc-900 font-medium">{item.label}</span>
             </div>
-            <span className="text-xs text-[#9090a8]">
+            <span className="text-xs text-zinc-600">
               {item.isVat ? '15%' : `R${item.price}`}
             </span>
           </label>
@@ -96,31 +96,31 @@ export default function QuoteCraft({ activeChat }: QuoteCraftProps) {
       </div>
 
       {/* Totals */}
-      <div className="bg-[#0a0a0f] rounded-lg p-3 border border-[#2a2a3a] flex flex-col gap-1">
-        <div className="flex justify-between text-xs text-[#9090a8]">
+      <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-200 flex flex-col gap-2">
+        <div className="flex justify-between text-xs text-zinc-600">
           <span>Subtotal</span>
-          <span>R{subtotal}</span>
+          <span className="font-medium">R{subtotal}</span>
         </div>
         {includeVat && (
-          <div className="flex justify-between text-xs text-[#9090a8]">
+          <div className="flex justify-between text-xs text-zinc-600">
             <span>VAT (15%)</span>
-            <span>R{total - subtotal}</span>
+            <span className="font-medium">R{total - subtotal}</span>
           </div>
         )}
-        <div className="flex justify-between text-sm font-semibold text-[#e8e8f0] border-t border-[#2a2a3a] pt-1 mt-1">
+        <div className="flex justify-between text-sm font-bold text-zinc-900 border-t border-zinc-200 pt-2 mt-2">
           <span>Total</span>
-          <span className="text-[#6c63ff]">R{total}</span>
+          <span className="text-amber-600">R{total}</span>
         </div>
-        <div className="flex justify-between text-xs text-[#9090a8]">
+        <div className="flex justify-between text-xs text-zinc-600 pt-1">
           <span>50% Deposit</span>
-          <span>R{deposit}</span>
+          <span className="font-medium">R{deposit}</span>
         </div>
       </div>
 
       <button
         onClick={handleSend}
         disabled={selectedItems.length === 0 || !activeChat || sending}
-        className="flex items-center justify-center gap-2 bg-[#6c63ff] hover:bg-[#7c73ff] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
       >
         <Send size={14} />
         Send Quote

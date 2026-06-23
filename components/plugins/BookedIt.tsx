@@ -66,11 +66,11 @@ export default function BookedIt({ activeChat }: BookedItProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <CalendarCheck size={16} className="text-[#6c63ff]" />
-        <h3 className="text-sm font-semibold text-[#e8e8f0]">BookedIt</h3>
+        <CalendarCheck size={16} className="text-amber-600" />
+        <h3 className="text-sm font-bold text-zinc-900">BookedIt</h3>
       </div>
 
-      <p className="text-xs text-[#9090a8]">
+      <p className="text-xs text-zinc-600">
         Today&apos;s slots — tap an available slot to select it
       </p>
 
@@ -83,20 +83,20 @@ export default function BookedIt({ activeChat }: BookedItProps) {
               key={slot}
               onClick={() => toggleSlot(slot)}
               disabled={isBooked}
-              className={`py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`py-2.5 rounded-lg text-xs font-semibold transition-colors ${
                 isBooked
-                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-800 cursor-default'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 cursor-default'
                   : isSelected
-                  ? 'bg-[#6c63ff] text-white border border-[#6c63ff]'
-                  : 'bg-[#1a1a24] text-[#9090a8] border border-[#2a2a3a] hover:border-[#6c63ff] hover:text-[#e8e8f0]'
+                  ? 'bg-amber-600 text-white border border-amber-600'
+                  : 'bg-white text-zinc-700 border border-zinc-200 hover:border-amber-300 hover:bg-amber-50'
               }`}
             >
               {slot}
               {isBooked && (
-                <span className="block text-[9px] mt-0.5 text-emerald-400">Booked</span>
+                <span className="block text-[9px] mt-0.5 text-emerald-600 font-medium">Booked</span>
               )}
               {!isBooked && !isSelected && (
-                <span className="block text-[9px] mt-0.5 text-[#4a4a5a]">Free</span>
+                <span className="block text-[9px] mt-0.5 text-zinc-500">Free</span>
               )}
             </button>
           );
@@ -104,15 +104,15 @@ export default function BookedIt({ activeChat }: BookedItProps) {
       </div>
 
       {selected && activeChat && (
-        <div className="bg-[#0a0a0f] rounded-lg p-3 border border-[#6c63ff]/40 text-xs text-[#9090a8]">
-          <span className="text-[#6c63ff] font-medium">Draft:</span> Appointment at {selected}
+        <div className="bg-zinc-50 rounded-lg p-3 border border-amber-200 text-xs text-zinc-700">
+          <span className="text-amber-600 font-medium">Draft:</span> Appointment at {selected}
         </div>
       )}
 
       <button
         onClick={sendConfirmation}
         disabled={!selected || !activeChat || sending}
-        className="flex items-center justify-center gap-2 bg-[#6c63ff] hover:bg-[#7c73ff] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
       >
         <Send size={14} />
         Confirm & Send Booking
