@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { MessageSquare, FileText, CalendarCheck, Calculator, ShoppingBag } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { FileText, CalendarCheck, Calculator, ShoppingBag } from 'lucide-react';
 
 export default function Home() {
   // Mock conversation state for demo
@@ -25,6 +25,7 @@ export default function Home() {
   const [activeId, setActiveId] = useState('mock-1');
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const replyTimer = useRef<number | null>(null);
 
   function appendMessage(text: string, from: 'business' | 'customer' = 'business') {
     setConversations((prev) => {
@@ -44,25 +45,60 @@ export default function Home() {
         };
       });
     });
-    // scroll into view after a short delay
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    window.setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
   }
+
+  function getAutoReply(outgoing: string) {
+    const normalized = outgoing.toLowerCase();
+    if (/\b(hello|hi|help you|details)\b/.test(normalized)) {
+      return 'Awesome, thank you! Do you have an open slot available this Tuesday afternoon for that consultation?';
+    }
+    if (/\b(booking|scheduled|confirmed)\b/.test(normalized)) {
+      return 'Perfect! R16:00 on Tuesday works beautifully for me. Should I expect a voice call or a link through here?';
+    }
+    if (/\b(invoice|payment|r250)\b/.test(normalized)) {
+      return "Received, thank you! I'll process the payment right away and let you know when it goes through.";
+    }
+    return 'Sounds good, thanks for confirming! What are the next steps to get everything finalized on your end?';
+  }
+
+  function scheduleAutoReply(outgoing: string) {
+    if (replyTimer.current) {
+      window.clearTimeout(replyTimer.current);
+    }
+    const nextReply = getAutoReply(outgoing);
+    replyTimer.current = window.setTimeout(() => {
+      appendMessage(nextReply, 'customer');
+      replyTimer.current = null;
+    }, 4000);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (replyTimer.current) {
+        window.clearTimeout(replyTimer.current);
+      }
+    };
+  }, []);
 
   function handleSend() {
     if (!input.trim()) return;
-    appendMessage(input.trim(), 'business');
+    const outgoing = input.trim();
+    appendMessage(outgoing, 'business');
     setInput('');
+    scheduleAutoReply(outgoing);
   }
 
   // Plugin output handler
   function handlePluginAction(text: string) {
     appendMessage(text, 'business');
+    scheduleAutoReply(text);
   }
 
   const activeConv = conversations.find((c) => c.id === activeId)!;
 
   return (
-    <div className="h-[100dvh] w-screen overflow-hidden flex flex-col bg-white">
+    <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-white">
       {/* Header */}
       <div className="flex-shrink-0">
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 bg-white">
@@ -115,7 +151,7 @@ export default function Home() {
             <p className="text-xs text-zinc-500">+{activeConv.id}</p>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-24 w-full max-w-full">
+          <div className="flex-1 overflow-y-auto w-full px-4 py-2 pb-40 max-w-full">
             <div className="flex flex-col gap-3 mt-4">
               {activeConv.messages.map((m: any) => (
                 <div key={m.id} className={`flex ${m.sender === 'business' ? 'justify-end' : 'justify-start'}`}>
@@ -130,12 +166,20 @@ export default function Home() {
           </div>
 
           {/* Input area */}
-          <div className="p-4 border-t border-zinc-200 bg-white">
-            <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2">
-              <textarea rows={1} placeholder="Type a reply..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none resize-none max-h-32" />
-              <button onClick={handleSend} disabled={!input.trim()} className="w-8 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
-              </button>
+          <div className="sticky bottom-16 left-0 right-0 z-20 p-4 border-t border-zinc-200 bg-white">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2">
+                <textarea rows={1} placeholder="Type a reply..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none resize-none max-h-32" />
+                <button onClick={handleSend} disabled={!input.trim()} className="w-8 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:hidden">
+                <button onClick={() => handlePluginAction('📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.')} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-700">Invoice</button>
+                <button onClick={() => handlePluginAction('📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!')} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-700">BookedIt</button>
+                <button onClick={() => handlePluginAction('🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00')} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-700">Quote</button>
+                <button onClick={() => handlePluginAction('🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.')} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-700">Menu</button>
+              </div>
             </div>
           </div>
         </div>
