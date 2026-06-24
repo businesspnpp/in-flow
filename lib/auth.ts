@@ -117,6 +117,7 @@ export function clearSessionCookie() {
  */
 export async function verifyMetaWebhookSignature(
   request: NextRequest,
+  rawBody: string,
   secret: string
 ): Promise<boolean> {
   const xHubSignature = request.headers.get('x-hub-signature-256');
@@ -126,7 +127,6 @@ export async function verifyMetaWebhookSignature(
   }
 
   try {
-    const rawBody = await request.text();
     const crypto = await import('crypto');
     const hmac = crypto
       .createHmac('sha256', secret)

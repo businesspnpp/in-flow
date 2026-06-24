@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabase } from '@/lib/supabase';
 import { sanitizeText, sanitizePhoneNumber } from '@/lib/sanitize';
-import { WhatsAppWebhookSchema } from '@/lib/validation';
+import { WhatsAppWebhookSchema, FacebookWebhookSchema, InstagramWebhookSchema } from '@/lib/validation';
 import { verifyMetaWebhookSignature, shouldBypassAuthForMeta } from '@/lib/auth';
 
 /**
@@ -22,117 +22,183 @@ export async function GET(request: NextRequest) {
   return new NextResponse('Forbidden', { status: 403 });
 }
 
+function normalizeId(value: string): string {
+  return sanitizeText(value).trim();
+}
+
+async function handleChatRecord(chatId: string, name: string, messageText: string) {
+  const supabase = getSupabase();
+
+  const { error: upsertError } = await supabase.from('chats').upsert(
+    {
+      id: chatId,
+      name: name || chatId,
+      last_message: messageText,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'id' }
+  );
+
+  if (upsertError) {
+    console.error('[Webhook] Chat upsert error:', upsertError);
+    return { status: 'db_error', code: 500 } as const;
+  }
+
+  const { error: insertError } = await supabase.from('messages').insert({
+    chat_id: chatId,
+    sender: 'customer',
+    body: messageText,
+  });
+
+  if (insertError) {
+    console.error('[Webhook] Message insert error:', insertError);
+    return { status: 'db_error', code: 500 } as const;
+  }
+
+  return { status: 'ok', code: 200 } as const;
+}
+
+async function handleWhatsAppWebhook(body: unknown) {
+  const validationResult = WhatsAppWebhookSchema.safeParse(body);
+  if (!validationResult.success) {
+    console.error('[Webhook] WhatsApp validation error:', validationResult.error);
+    return { status: 'invalid_payload', code: 400 } as const;
+  }
+
+  const entries = validationResult.data.entry ?? [];
+  if (entries.length === 0) {
+    return { status: 'no_entries', code: 200 } as const;
+  }
+
+  const change = entries[0].changes?.[0];
+  const value = change?.value;
+  const message = value?.messages?.[0];
+  if (!message || message.type !== 'text' || !message.text?.body) {
+    return { status: 'ignored_type', code: 200 } as const;
+  }
+
+  const fromPhone = sanitizePhoneNumber(message.from);
+  if (!fromPhone || fromPhone.length < 10) {
+    console.error('[Webhook] Invalid phone number:', message.from);
+    return { status: 'invalid_phone', code: 400 } as const;
+  }
+
+  const messageText = sanitizeText(message.text.body);
+  if (!messageText) {
+    console.error('[Webhook] Message text empty after sanitization');
+    return { status: 'empty_message', code: 400 } as const;
+  }
+
+  let contactName = fromPhone;
+  if (value?.contacts?.[0]?.profile?.name) {
+    contactName = sanitizeText(value.contacts[0].profile.name).substring(0, 255) || fromPhone;
+  }
+
+  return handleChatRecord(fromPhone, contactName, messageText);
+}
+
+async function handleFacebookWebhook(body: unknown) {
+  const validationResult = FacebookWebhookSchema.safeParse(body);
+  if (!validationResult.success) {
+    console.error('[Webhook] Facebook validation error:', validationResult.error);
+    return { status: 'invalid_payload', code: 400 } as const;
+  }
+
+  const entries = validationResult.data.entry ?? [];
+  if (entries.length === 0) {
+    return { status: 'no_entries', code: 200 } as const;
+  }
+
+  for (const entry of entries) {
+    for (const messaging of entry.messaging ?? []) {
+      const senderId = normalizeId(messaging.sender.id);
+      const messageText = sanitizeText(messaging.message?.text ?? '');
+      if (!senderId || !messageText) {
+        continue;
+      }
+      const result = await handleChatRecord(senderId, senderId, messageText);
+      if (result.code !== 200) {
+        return result;
+      }
+    }
+  }
+
+  return { status: 'ok', code: 200 } as const;
+}
+
+async function handleInstagramWebhook(body: unknown) {
+  const validationResult = InstagramWebhookSchema.safeParse(body);
+  if (!validationResult.success) {
+    console.error('[Webhook] Instagram validation error:', validationResult.error);
+    return { status: 'invalid_payload', code: 400 } as const;
+  }
+
+  const entries = validationResult.data.entry ?? [];
+  if (entries.length === 0) {
+    return { status: 'no_entries', code: 200 } as const;
+  }
+
+  for (const entry of entries) {
+    for (const change of entry.changes ?? []) {
+      for (const message of change.value.messages ?? []) {
+        const senderId = normalizeId(message.from);
+        const messageText = sanitizeText(message.text ?? '');
+        if (!senderId || !messageText) {
+          continue;
+        }
+        const result = await handleChatRecord(senderId, senderId, messageText);
+        if (result.code !== 200) {
+          return result;
+        }
+      }
+    }
+  }
+
+  return { status: 'ok', code: 200 } as const;
+}
+
 /**
  * POST /api/webhook
- * Receives incoming WhatsApp messages from Meta
- * Validates webhook signature and sanitizes all inputs
+ * Receives incoming Meta messaging events for WhatsApp, Facebook, and Instagram.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify webhook signature for authenticity
     const secret = process.env.META_WEBHOOK_SECRET || process.env.META_APP_SECRET;
     if (!secret) {
       console.error('[Webhook] Missing webhook secret');
       return NextResponse.json({ status: 'error' }, { status: 500 });
     }
 
-    // Skip signature verification only in Meta review mode for staging
+    const rawBody = await request.text();
+
     if (!shouldBypassAuthForMeta(request)) {
-      const isValid = await verifyMetaWebhookSignature(request, secret);
+      const isValid = await verifyMetaWebhookSignature(request, rawBody, secret);
       if (!isValid) {
         console.error('[Webhook] Invalid signature');
         return NextResponse.json({ status: 'unauthorized' }, { status: 401 });
       }
     }
 
-    // Parse and validate the webhook payload
-    const body = await request.json();
-
-    // Validate against schema
-    const validationResult = WhatsAppWebhookSchema.safeParse(body);
-    if (!validationResult.success) {
-      console.error('[Webhook] Validation error:', validationResult.error);
-      return NextResponse.json({ status: 'invalid_payload' }, { status: 400 });
+    let body: unknown;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (parseError) {
+      console.error('[Webhook] JSON parse error:', parseError);
+      return NextResponse.json({ status: 'invalid_json' }, { status: 400 });
     }
 
-    const entries = validationResult.data.entry;
-    if (!entries || entries.length === 0) {
-      return NextResponse.json({ status: 'no_entries' }, { status: 200 });
+    const objectType = typeof body === 'object' && body !== null && 'object' in body ? (body as any).object : undefined;
+
+    let result;
+    if (objectType === 'page') {
+      result = await handleFacebookWebhook(body);
+    } else if (objectType === 'instagram') {
+      result = await handleInstagramWebhook(body);
+    } else {
+      result = await handleWhatsAppWebhook(body);
     }
 
-    const entry = entries[0];
-    const changes = entry?.changes;
-    if (!changes || changes.length === 0) {
-      return NextResponse.json({ status: 'no_changes' }, { status: 200 });
-    }
-
-    const change = changes[0];
-    const value = change?.value;
-    if (!value || !value.messages) {
-      return NextResponse.json({ status: 'no_messages' }, { status: 200 });
-    }
-
-    const message = value.messages[0];
-    if (!message) {
-      return NextResponse.json({ status: 'no_message' }, { status: 200 });
-    }
-
-    // Only process text messages
-    if (message.type !== 'text' || !message.text?.body) {
-      return NextResponse.json({ status: 'ignored_type' }, { status: 200 });
-    }
-
-    // Sanitize and validate inputs
-    const fromPhone = sanitizePhoneNumber(message.from);
-    if (!fromPhone || fromPhone.length < 10) {
-      console.error('[Webhook] Invalid phone number:', message.from);
-      return NextResponse.json({ status: 'invalid_phone' }, { status: 400 });
-    }
-
-    // Sanitize message text - remove HTML, scripts, control characters
-    const messageText = sanitizeText(message.text.body);
-    if (!messageText) {
-      console.error('[Webhook] Message text empty after sanitization');
-      return NextResponse.json({ status: 'empty_message' }, { status: 400 });
-    }
-
-    // Sanitize contact name
-    let contactName = message.from; // fallback to phone number
-    if (value?.contacts?.[0]?.profile?.name) {
-      contactName = sanitizeText(value.contacts[0].profile.name).substring(0, 255);
-    }
-
-    const supabase = getSupabase();
-
-    // Upsert chat profile using Supabase parameterized query
-    const { error: upsertError } = await supabase.from('chats').upsert(
-      {
-        id: fromPhone,
-        name: contactName,
-        last_message: messageText,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'id' }
-    );
-
-    if (upsertError) {
-      console.error('[Webhook] Upsert error:', upsertError);
-      return NextResponse.json({ status: 'db_error' }, { status: 500 });
-    }
-
-    // Insert new message record using Supabase parameterized query
-    const { error: insertError } = await supabase.from('messages').insert({
-      chat_id: fromPhone,
-      sender: 'customer',
-      body: messageText,
-    });
-
-    if (insertError) {
-      console.error('[Webhook] Insert error:', insertError);
-      return NextResponse.json({ status: 'db_error' }, { status: 500 });
-    }
-
-    return NextResponse.json({ status: 'ok' }, { status: 200 });
+    return NextResponse.json({ status: result.status }, { status: result.code });
   } catch (err) {
     console.error('[Webhook] Error:', err);
     return NextResponse.json({ status: 'error' }, { status: 500 });
