@@ -85,7 +85,7 @@ const MOCK_CONTACTS = [
     id: 'c1',
     name: 'Customer One',
     channel: 'WhatsApp',
-    preview: 'I'd like to book an appointment this week…',
+    preview: "I'd like to book an appointment this week…",
     time: 'Now',
     unread: 1,
     status: 'online',
