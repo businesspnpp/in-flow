@@ -63,24 +63,36 @@ const CHANNELS: ChannelItem[] = [
   },
 ];
 
+const META_CONFIG_ID = '2301977283876651';
+
+type BusinessProfile = {
+  id: string;
+  whatsapp_phone_number_id?: string | null;
+  whatsapp_number?: string | null;
+};
+
 export default function Dashboard() {
   const router = useRouter();
   const [loadingSession, setLoadingSession] = useState(true);
   const [globalTab, setGlobalTab] = useState<GlobalTab>('chats');
   const [showThread, setShowThread] = useState(false);
-  const [activeChat, setActiveChat] = useState<Chat | null>(null);
+  const [business, setBusiness] = useState<BusinessProfile | null>(null);
+  const [whatsappConnected, setWhatsappConnected] = useState(false);
   const [chats, setChats] = useState<Chat[]>([]);
+  const [activeChat, setActiveChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [connectLoading, setConnectLoading] = useState(false);
+  const [connectError, setConnectError] = useState('');
+  const [connectSuccess, setConnectSuccess] = useState('');
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const chatChannelRef = useRef<any>(null);
   const messageChannelRef = useRef<any>(null);
-  const authSubscriptionRef = useRef<any>(null);
 
   useEffect(() => {
-    async function initialize() {
+    async function verifyAuth() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
@@ -89,30 +101,54 @@ export default function Dashboard() {
       setLoadingSession(false);
     }
 
-    initialize();
+    verifyAuth();
 
-    const { data: authSubscription } = supabase.auth.onAuthStateChange((_, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       if (!session) {
         router.push('/login');
       }
     });
 
-    authSubscriptionRef.current = authSubscription;
-
-    return () => {
-      authSubscriptionRef.current?.unsubscribe?.();
-    };
+    return () => subscription?.unsubscribe();
   }, [router]);
 
   useEffect(() => {
+    if (loadingSession) {
+      return;
+    }
+
+    async function loadBusiness() {
+      const { data, error } = await supabase
+        .from<BusinessProfile>('businesses')
+        .select('id,whatsapp_phone_number_id,whatsapp_number')
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('[Dashboard] Load business failed:', error);
+        return;
+      }
+
+      setBusiness(data ?? null);
+      setWhatsappConnected(Boolean(data?.whatsapp_phone_number_id));
+    }
+
+    loadBusiness();
+  }, [loadingSession]);
+
+  useEffect(() => {
+    if (loadingSession) {
+      return;
+    }
+
     async function loadChats() {
-      const { data, error: fetchError } = await supabase
+      const { data, error } = await supabase
         .from<Chat>('chats')
         .select('id,name,last_message,updated_at')
         .order('updated_at', { ascending: false });
 
-      if (fetchError) {
-        setError(fetchError.message);
+      if (error) {
+        console.error('[Dashboard] Load chats failed:', error);
         return;
       }
 
@@ -130,7 +166,9 @@ export default function Dashboard() {
           const incoming = payload.new as Chat;
           setChats((prev) => {
             const next = prev.filter((chat) => chat.id !== incoming.id);
-            return [incoming, ...next].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+            return [incoming, ...next].sort(
+              (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+            );
           });
         }
       )
@@ -143,7 +181,7 @@ export default function Dashboard() {
         supabase.removeChannel(chatChannelRef.current);
       }
     };
-  }, []);
+  }, [loadingSession]);
 
   useEffect(() => {
     if (!activeChat) {
@@ -152,14 +190,15 @@ export default function Dashboard() {
     }
 
     async function loadMessages() {
-      const { data, error: fetchError } = await supabase
+      const { data, error } = await supabase
         .from<Message>('messages')
         .select('id,chat_id,sender,body,created_at')
         .eq('chat_id', activeChat.id)
         .order('created_at', { ascending: true });
 
-      if (fetchError) {
-        setError(fetchError.message);
+      if (error) {
+        console.error('[Dashboard] Load messages failed:', error);
+        setError(error.message);
         return;
       }
 
@@ -199,65 +238,250 @@ export default function Dashboard() {
     }
   }, [messages]);
 
-  function handleSelectChat(chat: Chat) {
-    setActiveChat(chat);
-    setShowThread(true);
-  }
+  useEffect(() => {
+    const listener = (event: MessageEvent) => {
+      if (!event.origin.endsWith('facebook.com')) {
+        return;
+      }
 
-  function handleGoBack() {
-    setShowThread(false);
-  }
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'WA_EMBEDDED_SIGNUP') {
+          return;
+        }
 
-  async function handleSend() {
-    const trimmed = input.trim();
-    if (!trimmed || !activeChat) return;
+        if (data.event === 'FINISH' && data.data) {
+          window.sessionStorage.setItem(
+            'wa_embedded_signup',
+            JSON.stringify({ phone_number_id: data.data.phone_number_id, waba_id: data.data.waba_id })
+          );
+        }
+      } catch {
+        // Ignore malformed messages from other frames or domains.
+      }
+    };
+
+    window.addEventListener('message', listener);
+
+    if (!document.getElementById('facebook-jssdk')) {
+      const js = document.createElement('script');
+      js.id = 'facebook-jssdk';
+      js.src = 'https://connect.facebook.net/en_US/sdk.js';
+      document.body.appendChild(js);
+    }
+
+    (window as any).fbAsyncInit = function () {
+      (window as any).FB?.init({
+        appId: process.env.NEXT_PUBLIC_META_APP_ID,
+        cookie: true,
+        xfbml: true,
+        version: 'v20.0',
+      });
+    };
+
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, []);
+
+  async function sendChatMessage(chat: Chat, body: string) {
+    const trimmed = body.trim();
+    if (!trimmed) {
+      return;
+    }
 
     setError(null);
-    setInput('');
 
     const { error: insertError } = await supabase.from('messages').insert({
-      chat_id: activeChat.id,
+      chat_id: chat.id,
       sender: 'business',
       body: trimmed,
     });
 
     if (insertError) {
+      console.error('[Dashboard] Message insert failed:', insertError);
       setError('Unable to send message to the database.');
-      setInput(trimmed);
       return;
     }
 
     const { error: updateError } = await supabase
       .from('chats')
       .update({ last_message: trimmed, updated_at: new Date().toISOString() })
-      .eq('id', activeChat.id);
+      .eq('id', chat.id);
 
     if (updateError) {
-      console.error('Chat update failed:', updateError);
+      console.error('[Dashboard] Chat update failed:', updateError);
     }
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `m-${Date.now()}`,
-        sender: 'business',
-        body: trimmed,
-        created_at: new Date().toISOString(),
-      },
-    ]);
+    if (activeChat?.id === chat.id) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `m-${Date.now()}`,
+          chat_id: chat.id,
+          sender: 'business',
+          body: trimmed,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  async function handleSend() {
+    const trimmed = input.trim();
+    if (!trimmed || !activeChat) {
+      return;
+    }
+
+    setInput('');
+    await sendChatMessage(activeChat, trimmed);
+  }
+
+  async function handleToolAction(text: string) {
+    const chatToSend = activeChat ?? chats[0];
+    if (!chatToSend) {
+      setError('Select a conversation before using quick actions.');
+      return;
+    }
+
+    if (!activeChat) {
+      setActiveChat(chatToSend);
+      setShowThread(true);
+    }
+
+    await sendChatMessage(chatToSend, text);
+  }
+
+  async function attemptConnectWithDiagnostics() {
+    setConnectError('');
+    setConnectSuccess('');
+    setConnectLoading(true);
+
+    if (!business) {
+      setConnectError('Unable to connect WhatsApp: missing business profile.');
+      setConnectLoading(false);
+      return;
+    }
+
+    try {
+      const diagRes = await fetch('/api/whatsapp/diagnostics', { method: 'POST' });
+      const diagData = await diagRes.json();
+
+      if (!diagRes.ok || !diagData?.ok) {
+        setConnectError(diagData?.error || 'Diagnostics failed.');
+        return;
+      }
+
+      const missing = Object.entries(diagData.result?.env || {})
+        .filter(([, value]) => !value)
+        .map(([key]) => key);
+
+      if (missing.length > 0) {
+        setConnectError(`Missing env: ${missing.join(', ')}.`);
+        return;
+      }
+
+      await handleEmbeddedSignup();
+    } catch (err) {
+      console.error('[Dashboard] WhatsApp diagnostics failed:', err);
+      setConnectError(err instanceof Error ? err.message : 'Diagnostics request failed');
+    } finally {
+      setConnectLoading(false);
+    }
+  }
+
+  async function handleEmbeddedSignup() {
+    const fb = (window as any).FB;
+    if (!fb) {
+      setConnectError('Facebook SDK failed to load. Please refresh the page.');
+      return;
+    }
+
+    let timedOut = false;
+    const timer = window.setTimeout(() => {
+      timedOut = true;
+      setConnectError(
+        'Login timed out — the auth dialog may be blocked by your browser. Please allow popups and try again.'
+      );
+    }, 30000);
+
+    fb.login(
+      async (response: any) => {
+        window.clearTimeout(timer);
+        if (timedOut) {
+          return;
+        }
+
+        if (!response?.authResponse?.code) {
+          setConnectError('Onboarding cancelled or permissions were not fully authorized.');
+          return;
+        }
+
+        const authCode = response.authResponse.code;
+
+        let signupMeta: { phone_number_id?: string; waba_id?: string } = {};
+        try {
+          const raw = window.sessionStorage.getItem('wa_embedded_signup');
+          if (raw) {
+            signupMeta = JSON.parse(raw);
+          }
+        } catch {
+          // ignore parse errors
+        }
+
+        try {
+          const connectRes = await fetch('/api/whatsapp/connect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              business_id: business?.id,
+              code: authCode,
+              waba_id: signupMeta.waba_id,
+              phone_number_id: signupMeta.phone_number_id,
+            }),
+          });
+
+          const connectData = await connectRes.json();
+
+          if (!connectRes.ok) {
+            setConnectError(connectData?.error || `Server responded with status ${connectRes.status}`);
+            return;
+          }
+
+          setConnectSuccess('WhatsApp Business Account connected successfully.');
+          setWhatsappConnected(true);
+          window.sessionStorage.removeItem('wa_embedded_signup');
+        } catch (err) {
+          console.error('[Dashboard] WhatsApp connect failed:', err);
+          setConnectError(err instanceof Error ? err.message : 'WhatsApp connect failed.');
+        }
+      },
+      {
+        config_id: META_CONFIG_ID,
+        response_type: 'code',
+        override_default_response_type: true,
+        extras: {
+          setup: {},
+          featureType: '',
+          sessionInfoVersion: '3',
+        },
+      }
+    );
   }
 
   async function handleSignOut() {
     setIsSigningOut(true);
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
       router.push('/login');
     } catch (err) {
       console.error('Sign out failed:', err);
-      setError('Failed to sign out. Please try again.');
       setIsSigningOut(false);
+      setError('Failed to sign out. Please try again.');
     }
   }
 
@@ -298,11 +522,7 @@ export default function Dashboard() {
             {TOOL_ACTIONS.map((tool) => (
               <button
                 key={tool.label}
-                onClick={() => {
-                  setInput(tool.text);
-                  setGlobalTab('chats');
-                  setShowThread(true);
-                }}
+                onClick={() => handleToolAction(tool.text)}
                 className="flex-shrink-0 inline-flex items-center rounded-full bg-zinc-100 px-4 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-200"
               >
                 {tool.label}
@@ -319,7 +539,7 @@ export default function Dashboard() {
               <div className="flex flex-col h-full overflow-hidden">
                 <div className="flex-shrink-0 px-4 py-4 border-b border-zinc-100 bg-white">
                   <h2 className="text-sm font-semibold text-zinc-900">Chats</h2>
-                  <p className="mt-1 text-xs text-zinc-500">Live Supabase conversation stream</p>
+                  <p className="mt-1 text-xs text-zinc-500">Live conversation stream</p>
                 </div>
                 <div className="flex-1 overflow-y-auto px-4 py-3">
                   {chats.length === 0 ? (
@@ -331,7 +551,11 @@ export default function Dashboard() {
                       {chats.map((chat) => (
                         <button
                           key={chat.id}
-                          onClick={() => handleSelectChat(chat)}
+                          onClick={() => {
+                            setActiveChat(chat);
+                            setShowThread(true);
+                            setError(null);
+                          }}
                           className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-4 text-left transition hover:bg-zinc-50"
                         >
                           <div className="flex items-center gap-3">
@@ -356,7 +580,7 @@ export default function Dashboard() {
               <div className="flex flex-col h-full overflow-hidden">
                 <div className="flex-shrink-0 px-4 py-3 border-b border-zinc-200 bg-white flex items-center gap-3">
                   <button
-                    onClick={handleGoBack}
+                    onClick={() => setShowThread(false)}
                     className="rounded-full border border-zinc-200 p-2 text-zinc-700 transition hover:bg-zinc-100 md:hidden"
                   >
                     <ArrowLeft size={16} />
@@ -388,7 +612,7 @@ export default function Dashboard() {
                           </p>
                         </div>
                       </div>
-                    ))
+                    ))}
                   )}
                   <div ref={bottomRef} />
                 </div>
@@ -430,18 +654,14 @@ export default function Dashboard() {
                 {TOOL_ACTIONS.map((tool) => (
                   <button
                     key={tool.label}
-                    onClick={() => {
-                      setGlobalTab('chats');
-                      setShowThread(true);
-                      setInput(tool.text);
-                    }}
+                    onClick={() => handleToolAction(tool.text)}
                     className="rounded-2xl border border-zinc-200 bg-white px-6 py-4 text-left transition hover:border-amber-300 hover:bg-amber-50"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 text-amber-600">
                       <Zap size={18} />
                     </div>
                     <p className="mt-3 font-semibold text-zinc-900">{tool.label}</p>
-                    <p className="mt-1 text-xs text-zinc-500">Send a message into your workflow</p>
+                    <p className="mt-1 text-xs text-zinc-500">Send a quick action into the selected conversation.</p>
                   </button>
                 ))}
               </div>
@@ -477,6 +697,44 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
+                    {channel.id === 'whatsapp' && channel.isActive && (
+                      <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-zinc-900">WhatsApp Business</p>
+                              <p className="text-xs text-zinc-500">
+                                {whatsappConnected ? `Connected to ${business?.whatsapp_number ?? 'your verified line'}` : 'Not integrated yet'}
+                              </p>
+                            </div>
+                            <button
+                              onClick={attemptConnectWithDiagnostics}
+                              disabled={connectLoading}
+                              className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
+                            >
+                              {connectLoading ? 'Connecting...' : whatsappConnected ? 'Reconnect WhatsApp' : 'Connect WhatsApp'}
+                            </button>
+                          </div>
+
+                          {connectSuccess ? (
+                            <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+                              {connectSuccess}
+                            </p>
+                          ) : null}
+
+                          {connectError ? (
+                            <p className="text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                              {connectError}
+                            </p>
+                          ) : null}
+
+                          <div className="rounded-2xl bg-white border border-zinc-200 p-4 text-xs text-zinc-600">
+                            <p className="font-semibold text-zinc-900 text-sm">WhatsApp setup</p>
+                            <p className="mt-2">This card starts the real Meta Secure OAuth connection for WhatsApp Business. Once completed, inbound messages will stream into this live inbox.</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
