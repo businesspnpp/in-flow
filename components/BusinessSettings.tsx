@@ -243,20 +243,18 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           {CHANNELS.map(({ id, name, Icon, description, isActive }) => {
             const isWhatsappChannel = id === 'whatsapp';
             const isWhatsappConnected = isWhatsappChannel && Boolean(business.whatsapp_phone_number_id);
-            const activeClass = isWhatsappChannel ? 'opacity-100' : isActive ? 'opacity-100' : 'opacity-60 border-zinc-100';
-            const cardBorder = isWhatsappChannel ? 'border-zinc-200' : isActive ? 'border-zinc-200' : 'border-zinc-100';
-            const cardBackground = isWhatsappChannel || isActive ? 'bg-white' : 'bg-zinc-50';
+            const cardBorder = 'border-zinc-200';
 
             return (
-              <div key={id} className={`bg-white border ${cardBorder} rounded-lg p-4 flex flex-col gap-3 ${activeClass}`}>
+              <div key={id} className={`bg-white border ${cardBorder} rounded-lg p-4 flex flex-col gap-3`}> 
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isWhatsappChannel || isActive ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'}`}>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isWhatsappChannel ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'}`}>
                     <Icon size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold text-zinc-900 truncate">{name}</p>
-                      {!isWhatsappChannel && !isActive && (
+                      {!isWhatsappChannel && (
                         <span className="text-[10px] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded-full text-zinc-500">Coming Soon</span>
                       )}
                     </div>
@@ -266,15 +264,16 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
                 {isWhatsappChannel ? (
                   <>
-                    <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-3">
-                      <div className="flex flex-col sm:flex-row items-stretch gap-3">
-                        <div className="flex-1">
+                    <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-4">
+                      <div className="space-y-3">
+                        <div>
                           <p className="text-sm font-medium text-zinc-900">Status</p>
                           <p className="text-xs text-zinc-500 mt-1 truncate">
                             {isWhatsappConnected ? `Connected to ${business.whatsapp_number}` : 'Not integrated'}
                           </p>
                         </div>
-                        <div className="flex flex-wrap gap-2 items-center sm:items-stretch">
+
+                        <div className="flex flex-wrap gap-2">
                           <button
                             onClick={attemptConnectWithDiagnostics}
                             disabled={loading}
@@ -301,6 +300,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                       {error && <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>}
                       {success && <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200">{success}</p>}
                     </div>
+
                     <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
                       <p className="text-xs font-semibold text-zinc-900">How it works</p>
                       <ul className="mt-2 space-y-1 text-xs text-zinc-600 list-disc list-inside">
@@ -311,9 +311,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                     </div>
                   </>
                 ) : (
-                  <div className="flex items-center justify-end">
-                    <button className="rounded-lg border border-zinc-200 px-4 py-2.5 text-xs text-zinc-400 bg-zinc-50 cursor-not-allowed min-h-[44px]" disabled>
-                      Unavailable in Dev Mode
+                  <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-3">
+                    <p className="text-sm font-medium text-zinc-900">Channel preview</p>
+                    <p className="text-xs text-zinc-500">This channel is available in the grid and will be clickable when supported.</p>
+                    <button className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 min-h-[44px]">
+                      Preview
                     </button>
                   </div>
                 )}
