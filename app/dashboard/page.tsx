@@ -550,33 +550,33 @@ export default function Dashboard() {
         {/* ─── Tools Tab ─── */}
         {globalTab === 'tools' && (
           <div className="flex-1 overflow-y-auto">
-            <div className="px-6 py-8 max-w-2xl">
-              <div className="mb-8">
-                <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
-                <p className="mt-1 text-sm text-slate-500">Send rich messages into any active conversation.</p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
+            <div className="px-4 pt-6 pb-4">
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 px-1 mb-2">Quick Actions</p>
+              <div className="rounded-2xl overflow-hidden bg-[#13161e] divide-y divide-white/[0.05]">
                 {TOOL_ACTIONS.map((tool) => (
                   <button
                     key={tool.label}
                     onClick={() => handleToolAction(tool.text)}
-                    className="group rounded-2xl border border-white/8 bg-white/[0.04] p-5 text-left hover:border-amber-500/30 hover:bg-amber-500/5 transition-all"
+                    className="group w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-white/5 active:bg-white/8 transition-all"
                   >
-                    <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl ${tool.color} shadow-lg text-xl`}>
+                    <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${tool.color} flex items-center justify-center text-base leading-none`}>
                       {tool.emoji}
                     </div>
-                    <p className="font-semibold text-white group-hover:text-amber-300 transition-colors">{tool.label}</p>
-                    <p className="mt-1 text-xs text-slate-500">{tool.desc}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">{tool.label}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{tool.desc}</p>
+                    </div>
+                    <svg className="flex-shrink-0 text-slate-700 group-hover:text-slate-500 transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
                 ))}
               </div>
 
               {!activeContact && (
-                <div className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-                  <p className="text-xs text-amber-400">
-                    💡 Open a conversation first, then actions will send directly into that chat.
-                  </p>
+                <div className="mt-4 flex items-start gap-2.5 px-1">
+                  <span className="text-amber-500 text-xs mt-0.5">↑</span>
+                  <p className="text-xs text-slate-600">Open a conversation in Inbox first — actions will send directly into that chat.</p>
                 </div>
               )}
             </div>
