@@ -185,37 +185,37 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     }
   };
 
-  // Instagram — server-side OAuth redirect (no JS SDK, domain-agnostic)
+  // Instagram — updated to use standard Business configuration routing parameters
   const handleInstagramConnect = () => {
     setError('');
     setSuccess('');
     const redirectUri = `${window.location.origin}/api/instagram/callback`;
-    const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_messaging';
     const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'instagram' }));
     const url =
       `https://www.facebook.com/v20.0/dialog/oauth` +
       `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=${encodeURIComponent(scope)}` +
+      `&config_id=${META_CONFIG_ID}` +
       `&state=${state}` +
-      `&response_type=code`;
+      `&response_type=code` +
+      `&override_default_response_type=true`;
     window.location.href = url;
   };
 
-  // Facebook — server-side OAuth redirect (no JS SDK, domain-agnostic)
+  // Facebook — updated to use standard Business configuration routing parameters
   const handleFacebookConnect = () => {
     setError('');
     setSuccess('');
     const redirectUri = `${window.location.origin}/api/facebook/callback`;
-    const scope = 'pages_messaging,pages_show_list,pages_read_engagement';
     const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'facebook' }));
     const url =
       `https://www.facebook.com/v20.0/dialog/oauth` +
       `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&scope=${encodeURIComponent(scope)}` +
+      `&config_id=${META_CONFIG_ID}` +
       `&state=${state}` +
-      `&response_type=code`;
+      `&response_type=code` +
+      `&override_default_response_type=true`;
     window.location.href = url;
   };
 
