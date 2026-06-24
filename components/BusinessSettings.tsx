@@ -29,7 +29,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
-  const [activeChannel, setActiveChannel] = useState<string | null>('whatsapp');
+  const [activeChannel, setActiveChannel] = useState<string | null>(null);
   const [channelStatus, setChannelStatus] = useState<ChannelStatus>({
     whatsapp: Boolean(business.whatsapp_phone_number_id),
     instagram: false,
@@ -56,7 +56,27 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     fetchChannelConfigs();
   }, [business.id]);
 
-  // Load FB SDK once
+  // Check for OAuth callback success/error params in URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const oauthStatus = params.get('oauth');
+    const channel = params.get('channel');
+    const oauthError = params.get('error');
+
+    if (oauthStatus === 'success' && channel) {
+      setSuccess(`${channel.charAt(0).toUpperCase() + channel.slice(1)} channel connected to inFlow!`);
+      setActiveChannel(channel);
+      setChannelStatus(prev => ({ ...prev, [channel]: true }));
+      // Clean the URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (oauthStatus === 'error' && oauthError) {
+      setError(decodeURIComponent(oauthError));
+      if (channel) setActiveChannel(channel);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  // Load FB SDK — only needed for WhatsApp embedded signup
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
@@ -81,7 +101,10 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data || {};
           if (phone_number_id && waba_id) {
-            window.sessionStorage.setItem('wa_embedded_signup', JSON.stringify({ phone_number_id, waba_id }));
+            window.sessionStorage.setItem(
+              'wa_embedded_signup',
+              JSON.stringify({ phone_number_id, waba_id })
+            );
           }
         }
       } catch (e) {}
@@ -90,7 +113,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // WhatsApp — embedded signup
+  // WhatsApp — existing embedded signup flow (unchanged)
   const handleWhatsAppConnect = () => {
     setError('');
     setSuccess('');
@@ -162,116 +185,38 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     }
   };
 
-  // Instagram — standard FB Login OAuth
+  // Instagram — server-side OAuth redirect (no JS SDK, domain-agnostic)
   const handleInstagramConnect = () => {
     setError('');
     setSuccess('');
-    setLoading('instagram');
-
-    if (!window.FB) {
-      setError('Facebook SDK failed to load. Please refresh the page.');
-      setLoading(null);
-      return;
-    }
-
-    let timedOut = false;
-    const timer = setTimeout(() => {
-      timedOut = true;
-      setLoading(null);
-      setError('Login timed out — popups might be blocked. Please allow popups and try again.');
-    }, 30000);
-
-    try {
-      window.FB.login(
-        (response: any) => {
-          clearTimeout(timer);
-          if (timedOut) return;
-
-          if (response?.authResponse?.accessToken) {
-            fetch('/api/instagram/connect', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                business_id: business.id,
-                access_token: response.authResponse.accessToken,
-              }),
-            })
-              .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(data?.error || `Error ${res.status}`);
-                setSuccess('Instagram DM channel connected to inFlow!');
-                setChannelStatus(prev => ({ ...prev, instagram: true }));
-              })
-              .catch((err: any) => setError(err?.message || 'Error connecting Instagram.'))
-              .finally(() => setLoading(null));
-          } else {
-            setError('Instagram login cancelled or permissions not granted.');
-            setLoading(null);
-          }
-        },
-        { scope: 'instagram_basic,instagram_manage_messages,pages_show_list' }
-      );
-    } catch (err: any) {
-      clearTimeout(timer);
-      setLoading(null);
-      setError(err?.message || 'Facebook login failed to start.');
-    }
+    const redirectUri = `${window.location.origin}/api/instagram/callback`;
+    const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_messaging';
+    const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'instagram' }));
+    const url =
+      `https://www.facebook.com/v20.0/dialog/oauth` +
+      `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&scope=${encodeURIComponent(scope)}` +
+      `&state=${state}` +
+      `&response_type=code`;
+    window.location.href = url;
   };
 
-  // Facebook — standard FB Login OAuth
+  // Facebook — server-side OAuth redirect (no JS SDK, domain-agnostic)
   const handleFacebookConnect = () => {
     setError('');
     setSuccess('');
-    setLoading('facebook');
-
-    if (!window.FB) {
-      setError('Facebook SDK failed to load. Please refresh the page.');
-      setLoading(null);
-      return;
-    }
-
-    let timedOut = false;
-    const timer = setTimeout(() => {
-      timedOut = true;
-      setLoading(null);
-      setError('Login timed out — popups might be blocked. Please allow popups and try again.');
-    }, 30000);
-
-    try {
-      window.FB.login(
-        (response: any) => {
-          clearTimeout(timer);
-          if (timedOut) return;
-
-          if (response?.authResponse?.accessToken) {
-            fetch('/api/facebook/connect', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                business_id: business.id,
-                access_token: response.authResponse.accessToken,
-              }),
-            })
-              .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(data?.error || `Error ${res.status}`);
-                setSuccess('Facebook Business channel connected to inFlow!');
-                setChannelStatus(prev => ({ ...prev, facebook: true }));
-              })
-              .catch((err: any) => setError(err?.message || 'Error connecting Facebook.'))
-              .finally(() => setLoading(null));
-          } else {
-            setError('Facebook login cancelled or permissions not granted.');
-            setLoading(null);
-          }
-        },
-        { scope: 'pages_messaging,pages_show_list,pages_read_engagement' }
-      );
-    } catch (err: any) {
-      clearTimeout(timer);
-      setLoading(null);
-      setError(err?.message || 'Facebook login failed to start.');
-    }
+    const redirectUri = `${window.location.origin}/api/facebook/callback`;
+    const scope = 'pages_messaging,pages_show_list,pages_read_engagement';
+    const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'facebook' }));
+    const url =
+      `https://www.facebook.com/v20.0/dialog/oauth` +
+      `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&scope=${encodeURIComponent(scope)}` +
+      `&state=${state}` +
+      `&response_type=code`;
+    window.location.href = url;
   };
 
   const handleCardClick = (id: string) => {
@@ -290,6 +235,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       onConnect: handleWhatsAppConnect,
       connectLabel: channelStatus.whatsapp ? 'Reconnect Channel' : 'Connect WhatsApp',
       showRetry: true,
+      howItWorks: [
+        "Authenticate your official business account via Meta's dialog securely.",
+        'Select the specific active WhatsApp phone number you want to track.',
+        'Inbound client messages will stream natively into your inFlow smart inbox.',
+      ],
     },
     {
       id: 'instagram',
@@ -300,6 +250,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       onConnect: handleInstagramConnect,
       connectLabel: channelStatus.instagram ? 'Reconnect Instagram' : 'Connect Instagram',
       showRetry: false,
+      howItWorks: [
+        'You will be redirected to Facebook to grant Instagram messaging permissions.',
+        'Your Instagram Professional account will be linked automatically.',
+        'DMs from followers will appear directly in your inFlow inbox.',
+      ],
     },
     {
       id: 'facebook',
@@ -310,6 +265,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       onConnect: handleFacebookConnect,
       connectLabel: channelStatus.facebook ? 'Reconnect Facebook' : 'Connect Facebook',
       showRetry: false,
+      howItWorks: [
+        'You will be redirected to Facebook to select your Business Page.',
+        'Grant messaging permissions for the selected Page.',
+        'Page conversations will route directly into your inFlow inbox.',
+      ],
     },
     {
       id: 'sms',
@@ -320,6 +280,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       onConnect: null,
       connectLabel: '',
       showRetry: false,
+      howItWorks: [],
     },
   ];
 
@@ -335,7 +296,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry }) => {
+          {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
             const isSms = id === 'sms';
             const isOpen = activeChannel === id;
             const isLoading = loading === id;
@@ -416,33 +377,29 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                           )}
                         </div>
                       </div>
+
                       {error && (
-                        <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 font-medium">{error}</p>
+                        <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 font-medium">
+                          {error}
+                        </p>
                       )}
                       {success && (
-                        <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200 font-medium">{success}</p>
+                        <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200 font-medium">
+                          {success}
+                        </p>
                       )}
                     </div>
-                    <div className="px-4 py-3 bg-zinc-50 rounded-b-lg">
-                      <p className="text-xs font-semibold text-zinc-900">How it works</p>
-                      <ul className="mt-2 space-y-1 text-xs text-zinc-600 list-disc list-inside">
-                        {id === 'whatsapp' && <>
-                          <li>Authenticate your official business account via Meta's dialog.</li>
-                          <li>Select the WhatsApp phone number you want to track.</li>
-                          <li>Inbound messages will stream into your inFlow inbox.</li>
-                        </>}
-                        {id === 'instagram' && <>
-                          <li>Log in with Facebook and grant Instagram messaging permissions.</li>
-                          <li>Your Instagram Professional account will be linked.</li>
-                          <li>DMs from followers will appear in your inFlow inbox.</li>
-                        </>}
-                        {id === 'facebook' && <>
-                          <li>Log in with Facebook and select your Business Page.</li>
-                          <li>Grant messaging permissions for that Page.</li>
-                          <li>Page messages will route into your inFlow inbox.</li>
-                        </>}
-                      </ul>
-                    </div>
+
+                    {howItWorks.length > 0 && (
+                      <div className="px-4 py-3 bg-zinc-50 rounded-b-lg">
+                        <p className="text-xs font-semibold text-zinc-900">How it works</p>
+                        <ul className="mt-2 space-y-1 text-xs text-zinc-600 list-disc list-inside">
+                          {howItWorks.map((step, i) => (
+                            <li key={i}>{step}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -464,7 +421,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                   <h4 className="text-sm font-bold text-zinc-900">WhatsApp Troubleshooting</h4>
                   <p className="text-xs text-zinc-500 mt-1">Steps to resolve common connection issues.</p>
                 </div>
-                <button type="button" onClick={() => setShowTroubleshoot(false)} className="text-zinc-400 hover:text-zinc-600 p-1">
+                <button
+                  type="button"
+                  onClick={() => setShowTroubleshoot(false)}
+                  className="text-zinc-400 hover:text-zinc-600 p-1"
+                >
                   <X size={16} />
                 </button>
               </div>
