@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase, Chat, Message } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,15 +15,14 @@ import {
   Facebook,
 } from 'lucide-react';
 
-type GlobalTab = 'chats' | 'tools' | 'settings';
-
-type ChannelItem = {
+type Message = {
   id: string;
-  name: string;
-  description: string;
-  Icon: typeof MessageSquare;
-  isActive: boolean;
+  sender: 'business' | 'customer';
+  body: string;
+  created_at: string;
 };
+
+type GlobalTab = 'chats' | 'tools' | 'settings';
 
 const TOOL_ACTIONS = [
   { label: 'Invoice', text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
@@ -32,7 +31,7 @@ const TOOL_ACTIONS = [
   { label: 'Menu', text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
 ];
 
-const CHANNELS: ChannelItem[] = [
+const CHANNELS = [
   {
     id: 'whatsapp',
     name: 'WhatsApp',
@@ -63,190 +62,102 @@ const CHANNELS: ChannelItem[] = [
   },
 ];
 
+const initialMessages: Message[] = [
+  {
+    id: 'm-1',
+    sender: 'customer',
+    body: "Hi! I'd like to book an appointment for a hair wash, treatment, and styling this week if you have any openings?",
+    created_at: new Date().toISOString(),
+  },
+];
+
 export default function Dashboard() {
   const router = useRouter();
   const [loadingSession, setLoadingSession] = useState(true);
   const [globalTab, setGlobalTab] = useState<GlobalTab>('chats');
   const [showThread, setShowThread] = useState(false);
-  const [activeChat, setActiveChat] = useState<Chat | null>(null);
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState('');
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const chatChannelRef = useRef<any>(null);
-  const messageChannelRef = useRef<any>(null);
-  const authSubscriptionRef = useRef<any>(null);
+  const replyTimer = useRef<number | null>(null);
 
+  // Secure client authorization mount check
   useEffect(() => {
-    async function initialize() {
+    async function verifyAuth() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
-        return;
+      } else {
+        setLoadingSession(false);
       }
-      setLoadingSession(false);
     }
-
-    initialize();
-
-    const { data: authSubscription } = supabase.auth.onAuthStateChange((_, session) => {
-      if (!session) {
-        router.push('/login');
-      }
-    });
-
-    authSubscriptionRef.current = authSubscription;
-
-    return () => {
-      authSubscriptionRef.current?.unsubscribe?.();
-    };
+    verifyAuth();
   }, [router]);
 
-  useEffect(() => {
-    async function loadChats() {
-      const { data, error: fetchError } = await supabase
-        .from<Chat>('chats')
-        .select('id,name,last_message,updated_at')
-        .order('updated_at', { ascending: false });
-
-      if (fetchError) {
-        setError(fetchError.message);
-        return;
-      }
-
-      setChats(data ?? []);
-    }
-
-    loadChats();
-
-    const channel = supabase
-      .channel('chats-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'chats' },
-        (payload) => {
-          const incoming = payload.new as Chat;
-          setChats((prev) => {
-            const next = prev.filter((chat) => chat.id !== incoming.id);
-            return [incoming, ...next].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
-          });
-        }
-      )
-      .subscribe();
-
-    chatChannelRef.current = channel;
-
-    return () => {
-      if (chatChannelRef.current) {
-        supabase.removeChannel(chatChannelRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!activeChat) {
-      setMessages([]);
-      return;
-    }
-
-    async function loadMessages() {
-      const { data, error: fetchError } = await supabase
-        .from<Message>('messages')
-        .select('id,chat_id,sender,body,created_at')
-        .eq('chat_id', activeChat.id)
-        .order('created_at', { ascending: true });
-
-      if (fetchError) {
-        setError(fetchError.message);
-        return;
-      }
-
-      setMessages(data ?? []);
-    }
-
-    loadMessages();
-
-    const channel = supabase
-      .channel(`messages-${activeChat.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_id=eq.${activeChat.id}`,
-        },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
-        }
-      )
-      .subscribe();
-
-    messageChannelRef.current = channel;
-
-    return () => {
-      if (messageChannelRef.current) {
-        supabase.removeChannel(messageChannelRef.current);
-      }
-    };
-  }, [activeChat]);
-
-  useEffect(() => {
-    if (messages.length > 0) {
+  function scrollToBottom() {
+    window.setTimeout(() => {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
-
-  function handleSelectChat(chat: Chat) {
-    setActiveChat(chat);
-    setShowThread(true);
+    }, 50);
   }
 
-  function handleGoBack() {
-    setShowThread(false);
-  }
-
-  async function handleSend() {
-    const trimmed = input.trim();
-    if (!trimmed || !activeChat) return;
-
-    setError(null);
-    setInput('');
-
-    const { error: insertError } = await supabase.from('messages').insert({
-      chat_id: activeChat.id,
-      sender: 'business',
-      body: trimmed,
-    });
-
-    if (insertError) {
-      setError('Unable to send message to the database.');
-      setInput(trimmed);
-      return;
-    }
-
-    const { error: updateError } = await supabase
-      .from('chats')
-      .update({ last_message: trimmed, updated_at: new Date().toISOString() })
-      .eq('id', activeChat.id);
-
-    if (updateError) {
-      console.error('Chat update failed:', updateError);
-    }
-
+  function appendMessage(text: string, sender: 'business' | 'customer' = 'business') {
     setMessages((prev) => [
       ...prev,
       {
         id: `m-${Date.now()}`,
-        sender: 'business',
-        body: trimmed,
+        sender,
+        body: text,
         created_at: new Date().toISOString(),
       },
     ]);
+    scrollToBottom();
+  }
 
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  function getAutoReply(outgoing: string) {
+    const normalized = outgoing.toLowerCase();
+    if (/(hello|hi|details)/.test(normalized)) {
+      return 'Awesome, thank you! Do you have a free slot available this Tuesday afternoon?';
+    }
+    if (/(booking|scheduled|confirmed)/.test(normalized)) {
+      return 'Perfect! 16:00 on Tuesday works beautifully for me. See you then!';
+    }
+    if (/(invoice|payment|r250)/.test(normalized)) {
+      return "Got the summary, thank you! I'll see you on Tuesday and settle up right after.";
+    }
+    return 'Sounds good, thanks for confirming! Let me know what the next steps are.';
+  }
+
+  function scheduleAutoReply(outgoing: string) {
+    if (replyTimer.current) {
+      window.clearTimeout(replyTimer.current);
+    }
+    const nextReply = getAutoReply(outgoing);
+    replyTimer.current = window.setTimeout(() => {
+      appendMessage(nextReply, 'customer');
+      replyTimer.current = null;
+    }, 4000);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (replyTimer.current) {
+        window.clearTimeout(replyTimer.current);
+      }
+    };
+  }, []);
+
+  function handleSend() {
+    const trimmed = input.trim();
+    if (!trimmed) return;
+    appendMessage(trimmed, 'business');
+    setInput('');
+    scheduleAutoReply(trimmed);
+  }
+
+  function handleToolAction(text: string) {
+    appendMessage(text, 'business');
+    scheduleAutoReply(text);
   }
 
   async function handleSignOut() {
@@ -256,11 +167,12 @@ export default function Dashboard() {
       router.push('/login');
     } catch (err) {
       console.error('Sign out failed:', err);
-      setError('Failed to sign out. Please try again.');
       setIsSigningOut(false);
+      alert('Failed to sign out. Please try again.');
     }
   }
 
+  // Prevent UI flashing before auth validation checks complete
   if (loadingSession) {
     return (
       <div className="flex h-[100dvh] w-full items-center justify-center bg-white">
@@ -271,6 +183,7 @@ export default function Dashboard() {
 
   return (
     <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-white">
+      {/* Header */}
       <header className="flex-shrink-0 border-b border-zinc-200 bg-white">
         <div className="px-4 py-3 flex items-center justify-between">
           <div>
@@ -293,16 +206,13 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Top Toolbar */}
         <div className="border-t border-zinc-100 overflow-x-auto scrollbar-none px-4 py-3">
           <div className="flex gap-2 whitespace-nowrap">
             {TOOL_ACTIONS.map((tool) => (
               <button
                 key={tool.label}
-                onClick={() => {
-                  setInput(tool.text);
-                  setGlobalTab('chats');
-                  setShowThread(true);
-                }}
+                onClick={() => handleToolAction(tool.text)}
                 className="flex-shrink-0 inline-flex items-center rounded-full bg-zinc-100 px-4 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-200"
               >
                 {tool.label}
@@ -312,6 +222,7 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="flex-1 overflow-hidden pb-16 md:pb-0">
         {globalTab === 'chats' && (
           <div className="h-full w-full overflow-hidden">
@@ -319,77 +230,57 @@ export default function Dashboard() {
               <div className="flex flex-col h-full overflow-hidden">
                 <div className="flex-shrink-0 px-4 py-4 border-b border-zinc-100 bg-white">
                   <h2 className="text-sm font-semibold text-zinc-900">Chats</h2>
-                  <p className="mt-1 text-xs text-zinc-500">Live Supabase conversation stream</p>
+                  <p className="mt-1 text-xs text-zinc-500">Tap to open conversation</p>
                 </div>
                 <div className="flex-1 overflow-y-auto px-4 py-3">
-                  {chats.length === 0 ? (
-                    <div className="rounded-3xl border border-dashed border-zinc-200 bg-zinc-50 p-8 text-center text-sm text-zinc-500">
-                      No active conversations found yet.
+                  <button
+                    onClick={() => setShowThread(true)}
+                    className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-4 text-left transition hover:bg-zinc-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-bold text-white">
+                        C1
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-zinc-900">Customer One</p>
+                        <p className="truncate text-xs text-zinc-500">WhatsApp Business • Consultation request</p>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {chats.map((chat) => (
-                        <button
-                          key={chat.id}
-                          onClick={() => handleSelectChat(chat)}
-                          className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-4 text-left transition hover:bg-zinc-50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-bold text-white">
-                              {(chat.name ?? chat.id).slice(0, 2).toUpperCase()}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-semibold text-zinc-900">{chat.name ?? chat.id}</p>
-                              <p className="truncate text-xs text-zinc-500">{chat.last_message ?? 'No recent message'}</p>
-                            </div>
-                            <span className="text-[10px] text-zinc-400">
-                              {new Date(chat.updated_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                            </span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  </button>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col h-full overflow-hidden">
                 <div className="flex-shrink-0 px-4 py-3 border-b border-zinc-200 bg-white flex items-center gap-3">
                   <button
-                    onClick={handleGoBack}
+                    onClick={() => setShowThread(false)}
                     className="rounded-full border border-zinc-200 p-2 text-zinc-700 transition hover:bg-zinc-100 md:hidden"
                   >
                     <ArrowLeft size={16} />
                   </button>
                   <div>
-                    <p className="text-sm font-semibold text-zinc-900">{activeChat?.name ?? activeChat?.id}</p>
+                    <p className="text-sm font-semibold text-zinc-900">Customer One</p>
                     <p className="text-xs text-zinc-500">WhatsApp Business</p>
                   </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-4 py-4 bg-zinc-50 flex flex-col gap-3">
-                  {messages.length === 0 ? (
-                    <div className="flex flex-1 items-center justify-center text-zinc-500">
-                      <p className="text-sm">No messages in this conversation yet.</p>
-                    </div>
-                  ) : (
-                    messages.map((message) => (
-                      <div key={message.id} className={`flex ${message.sender === 'business' ? 'justify-end' : 'justify-start'}`}>
-                        <div
-                          className={`max-w-[80%] rounded-3xl px-4 py-3 text-sm leading-relaxed ${
-                            message.sender === 'business'
-                              ? 'rounded-br-none bg-amber-600 text-white'
-                              : 'rounded-bl-none border border-zinc-200 bg-white text-zinc-900'
-                          }`}
-                        >
-                          <p>{message.body}</p>
-                          <p className={`mt-2 text-[10px] text-right ${message.sender === 'business' ? 'text-amber-100' : 'text-zinc-500'}`}>
-                            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
+                  {messages.map((message) => (
+                    <div key={message.id} className={`flex ${message.sender === 'business' ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`max-w-[80%] rounded-3xl px-4 py-3 text-sm leading-relaxed ${
+                          message.sender === 'business'
+                            ? 'rounded-br-none bg-amber-600 text-white'
+                            : 'rounded-bl-none border border-zinc-200 bg-white text-zinc-900'
+                        }`}
+                      >
+                        <p>{message.body}</p>
+                        <p className={`mt-2 text-[10px] text-right ${message.sender === 'business' ? 'text-amber-100' : 'text-zinc-500'}`}>
+                          {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
                       </div>
-                    ))
-                  )}
+                    </div>
+                  ))}
                   <div ref={bottomRef} />
                 </div>
 
@@ -430,18 +321,14 @@ export default function Dashboard() {
                 {TOOL_ACTIONS.map((tool) => (
                   <button
                     key={tool.label}
-                    onClick={() => {
-                      setGlobalTab('chats');
-                      setShowThread(true);
-                      setInput(tool.text);
-                    }}
+                    onClick={() => handleToolAction(tool.text)}
                     className="rounded-2xl border border-zinc-200 bg-white px-6 py-4 text-left transition hover:border-amber-300 hover:bg-amber-50"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 text-amber-600">
                       <Zap size={18} />
                     </div>
                     <p className="mt-3 font-semibold text-zinc-900">{tool.label}</p>
-                    <p className="mt-1 text-xs text-zinc-500">Send a message into your workflow</p>
+                    <p className="mt-1 text-xs text-zinc-500">Send a mock card into chat</p>
                   </button>
                 ))}
               </div>
@@ -485,6 +372,7 @@ export default function Dashboard() {
         )}
       </main>
 
+      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white md:static">
         <div className="flex items-center justify-around px-4 py-3 md:justify-start md:gap-2">
           <button
