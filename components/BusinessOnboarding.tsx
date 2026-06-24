@@ -4,14 +4,8 @@ import { useState } from 'react';
 import { supabase, Business } from '@/lib/supabase';
 
 const CATEGORY_OPTIONS = [
-  'Retail',
-  'Food',
-  'Services',
-  'Beauty',
-  'Health',
-  'Education',
-  'Wellness',
-  'Other',
+  'Retail', 'Food', 'Services', 'Beauty',
+  'Health', 'Education', 'Wellness', 'Other',
 ] as const;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,84 +24,74 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
 
   function toggleCategory(category: string) {
     if (selectedCategories.includes(category)) {
-      setSelectedCategories((prev) => prev.filter((item) => item !== category));
+      setSelectedCategories(prev => prev.filter(i => i !== category));
       setError('');
       return;
     }
-
     if (selectedCategories.length >= 2) {
       setError('You can choose up to 2 categories.');
       return;
     }
-
-    setSelectedCategories((prev) => [...prev, category]);
+    setSelectedCategories(prev => [...prev, category]);
     setError('');
   }
 
-  function validateStepOne() {
-    if (!businessName.trim()) {
-      setError('Business name is required.');
-      return false;
-    }
-    if (selectedCategories.length === 0) {
-      setError('Select at least one category.');
-      return false;
-    }
-    if (!address.trim()) {
-      setError('Address is required.');
-      return false;
-    }
-    if (!emailRegex.test(email)) {
-      setError('Enter a valid email address.');
-      return false;
-    }
+  function validate() {
+    if (!businessName.trim()) { setError('Business name is required.'); return false; }
+    if (selectedCategories.length === 0) { setError('Select at least one category.'); return false; }
+    if (!address.trim()) { setError('Address is required.'); return false; }
+    if (!emailRegex.test(email)) { setError('Enter a valid email address.'); return false; }
     setError('');
     return true;
   }
 
   async function handleCreateAccount() {
-    if (!validateStepOne()) return;
-
+    if (!validate()) return;
     setSaving(true);
     setError('');
 
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-
       if (userError || !user) {
         setError('Authentication session missing. Please log in again.');
-        setSaving(false);
         return;
       }
 
       const { data, error: insertError } = await supabase
         .from('businesses')
-        .insert([
-          {
-            id: user.id, 
-            business_name: businessName.trim(),
-            categories: selectedCategories,
-            address: address.trim(),
-            email: email.trim(),
-            updated_at: new Date().toISOString()
-          },
-        ])
+        .insert([{
+          id: user.id,
+          business_name: businessName.trim(),
+          categories: selectedCategories,
+          address: address.trim(),
+          email: email.trim(),
+          updated_at: new Date().toISOString(),
+        }])
         .select()
         .single();
 
       if (insertError || !data) {
-        console.error('[BusinessOnboarding] insert error', insertError);
         if (insertError?.code === '23505') {
-          setError('A business profile has already been initialized for this account.');
+          setError('A business profile already exists for this account.');
         } else {
-          setError('Unable to save profile metrics right now. Please try again.');
+          setError('Unable to save profile right now. Please try again.');
         }
         return;
       }
 
+      // Seed channel_configs rows for all channels
+      const channels = ['whatsapp', 'instagram', 'facebook', 'sms'];
+      await supabase.from('channel_configs').insert(
+        channels.map(channel => ({
+          business_id: user.id,
+          channel,
+          status: 'not_connected',
+        }))
+      );
+
       onCompleted(data as Business);
     } catch (err) {
-      setError('An unexpected error occurred during profile assignment.');
+      setError('An unexpected error occurred.');
     } finally {
       setSaving(false);
     }
@@ -130,7 +114,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
               <span>Business name</span>
               <input
                 value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
+                onChange={e => setBusinessName(e.target.value)}
                 placeholder="e.g. Sunrise Salon"
                 className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
               />
@@ -140,7 +124,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="hello@business.com"
                 className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
               />
@@ -151,7 +135,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
             <span>Address</span>
             <input
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={e => setAddress(e.target.value)}
               placeholder="123 Business Avenue, City"
               className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
             />
@@ -166,7 +150,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
               <span className="text-xs text-amber-600 font-medium">{selectedCategories.length}/2 selected</span>
             </div>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {CATEGORY_OPTIONS.map((category) => (
+              {CATEGORY_OPTIONS.map(category => (
                 <button
                   key={category}
                   type="button"
@@ -183,7 +167,9 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
             </div>
           </div>
 
-          {error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>
+          )}
 
           <div className="flex justify-end pt-3">
             <button
