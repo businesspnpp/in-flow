@@ -205,7 +205,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       name: 'WhatsApp',
       Icon: MessageSquare,
       description: 'Link your WhatsApp Business profile via Meta Secure OAuth.',
-      isActive: true,
+      isActive: false,
     },
     {
       id: 'instagram',
