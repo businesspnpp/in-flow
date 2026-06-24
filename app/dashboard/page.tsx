@@ -3,16 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import type { Business } from '@/lib/supabase';
+import BusinessSettings from '@/components/BusinessSettings';
 import {
   ArrowLeft,
   ArrowRight,
   LogOut,
   MessageSquare,
   Settings,
-  Smartphone,
   Zap,
-  Instagram,
-  Facebook,
 } from 'lucide-react';
 
 type Message = {
@@ -29,37 +28,6 @@ const TOOL_ACTIONS = [
   { label: 'BookedIt', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
   { label: 'Quote', text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00' },
   { label: 'Menu', text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
-];
-
-const CHANNELS = [
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp',
-    description: 'Link your WhatsApp Business profile via Meta Secure OAuth.',
-    Icon: MessageSquare,
-    isActive: true,
-  },
-  {
-    id: 'instagram',
-    name: 'Instagram DM',
-    description: 'Manage your professional Instagram direct messages.',
-    Icon: Instagram,
-    isActive: false,
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook Business',
-    description: 'Sync your company Facebook Page conversations.',
-    Icon: Facebook,
-    isActive: false,
-  },
-  {
-    id: 'sms',
-    name: 'SMS Gateway',
-    description: 'Connect your local SMS integration.',
-    Icon: Smartphone,
-    isActive: false,
-  },
 ];
 
 const initialMessages: Message[] = [
@@ -79,6 +47,7 @@ export default function Dashboard() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState('');
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [business, setBusiness] = useState<Business | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
 
@@ -88,9 +57,18 @@ export default function Dashboard() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
-      } else {
-        setLoadingSession(false);
+        return;
       }
+
+      // Fetch the business record for the authenticated user
+      const { data: businessData } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (businessData) setBusiness(businessData);
+      setLoadingSession(false);
     }
     verifyAuth();
   }, [router]);
@@ -129,9 +107,7 @@ export default function Dashboard() {
   }
 
   function scheduleAutoReply(outgoing: string) {
-    if (replyTimer.current) {
-      window.clearTimeout(replyTimer.current);
-    }
+    if (replyTimer.current) window.clearTimeout(replyTimer.current);
     const nextReply = getAutoReply(outgoing);
     replyTimer.current = window.setTimeout(() => {
       appendMessage(nextReply, 'customer');
@@ -141,9 +117,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     return () => {
-      if (replyTimer.current) {
-        window.clearTimeout(replyTimer.current);
-      }
+      if (replyTimer.current) window.clearTimeout(replyTimer.current);
     };
   }, []);
 
@@ -163,7 +137,8 @@ export default function Dashboard() {
   async function handleSignOut() {
     setIsSigningOut(true);
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       router.push('/login');
     } catch (err) {
       console.error('Sign out failed:', err);
@@ -172,11 +147,10 @@ export default function Dashboard() {
     }
   }
 
-  // Prevent UI flashing before auth validation checks complete
   if (loadingSession) {
     return (
-      <div className="flex h-[100dvh] w-full items-center justify-center bg-white">
-        <p className="text-sm font-semibold text-zinc-500 animate-pulse">Loading workspace...</p>
+      <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
+        <p className="text-sm text-zinc-400">Loading...</p>
       </div>
     );
   }
@@ -206,7 +180,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Top Toolbar */}
+        {/* Tool Pills */}
         <div className="border-t border-zinc-100 overflow-x-auto scrollbar-none px-4 py-3">
           <div className="flex gap-2 whitespace-nowrap">
             {TOOL_ACTIONS.map((tool) => (
@@ -224,6 +198,8 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-hidden pb-16 md:pb-0">
+
+        {/* Chats Tab */}
         {globalTab === 'chats' && (
           <div className="h-full w-full overflow-hidden">
             {!showThread ? (
@@ -312,6 +288,7 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Tools Tab */}
         {globalTab === 'tools' && (
           <div className="h-full overflow-y-auto px-4 py-6">
             <div className="mx-auto max-w-2xl">
@@ -336,37 +313,18 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Settings Tab — uses real BusinessSettings component */}
         {globalTab === 'settings' && (
           <div className="h-full overflow-y-auto px-4 py-6">
             <div className="mx-auto max-w-2xl">
-              <h2 className="text-lg font-semibold text-zinc-900">Connected Channels</h2>
-              <p className="mt-1 text-xs text-zinc-500">Omni-channel integrations and connection status.</p>
-              <div className="mt-6 space-y-3">
-                {CHANNELS.map((channel) => (
-                  <div key={channel.id} className={`rounded-2xl border px-6 py-4 ${channel.isActive ? 'border-zinc-200 bg-white' : 'border-zinc-100 bg-zinc-50'}`}>
-                    <div className="flex items-start gap-4">
-                      <div className={`flex h-11 w-11 items-center justify-center rounded-lg flex-shrink-0 ${channel.isActive ? 'bg-amber-50 text-amber-600' : 'bg-zinc-100 text-zinc-500'}`}>
-                        <channel.Icon size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-zinc-900">{channel.name}</p>
-                        <p className="mt-1 text-xs text-zinc-500">{channel.description}</p>
-                        <div className="mt-3">
-                          {channel.isActive ? (
-                            <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                              Connected
-                            </span>
-                          ) : (
-                            <span className="inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-500">
-                              Coming Soon
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {business ? (
+                <BusinessSettings
+                  business={business}
+                  onUpdated={(updated) => setBusiness(updated)}
+                />
+              ) : (
+                <p className="text-sm text-zinc-400">Loading business profile...</p>
+              )}
             </div>
           </div>
         )}
@@ -376,10 +334,7 @@ export default function Dashboard() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white md:static">
         <div className="flex items-center justify-around px-4 py-3 md:justify-start md:gap-2">
           <button
-            onClick={() => {
-              setGlobalTab('chats');
-              setShowThread(false);
-            }}
+            onClick={() => { setGlobalTab('chats'); setShowThread(false); }}
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
               globalTab === 'chats' ? 'bg-amber-100 text-amber-900' : 'text-zinc-600 hover:bg-zinc-100'
             }`}
