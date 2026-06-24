@@ -60,11 +60,10 @@ export default function Dashboard() {
         return;
       }
 
-      // Fetch the business record for the authenticated user
+      // Fetch the first business record (user_id not yet implemented)
       const { data: businessData } = await supabase
         .from('businesses')
         .select('*')
-        .eq('user_id', session.user.id)
         .single();
 
       if (businessData) setBusiness(businessData);
