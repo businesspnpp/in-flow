@@ -241,17 +241,22 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {CHANNELS.map(({ id, name, Icon, description, isActive }) => {
-            const activeClass = isActive ? 'opacity-100' : 'opacity-60 border-zinc-100';
+            const isWhatsappChannel = id === 'whatsapp';
+            const isWhatsappConnected = isWhatsappChannel && Boolean(business.whatsapp_phone_number_id);
+            const activeClass = isWhatsappChannel ? 'opacity-100' : isActive ? 'opacity-100' : 'opacity-60 border-zinc-100';
+            const cardBorder = isWhatsappChannel ? 'border-zinc-200' : isActive ? 'border-zinc-200' : 'border-zinc-100';
+            const cardBackground = isWhatsappChannel || isActive ? 'bg-white' : 'bg-zinc-50';
+
             return (
-              <div key={id} className={`bg-white border ${isActive ? 'border-zinc-200' : 'border-zinc-100'} rounded-lg p-4 flex flex-col gap-3 ${activeClass}`}>
+              <div key={id} className={`bg-white border ${cardBorder} rounded-lg p-4 flex flex-col gap-3 ${activeClass}`}>
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isActive ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'}`}>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isWhatsappChannel || isActive ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'}`}>
                     <Icon size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold text-zinc-900 truncate">{name}</p>
-                      {!isActive && (
+                      {!isWhatsappChannel && !isActive && (
                         <span className="text-[10px] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded-full text-zinc-500">Coming Soon</span>
                       )}
                     </div>
@@ -259,37 +264,41 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                   </div>
                 </div>
 
-                {isActive ? (
+                {isWhatsappChannel ? (
                   <>
-                    <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-3">
+                    <div className={`bg-white border border-zinc-100 rounded-lg p-4 space-y-3`}> 
                       <div className="flex flex-col sm:flex-row items-stretch gap-3">
                         <div className="flex-1">
                           <p className="text-sm font-medium text-zinc-900">Status</p>
                           <p className="text-xs text-zinc-500 mt-1 truncate">
-                            {business.whatsapp_phone_number_id ? `Connected to ${business.whatsapp_number}` : 'Not integrated'}
+                            {isWhatsappConnected ? `Connected to ${business.whatsapp_number}` : 'Not integrated'}
                           </p>
                         </div>
-                        <div className="flex gap-2 items-center sm:items-stretch">
+                        <div className="flex flex-wrap gap-2 items-center sm:items-stretch">
                           <button
                             onClick={attemptConnectWithDiagnostics}
                             disabled={loading}
                             className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors min-h-[44px]"
                           >
-                            {loading ? 'Connecting...' : business.whatsapp_phone_number_id ? 'Reconnect Channel' : 'Connect WhatsApp'}
+                            {loading ? 'Connecting...' : isWhatsappConnected ? 'Reconnect Channel' : 'Connect WhatsApp'}
                           </button>
-                          <button
-                            onClick={attemptConnectWithDiagnostics}
-                            disabled={loading}
-                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[44px]"
-                          >
-                            Retry
-                          </button>
-                          <button
-                            onClick={() => setShowTroubleshoot(true)}
-                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
-                          >
-                            Troubleshoot
-                          </button>
+                          {isWhatsappConnected ? (
+                            <>
+                              <button
+                                onClick={attemptConnectWithDiagnostics}
+                                disabled={loading}
+                                className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[44px]"
+                              >
+                                Retry
+                              </button>
+                              <button
+                                onClick={() => setShowTroubleshoot(true)}
+                                className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
+                              >
+                                Troubleshoot
+                              </button>
+                            </>
+                          ) : null}
                         </div>
                       </div>
 
