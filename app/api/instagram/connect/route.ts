@@ -6,27 +6,65 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const code = searchParams.get('code');
+  const stateRaw = searchParams.get('state');
+  const oauthError = searchParams.get('error');
+
+  // Parse state to get business_id and which page to redirect back to
+  let business_id = '';
+  let channel = 'instagram';
   try {
-    const { business_id, access_token } = await req.json();
+    const state = JSON.parse(decodeURIComponent(stateRaw || '{}'));
+    business_id = state.business_id || '';
+    channel = state.channel || 'instagram';
+  } catch (e) {}
 
-    if (!business_id || !access_token) {
-      return NextResponse.json({ error: 'Missing business_id or access_token' }, { status: 400 });
-    }
+  const dashboardUrl = `${req.nextUrl.origin}/dashboard`;
 
-    // Exchange short-lived token for long-lived token
+  if (oauthError || !code || !business_id) {
+    const msg = oauthError || 'Missing code or business_id';
+    return NextResponse.redirect(
+      `${dashboardUrl}?oauth=error&channel=${channel}&error=${encodeURIComponent(msg)}`
+    );
+  }
+
+  try {
+    const redirectUri = `${req.nextUrl.origin}/api/instagram/callback`;
+
+    // Exchange code for short-lived token
     const tokenRes = await fetch(
-      `https://graph.facebook.com/v20.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.NEXT_PUBLIC_META_APP_ID}&client_secret=${process.env.META_APP_SECRET}&fb_exchange_token=${access_token}`
+      `https://graph.facebook.com/v20.0/oauth/access_token` +
+      `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
+      `&client_secret=${process.env.META_APP_SECRET}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&code=${code}`
     );
     const tokenData = await tokenRes.json();
     if (!tokenRes.ok || !tokenData.access_token) {
-      throw new Error(tokenData?.error?.message || 'Failed to exchange token');
+      throw new Error(tokenData?.error?.message || 'Failed to exchange code for token');
     }
-    const longLivedToken = tokenData.access_token;
 
-    // Get Instagram account linked to user's pages
+    // Exchange for long-lived token
+    const longRes = await fetch(
+      `https://graph.facebook.com/v20.0/oauth/access_token` +
+      `?grant_type=fb_exchange_token` +
+      `&client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
+      `&client_secret=${process.env.META_APP_SECRET}` +
+      `&fb_exchange_token=${tokenData.access_token}`
+    );
+    const longData = await longRes.json();
+    if (!longRes.ok || !longData.access_token) {
+      throw new Error(longData?.error?.message || 'Failed to get long-lived token');
+    }
+    const longLivedToken = longData.access_token;
+
+    // Get Instagram Business Account linked to user's Pages
     const igRes = await fetch(
-      `https://graph.facebook.com/v20.0/me/accounts?fields=instagram_business_account&access_token=${longLivedToken}`
+      `https://graph.facebook.com/v20.0/me/accounts` +
+      `?fields=instagram_business_account` +
+      `&access_token=${longLivedToken}`
     );
     const igData = await igRes.json();
     const igAccountId = igData?.data?.[0]?.instagram_business_account?.id ?? null;
@@ -34,20 +72,25 @@ export async function POST(req: NextRequest) {
     // Upsert into channel_configs
     const { error: upsertError } = await supabase
       .from('channel_configs')
-      .upsert({
-        business_id,
-        channel: 'instagram',
-        status: 'connected',
-        access_token: longLivedToken,
-        instagram_account_id: igAccountId,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'business_id,channel' });
+      .upsert(
+        {
+          business_id,
+          channel: 'instagram',
+          status: 'connected',
+          access_token: longLivedToken,
+          instagram_account_id: igAccountId,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'business_id,channel' }
+      );
 
     if (upsertError) throw new Error(upsertError.message);
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.redirect(`${dashboardUrl}?oauth=success&channel=instagram`);
   } catch (err: any) {
-    console.error('[instagram/connect]', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    console.error('[instagram/callback]', err);
+    return NextResponse.redirect(
+      `${dashboardUrl}?oauth=error&channel=instagram&error=${encodeURIComponent(err.message || 'Unknown error')}`
+    );
   }
 }
