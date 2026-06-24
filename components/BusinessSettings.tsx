@@ -266,7 +266,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
                 {isWhatsappChannel ? (
                   <>
-                    <div className={`bg-white border border-zinc-100 rounded-lg p-4 space-y-3`}> 
+                    <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-3">
                       <div className="flex flex-col sm:flex-row items-stretch gap-3">
                         <div className="flex-1">
                           <p className="text-sm font-medium text-zinc-900">Status</p>
@@ -282,23 +282,19 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                           >
                             {loading ? 'Connecting...' : isWhatsappConnected ? 'Reconnect Channel' : 'Connect WhatsApp'}
                           </button>
-                          {isWhatsappConnected ? (
-                            <>
-                              <button
-                                onClick={attemptConnectWithDiagnostics}
-                                disabled={loading}
-                                className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[44px]"
-                              >
-                                Retry
-                              </button>
-                              <button
-                                onClick={() => setShowTroubleshoot(true)}
-                                className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
-                              >
-                                Troubleshoot
-                              </button>
-                            </>
-                          ) : null}
+                          <button
+                            onClick={attemptConnectWithDiagnostics}
+                            disabled={loading}
+                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[44px]"
+                          >
+                            Retry
+                          </button>
+                          <button
+                            onClick={() => setShowTroubleshoot(true)}
+                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
+                          >
+                            Troubleshoot
+                          </button>
                         </div>
                       </div>
 
