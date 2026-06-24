@@ -36,7 +36,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     facebook: false,
   });
 
-  // Load channel_configs on mount
   useEffect(() => {
     async function fetchChannelConfigs() {
       const { data } = await supabase
@@ -56,7 +55,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     fetchChannelConfigs();
   }, [business.id]);
 
-  // Check for OAuth callback success/error params in URL on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const oauthStatus = params.get('oauth');
@@ -67,7 +65,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       setSuccess(`${channel.charAt(0).toUpperCase() + channel.slice(1)} channel connected to inFlow!`);
       setActiveChannel(channel);
       setChannelStatus(prev => ({ ...prev, [channel]: true }));
-      // Clean the URL
       window.history.replaceState({}, '', window.location.pathname);
     } else if (oauthStatus === 'error' && oauthError) {
       setError(decodeURIComponent(oauthError));
@@ -76,7 +73,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     }
   }, []);
 
-  // Load FB SDK — only needed for WhatsApp embedded signup
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
@@ -113,7 +109,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // WhatsApp — existing embedded signup flow (unchanged)
   const handleWhatsAppConnect = () => {
     setError('');
     setSuccess('');
@@ -185,7 +180,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     }
   };
 
-  // Instagram — updated to use standard Business configuration routing parameters
   const handleInstagramConnect = () => {
     setError('');
     setSuccess('');
@@ -202,7 +196,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     window.location.href = url;
   };
 
-  // Facebook — updated to use standard Business configuration routing parameters
   const handleFacebookConnect = () => {
     setError('');
     setSuccess('');
@@ -230,6 +223,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       id: 'whatsapp',
       name: 'WhatsApp',
       Icon: MessageSquare,
+      iconColor: 'text-emerald-400',
+      iconBg: 'bg-emerald-500/10',
       description: 'Link your WhatsApp Business profile via Meta Secure OAuth.',
       isConnected: channelStatus.whatsapp,
       onConnect: handleWhatsAppConnect,
@@ -245,6 +240,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       id: 'instagram',
       name: 'Instagram DM',
       Icon: Instagram,
+      iconColor: 'text-pink-400',
+      iconBg: 'bg-pink-500/10',
       description: 'Manage your professional Instagram direct messages and automations.',
       isConnected: channelStatus.instagram,
       onConnect: handleInstagramConnect,
@@ -260,6 +257,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       id: 'facebook',
       name: 'Facebook Business',
       Icon: Facebook,
+      iconColor: 'text-blue-400',
+      iconBg: 'bg-blue-500/10',
       description: 'Sync your company Facebook Page conversations directly into your inbox.',
       isConnected: channelStatus.facebook,
       onConnect: handleFacebookConnect,
@@ -275,6 +274,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       id: 'sms',
       name: 'SMS Gateway',
       Icon: MessageCircle,
+      iconColor: 'text-slate-400',
+      iconBg: 'bg-slate-500/10',
       description: 'Connect your local SMS integration to send native text notifications.',
       isConnected: false,
       onConnect: null,
@@ -287,81 +288,91 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-4">
+      <div className="space-y-6">
+
+        {/* Section label */}
         <div>
-          <h3 className="text-sm font-bold text-zinc-900">Connected Channels</h3>
-          <p className="text-sm text-zinc-600 mt-1">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 mb-1">Connected Channels</p>
+          <p className="text-xs text-slate-500">
             Manage platform channels connected to your inFlow account.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
+        {/* Channel list */}
+        <div className="flex flex-col gap-3">
+          {CHANNELS.map(({ id, name, Icon, iconColor, iconBg, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
             const isSms = id === 'sms';
             const isOpen = activeChannel === id;
             const isLoading = loading === id;
 
             return (
-              <div key={id} className="flex flex-col gap-0">
+              <div key={id} className="flex flex-col">
+                {/* Card row */}
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
-                  className={`w-full text-left bg-white border rounded-lg p-4 flex items-start gap-3 transition-colors cursor-pointer ${
-                    isOpen ? 'border-amber-400 rounded-b-none' : 'border-zinc-200 hover:border-zinc-300'
+                  className={`w-full text-left rounded-2xl px-4 py-4 flex items-center gap-4 transition-all ${
+                    isOpen
+                      ? 'bg-[#1a1d27] rounded-b-none border border-amber-500/30 border-b-0'
+                      : 'bg-[#13161e] border border-white/5 hover:border-white/10 hover:bg-[#1a1d27]'
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                    isConnected ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'
-                  }`}>
+                  {/* Icon */}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg} ${iconColor}`}>
                     <Icon size={18} />
                   </div>
+
+                  {/* Text */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-zinc-900 truncate">{name}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-slate-200">{name}</p>
                       {isSms ? (
-                        <span className="text-[10px] px-2 py-0.5 bg-zinc-50 border border-zinc-100 rounded-full text-zinc-400 shrink-0">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-600 border border-white/5">
                           Coming Soon
                         </span>
                       ) : (
                         <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${
                           isConnected
-                            ? 'bg-emerald-50 border-emerald-100 text-emerald-600 font-semibold'
-                            : 'bg-zinc-50 border-zinc-200 text-zinc-500'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                            : 'bg-white/5 border-white/8 text-slate-500'
                         }`}>
                           {isConnected ? 'Connected' : 'Not Integrated'}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-zinc-500 mt-0.5">{description}</p>
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{description}</p>
                   </div>
-                  <span className="text-zinc-300 text-xs mt-1 shrink-0">{isOpen ? '▲' : '▼'}</span>
+
+                  {/* Chevron */}
+                  <span className="text-slate-700 text-[10px] shrink-0">{isOpen ? '▲' : '▼'}</span>
                 </button>
 
+                {/* Expanded panel */}
                 {isOpen && !isSms && onConnect && (
-                  <div className="border border-t-0 border-amber-200 rounded-b-lg bg-white divide-y divide-zinc-100">
+                  <div className="rounded-2xl rounded-t-none border border-amber-500/20 border-t-0 bg-[#1a1d27] divide-y divide-white/[0.05]">
                     <div className="p-4 space-y-4">
-                      <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
+                      <div className="flex items-center justify-between gap-4 flex-wrap">
                         <div>
-                          <p className="text-sm font-medium text-zinc-900">Status</p>
-                          <p className="text-xs text-zinc-500 mt-1">
-                            {isConnected ? 'Channel is active and receiving messages' : 'Not integrated'}
+                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</p>
+                          <p className="text-xs text-slate-600 mt-1">
+                            {isConnected ? 'Active and receiving messages' : 'Not integrated'}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap justify-end">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <button
                             type="button"
                             onClick={onConnect}
                             disabled={isLoading}
-                            className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50 transition-colors min-h-[36px]"
+                            className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-[#0f1117] hover:bg-amber-400 disabled:opacity-40 transition-colors"
                           >
-                            {isLoading ? 'Connecting...' : connectLabel}
+                            {isLoading ? 'Connecting…' : connectLabel}
                           </button>
                           {showRetry && (
                             <button
                               type="button"
                               onClick={onConnect}
                               disabled={isLoading}
-                              className="rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[36px]"
+                              className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 disabled:opacity-40 transition-colors"
                             >
                               Retry
                             </button>
@@ -370,7 +381,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             <button
                               type="button"
                               onClick={() => setShowTroubleshoot(true)}
-                              className="rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 min-h-[36px]"
+                              className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-slate-500 hover:bg-white/5 transition-colors"
                             >
                               Troubleshoot
                             </button>
@@ -379,23 +390,26 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                       </div>
 
                       {error && (
-                        <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 font-medium">
+                        <p className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
                           {error}
                         </p>
                       )}
                       {success && (
-                        <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200 font-medium">
+                        <p className="text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
                           {success}
                         </p>
                       )}
                     </div>
 
                     {howItWorks.length > 0 && (
-                      <div className="px-4 py-3 bg-zinc-50 rounded-b-lg">
-                        <p className="text-xs font-semibold text-zinc-900">How it works</p>
-                        <ul className="mt-2 space-y-1 text-xs text-zinc-600 list-disc list-inside">
+                      <div className="px-4 py-3">
+                        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">How it works</p>
+                        <ul className="space-y-1.5">
                           {howItWorks.map((step, i) => (
-                            <li key={i}>{step}</li>
+                            <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
+                              <span className="text-amber-500/60 mt-0.5 shrink-0">·</span>
+                              {step}
+                            </li>
                           ))}
                         </ul>
                       </div>
@@ -404,51 +418,63 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 )}
 
                 {isOpen && isSms && (
-                  <div className="border border-t-0 border-zinc-200 rounded-b-lg bg-zinc-50/50 p-4 text-xs text-zinc-500 italic">
-                    SMS integration is currently being provisioned. Full connection support is coming soon.
+                  <div className="rounded-2xl rounded-t-none border border-white/5 border-t-0 bg-[#1a1d27] px-4 py-3">
+                    <p className="text-xs text-slate-600 italic">
+                      SMS integration is currently being provisioned. Full connection support is coming soon.
+                    </p>
                   </div>
                 )}
               </div>
             );
           })}
         </div>
+      </div>
 
-        {showTroubleshoot && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs">
-            <div className="w-[90%] max-w-lg rounded-lg bg-white border border-zinc-200 p-6 shadow-xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-zinc-900">WhatsApp Troubleshooting</h4>
-                  <p className="text-xs text-zinc-500 mt-1">Steps to resolve common connection issues.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowTroubleshoot(false)}
-                  className="text-zinc-400 hover:text-zinc-600 p-1"
-                >
-                  <X size={16} />
-                </button>
+      {/* Troubleshoot modal */}
+      {showTroubleshoot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-[90%] max-w-lg rounded-2xl bg-[#13161e] border border-white/10 p-6 shadow-2xl">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h4 className="text-sm font-semibold text-slate-200">WhatsApp Troubleshooting</h4>
+                <p className="text-xs text-slate-600 mt-0.5">Steps to resolve common connection issues.</p>
               </div>
-              <ol className="mt-4 space-y-2 text-xs text-zinc-700 list-decimal list-inside">
-                <li>Allow popups and redirects for this site in your browser.</li>
-                <li>Make sure third-party cookies are enabled or try in a private window.</li>
-                <li>Check that your Meta app ID (NEXT_PUBLIC_META_APP_ID) is configured correctly.</li>
-                <li>Temporarily disable browser extensions that may interfere.</li>
-                <li>Try again with the Retry button after applying the above steps.</li>
-              </ol>
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowTroubleshoot(false)}
-                  className="rounded-lg px-4 py-2 text-xs font-semibold border border-zinc-300 text-zinc-700 hover:bg-zinc-50 min-h-[36px]"
-                >
-                  Done
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowTroubleshoot(false)}
+                className="text-slate-600 hover:text-slate-400 p-1 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <ol className="space-y-2.5">
+              {[
+                'Allow popups and redirects for this site in your browser.',
+                'Make sure third-party cookies are enabled or try in a private window.',
+                'Check that your Meta app ID (NEXT_PUBLIC_META_APP_ID) is configured correctly.',
+                'Temporarily disable browser extensions that may interfere.',
+                'Try again with the Retry button after applying the above steps.',
+              ].map((step, i) => (
+                <li key={i} className="flex items-start gap-3 text-xs text-slate-500">
+                  <span className="flex-shrink-0 h-5 w-5 rounded-full bg-white/5 text-slate-400 flex items-center justify-center text-[10px] font-semibold mt-0.5">
+                    {i + 1}
+                  </span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowTroubleshoot(false)}
+                className="rounded-xl px-4 py-2 text-xs font-semibold border border-white/10 text-slate-400 hover:bg-white/5 transition-colors"
+              >
+                Done
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 }
