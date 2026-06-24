@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Instagram, Facebook, MessageSquare, MessageCircle } from 'lucide-react';
+import { Instagram, Facebook, MessageSquare, MessageCircle, X } from 'lucide-react';
 import { supabase, Business } from '@/lib/supabase';
 
 interface Props {
@@ -24,6 +24,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
+  const [activeChannel, setActiveChannel] = useState<string | null>(null);
 
   useEffect(() => {
     window.fbAsyncInit = function () {
@@ -53,7 +54,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data || {};
           if (phone_number_id && waba_id) {
-            // Stash for use once FB.login's callback fires with the auth code
             window.sessionStorage.setItem(
               'wa_embedded_signup',
               JSON.stringify({ phone_number_id, waba_id })
@@ -98,13 +98,12 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           if (response?.authResponse?.code) {
             const authCode = response.authResponse.code;
 
-            // Pull the WABA/phone details captured by the postMessage listener
             let signupMeta: { phone_number_id?: string; waba_id?: string } = {};
             try {
               const raw = window.sessionStorage.getItem('wa_embedded_signup');
               if (raw) signupMeta = JSON.parse(raw);
             } catch (e) {
-              // ignore parse errors, route will fall back to API lookup
+              // ignore parse errors
             }
 
             fetch('/api/whatsapp/connect', {
@@ -121,9 +120,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 let data: any = {};
                 try {
                   data = await apiRes.json();
-                } catch (e) {
-                  // ignore JSON parse errors
-                }
+                } catch (e) {}
 
                 if (!apiRes.ok) {
                   const message = data?.error || data?.message || `Server responded with status ${apiRes.status}`;
@@ -163,7 +160,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     }
   };
 
-  // Run diagnostics first, then attempt login if diagnostics pass
   const attemptConnectWithDiagnostics = () => {
     setError('');
     setSuccess('');
@@ -199,34 +195,44 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       });
   };
 
+  const handleCardClick = (id: string, isAvailable: boolean) => {
+    if (!isAvailable) return;
+    // Clear state when opening/switching channels
+    setError('');
+    setSuccess('');
+    setActiveChannel(prev => (prev === id ? null : id));
+  };
+
+  const isWhatsappConnected = Boolean(business.whatsapp_phone_number_id);
+
   const CHANNELS = [
     {
       id: 'whatsapp',
       name: 'WhatsApp',
       Icon: MessageSquare,
       description: 'Link your WhatsApp Business profile via Meta Secure OAuth.',
-      isActive: false,
+      isAvailable: true,
     },
     {
       id: 'instagram',
       name: 'Instagram DM',
       Icon: Instagram,
       description: 'Manage your professional Instagram direct messages and automations.',
-      isActive: false,
+      isAvailable: false,
     },
     {
       id: 'facebook',
       name: 'Facebook Business',
       Icon: Facebook,
       description: 'Sync your company Facebook Page conversations directly into your inbox.',
-      isActive: false,
+      isAvailable: false,
     },
     {
       id: 'sms',
       name: 'SMS Gateway',
       Icon: MessageCircle,
       description: 'Connect your local SMS integration to send native text notifications.',
-      isActive: false,
+      isAvailable: false,
     },
   ];
 
@@ -236,72 +242,107 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       <div className="space-y-4">
         <div>
           <h3 className="text-sm font-bold text-zinc-900">Connected Channels</h3>
-          <p className="text-sm text-zinc-600 mt-1">Manage platform channels that can be connected to your inFlow account.</p>
+          <p className="text-sm text-zinc-600 mt-1">
+            Manage platform channels that can be connected to your inFlow account.
+          </p>
         </div>
 
+        {/* Channel grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {CHANNELS.map(({ id, name, Icon, description, isActive }) => {
-            const isWhatsappChannel = id === 'whatsapp';
-            const isWhatsappConnected = isWhatsappChannel && Boolean(business.whatsapp_phone_number_id);
-            const cardBorder = 'border-zinc-200';
+          {CHANNELS.map(({ id, name, Icon, description, isAvailable }) => {
+            const isWhatsapp = id === 'whatsapp';
+            const isOpen = activeChannel === id;
 
             return (
-              <div key={id} className={`bg-white border ${cardBorder} rounded-lg p-4 flex flex-col gap-3`}> 
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isWhatsappChannel ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-500'}`}>
+              <div key={id} className="flex flex-col gap-0">
+                {/* Card header — always visible */}
+                <button
+                  type="button"
+                  disabled={!isAvailable}
+                  onClick={() => handleCardClick(id, isAvailable)}
+                  className={`
+                    w-full text-left bg-white border rounded-lg p-4 flex items-start gap-3 transition-colors
+                    ${isOpen ? 'border-amber-400 rounded-b-none' : 'border-zinc-200'}
+                    ${isAvailable ? 'hover:border-zinc-300 cursor-pointer' : 'cursor-default opacity-70'}
+                  `}
+                >
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${isWhatsapp ? 'bg-amber-50 text-amber-600' : 'bg-zinc-50 text-zinc-400'}`}>
                     <Icon size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold text-zinc-900 truncate">{name}</p>
-                      {!isWhatsappChannel && (
-                        <span className="text-[10px] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded-full text-zinc-500">Coming Soon</span>
+                      {!isAvailable && (
+                        <span className="text-[10px] px-2 py-0.5 bg-zinc-50 border border-zinc-100 rounded-full text-zinc-400 shrink-0">
+                          Coming Soon
+                        </span>
+                      )}
+                      {isWhatsapp && isWhatsappConnected && (
+                        <span className="text-[10px] px-2 py-0.5 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-600 shrink-0">
+                          Connected
+                        </span>
                       )}
                     </div>
-                    <p className="text-xs text-zinc-500 mt-1 truncate">{description}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5">{description}</p>
                   </div>
-                </div>
+                  {isAvailable && (
+                    <span className="text-zinc-300 text-xs mt-1 shrink-0">{isOpen ? '▲' : '▼'}</span>
+                  )}
+                </button>
 
-                {isWhatsappChannel ? (
-                  <>
-                    <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-4">
-                      <div className="space-y-3">
+                {/* Expanded integration panel — only for the active channel */}
+                {isOpen && isWhatsapp && (
+                  <div className="border border-t-0 border-amber-200 rounded-b-lg bg-white divide-y divide-zinc-100">
+                    {/* Status + actions */}
+                    <div className="p-4 space-y-4">
+                      <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium text-zinc-900">Status</p>
-                          <p className="text-xs text-zinc-500 mt-1 truncate">
-                            {isWhatsappConnected ? `Connected to ${business.whatsapp_number}` : 'Not integrated'}
+                          <p className="text-xs text-zinc-500 mt-1">
+                            {isWhatsappConnected
+                              ? `Connected to ${business.whatsapp_number}`
+                              : 'Not integrated'}
                           </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex items-center gap-2 flex-wrap justify-end">
                           <button
                             onClick={attemptConnectWithDiagnostics}
                             disabled={loading}
-                            className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors min-h-[44px]"
+                            className="rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors min-h-[36px]"
                           >
                             {loading ? 'Connecting...' : isWhatsappConnected ? 'Reconnect Channel' : 'Connect WhatsApp'}
                           </button>
                           <button
                             onClick={attemptConnectWithDiagnostics}
                             disabled={loading}
-                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[44px]"
+                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 min-h-[36px]"
                           >
                             Retry
                           </button>
                           <button
                             onClick={() => setShowTroubleshoot(true)}
-                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[44px]"
+                            className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 min-h-[36px]"
                           >
                             Troubleshoot
                           </button>
                         </div>
                       </div>
 
-                      {error && <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>}
-                      {success && <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200">{success}</p>}
+                      {error && (
+                        <p className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                          {error}
+                        </p>
+                      )}
+                      {success && (
+                        <p className="text-xs text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                          {success}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                    {/* How it works */}
+                    <div className="px-4 py-3 bg-zinc-50 rounded-b-lg">
                       <p className="text-xs font-semibold text-zinc-900">How it works</p>
                       <ul className="mt-2 space-y-1 text-xs text-zinc-600 list-disc list-inside">
                         <li>Authenticate your official business account via Meta's dialog securely.</li>
@@ -309,14 +350,6 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                         <li>Inbound client messages will stream natively into your inFlow smart inbox.</li>
                       </ul>
                     </div>
-                  </>
-                ) : (
-                  <div className="bg-white border border-zinc-100 rounded-lg p-4 space-y-3">
-                    <p className="text-sm font-medium text-zinc-900">Channel preview</p>
-                    <p className="text-xs text-zinc-500">This channel is available in the grid and will be clickable when supported.</p>
-                    <button className="rounded-lg border border-zinc-300 px-3 py-2 text-xs text-zinc-700 hover:bg-zinc-50 min-h-[44px]">
-                      Preview
-                    </button>
                   </div>
                 )}
               </div>
@@ -324,6 +357,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
           })}
         </div>
 
+        {/* Troubleshoot modal */}
         {showTroubleshoot && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
             <div className="w-[90%] max-w-lg rounded-lg bg-white border border-zinc-200 p-6">
@@ -332,7 +366,9 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                   <h4 className="text-sm font-bold text-zinc-900">WhatsApp Troubleshooting</h4>
                   <p className="text-xs text-zinc-500 mt-1">Steps to resolve common connection issues.</p>
                 </div>
-                <button onClick={() => setShowTroubleshoot(false)} className="text-zinc-400 hover:text-zinc-600">✕</button>
+                <button onClick={() => setShowTroubleshoot(false)} className="text-zinc-400 hover:text-zinc-600">
+                  <X size={14} />
+                </button>
               </div>
 
               <ol className="mt-4 space-y-2 text-xs text-zinc-700 list-decimal list-inside">
@@ -344,7 +380,12 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
               </ol>
 
               <div className="mt-6 flex justify-end gap-2">
-                <button onClick={() => setShowTroubleshoot(false)} className="rounded-lg px-4 py-2 text-xs border border-zinc-300 text-zinc-700 hover:bg-zinc-50">Done</button>
+                <button
+                  onClick={() => setShowTroubleshoot(false)}
+                  className="rounded-lg px-4 py-2 text-xs border border-zinc-300 text-zinc-700 hover:bg-zinc-50"
+                >
+                  Done
+                </button>
               </div>
             </div>
           </div>
