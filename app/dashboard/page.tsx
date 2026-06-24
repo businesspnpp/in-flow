@@ -586,18 +586,12 @@ export default function Dashboard() {
         {/* ─── Settings Tab ─── */}
         {globalTab === 'settings' && (
           <div className="flex-1 overflow-y-auto">
-            <div className="px-6 py-8 max-w-2xl">
-              <div className="mb-8">
-                <h2 className="text-lg font-semibold text-white">Settings</h2>
-                <p className="mt-1 text-sm text-slate-500">Manage your business profile and preferences.</p>
-              </div>
+            <div className="px-4 py-6 max-w-2xl">
               {business ? (
-                <div className="rounded-2xl border border-white/8 bg-white/[0.04] p-6">
-                  <BusinessSettings
-                    business={business}
-                    onUpdated={(updated) => setBusiness(updated)}
-                  />
-                </div>
+                <BusinessSettings
+                  business={business}
+                  onUpdated={(updated) => setBusiness(updated)}
+                />
               ) : (
                 <p className="text-sm text-slate-500">Loading business profile…</p>
               )}
