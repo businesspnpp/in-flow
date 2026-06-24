@@ -1,9 +1,59 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Instagram, Facebook, MessageSquare, MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { supabase, Business } from '@/lib/supabase';
 
+// Real brand SVG icons
+function WhatsAppIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.406A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="#25D366"/>
+      <path d="M17.006 14.713c-.258-.129-1.528-.754-1.764-.84-.236-.086-.408-.129-.58.129-.172.257-.665.84-.815 1.012-.15.172-.3.193-.557.064-.258-.129-1.088-.401-2.073-1.279-.766-.683-1.283-1.527-1.433-1.784-.15-.258-.016-.397.113-.525.116-.115.258-.3.387-.45.129-.15.172-.258.258-.43.086-.172.043-.322-.021-.45-.064-.129-.58-1.397-.794-1.912-.21-.502-.422-.433-.58-.441l-.494-.008c-.172 0-.45.064-.686.322-.236.257-.9.879-.9 2.144s.922 2.487 1.05 2.659c.13.172 1.812 2.766 4.388 3.879.614.265 1.092.423 1.465.541.616.196 1.176.168 1.619.102.494-.073 1.528-.625 1.743-1.228.215-.602.215-1.118.15-1.226-.064-.107-.236-.172-.494-.3z" fill="white"/>
+    </svg>
+  );
+}
+
+function InstagramIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ig-grad" cx="30%" cy="107%" r="150%">
+          <stop offset="0%" stopColor="#fdf497"/>
+          <stop offset="5%" stopColor="#fdf497"/>
+          <stop offset="45%" stopColor="#fd5949"/>
+          <stop offset="60%" stopColor="#d6249f"/>
+          <stop offset="90%" stopColor="#285AEB"/>
+        </radialGradient>
+      </defs>
+      <rect width="24" height="24" rx="6" fill="url(#ig-grad)"/>
+      <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
+      <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="white" strokeWidth="1.8" fill="none"/>
+    </svg>
+  );
+}
+
+function FacebookIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="6" fill="#1877F2"/>
+      <path d="M16 8h-2a1 1 0 00-1 1v2h3l-.5 3H13v7h-3v-7H8v-3h2V9a4 4 0 014-4h2v3z" fill="white"/>
+    </svg>
+  );
+}
+
+function SmsIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="6" fill="#4B5563"/>
+      <path d="M4 6h16v10a2 2 0 01-2 2H6l-3 2V8a2 2 0 012-2z" fill="white" fillOpacity="0.9"/>
+      <circle cx="8" cy="11" r="1.2" fill="#4B5563"/>
+      <circle cx="12" cy="11" r="1.2" fill="#4B5563"/>
+      <circle cx="16" cy="11" r="1.2" fill="#4B5563"/>
+    </svg>
+  );
+}
 interface Props {
   business: Business;
   onUpdated: (b: Business) => void;
@@ -222,9 +272,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     {
       id: 'whatsapp',
       name: 'WhatsApp',
-      Icon: MessageSquare,
-      iconColor: 'text-emerald-400',
-      iconBg: 'bg-emerald-500/10',
+      Icon: WhatsAppIcon,
       description: 'Link your WhatsApp Business profile via Meta Secure OAuth.',
       isConnected: channelStatus.whatsapp,
       onConnect: handleWhatsAppConnect,
@@ -239,9 +287,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     {
       id: 'instagram',
       name: 'Instagram DM',
-      Icon: Instagram,
-      iconColor: 'text-pink-400',
-      iconBg: 'bg-pink-500/10',
+      Icon: InstagramIcon,
       description: 'Manage your professional Instagram direct messages and automations.',
       isConnected: channelStatus.instagram,
       onConnect: handleInstagramConnect,
@@ -256,9 +302,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     {
       id: 'facebook',
       name: 'Facebook Business',
-      Icon: Facebook,
-      iconColor: 'text-blue-400',
-      iconBg: 'bg-blue-500/10',
+      Icon: FacebookIcon,
       description: 'Sync your company Facebook Page conversations directly into your inbox.',
       isConnected: channelStatus.facebook,
       onConnect: handleFacebookConnect,
@@ -273,9 +317,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     {
       id: 'sms',
       name: 'SMS Gateway',
-      Icon: MessageCircle,
-      iconColor: 'text-slate-400',
-      iconBg: 'bg-slate-500/10',
+      Icon: SmsIcon,
       description: 'Connect your local SMS integration to send native text notifications.',
       isConnected: false,
       onConnect: null,
@@ -300,7 +342,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
         {/* Channel list */}
         <div className="flex flex-col gap-3">
-          {CHANNELS.map(({ id, name, Icon, iconColor, iconBg, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
+          {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
             const isSms = id === 'sms';
             const isOpen = activeChannel === id;
             const isLoading = loading === id;
@@ -318,8 +360,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                   }`}
                 >
                   {/* Icon */}
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg} ${iconColor}`}>
-                    <Icon size={18} />
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 overflow-hidden">
+                    <Icon size={20} />
                   </div>
 
                   {/* Text */}
