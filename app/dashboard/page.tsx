@@ -101,7 +101,7 @@ const MOCK_CONTACTS = [
     unread: 1,
     status: 'online',
     tag: 'New lead',
-    tagColor: 'bg-emerald-100 text-emerald-700',
+    tagColor: 'bg-emerald-500/15 text-emerald-400',
   },
   {
     id: 'c2',
@@ -112,7 +112,7 @@ const MOCK_CONTACTS = [
     unread: 3,
     status: 'away',
     tag: 'Urgent',
-    tagColor: 'bg-rose-100 text-rose-700',
+    tagColor: 'bg-rose-500/15 text-rose-400',
   },
   {
     id: 'c3',
@@ -123,7 +123,7 @@ const MOCK_CONTACTS = [
     unread: 0,
     status: 'offline',
     tag: 'Sales',
-    tagColor: 'bg-violet-100 text-violet-700',
+    tagColor: 'bg-violet-500/15 text-violet-400',
   },
   {
     id: 'c4',
@@ -323,8 +323,8 @@ export default function Dashboard() {
               <div className="px-4 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-sm font-semibold text-white">Inbox</h2>
-                    <p className="text-xs text-slate-500 mt-0.5">{MOCK_CONTACTS.length} conversations</p>
+                    <h2 className="text-base font-semibold text-white tracking-tight">Inbox</h2>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">{MOCK_CONTACTS.length} conversations</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
@@ -343,7 +343,7 @@ export default function Dashboard() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search conversations…"
-                    className="w-full rounded-xl bg-white/5 pl-8 pr-3 py-2 text-xs text-slate-300 placeholder:text-slate-600 outline-none focus:bg-white/8 focus:ring-1 focus:ring-amber-500/30 transition"
+                    className="w-full rounded-xl bg-white/[0.04] pl-8 pr-3 py-2 text-xs text-slate-300 placeholder:text-slate-500 outline-none focus:bg-white/[0.07] focus:ring-1 focus:ring-amber-500/30 transition"
                   />
                 </div>
 
@@ -352,10 +352,10 @@ export default function Dashboard() {
                   {['All', 'Unread', 'Mine'].map((f) => (
                     <button
                       key={f}
-                      className={`rounded-full px-3 py-1 text-[11px] font-medium transition ${
+                      className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition ${
                         f === 'All'
                           ? 'bg-amber-500 text-[#0f1117]'
-                          : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                          : 'bg-white/[0.04] text-slate-400 hover:bg-white/[0.08]'
                       }`}
                     >
                       {f}
@@ -370,13 +370,13 @@ export default function Dashboard() {
                   <button
                     key={contact.id}
                     onClick={() => setActiveContact(contact.id)}
-                    className={`w-full flex items-start gap-3 px-4 py-3.5 text-left transition-all hover:bg-white/5 ${
-                      activeContact === contact.id ? 'bg-white/[0.07]' : ''
+                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-all hover:bg-white/[0.03] ${
+                      activeContact === contact.id ? 'bg-white/[0.06]' : ''
                     }`}
                   >
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
-                      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center text-sm font-bold text-white ${contact.channel === 'Instagram' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' : CHANNEL_COLORS[contact.channel]}`}>
+                      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center text-[13px] font-semibold text-white ${contact.channel === 'Instagram' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' : CHANNEL_COLORS[contact.channel]}`}>
                         {contact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                       </div>
                       <span className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${
@@ -387,15 +387,12 @@ export default function Dashboard() {
                     {/* Text */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span className="text-sm font-medium text-white truncate">{contact.name}</span>
-                        <span className="text-[10px] text-slate-500 flex-shrink-0">{contact.time}</span>
+                        <span className="text-[13px] font-medium text-slate-100 truncate">{contact.name}</span>
+                        <span className="text-[10px] text-slate-500 flex-shrink-0 font-medium">{contact.time}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`inline-block h-1.5 w-1.5 rounded-full flex-shrink-0 ${CHANNEL_DOT[contact.channel]}`} />
-                        <p className="text-xs text-slate-500 truncate">{contact.preview}</p>
-                      </div>
+                      <p className="text-xs text-slate-500 truncate leading-snug">{contact.preview}</p>
                       {contact.tag && (
-                        <span className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${contact.tagColor}`}>
+                        <span className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide ${contact.tagColor}`}>
                           {contact.tag}
                         </span>
                       )}
@@ -565,7 +562,6 @@ export default function Dashboard() {
         {globalTab === 'tools' && (
           <div className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="px-4 pt-6 pb-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 px-1 mb-2">Quick Actions</p>
               <div className="rounded-2xl overflow-hidden bg-[#13161e] divide-y divide-white/[0.05]">
                 {TOOL_ACTIONS.map((tool) => {
                   const ToolIcon = tool.Icon;
