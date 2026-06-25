@@ -28,6 +28,8 @@ import {
   CalendarCheck,
   Wrench,
   UtensilsCrossed,
+  CreditCard,
+  Megaphone,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -74,6 +76,27 @@ const TOOL_ACTIONS: {
     color: 'bg-rose-500',
     text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.',
     desc: 'Share product menu',
+  },
+  {
+    label: 'PayNow',
+    Icon: CreditCard,
+    color: 'bg-blue-500',
+    text: '💳 Hi! Here is your secure payment link for R500.00 — inflow.to/pay/inv_8891 (Accepts Card, Instant EFT, or Capitec Pay). Tap to complete your payment.',
+    desc: 'Send payment link',
+  },
+  {
+    label: 'Review',
+    Icon: Star,
+    color: 'bg-yellow-500',
+    text: '⭐ Thanks for choosing us today! If you\'re happy with your experience, would you mind leaving us a quick rating? It takes 5 seconds: inflow.to/review/biz_441',
+    desc: 'Request Google review',
+  },
+  {
+    label: 'Promo',
+    Icon: Megaphone,
+    color: 'bg-pink-500',
+    text: '🎉 We miss you! Use code INFLOW10 at checkout to get 10% off your next booking: inflow.to/book/biz_441 — Valid for 7 days only.',
+    desc: 'Send promo & voucher',
   },
 ];
 
