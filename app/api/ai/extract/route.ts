@@ -1,15 +1,6 @@
-// inFlow — AI Context Extraction API Route (Gemini 2.5 Flash)
-// Path: app/api/ai/extract/route.ts  ← lives alongside your existing
-// app/api/{auth,facebook,instagram,ping,webhook,whatsapp}/ folders
-//
-// On-demand ONLY. No polling, no background workers. This route is hit
-// exactly once per dashboard tool click (Invoice/Quote/BookedIt/Promo),
-// pulling the last 15 messages of the target chat and asking Gemini
-// 2.5 Flash to extract structured data via Structured Outputs.
-// ════════════════════════════════════════════════════════════════════════
-
+// app/api/ai/extract/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { getSupabase } from '@/lib/supabase';
 import type {
   AIContextExtraction,
@@ -19,49 +10,45 @@ import type {
 } from '@/lib/inflow-types';
 
 // ───────────────────────────────────────────────────────────────────────
-// Gemini client — instantiated once per cold start, reused across
-// invocations within the same serverless instance.
+// Gemini client — instantiated once per cold start
 // ───────────────────────────────────────────────────────────────────────
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
-  // Don't throw at module scope in a way that crashes the whole route
-  // file on import — log loudly instead, and fail per-request below.
   console.error(
     '[inflow:ai/extract] GEMINI_API_KEY is not set. Set it in your environment before using AI extraction.'
   );
 }
 
-const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
-const MODEL = 'gemini-2.5-flash';
+const MODEL = 'gemini-2.0-flash'; // Updated to current model name
 const MESSAGE_HISTORY_LIMIT = 15;
 
 // ───────────────────────────────────────────────────────────────────────
-// Structured Output schema — enforced by Gemini via responseSchema.
-// Mirrors AIContextExtraction in lib/types/inflow.ts exactly.
+// Structured Output schema — enforced by Gemini via responseSchema
 // ───────────────────────────────────────────────────────────────────────
 
 const EXTRACTION_SCHEMA = {
-  type: Type.OBJECT,
+  type: SchemaType.OBJECT,
   properties: {
     detectedIntent: {
-      type: Type.STRING,
+      type: SchemaType.STRING,
       enum: ['invoice', 'booking', 'quote', 'promo', 'none'],
       description:
         'The single most likely action the business owner wants to take based on the conversation.',
     },
     customerInfo: {
-      type: Type.OBJECT,
+      type: SchemaType.OBJECT,
       properties: {
         name: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           nullable: true,
           description: "The customer's first name if mentioned anywhere in the thread, else null.",
         },
         phone: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           nullable: true,
           description: 'A phone number if explicitly shared in the conversation, else null.',
         },
@@ -69,42 +56,42 @@ const EXTRACTION_SCHEMA = {
       required: ['name', 'phone'],
     },
     invoiceDetails: {
-      type: Type.OBJECT,
+      type: SchemaType.OBJECT,
       properties: {
         lineItems: {
-          type: Type.ARRAY,
+          type: SchemaType.ARRAY,
           items: {
-            type: Type.OBJECT,
+            type: SchemaType.OBJECT,
             properties: {
-              item: { type: Type.STRING, description: 'Name of the service or product mentioned.' },
-              price: { type: Type.NUMBER, description: 'Price in the detected currency, numeric only.' },
-              quantity: { type: Type.NUMBER, description: 'Quantity requested, default 1.' },
+              item: { type: SchemaType.STRING, description: 'Name of the service or product mentioned.' },
+              price: { type: SchemaType.NUMBER, description: 'Price in the detected currency, numeric only.' },
+              quantity: { type: SchemaType.NUMBER, description: 'Quantity requested, default 1.' },
             },
             required: ['item', 'price', 'quantity'],
           },
         },
         currency: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           description: 'ISO-ish currency label, default to "ZAR" for South African Rand.',
         },
       },
       required: ['lineItems', 'currency'],
     },
     bookingDetails: {
-      type: Type.OBJECT,
+      type: SchemaType.OBJECT,
       properties: {
         requestedDate: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           nullable: true,
           description: 'ISO YYYY-MM-DD date if a specific date can be inferred from relative terms like "next Tuesday", else null.',
         },
         requestedTimeSlot: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           nullable: true,
           description: 'A time or time-of-day phrase such as "afternoon" or "14:00", else null.',
         },
         serviceType: {
-          type: Type.STRING,
+          type: SchemaType.STRING,
           nullable: true,
           description: 'The service or appointment type being discussed, else null.',
         },
@@ -116,7 +103,7 @@ const EXTRACTION_SCHEMA = {
 };
 
 // ───────────────────────────────────────────────────────────────────────
-// System prompt
+// System prompt builder
 // ───────────────────────────────────────────────────────────────────────
 
 function buildSystemInstruction(catalogItems: InflowCatalogItem[]): string {
@@ -148,7 +135,7 @@ Rules:
 // ───────────────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
-  if (!ai) {
+  if (!genAI) {
     return NextResponse.json(
       { error: 'AI extraction is not configured on this server (missing GEMINI_API_KEY).' },
       { status: 503 }
@@ -174,7 +161,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabase();
 
-    // 1. Fetch the last 15 messages for this chat thread (newest first, then reverse to chronological)
+    // 1. Fetch the last 15 messages for this chat thread
     const { data: messages, error: messagesError } = await supabase
       .from('messages')
       .select('sender, body, created_at')
@@ -196,7 +183,7 @@ export async function POST(request: NextRequest) {
 
     const chronological = [...messages].reverse();
 
-    // 2. Fetch this business's active catalog so the AI can cross-reference items
+    // 2. Fetch this business's active catalog
     const { data: catalogItems, error: catalogError } = await supabase
       .from('inflow_items_catalog')
       .select('*')
@@ -205,7 +192,6 @@ export async function POST(request: NextRequest) {
       .order('sort_order', { ascending: true });
 
     if (catalogError) {
-      // Non-fatal — proceed without catalog cross-referencing rather than failing the whole request
       console.warn('[inflow:ai/extract] Failed to fetch catalog, proceeding without it:', catalogError);
     }
 
@@ -216,9 +202,19 @@ export async function POST(request: NextRequest) {
       .map((m) => `${m.sender === 'business' ? 'Business' : 'Customer'}: ${m.body}`)
       .join('\n');
 
-    // 4. Call Gemini 2.5 Flash with Structured Outputs
-    const response = await ai.models.generateContent({
+    // 4. Get the generative model
+    const model = genAI.getGenerativeModel({ 
       model: MODEL,
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+        responseSchema: EXTRACTION_SCHEMA,
+      },
+      systemInstruction: buildSystemInstruction(activeCatalog),
+    });
+
+    // 5. Call Gemini with Structured Outputs
+    const result = await model.generateContent({
       contents: [
         {
           role: 'user',
@@ -229,15 +225,11 @@ export async function POST(request: NextRequest) {
           ],
         },
       ],
-      config: {
-        systemInstruction: buildSystemInstruction(activeCatalog),
-        responseMimeType: 'application/json',
-        responseSchema: EXTRACTION_SCHEMA,
-        temperature: 0.1,
-      },
     });
 
-    const rawText = response.text;
+    const response = result.response;
+    const rawText = response.text();
+    
     if (!rawText) {
       console.error('[inflow:ai/extract] Gemini returned an empty response.');
       return NextResponse.json({ error: 'AI returned an empty response.' }, { status: 502 });
@@ -254,10 +246,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Cross-reference matched catalog items by fuzzy name containment
-    //    (cheap heuristic; Gemini already tried to match names against the
-    //    catalog in its own output, this just surfaces the full catalog
-    //    rows for any line item whose name overlaps with a catalog entry)
+    // 6. Cross-reference matched catalog items
     const matchedCatalogItems = activeCatalog.filter((catalogItem) =>
       extraction.invoiceDetails.lineItems.some((line) => {
         const a = line.item.toLowerCase();
@@ -266,12 +255,12 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    const result: AIExtractResponse = {
+    const resultData: AIExtractResponse = {
       extraction,
       matchedCatalogItems,
     };
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(resultData, { status: 200 });
   } catch (err) {
     console.error('[inflow:ai/extract] Unexpected error:', err);
     return NextResponse.json(
