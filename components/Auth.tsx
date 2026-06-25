@@ -214,23 +214,23 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
       {/* If user is not logged in, show auth form */}
       {!user && (
-        <div className="w-full max-w-md rounded-2xl bg-[#13161e] px-7 pt-7 pb-6 shadow-xl my-auto">
+        <div className="w-full max-w-md rounded-2xl bg-[#13161e] px-5 pt-5 pb-4 shadow-xl my-auto">
           {/* Brand mark */}
-          <div className="flex flex-col items-center text-center mb-6">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
-              <Zap size={28} className="text-[#0f1117]" strokeWidth={2.5} />
+          <div className="flex flex-col items-center text-center mb-4">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
+              <Zap size={22} className="text-[#0f1117]" strokeWidth={2.5} />
             </div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-xl font-bold text-white">
               {mode === 'signin' ? 'Sign in to inFlow' : 'Create your account'}
             </h2>
-            <p className="text-sm text-slate-400 mt-2">
+            <p className="text-xs text-slate-400 mt-1">
               {mode === 'signin'
                 ? 'Enter your email and password to access your inbox.'
                 : 'Create a secure account to get started.'}
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2.5">
             {/* Email field */}
             <div>
               <label className="relative block">
@@ -247,11 +247,11 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     }
                   }}
                   placeholder="E-mail"
-                  className="w-full rounded-xl pl-14 pr-4 py-4 bg-white/5 text-base text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                  className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
                 />
               </label>
               {validationErrors.email && (
-                <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.email}</p>
+                <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.email}</p>
               )}
             </div>
 
@@ -271,11 +271,11 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     }
                   }}
                   placeholder={mode === 'signup' ? 'Min 8 characters, 1 uppercase, 1 number, 1 special' : 'Password'}
-                  className="w-full rounded-xl pl-14 pr-4 py-4 bg-white/5 text-base text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                  className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
                 />
               </label>
               {validationErrors.password && (
-                <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.password}</p>
+                <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.password}</p>
               )}
             </div>
 
@@ -296,11 +296,11 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                       }
                     }}
                     placeholder="Confirm password"
-                    className="w-full rounded-xl pl-14 pr-4 py-4 bg-white/5 text-base text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                    className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
                   />
                 </label>
                 {validationErrors.confirmPassword && (
-                  <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.confirmPassword}</p>
+                  <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.confirmPassword}</p>
                 )}
               </div>
             )}
@@ -328,7 +328,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             <button
               onClick={mode === 'signin' ? handleSignIn : handleSignUp}
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 py-4 text-base font-semibold text-[#0f1117] hover:from-amber-300 hover:to-amber-500 transition-colors disabled:opacity-50"
+              className="w-full rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 py-3 text-sm font-semibold text-[#0f1117] hover:from-amber-300 hover:to-amber-500 transition-colors disabled:opacity-50"
             >
               {loading ? 'Processing...' : mode === 'signin' ? 'Continue' : 'Create Account'}
             </button>
@@ -336,7 +336,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             {/* Divider */}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-white/8" />
-              <span className="text-xs text-slate-500 whitespace-nowrap">
+              <span className="text-xs text-slate-500 whitespace-nowrap px-1">
                 {mode === 'signin' ? "Don't have an account yet?" : 'Already have an account?'}
               </span>
               <div className="flex-1 h-px bg-white/8" />
@@ -351,20 +351,20 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 setValidationErrors({});
               }}
               disabled={loading}
-              className="w-full rounded-xl bg-white/5 py-4 text-base font-semibold text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+              className="w-full rounded-xl bg-white/5 py-3 text-sm font-semibold text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
             >
               {mode === 'signin' ? 'Create an account' : 'Back to Sign In'}
             </button>
 
             {/* OAuth buttons — visual only for now, wired up later */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <button
                 type="button"
                 onClick={handleAppleSignIn}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-4 text-base font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
               >
-                <svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor">
+                <svg width="16" height="16" viewBox="0 0 384 512" fill="currentColor">
                   <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z"/>
                 </svg>
                 Sign in with Apple
@@ -373,9 +373,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-4 text-base font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
               >
-                <svg width="19" height="19" viewBox="0 0 48 48">
+                <svg width="17" height="17" viewBox="0 0 48 48">
                   <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
                   <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
                   <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
@@ -387,7 +387,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           </div>
 
           {/* Terms footer */}
-          <p className="text-sm text-slate-500 text-center mt-5 leading-relaxed">
+          <p className="text-xs text-slate-500 text-center mt-3 leading-relaxed">
             By continuing, you agree to the{' '}
             <span className="underline cursor-pointer">Terms and Privacy Policy</span>.
           </p>
