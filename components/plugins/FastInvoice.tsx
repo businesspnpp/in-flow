@@ -1,18 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, Send, CheckCircle } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
 
-interface FastInvoiceProps {
-  activeChat: Chat | null;
+interface AiPrefill {
+  service?: string;
+  amount?: string;
 }
 
-export default function FastInvoice({ activeChat }: FastInvoiceProps) {
+interface FastInvoiceProps {
+  activeChat: Chat | null;
+  aiPrefill?: AiPrefill;
+}
+
+export default function FastInvoice({ activeChat, aiPrefill }: FastInvoiceProps) {
   const [service, setService] = useState('');
   const [amount, setAmount] = useState('');
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+
+  // Apply AI prefill when it arrives
+  useEffect(() => {
+    if (aiPrefill?.service) setService(aiPrefill.service);
+    if (aiPrefill?.amount) setAmount(aiPrefill.amount);
+  }, [aiPrefill]);
 
   async function handleSend() {
     if (!service.trim() || !amount.trim() || !activeChat) return;
@@ -52,6 +64,11 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
       <div className="flex items-center gap-2">
         <FileText size={16} className="text-amber-600" />
         <h3 className="text-sm font-bold text-zinc-900">Fast Invoice</h3>
+        {aiPrefill && (
+          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
+            AI filled
+          </span>
+        )}
       </div>
 
       {!activeChat && (
@@ -106,15 +123,9 @@ export default function FastInvoice({ activeChat }: FastInvoiceProps) {
             className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
           >
             {sent ? (
-              <>
-                <CheckCircle size={14} />
-                Sent!
-              </>
+              <><CheckCircle size={14} /> Sent!</>
             ) : (
-              <>
-                <Send size={14} />
-                Generate & Send
-              </>
+              <><Send size={14} /> Generate & Send</>
             )}
           </button>
         </>
