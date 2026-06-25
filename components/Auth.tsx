@@ -179,7 +179,18 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   return (
-    <div className="h-[100dvh] w-full overflow-y-auto flex items-center justify-center bg-[#0f1117] px-4 py-4">
+    <div className="h-[100dvh] w-full overflow-y-auto flex items-center justify-center bg-[#0f1117] px-4 py-4 scrollbar-hide">
+      <style>{`
+        .scrollbar-hide {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+      `}</style>
       {/* If user is logged in, show sign out option */}
       {user && (
         <div className="w-full max-w-md rounded-2xl bg-[#13161e] p-8 shadow-xl">
@@ -203,7 +214,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
       {/* If user is not logged in, show auth form */}
       {!user && (
-        <div className="w-full max-w-md rounded-2xl bg-[#13161e] p-6 shadow-xl my-auto">
+        <div className="w-full max-w-md rounded-2xl bg-[#13161e] px-6 pt-5 pb-4 shadow-xl my-auto">
           {/* Brand mark */}
           <div className="flex flex-col items-center text-center mb-4">
             <div className="mb-2.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
@@ -376,10 +387,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           </div>
 
           {/* Terms footer */}
-          <p className="text-[10px] text-slate-600 text-center mt-4 leading-relaxed">
+          <p className="text-xs text-slate-500 text-center mt-4 leading-relaxed">
             By continuing, you agree to the{' '}
-            <span className="text-slate-400 underline cursor-pointer">Terms</span> and{' '}
-            <span className="text-slate-400 underline cursor-pointer">Privacy Policy</span>.
+            <span className="underline cursor-pointer">Terms and Privacy Policy</span>.
           </p>
         </div>
       )}
