@@ -21,17 +21,14 @@ import {
   Zap,
   Search,
   Phone,
-  Mail,
   Star,
   MoreHorizontal,
   Hash,
   Users,
   Inbox,
-  ChevronDown,
   Paperclip,
   Smile,
   CheckCheck,
-  Circle,
   FileText,
   CalendarCheck,
   Wrench,
@@ -43,8 +40,11 @@ import {
   Megaphone,
   LayoutList,
   LayoutGrid,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 type Message = {
   id: string;
@@ -55,7 +55,25 @@ type Message = {
 
 type GlobalTab = 'chats' | 'tools' | 'settings';
 
-type ToolId = 'invoice' | 'booked' | 'quote' | 'menu' | 'pin' | 'paynow' | 'review' | 'promo' | 'settings';
+type ToolId =
+  | 'invoice'
+  | 'booked'
+  | 'quote'
+  | 'menu'
+  | 'pin'
+  | 'paynow'
+  | 'review'
+  | 'promo'
+  | 'settings';
+
+// Shape of what the AI extraction route returns
+interface AiExtraction {
+  tool: ToolId | null;
+  prefill: Record<string, unknown>;
+  confidence: number;
+}
+
+// ─── Tool registry ────────────────────────────────────────────────────────────
 
 const ALL_TOOLS: {
   id: ToolId;
@@ -64,38 +82,42 @@ const ALL_TOOLS: {
   color: string;
   desc: string;
 }[] = [
-  { id: 'invoice',  label: 'Invoice',  Icon: FileText,      color: 'bg-violet-500',  desc: 'Generate & send invoice' },
-  { id: 'booked',   label: 'Booked',   Icon: CalendarCheck, color: 'bg-emerald-500', desc: 'Schedule appointment' },
-  { id: 'quote',    label: 'Quote',    Icon: Calculator,    color: 'bg-amber-500',   desc: 'Send price estimate' },
-  { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,   color: 'bg-rose-500',    desc: 'Share product menu' },
-  { id: 'pin',      label: 'Pin',      Icon: MapPin,        color: 'bg-sky-500',     desc: 'Send location pin' },
-  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,    color: 'bg-blue-500',    desc: 'Send secure payment link' },
-  { id: 'review',   label: 'Review',   Icon: Star,          color: 'bg-yellow-500',  desc: 'Request Google review' },
-  { id: 'promo',    label: 'Promo',    Icon: Megaphone,     color: 'bg-pink-500',    desc: 'Send promo & voucher' },
-  { id: 'settings', label: 'Settings', Icon: Settings,      color: 'bg-slate-500',   desc: 'Channel & account settings' },
+  { id: 'invoice',  label: 'Invoice',  Icon: FileText,        color: 'bg-violet-500',  desc: 'Generate & send invoice' },
+  { id: 'booked',   label: 'Booked',   Icon: CalendarCheck,   color: 'bg-emerald-500', desc: 'Schedule appointment' },
+  { id: 'quote',    label: 'Quote',    Icon: Calculator,      color: 'bg-amber-500',   desc: 'Send price estimate' },
+  { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,     color: 'bg-rose-500',    desc: 'Share product menu' },
+  { id: 'pin',      label: 'Pin',      Icon: MapPin,          color: 'bg-sky-500',     desc: 'Send location pin' },
+  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,      color: 'bg-blue-500',    desc: 'Send secure payment link' },
+  { id: 'review',   label: 'Review',   Icon: Star,            color: 'bg-yellow-500',  desc: 'Request Google review' },
+  { id: 'promo',    label: 'Promo',    Icon: Megaphone,       color: 'bg-pink-500',    desc: 'Send promo & voucher' },
+  { id: 'settings', label: 'Settings', Icon: Settings,        color: 'bg-slate-500',   desc: 'Channel & account settings' },
 ];
 
-// Legacy quick-action pills used in the chat thread header (keep 4 simple ones)
+// Legacy quick-action pills (no AI pre-fill needed — these are one-tap sends)
 const TOOL_ACTIONS = [
-  { label: 'Invoice',  Icon: FileText,      color: 'bg-violet-500',  text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.',                   desc: 'Generate & send invoice' },
-  { label: 'BookedIt', Icon: CalendarCheck, color: 'bg-emerald-500', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!',       desc: 'Schedule appointment' },
-  { label: 'Quote',    Icon: Wrench,        color: 'bg-amber-500',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00',                           desc: 'Send price estimate' },
-  { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-500',  text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.',                   desc: 'Share product menu' },
+  { label: 'Invoice',  Icon: FileText,        color: 'bg-violet-500',  text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
+  { label: 'BookedIt', Icon: CalendarCheck,   color: 'bg-emerald-500', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
+  { label: 'Quote',    Icon: Wrench,          color: 'bg-amber-500',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00' },
+  { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-500',    text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
 ];
+
+// ─── Channel helpers ──────────────────────────────────────────────────────────
 
 const CHANNEL_COLORS: Record<string, string> = {
-  WhatsApp: 'bg-emerald-500',
+  WhatsApp:  'bg-emerald-500',
   Instagram: 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400',
-  Email: 'bg-blue-500',
-  SMS: 'bg-slate-500',
+  Email:     'bg-blue-500',
+  SMS:       'bg-slate-500',
 };
 
 const CHANNEL_DOT: Record<string, string> = {
-  WhatsApp: 'bg-emerald-400',
+  WhatsApp:  'bg-emerald-400',
   Instagram: 'bg-pink-500',
-  Email: 'bg-blue-400',
-  SMS: 'bg-slate-400',
+  Email:     'bg-blue-400',
+  SMS:       'bg-slate-400',
 };
+
+// ─── Mock contacts ────────────────────────────────────────────────────────────
 
 const MOCK_CONTACTS = [
   {
@@ -153,64 +175,61 @@ const initialMessages: Message[] = [
   },
 ];
 
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+
 export default function Dashboard() {
   const router = useRouter();
-  const [loadingSession, setLoadingSession] = useState(true);
-  const [globalTab, setGlobalTab] = useState<GlobalTab>('chats');
-  const [activeContact, setActiveContact] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState('');
-  const [isSigningOut, setIsSigningOut] = useState(false);
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [search, setSearch] = useState('');
-  const [toolViewMode, setToolViewMode] = useState<'list' | 'tabs'>('list');
-  const [activeToolId, setActiveToolId] = useState<ToolId | null>(null);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [loadingSession, setLoadingSession]   = useState(true);
+  const [globalTab, setGlobalTab]             = useState<GlobalTab>('chats');
+  const [activeContact, setActiveContact]     = useState<string | null>(null);
+  const [messages, setMessages]               = useState<Message[]>(initialMessages);
+  const [input, setInput]                     = useState('');
+  const [isSigningOut, setIsSigningOut]       = useState(false);
+  const [business, setBusiness]               = useState<Business | null>(null);
+  const [search, setSearch]                   = useState('');
+  const [toolViewMode, setToolViewMode]       = useState<'list' | 'tabs'>('list');
+  const [activeToolId, setActiveToolId]       = useState<ToolId | null>(null);
+
+  // AI pre-fill state
+  const [aiLoading, setAiLoading]             = useState(false);
+  const [aiExtraction, setAiExtraction]       = useState<AiExtraction | null>(null);
+
+  const bottomRef  = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
 
   const selectedContact = MOCK_CONTACTS.find((c) => c.id === activeContact);
 
+  // ── Auth ──
   useEffect(() => {
     async function verifyAuth() {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push('/login');
-        return;
-      }
-      const { data: businessData } = await supabase
-        .from('businesses')
-        .select('*')
-        .single();
+      if (!session) { router.push('/login'); return; }
+      const { data: businessData } = await supabase.from('businesses').select('*').single();
       if (businessData) setBusiness(businessData);
       setLoadingSession(false);
     }
     verifyAuth();
   }, [router]);
 
+  // ── Scroll ──
   function scrollToBottom() {
-    window.setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 50);
+    window.setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
   }
 
+  // ── Messaging ──
   function appendMessage(text: string, sender: 'business' | 'customer' = 'business') {
     setMessages((prev) => [
       ...prev,
-      {
-        id: `m-${Date.now()}`,
-        sender,
-        body: text,
-        created_at: new Date().toISOString(),
-      },
+      { id: `m-${Date.now()}`, sender, body: text, created_at: new Date().toISOString() },
     ]);
     scrollToBottom();
   }
 
   function getAutoReply(outgoing: string) {
     const n = outgoing.toLowerCase();
-    if (/(hello|hi|details)/.test(n)) return 'Awesome, thank you! Do you have a free slot available this Tuesday afternoon?';
+    if (/(hello|hi|details)/.test(n))          return 'Awesome, thank you! Do you have a free slot available this Tuesday afternoon?';
     if (/(booking|scheduled|confirmed)/.test(n)) return 'Perfect! 16:00 on Tuesday works beautifully for me. See you then!';
-    if (/(invoice|payment|r250)/.test(n)) return "Got the summary, thank you! I'll see you on Tuesday and settle up right after.";
+    if (/(invoice|payment|r250)/.test(n))       return "Got the summary, thank you! I'll see you on Tuesday and settle up right after.";
     return 'Sounds good, thanks for confirming! Let me know what the next steps are.';
   }
 
@@ -240,6 +259,43 @@ export default function Dashboard() {
     }
   }
 
+  // ── AI Pre-fill ──────────────────────────────────────────────────────────────
+  // Reads the current conversation thread and asks the AI which tool to open
+  // and what values to pre-populate.
+  async function handleAiAssist() {
+    if (!activeContact || messages.length === 0) return;
+    setAiLoading(true);
+    setAiExtraction(null);
+
+    try {
+      const transcript = messages
+        .map((m) => `${m.sender === 'business' ? 'Business' : 'Customer'}: ${m.body}`)
+        .join('\n');
+
+      const res = await fetch('/api/ai/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript }),
+      });
+
+      if (!res.ok) throw new Error('AI extraction failed');
+      const data: AiExtraction = await res.json();
+
+      setAiExtraction(data);
+
+      // Auto-open the suggested tool and switch to Tools tab
+      if (data.tool) {
+        setActiveToolId(data.tool);
+        setGlobalTab('tools');
+      }
+    } catch (err) {
+      console.error('AI assist error:', err);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  // ── Sign out ──
   async function handleSignOut() {
     setIsSigningOut(true);
     try {
@@ -253,28 +309,45 @@ export default function Dashboard() {
     }
   }
 
-  // Mock chat object for plugins (real impl would use activeChat from Supabase)
+  // ── Plugin renderer ──────────────────────────────────────────────────────────
+  // Passes aiPrefill only to the 4 tools that support it.
   const mockActiveChat = activeContact ? { id: activeContact } as any : null;
+
+  function getPrefillForTool(id: ToolId) {
+    if (!aiExtraction || aiExtraction.tool !== id) return undefined;
+    return aiExtraction.prefill as any;
+  }
 
   function renderPlugin(id: ToolId) {
     switch (id) {
-      case 'invoice':  return <FastInvoice activeChat={mockActiveChat} />;
-      case 'booked':   return <BookedIt activeChat={mockActiveChat} />;
-      case 'quote':    return <QuoteCraft activeChat={mockActiveChat} />;
-      case 'menu':     return <MenuDrop activeChat={mockActiveChat} />;
-      case 'pin':      return <PinTracker activeChat={mockActiveChat} />;
-      case 'paynow':   return <PayNow activeChat={mockActiveChat} />;
-      case 'review':   return <ReviewLink activeChat={mockActiveChat} />;
-      case 'promo':    return <PromoBlast activeChat={mockActiveChat} />;
+      case 'invoice':
+        return <FastInvoice activeChat={mockActiveChat} aiPrefill={getPrefillForTool('invoice')} />;
+      case 'booked':
+        return <BookedIt activeChat={mockActiveChat} aiPrefill={getPrefillForTool('booked')} />;
+      case 'quote':
+        return <QuoteCraft activeChat={mockActiveChat} aiPrefill={getPrefillForTool('quote')} />;
+      case 'menu':
+        return <MenuDrop activeChat={mockActiveChat} />;
+      case 'pin':
+        return <PinTracker activeChat={mockActiveChat} />;
+      case 'paynow':
+        return <PayNow activeChat={mockActiveChat} />;
+      case 'review':
+        return <ReviewLink activeChat={mockActiveChat} />;
+      case 'promo':
+        return <PromoBlast activeChat={mockActiveChat} aiPrefill={getPrefillForTool('promo')} />;
       case 'settings':
         return business ? (
           <BusinessSettings business={business} onUpdated={(b) => setBusiness(b)} />
         ) : (
           <p className="text-sm text-slate-500">No business profile found.</p>
         );
-      default: return null;
+      default:
+        return null;
     }
   }
+
+  // ─── Loading screen ───────────────────────────────────────────────────────────
 
   if (loadingSession) {
     return (
@@ -293,33 +366,27 @@ export default function Dashboard() {
       c.preview.toLowerCase().includes(search.toLowerCase()),
   );
 
+  // ─── Render ───────────────────────────────────────────────────────────────────
+
   return (
     <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-[#0f1117] text-white scrollbar-hide">
       <style>{`
-        .scrollbar-hide,
-        .scrollbar-hide * {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+        .scrollbar-hide, .scrollbar-hide * {
+          scrollbar-width: none; -ms-overflow-style: none;
         }
         .scrollbar-hide::-webkit-scrollbar,
-        .scrollbar-hide *::-webkit-scrollbar {
-          display: none;
-          width: 0;
-          height: 0;
-        }
+        .scrollbar-hide *::-webkit-scrollbar { display: none; width: 0; height: 0; }
       `}</style>
 
-      {/* ─── Sidebar (desktop) ─── */}
+      {/* ─── Desktop sidebar ── */}
       <aside className="hidden md:flex flex-col w-16 bg-[#0f1117] border-r border-white/5 items-center py-4 gap-2 z-20">
-        {/* Logo mark */}
         <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 shadow-lg shadow-amber-500/30">
           <span className="text-xs font-black text-[#0f1117] tracking-tight">iF</span>
         </div>
 
-        {/* Nav icons */}
         {[
-          { tab: 'chats' as GlobalTab, icon: <Inbox size={18} />, label: 'Inbox' },
-          { tab: 'tools' as GlobalTab, icon: <Zap size={18} />, label: 'Tools' },
+          { tab: 'chats'    as GlobalTab, icon: <Inbox    size={18} />, label: 'Inbox'    },
+          { tab: 'tools'    as GlobalTab, icon: <Zap      size={18} />, label: 'Tools'    },
           { tab: 'settings' as GlobalTab, icon: <Settings size={18} />, label: 'Settings' },
         ].map(({ tab, icon, label }) => (
           <button
@@ -351,24 +418,26 @@ export default function Dashboard() {
         </button>
       </aside>
 
-      {/* ─── Main Panel ─── */}
+      {/* ─── Main panel ── */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
-        {/* Chats Tab */}
+        {/* ══ CHATS TAB ══════════════════════════════════════════════════════════ */}
         {globalTab === 'chats' && (
           <>
-            {/* ── Conversation List ── */}
+            {/* ── Conversation list ── */}
             <div
               className={`flex-shrink-0 flex flex-col bg-[#13161e] border-r border-white/5 overflow-hidden
                 ${activeContact ? 'hidden md:flex' : 'flex'}
                 w-full md:w-72 lg:w-80`}
             >
-              {/* List header */}
+              {/* Header */}
               <div className="px-4 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-base font-semibold text-white tracking-tight">Inbox</h2>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">{MOCK_CONTACTS.length} conversations</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                      {MOCK_CONTACTS.length} conversations
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
@@ -380,7 +449,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Search */}
                 <div className="relative">
                   <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                   <input
@@ -391,7 +459,6 @@ export default function Dashboard() {
                   />
                 </div>
 
-                {/* Filter pills */}
                 <div className="flex gap-1.5 mt-3">
                   {['All', 'Unread', 'Mine'].map((f) => (
                     <button
@@ -418,17 +485,27 @@ export default function Dashboard() {
                       activeContact === contact.id ? 'bg-white/[0.06]' : ''
                     }`}
                   >
-                    {/* Avatar */}
                     <div className="relative flex-shrink-0">
-                      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center text-[13px] font-semibold text-white ${contact.channel === 'Instagram' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' : CHANNEL_COLORS[contact.channel]}`}>
+                      <div
+                        className={`h-10 w-10 rounded-2xl flex items-center justify-center text-[13px] font-semibold text-white ${
+                          contact.channel === 'Instagram'
+                            ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
+                            : CHANNEL_COLORS[contact.channel]
+                        }`}
+                      >
                         {contact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                       </div>
-                      <span className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${
-                        contact.status === 'online' ? 'bg-emerald-400' : contact.status === 'away' ? 'bg-amber-400' : 'bg-slate-600'
-                      }`} />
+                      <span
+                        className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${
+                          contact.status === 'online'
+                            ? 'bg-emerald-400'
+                            : contact.status === 'away'
+                            ? 'bg-amber-400'
+                            : 'bg-slate-600'
+                        }`}
+                      />
                     </div>
 
-                    {/* Text */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
                         <span className="text-[13px] font-medium text-slate-100 truncate">{contact.name}</span>
@@ -442,7 +519,6 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    {/* Unread badge */}
                     {contact.unread > 0 && (
                       <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-[#0f1117]">
                         {contact.unread}
@@ -453,10 +529,13 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* ── Thread View ── */}
-            <div className={`flex-1 flex flex-col overflow-hidden bg-[#0f1117] ${!activeContact ? 'hidden md:flex' : 'flex'}`}>
+            {/* ── Thread view ── */}
+            <div
+              className={`flex-1 flex flex-col overflow-hidden bg-[#0f1117] ${
+                !activeContact ? 'hidden md:flex' : 'flex'
+              }`}
+            >
               {!activeContact ? (
-                /* Empty state */
                 <div className="flex-1 flex flex-col items-center justify-center gap-4">
                   <div className="h-16 w-16 rounded-3xl bg-white/5 flex items-center justify-center">
                     <MessageSquare size={28} className="text-slate-600" />
@@ -477,8 +556,13 @@ export default function Dashboard() {
                       <ArrowLeft size={16} />
                     </button>
 
-                    {/* Avatar */}
-                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${selectedContact?.channel === 'Instagram' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' : CHANNEL_COLORS[selectedContact?.channel || 'SMS']}`}>
+                    <div
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
+                        selectedContact?.channel === 'Instagram'
+                          ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
+                          : CHANNEL_COLORS[selectedContact?.channel || 'SMS']
+                      }`}
+                    >
                       {selectedContact?.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                     </div>
 
@@ -490,8 +574,23 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    {/* Action icons */}
+                    {/* Action icons + AI assist button */}
                     <div className="flex items-center gap-1">
+                      {/* AI Assist — reads thread and opens correct tool with pre-fill */}
+                      <button
+                        onClick={handleAiAssist}
+                        disabled={aiLoading}
+                        title="AI Assist — auto-suggest tool from chat"
+                        className={`flex items-center gap-1.5 h-8 px-2.5 rounded-xl text-xs font-semibold transition-all ${
+                          aiLoading
+                            ? 'bg-amber-500/10 text-amber-400 animate-pulse cursor-wait'
+                            : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'
+                        }`}
+                      >
+                        <Sparkles size={13} />
+                        {aiLoading ? 'Reading…' : 'AI Assist'}
+                      </button>
+
                       <button className="h-8 w-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
                         <Phone size={15} />
                       </button>
@@ -503,6 +602,25 @@ export default function Dashboard() {
                       </button>
                     </div>
                   </div>
+
+                  {/* AI suggestion banner */}
+                  {aiExtraction?.tool && (
+                    <div className="flex-shrink-0 flex items-center gap-3 px-4 py-2.5 bg-amber-500/10 border-b border-amber-500/20">
+                      <Sparkles size={13} className="text-amber-400 flex-shrink-0" />
+                      <p className="text-xs text-amber-300 flex-1">
+                        AI detected a <span className="font-semibold capitalize">{aiExtraction.tool}</span> request
+                        {aiExtraction.confidence >= 0.8
+                          ? ' — form pre-filled, review and send.'
+                          : ' — check the pre-fill before sending.'}
+                      </p>
+                      <button
+                        onClick={() => { setActiveToolId(aiExtraction.tool!); setGlobalTab('tools'); }}
+                        className="flex-shrink-0 text-[10px] font-bold text-amber-400 bg-amber-500/20 px-2.5 py-1 rounded-full hover:bg-amber-500/30 transition"
+                      >
+                        Open tool ↗
+                      </button>
+                    </div>
+                  )}
 
                   {/* Quick tool pills */}
                   <div className="flex-shrink-0 border-b border-white/5 bg-[#13161e] overflow-x-auto scrollbar-none px-4 py-2">
@@ -525,7 +643,6 @@ export default function Dashboard() {
 
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
-                    {/* Date divider */}
                     <div className="flex items-center gap-3 my-2">
                       <div className="flex-1 h-px bg-white/5" />
                       <span className="text-[10px] text-slate-600 font-medium tracking-wide uppercase">Today</span>
@@ -538,7 +655,13 @@ export default function Dashboard() {
                         className={`flex gap-2 ${message.sender === 'business' ? 'justify-end' : 'justify-start'}`}
                       >
                         {message.sender === 'customer' && (
-                          <div className={`h-7 w-7 flex-shrink-0 self-end rounded-xl flex items-center justify-center text-[10px] font-bold text-white ${selectedContact?.channel === 'Instagram' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' : CHANNEL_COLORS[selectedContact?.channel || 'SMS']}`}>
+                          <div
+                            className={`h-7 w-7 flex-shrink-0 self-end rounded-xl flex items-center justify-center text-[10px] font-bold text-white ${
+                              selectedContact?.channel === 'Instagram'
+                                ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
+                                : CHANNEL_COLORS[selectedContact?.channel || 'SMS']
+                            }`}
+                          >
                             {selectedContact?.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                           </div>
                         )}
@@ -576,10 +699,7 @@ export default function Dashboard() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSend();
-                          }
+                          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
                         }}
                         placeholder="Type a message…"
                         className="flex-1 bg-transparent text-sm text-slate-200 outline-none placeholder:text-slate-600"
@@ -602,14 +722,13 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* ─── Tools Tab ─── */}
+        {/* ══ TOOLS TAB ══════════════════════════════════════════════════════════ */}
         {globalTab === 'tools' && (
           <div className="flex-1 flex flex-col overflow-hidden">
 
             {/* ── TAB MODE ── */}
             {toolViewMode === 'tabs' && (
               <>
-                {/* Tab bar */}
                 <div className="flex-shrink-0 relative border-b border-white/[0.06] bg-[#13161e]">
                   <div className="flex items-center">
                     <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
@@ -625,6 +744,10 @@ export default function Dashboard() {
                         >
                           <Icon size={16} />
                           <span className="text-[9px] font-bold uppercase tracking-wider">{label}</span>
+                          {/* AI indicator dot */}
+                          {aiExtraction?.tool === id && (
+                            <span className="block h-1 w-1 rounded-full bg-amber-400" />
+                          )}
                         </button>
                       ))}
                     </div>
@@ -636,12 +759,12 @@ export default function Dashboard() {
                       <LayoutList size={16} />
                     </button>
                   </div>
-                  {/* Fade hint */}
-                  <div className="pointer-events-none absolute top-0 right-10 h-full w-8"
-                    style={{ background: 'linear-gradient(to left, #13161e, transparent)' }} />
+                  <div
+                    className="pointer-events-none absolute top-0 right-10 h-full w-8"
+                    style={{ background: 'linear-gradient(to left, #13161e, transparent)' }}
+                  />
                 </div>
 
-                {/* Plugin content */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
                   {activeToolId === null ? (
                     <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
@@ -660,7 +783,6 @@ export default function Dashboard() {
             {/* ── LIST MODE ── */}
             {toolViewMode === 'list' && (
               <>
-                {/* List header */}
                 <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-[#13161e]">
                   <div>
                     <p className="text-xs font-semibold text-slate-300">Tools</p>
@@ -675,11 +797,11 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                {/* Accordion list */}
                 <div className="flex-1 overflow-y-auto pb-24">
                   <div className="divide-y divide-white/[0.04]">
                     {ALL_TOOLS.map(({ id, Icon, label, color, desc }) => {
                       const isOpen = activeToolId === id;
+                      const hasAi  = aiExtraction?.tool === id;
                       return (
                         <div key={id}>
                           <button
@@ -688,13 +810,26 @@ export default function Dashboard() {
                               isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.03]'
                             }`}
                           >
-                            <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${color} flex items-center justify-center`}>
+                            <div className={`relative flex-shrink-0 h-9 w-9 rounded-xl ${color} flex items-center justify-center`}>
                               <Icon size={16} className="text-white" strokeWidth={2.25} />
+                              {/* AI pre-fill indicator */}
+                              {hasAi && (
+                                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border-2 border-[#0f1117] flex items-center justify-center">
+                                  <Sparkles size={6} className="text-[#0f1117]" />
+                                </span>
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-400' : 'text-slate-200'}`}>
-                                {label}
-                              </p>
+                              <div className="flex items-center gap-2">
+                                <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-400' : 'text-slate-200'}`}>
+                                  {label}
+                                </p>
+                                {hasAi && (
+                                  <span className="text-[9px] font-bold bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">
+                                    AI ready
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-[10px] text-slate-600 mt-0.5">{desc}</p>
                             </div>
                             <svg
@@ -729,15 +864,12 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ─── Settings Tab ─── */}
+        {/* ══ SETTINGS TAB ═══════════════════════════════════════════════════════ */}
         {globalTab === 'settings' && (
           <div className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="px-4 py-6 max-w-2xl">
               {business ? (
-                <BusinessSettings
-                  business={business}
-                  onUpdated={(updated) => setBusiness(updated)}
-                />
+                <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
               ) : (
                 <p className="text-sm text-slate-500">Loading business profile…</p>
               )}
@@ -746,12 +878,12 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* ─── Bottom nav (mobile) ─── */}
+      {/* ─── Bottom nav (mobile) ── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/8 bg-[#13161e]/95 backdrop-blur-xl">
         <div className="flex items-center justify-around px-2 py-2">
           {[
-            { tab: 'chats' as GlobalTab, icon: <Inbox size={20} />, label: 'Inbox' },
-            { tab: 'tools' as GlobalTab, icon: <Zap size={20} />, label: 'Tools' },
+            { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} />, label: 'Inbox'    },
+            { tab: 'tools'    as GlobalTab, icon: <Zap      size={20} />, label: 'Tools'    },
             { tab: 'settings' as GlobalTab, icon: <Settings size={20} />, label: 'Settings' },
           ].map(({ tab, icon, label }) => (
             <button
