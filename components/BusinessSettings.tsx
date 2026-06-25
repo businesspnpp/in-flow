@@ -330,7 +330,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-6">
+      <div className="space-y-6 w-full min-w-0">
 
         {/* Section label */}
         <div>
@@ -341,19 +341,19 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         </div>
 
         {/* Channel list */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full min-w-0">
           {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
             const isSms = id === 'sms';
             const isOpen = activeChannel === id;
             const isLoading = loading === id;
 
             return (
-              <div key={id} className="flex flex-col">
+              <div key={id} className="flex flex-col w-full min-w-0">
                 {/* Card row */}
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
-                  className={`w-full text-left rounded-2xl px-4 py-4 flex items-center gap-4 transition-all ${
+                  className={`w-full min-w-0 text-left rounded-2xl px-4 py-4 flex items-center gap-4 transition-all ${
                     isOpen
                       ? 'bg-[#1a1d27] rounded-b-none border border-amber-500/30 border-b-0'
                       : 'bg-[#13161e] border border-white/5 hover:border-white/10 hover:bg-[#1a1d27]'
@@ -382,7 +382,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{description}</p>
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed truncate">{description}</p>
                   </div>
 
                   {/* Chevron */}
@@ -391,16 +391,16 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
                 {/* Expanded panel */}
                 {isOpen && !isSms && onConnect && (
-                  <div className="rounded-2xl rounded-t-none border border-amber-500/20 border-t-0 bg-[#1a1d27] divide-y divide-white/[0.05]">
-                    <div className="p-4 space-y-4">
-                      <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <div>
+                  <div className="w-full min-w-0 rounded-2xl rounded-t-none border border-amber-500/20 border-t-0 bg-[#1a1d27] divide-y divide-white/[0.05] overflow-hidden">
+                    <div className="p-4 space-y-4 min-w-0">
+                      <div className="flex flex-col gap-3 min-w-0">
+                        <div className="min-w-0">
                           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</p>
                           <p className="text-xs text-slate-600 mt-1">
                             {isConnected ? 'Active and receiving messages' : 'Not integrated'}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap min-w-0">
                           <button
                             type="button"
                             onClick={onConnect}
@@ -432,25 +432,25 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                       </div>
 
                       {error && (
-                        <p className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
+                        <p className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20 break-words">
                           {error}
                         </p>
                       )}
                       {success && (
-                        <p className="text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+                        <p className="text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20 break-words">
                           {success}
                         </p>
                       )}
                     </div>
 
                     {howItWorks.length > 0 && (
-                      <div className="px-4 py-3">
+                      <div className="px-4 py-3 min-w-0">
                         <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">How it works</p>
                         <ul className="space-y-1.5">
                           {howItWorks.map((step, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
+                            <li key={i} className="flex items-start gap-2 text-xs text-slate-600 min-w-0">
                               <span className="text-amber-500/60 mt-0.5 shrink-0">·</span>
-                              {step}
+                              <span className="min-w-0 break-words">{step}</span>
                             </li>
                           ))}
                         </ul>
@@ -460,8 +460,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 )}
 
                 {isOpen && isSms && (
-                  <div className="rounded-2xl rounded-t-none border border-white/5 border-t-0 bg-[#1a1d27] px-4 py-3">
-                    <p className="text-xs text-slate-600 italic">
+                  <div className="w-full min-w-0 rounded-2xl rounded-t-none border border-white/5 border-t-0 bg-[#1a1d27] px-4 py-3 overflow-hidden">
+                    <p className="text-xs text-slate-600 italic break-words">
                       SMS integration is currently being provisioned. Full connection support is coming soon.
                     </p>
                   </div>
@@ -474,17 +474,17 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
       {/* Troubleshoot modal */}
       {showTroubleshoot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-[90%] max-w-lg rounded-2xl bg-[#13161e] border border-white/10 p-6 shadow-2xl">
-            <div className="flex items-start justify-between mb-4">
-              <div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-[#13161e] border border-white/10 p-6 shadow-2xl">
+            <div className="flex items-start justify-between mb-4 gap-3">
+              <div className="min-w-0">
                 <h4 className="text-sm font-semibold text-slate-200">WhatsApp Troubleshooting</h4>
                 <p className="text-xs text-slate-600 mt-0.5">Steps to resolve common connection issues.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowTroubleshoot(false)}
-                className="text-slate-600 hover:text-slate-400 p-1 transition-colors"
+                className="text-slate-600 hover:text-slate-400 p-1 transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -497,11 +497,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 'Temporarily disable browser extensions that may interfere.',
                 'Try again with the Retry button after applying the above steps.',
               ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-xs text-slate-500">
+                <li key={i} className="flex items-start gap-3 text-xs text-slate-500 min-w-0">
                   <span className="flex-shrink-0 h-5 w-5 rounded-full bg-white/5 text-slate-400 flex items-center justify-center text-[10px] font-semibold mt-0.5">
                     {i + 1}
                   </span>
-                  {step}
+                  <span className="min-w-0 break-words">{step}</span>
                 </li>
               ))}
             </ol>
