@@ -4,6 +4,14 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { Business } from '@/lib/supabase';
 import BusinessSettings from '@/components/BusinessSettings';
+import FastInvoice from '@/components/plugins/FastInvoice';
+import BookedIt from '@/components/plugins/BookedIt';
+import QuoteCraft from '@/components/plugins/QuoteCraft';
+import MenuDrop from '@/components/plugins/MenuDrop';
+import PinTracker from '@/components/plugins/PinTracker';
+import PayNow from '@/components/plugins/PayNow';
+import ReviewLink from '@/components/plugins/ReviewLink';
+import PromoBlast from '@/components/plugins/PromoBlast';
 import {
   ArrowLeft,
   ArrowRight,
@@ -28,8 +36,13 @@ import {
   CalendarCheck,
   Wrench,
   UtensilsCrossed,
+  Calculator,
+  ShoppingBag,
+  MapPin,
   CreditCard,
   Megaphone,
+  LayoutList,
+  LayoutGrid,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -42,62 +55,32 @@ type Message = {
 
 type GlobalTab = 'chats' | 'tools' | 'settings';
 
-const TOOL_ACTIONS: {
+type ToolId = 'invoice' | 'booked' | 'quote' | 'menu' | 'pin' | 'paynow' | 'review' | 'promo' | 'settings';
+
+const ALL_TOOLS: {
+  id: ToolId;
   label: string;
   Icon: LucideIcon;
   color: string;
-  text: string;
   desc: string;
 }[] = [
-  {
-    label: 'Invoice',
-    Icon: FileText,
-    color: 'bg-violet-500',
-    text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.',
-    desc: 'Generate & send invoice',
-  },
-  {
-    label: 'BookedIt',
-    Icon: CalendarCheck,
-    color: 'bg-emerald-500',
-    text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!',
-    desc: 'Schedule appointment',
-  },
-  {
-    label: 'Quote',
-    Icon: Wrench,
-    color: 'bg-amber-500',
-    text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00',
-    desc: 'Send price estimate',
-  },
-  {
-    label: 'Menu',
-    Icon: UtensilsCrossed,
-    color: 'bg-rose-500',
-    text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.',
-    desc: 'Share product menu',
-  },
-  {
-    label: 'PayNow',
-    Icon: CreditCard,
-    color: 'bg-blue-500',
-    text: '💳 Hi! Here is your secure payment link for R500.00 — inflow.to/pay/inv_8891 (Accepts Card, Instant EFT, or Capitec Pay). Tap to complete your payment.',
-    desc: 'Send payment link',
-  },
-  {
-    label: 'Review',
-    Icon: Star,
-    color: 'bg-yellow-500',
-    text: '⭐ Thanks for choosing us today! If you\'re happy with your experience, would you mind leaving us a quick rating? It takes 5 seconds: inflow.to/review/biz_441',
-    desc: 'Request Google review',
-  },
-  {
-    label: 'Promo',
-    Icon: Megaphone,
-    color: 'bg-pink-500',
-    text: '🎉 We miss you! Use code INFLOW10 at checkout to get 10% off your next booking: inflow.to/book/biz_441 — Valid for 7 days only.',
-    desc: 'Send promo & voucher',
-  },
+  { id: 'invoice',  label: 'Invoice',  Icon: FileText,      color: 'bg-violet-500',  desc: 'Generate & send invoice' },
+  { id: 'booked',   label: 'Booked',   Icon: CalendarCheck, color: 'bg-emerald-500', desc: 'Schedule appointment' },
+  { id: 'quote',    label: 'Quote',    Icon: Calculator,    color: 'bg-amber-500',   desc: 'Send price estimate' },
+  { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,   color: 'bg-rose-500',    desc: 'Share product menu' },
+  { id: 'pin',      label: 'Pin',      Icon: MapPin,        color: 'bg-sky-500',     desc: 'Send location pin' },
+  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,    color: 'bg-blue-500',    desc: 'Send secure payment link' },
+  { id: 'review',   label: 'Review',   Icon: Star,          color: 'bg-yellow-500',  desc: 'Request Google review' },
+  { id: 'promo',    label: 'Promo',    Icon: Megaphone,     color: 'bg-pink-500',    desc: 'Send promo & voucher' },
+  { id: 'settings', label: 'Settings', Icon: Settings,      color: 'bg-slate-500',   desc: 'Channel & account settings' },
+];
+
+// Legacy quick-action pills used in the chat thread header (keep 4 simple ones)
+const TOOL_ACTIONS = [
+  { label: 'Invoice',  Icon: FileText,      color: 'bg-violet-500',  text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.',                   desc: 'Generate & send invoice' },
+  { label: 'BookedIt', Icon: CalendarCheck, color: 'bg-emerald-500', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!',       desc: 'Schedule appointment' },
+  { label: 'Quote',    Icon: Wrench,        color: 'bg-amber-500',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00',                           desc: 'Send price estimate' },
+  { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-500',  text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.',                   desc: 'Share product menu' },
 ];
 
 const CHANNEL_COLORS: Record<string, string> = {
@@ -180,6 +163,8 @@ export default function Dashboard() {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [business, setBusiness] = useState<Business | null>(null);
   const [search, setSearch] = useState('');
+  const [toolViewMode, setToolViewMode] = useState<'list' | 'tabs'>('list');
+  const [activeToolId, setActiveToolId] = useState<ToolId | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
 
@@ -265,6 +250,29 @@ export default function Dashboard() {
       console.error('Sign out failed:', err);
       setIsSigningOut(false);
       alert('Failed to sign out. Please try again.');
+    }
+  }
+
+  // Mock chat object for plugins (real impl would use activeChat from Supabase)
+  const mockActiveChat = activeContact ? { id: activeContact } as any : null;
+
+  function renderPlugin(id: ToolId) {
+    switch (id) {
+      case 'invoice':  return <FastInvoice activeChat={mockActiveChat} />;
+      case 'booked':   return <BookedIt activeChat={mockActiveChat} />;
+      case 'quote':    return <QuoteCraft activeChat={mockActiveChat} />;
+      case 'menu':     return <MenuDrop activeChat={mockActiveChat} />;
+      case 'pin':      return <PinTracker activeChat={mockActiveChat} />;
+      case 'paynow':   return <PayNow activeChat={mockActiveChat} />;
+      case 'review':   return <ReviewLink activeChat={mockActiveChat} />;
+      case 'promo':    return <PromoBlast activeChat={mockActiveChat} />;
+      case 'settings':
+        return business ? (
+          <BusinessSettings business={business} onUpdated={(b) => setBusiness(b)} />
+        ) : (
+          <p className="text-sm text-slate-500">No business profile found.</p>
+        );
+      default: return null;
     }
   }
 
@@ -596,39 +604,128 @@ export default function Dashboard() {
 
         {/* ─── Tools Tab ─── */}
         {globalTab === 'tools' && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="px-4 pt-6 pb-4">
-              <div className="rounded-2xl overflow-hidden bg-[#13161e] divide-y divide-white/[0.05]">
-                {TOOL_ACTIONS.map((tool) => {
-                  const ToolIcon = tool.Icon;
-                  return (
-                    <button
-                      key={tool.label}
-                      onClick={() => handleToolAction(tool.text)}
-                      className="group w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-white/5 active:bg-white/8 transition-all"
-                    >
-                      <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${tool.color} flex items-center justify-center`}>
-                        <ToolIcon size={17} className="text-white" strokeWidth={2.25} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">{tool.label}</p>
-                        <p className="text-xs text-slate-600 mt-0.5">{tool.desc}</p>
-                      </div>
-                      <svg className="flex-shrink-0 text-slate-700 group-hover:text-slate-500 transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  );
-                })}
-              </div>
+          <div className="flex-1 flex flex-col overflow-hidden">
 
-              {!activeContact && (
-                <div className="mt-4 flex items-start gap-2.5 px-1">
-                  <span className="text-amber-500 text-xs mt-0.5">↑</span>
-                  <p className="text-xs text-slate-600">Open a conversation in Inbox first — actions will send directly into that chat.</p>
+            {/* ── TAB MODE ── */}
+            {toolViewMode === 'tabs' && (
+              <>
+                {/* Tab bar */}
+                <div className="flex-shrink-0 relative border-b border-white/[0.06] bg-[#13161e]">
+                  <div className="flex items-center">
+                    <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
+                      {ALL_TOOLS.map(({ id, Icon, label }) => (
+                        <button
+                          key={id}
+                          onClick={() => setActiveToolId(id)}
+                          className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] rounded-xl transition-colors ${
+                            activeToolId === id
+                              ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
+                              : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                          }`}
+                        >
+                          <Icon size={16} />
+                          <span className="text-[9px] font-bold uppercase tracking-wider">{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => { setToolViewMode('list'); setActiveToolId(null); }}
+                      className="flex-shrink-0 p-2.5 mr-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"
+                      title="Switch to list view"
+                    >
+                      <LayoutList size={16} />
+                    </button>
+                  </div>
+                  {/* Fade hint */}
+                  <div className="pointer-events-none absolute top-0 right-10 h-full w-8"
+                    style={{ background: 'linear-gradient(to left, #13161e, transparent)' }} />
                 </div>
-              )}
-            </div>
+
+                {/* Plugin content */}
+                <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
+                  {activeToolId === null ? (
+                    <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
+                      <LayoutGrid size={28} className="text-slate-700" />
+                      <p className="text-sm text-slate-600">Select a tab above to open a tool</p>
+                    </div>
+                  ) : (
+                    <div className="bg-[#13161e] rounded-2xl p-4">
+                      {renderPlugin(activeToolId)}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* ── LIST MODE ── */}
+            {toolViewMode === 'list' && (
+              <>
+                {/* List header */}
+                <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-[#13161e]">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-300">Tools</p>
+                    <p className="text-[10px] text-slate-600 mt-0.5">Tap to open</p>
+                  </div>
+                  <button
+                    onClick={() => setToolViewMode('tabs')}
+                    className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"
+                    title="Switch to tab view"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                </div>
+
+                {/* Accordion list */}
+                <div className="flex-1 overflow-y-auto pb-24">
+                  <div className="divide-y divide-white/[0.04]">
+                    {ALL_TOOLS.map(({ id, Icon, label, color, desc }) => {
+                      const isOpen = activeToolId === id;
+                      return (
+                        <div key={id}>
+                          <button
+                            onClick={() => setActiveToolId(isOpen ? null : id)}
+                            className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors ${
+                              isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.03]'
+                            }`}
+                          >
+                            <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${color} flex items-center justify-center`}>
+                              <Icon size={16} className="text-white" strokeWidth={2.25} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-400' : 'text-slate-200'}`}>
+                                {label}
+                              </p>
+                              <p className="text-[10px] text-slate-600 mt-0.5">{desc}</p>
+                            </div>
+                            <svg
+                              className={`flex-shrink-0 transition-transform duration-200 text-slate-600 ${isOpen ? 'rotate-90' : ''}`}
+                              width="16" height="16" viewBox="0 0 16 16" fill="none"
+                            >
+                              <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+
+                          {isOpen && (
+                            <div className="px-4 py-4 bg-[#0f1117] border-t border-white/[0.04]">
+                              {renderPlugin(id)}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {!activeContact && (
+                    <div className="mt-3 flex items-start gap-2.5 px-4">
+                      <span className="text-amber-500 text-xs mt-0.5">↑</span>
+                      <p className="text-xs text-slate-600">
+                        Open a conversation in Inbox first — actions will send directly into that chat.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
 
