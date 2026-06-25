@@ -263,7 +263,20 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-[#0f1117] text-white">
+    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-[#0f1117] text-white scrollbar-hide">
+      <style>{`
+        .scrollbar-hide,
+        .scrollbar-hide * {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar,
+        .scrollbar-hide *::-webkit-scrollbar {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+      `}</style>
 
       {/* ─── Sidebar (desktop) ─── */}
       <aside className="hidden md:flex flex-col w-16 bg-[#0f1117] border-r border-white/5 items-center py-4 gap-2 z-20">
