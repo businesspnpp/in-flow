@@ -1,18 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Megaphone, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
 
+interface AiPrefill {
+  voucherCode?: string;
+  discountText?: string;
+  expiry?: string;
+  customMessage?: string;
+}
+
 interface PromoBlastProps {
   activeChat: Chat | null;
+  aiPrefill?: AiPrefill;
 }
 
 const PRESET_PROMOS = [
-  { label: '10% Off', code: 'INFLOW10', discount: '10% off', emoji: '🎉' },
-  { label: '15% Off', code: 'SAVE15', discount: '15% off', emoji: '💥' },
-  { label: 'Free Delivery', code: 'FREEDEL', discount: 'free delivery', emoji: '🚚' },
-  { label: 'BOGO', code: 'BOGO50', discount: 'buy one get one 50% off', emoji: '🛍️' },
+  { label: '10% Off',      code: 'INFLOW10', discount: '10% off',                  emoji: '🎉' },
+  { label: '15% Off',      code: 'SAVE15',   discount: '15% off',                  emoji: '💥' },
+  { label: 'Free Delivery',code: 'FREEDEL',  discount: 'free delivery',             emoji: '🚚' },
+  { label: 'BOGO',         code: 'BOGO50',   discount: 'buy one get one 50% off',  emoji: '🛍️' },
 ];
 
 const EXPIRY_OPTIONS = ['Today only', '3 days', '7 days', '14 days', '30 days'];
@@ -21,15 +29,24 @@ function generateCode() {
   return 'FLOW' + Math.random().toString(36).slice(2, 6).toUpperCase();
 }
 
-export default function PromoBlast({ activeChat }: PromoBlastProps) {
-  const [voucherCode, setVoucherCode] = useState('INFLOW10');
-  const [discountText, setDiscountText] = useState('10% off');
-  const [promoEmoji, setPromoEmoji] = useState('🎉');
-  const [bookingLink, setBookingLink] = useState('inflow.to/book/biz_441');
-  const [expiry, setExpiry] = useState('7 days');
+export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
+  const [voucherCode,   setVoucherCode]   = useState('INFLOW10');
+  const [discountText,  setDiscountText]  = useState('10% off');
+  const [promoEmoji,    setPromoEmoji]    = useState('🎉');
+  const [bookingLink,   setBookingLink]   = useState('inflow.to/book/biz_441');
+  const [expiry,        setExpiry]        = useState('7 days');
   const [customMessage, setCustomMessage] = useState('');
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [sending,       setSending]       = useState(false);
+  const [sent,          setSent]          = useState(false);
+
+  // Apply AI prefill when it arrives
+  useEffect(() => {
+    if (!aiPrefill) return;
+    if (aiPrefill.voucherCode)   setVoucherCode(aiPrefill.voucherCode);
+    if (aiPrefill.discountText)  setDiscountText(aiPrefill.discountText);
+    if (aiPrefill.expiry)        setExpiry(aiPrefill.expiry);
+    if (aiPrefill.customMessage) setCustomMessage(aiPrefill.customMessage);
+  }, [aiPrefill]);
 
   function applyPreset(preset: typeof PRESET_PROMOS[0]) {
     setVoucherCode(preset.code);
@@ -74,6 +91,11 @@ export default function PromoBlast({ activeChat }: PromoBlastProps) {
       <div className="flex items-center gap-2">
         <Megaphone size={16} className="text-pink-500" />
         <h3 className="text-sm font-bold text-zinc-900">PromoBlast</h3>
+        {aiPrefill && (
+          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
+            AI filled
+          </span>
+        )}
       </div>
 
       {!activeChat && (
@@ -218,4 +240,4 @@ export default function PromoBlast({ activeChat }: PromoBlastProps) {
       )}
     </div>
   );
-                }
+          }
