@@ -24,6 +24,11 @@ import {
   Smile,
   CheckCheck,
   Circle,
+  FileText,
+  CalendarCheck,
+  Wrench,
+  UtensilsCrossed,
+  type LucideIcon,
 } from 'lucide-react';
 
 type Message = {
@@ -35,31 +40,37 @@ type Message = {
 
 type GlobalTab = 'chats' | 'tools' | 'settings';
 
-const TOOL_ACTIONS = [
+const TOOL_ACTIONS: {
+  label: string;
+  Icon: LucideIcon;
+  color: string;
+  text: string;
+  desc: string;
+}[] = [
   {
     label: 'Invoice',
-    emoji: '📄',
+    Icon: FileText,
     color: 'bg-violet-500',
     text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.',
     desc: 'Generate & send invoice',
   },
   {
     label: 'BookedIt',
-    emoji: '📅',
+    Icon: CalendarCheck,
     color: 'bg-emerald-500',
     text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!',
     desc: 'Schedule appointment',
   },
   {
     label: 'Quote',
-    emoji: '🛠️',
+    Icon: Wrench,
     color: 'bg-amber-500',
     text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00',
     desc: 'Send price estimate',
   },
   {
     label: 'Menu',
-    emoji: '🍔',
+    Icon: UtensilsCrossed,
     color: 'bg-rose-500',
     text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.',
     desc: 'Share product menu',
@@ -455,16 +466,19 @@ export default function Dashboard() {
                   {/* Quick tool pills */}
                   <div className="flex-shrink-0 border-b border-white/5 bg-[#13161e] overflow-x-auto scrollbar-none px-4 py-2">
                     <div className="flex gap-2 whitespace-nowrap">
-                      {TOOL_ACTIONS.map((tool) => (
-                        <button
-                          key={tool.label}
-                          onClick={() => handleToolAction(tool.text)}
-                          className="flex-shrink-0 flex items-center gap-1.5 rounded-full bg-white/5 border border-white/8 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-300 transition-all"
-                        >
-                          <span>{tool.emoji}</span>
-                          {tool.label}
-                        </button>
-                      ))}
+                      {TOOL_ACTIONS.map((tool) => {
+                        const ToolIcon = tool.Icon;
+                        return (
+                          <button
+                            key={tool.label}
+                            onClick={() => handleToolAction(tool.text)}
+                            className="flex-shrink-0 flex items-center gap-1.5 rounded-full bg-white/5 border border-white/8 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-300 transition-all"
+                          >
+                            <ToolIcon size={13} />
+                            {tool.label}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -553,24 +567,27 @@ export default function Dashboard() {
             <div className="px-4 pt-6 pb-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 px-1 mb-2">Quick Actions</p>
               <div className="rounded-2xl overflow-hidden bg-[#13161e] divide-y divide-white/[0.05]">
-                {TOOL_ACTIONS.map((tool) => (
-                  <button
-                    key={tool.label}
-                    onClick={() => handleToolAction(tool.text)}
-                    className="group w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-white/5 active:bg-white/8 transition-all"
-                  >
-                    <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${tool.color} flex items-center justify-center text-base leading-none`}>
-                      {tool.emoji}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">{tool.label}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{tool.desc}</p>
-                    </div>
-                    <svg className="flex-shrink-0 text-slate-700 group-hover:text-slate-500 transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                ))}
+                {TOOL_ACTIONS.map((tool) => {
+                  const ToolIcon = tool.Icon;
+                  return (
+                    <button
+                      key={tool.label}
+                      onClick={() => handleToolAction(tool.text)}
+                      className="group w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-white/5 active:bg-white/8 transition-all"
+                    >
+                      <div className={`flex-shrink-0 h-9 w-9 rounded-xl ${tool.color} flex items-center justify-center`}>
+                        <ToolIcon size={17} className="text-white" strokeWidth={2.25} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">{tool.label}</p>
+                        <p className="text-xs text-slate-600 mt-0.5">{tool.desc}</p>
+                      </div>
+                      <svg className="flex-shrink-0 text-slate-700 group-hover:text-slate-500 transition-colors" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  );
+                })}
               </div>
 
               {!activeContact && (
