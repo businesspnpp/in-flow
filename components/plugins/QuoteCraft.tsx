@@ -1,25 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calculator, Send } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
 
+interface AiPrefill {
+  selectedIds?: string[];
+  includeVat?: boolean;
+}
+
 interface QuoteCraftProps {
   activeChat: Chat | null;
+  aiPrefill?: AiPrefill;
 }
 
 const ITEMS = [
-  { id: 'diag', label: 'Basic Diagnostics', price: 250 },
-  { id: 'parts', label: 'Parts Replacement', price: 600 },
-  { id: 'labor', label: 'Labour', price: 400 },
-  { id: 'fluid', label: 'Fluid Top-Up', price: 150 },
-  { id: 'filter', label: 'Filter Replacement', price: 200 },
-  { id: 'vat', label: 'VAT (15%)', price: 0, isVat: true },
+  { id: 'diag',   label: 'Basic Diagnostics',   price: 250 },
+  { id: 'parts',  label: 'Parts Replacement',    price: 600 },
+  { id: 'labor',  label: 'Labour',               price: 400 },
+  { id: 'fluid',  label: 'Fluid Top-Up',         price: 150 },
+  { id: 'filter', label: 'Filter Replacement',   price: 200 },
+  { id: 'vat',    label: 'VAT (15%)',             price: 0, isVat: true },
 ];
 
-export default function QuoteCraft({ activeChat }: QuoteCraftProps) {
+export default function QuoteCraft({ activeChat, aiPrefill }: QuoteCraftProps) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
+
+  // Apply AI prefill when it arrives
+  useEffect(() => {
+    if (!aiPrefill) return;
+    const next = new Set<string>();
+    aiPrefill.selectedIds?.forEach((id) => next.add(id));
+    if (aiPrefill.includeVat) next.add('vat');
+    if (next.size > 0) setChecked(next);
+  }, [aiPrefill]);
 
   function toggle(id: string) {
     setChecked((prev) => {
@@ -71,6 +86,11 @@ export default function QuoteCraft({ activeChat }: QuoteCraftProps) {
       <div className="flex items-center gap-2">
         <Calculator size={16} className="text-amber-600" />
         <h3 className="text-sm font-bold text-zinc-900">QuoteCraft</h3>
+        {aiPrefill && (
+          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
+            AI filled
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
