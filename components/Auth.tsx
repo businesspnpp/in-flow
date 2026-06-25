@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
-import { LogOut } from 'lucide-react';
+import { LogOut, Mail, Lock, Zap } from 'lucide-react';
 
 interface AuthProps {
   onSignedIn: () => void;
@@ -169,22 +169,31 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     }
   }
 
+  // Placeholder OAuth handlers — wired up later
+  function handleAppleSignIn() {
+    setError('Apple sign-in is coming soon.');
+  }
+
+  function handleGoogleSignIn() {
+    setError('Google sign-in is coming soon.');
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-zinc-50 px-4 py-8">
+    <div className="flex items-center justify-center min-h-screen bg-[#0f1117] px-4 py-8">
       {/* If user is logged in, show sign out option */}
       {user && (
-        <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
+        <div className="w-full max-w-md rounded-2xl border border-white/8 bg-[#13161e] p-8 shadow-xl">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-zinc-900">Session Active</h2>
-            <p className="text-sm text-zinc-500 mt-2">
-              You are signed in as <span className="font-medium">{user.email}</span>
+            <h2 className="text-xl font-semibold text-white">Session Active</h2>
+            <p className="text-sm text-slate-500 mt-2">
+              You are signed in as <span className="font-medium text-slate-300">{user.email}</span>
             </p>
           </div>
 
           <button
             onClick={handleSignOut}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-rose-600 py-2.5 text-sm font-semibold text-white hover:bg-rose-500 transition-colors disabled:opacity-50"
           >
             <LogOut size={16} />
             {loading ? 'Signing out...' : 'Sign Out'}
@@ -194,112 +203,177 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
       {/* If user is not logged in, show auth form */}
       {!user && (
-        <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-zinc-900">
+        <div className="w-full max-w-md rounded-2xl border border-white/8 bg-[#13161e] p-8 shadow-xl">
+          {/* Brand mark */}
+          <div className="flex flex-col items-center text-center mb-6">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
+              <Zap size={22} className="text-[#0f1117]" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-xl font-semibold text-white">
               {mode === 'signin' ? 'Sign in to inFlow' : 'Create your account'}
             </h2>
-            <p className="text-sm text-zinc-500 mt-2">
+            <p className="text-sm text-slate-500 mt-2">
               {mode === 'signin'
-                ? 'Authenticate access credentials to access inFlow.'
+                ? 'Enter your email and password to access your inbox.'
                 : 'Create a secure account to get started.'}
             </p>
           </div>
 
           <div className="space-y-4">
             {/* Email field */}
-            <label className="block text-sm text-zinc-700 font-medium">
-              <span>Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (validationErrors.email) {
-                    setValidationErrors({ ...validationErrors, email: '' });
-                  }
-                }}
-                placeholder="name@company.za"
-                className="w-full mt-2 rounded-lg px-3 py-2.5 bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
-              />
+            <div>
+              <label className="relative block">
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (validationErrors.email) {
+                      setValidationErrors({ ...validationErrors, email: '' });
+                    }
+                  }}
+                  placeholder="E-mail"
+                  className="w-full rounded-xl pl-10 pr-3.5 py-3 bg-white/5 border border-white/8 text-sm text-white placeholder-slate-500 outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-colors"
+                />
+              </label>
               {validationErrors.email && (
-                <p className="text-xs text-red-600 mt-1">{validationErrors.email}</p>
+                <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.email}</p>
               )}
-            </label>
+            </div>
 
             {/* Password field */}
-            <label className="block text-sm text-zinc-700 font-medium">
-              <span>Password</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (validationErrors.password) {
-                    setValidationErrors({ ...validationErrors, password: '' });
-                  }
-                }}
-                placeholder={mode === 'signup' ? 'Min 8 characters with uppercase, number, special char' : ''}
-                className="w-full mt-2 rounded-lg px-3 py-2.5 bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
-              />
+            <div>
+              <label className="relative block">
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (validationErrors.password) {
+                      setValidationErrors({ ...validationErrors, password: '' });
+                    }
+                  }}
+                  placeholder={mode === 'signup' ? 'Min 8 characters, 1 uppercase, 1 number, 1 special' : 'Password'}
+                  className="w-full rounded-xl pl-10 pr-3.5 py-3 bg-white/5 border border-white/8 text-sm text-white placeholder-slate-500 outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-colors"
+                />
+              </label>
               {validationErrors.password && (
-                <p className="text-xs text-red-600 mt-1">{validationErrors.password}</p>
+                <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.password}</p>
               )}
-            </label>
+            </div>
 
             {/* Confirm password field - only for sign up */}
             {mode === 'signup' && (
-              <label className="block text-sm text-zinc-700 font-medium">
-                <span>Confirm Password</span>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (validationErrors.confirmPassword) {
-                      setValidationErrors({ ...validationErrors, confirmPassword: '' });
-                    }
-                  }}
-                  className="w-full mt-2 rounded-lg px-3 py-2.5 bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
-                />
+              <div>
+                <label className="relative block">
+                  <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (validationErrors.confirmPassword) {
+                        setValidationErrors({ ...validationErrors, confirmPassword: '' });
+                      }
+                    }}
+                    placeholder="Confirm password"
+                    className="w-full rounded-xl pl-10 pr-3.5 py-3 bg-white/5 border border-white/8 text-sm text-white placeholder-slate-500 outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-colors"
+                  />
+                </label>
                 {validationErrors.confirmPassword && (
-                  <p className="text-xs text-red-600 mt-1">{validationErrors.confirmPassword}</p>
+                  <p className="text-xs text-rose-400 mt-1.5 px-1">{validationErrors.confirmPassword}</p>
                 )}
-              </label>
+              </div>
+            )}
+
+            {/* Forgot password — sign in only */}
+            {mode === 'signin' && (
+              <div className="text-right -mt-1">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
             )}
 
             {/* General error message */}
             {error && (
-              <div className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+              <div className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
                 {error}
               </div>
             )}
 
-            {/* Action buttons */}
-            <div className="flex gap-3 pt-3">
+            {/* Primary action */}
+            <button
+              onClick={mode === 'signin' ? handleSignIn : handleSignUp}
+              disabled={loading}
+              className="w-full rounded-xl bg-amber-500 py-3 text-sm font-semibold text-[#0f1117] hover:bg-amber-400 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Processing...' : mode === 'signin' ? 'Continue' : 'Create Account'}
+            </button>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 pt-1">
+              <div className="flex-1 h-px bg-white/8" />
+              <span className="text-[11px] text-slate-500">
+                {mode === 'signin' ? "Don't have an account yet?" : 'Already have an account?'}
+              </span>
+              <div className="flex-1 h-px bg-white/8" />
+            </div>
+
+            {/* Mode toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === 'signin' ? 'signup' : 'signin');
+                setError('');
+                setValidationErrors({});
+              }}
+              disabled={loading}
+              className="w-full rounded-xl border border-white/10 py-3 text-sm font-semibold text-slate-200 hover:bg-white/5 transition-colors disabled:opacity-50"
+            >
+              {mode === 'signin' ? 'Create an account' : 'Back to Sign In'}
+            </button>
+
+            {/* OAuth buttons — visual only for now, wired up later */}
+            <div className="space-y-2.5 pt-1">
               <button
-                onClick={mode === 'signin' ? handleSignIn : handleSignUp}
+                type="button"
+                onClick={handleAppleSignIn}
                 disabled={loading}
-                className="flex-1 rounded-lg bg-amber-600 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
               >
-                {loading ? 'Processing...' : mode === 'signin' ? 'Sign in' : 'Create Account'}
+                <svg width="15" height="15" viewBox="0 0 384 512" fill="currentColor">
+                  <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z"/>
+                </svg>
+                Sign in with Apple
               </button>
               <button
-                onClick={() => {
-                  setMode(mode === 'signin' ? 'signup' : 'signin');
-                  setError('');
-                  setValidationErrors({});
-                }}
+                type="button"
+                onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="flex-1 rounded-lg border border-zinc-300 bg-white py-2.5 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
               >
-                {mode === 'signin' ? 'Register' : 'Back to Sign In'}
+                <svg width="15" height="15" viewBox="0 0 488 512">
+                  <path fill="#EA4335" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/>
+                </svg>
+                Sign in with Google
               </button>
             </div>
           </div>
+
+          {/* Terms footer */}
+          <p className="text-[11px] text-slate-600 text-center mt-6 leading-relaxed">
+            By continuing, you agree to the{' '}
+            <span className="text-slate-400 underline cursor-pointer">Terms</span> and{' '}
+            <span className="text-slate-400 underline cursor-pointer">Privacy Policy</span>.
+          </p>
         </div>
       )}
     </div>
   );
 }
-
