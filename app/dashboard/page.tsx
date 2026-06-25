@@ -563,7 +563,7 @@ export default function Dashboard() {
 
         {/* ─── Tools Tab ─── */}
         {globalTab === 'tools' && (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="px-4 pt-6 pb-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 px-1 mb-2">Quick Actions</p>
               <div className="rounded-2xl overflow-hidden bg-[#13161e] divide-y divide-white/[0.05]">
@@ -602,7 +602,7 @@ export default function Dashboard() {
 
         {/* ─── Settings Tab ─── */}
         {globalTab === 'settings' && (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="px-4 py-6 max-w-2xl">
               {business ? (
                 <BusinessSettings
