@@ -1,22 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CalendarCheck, Send } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
 
+interface AiPrefill {
+  suggestedSlot?: string; // e.g. "14:00"
+}
+
 interface BookedItProps {
   activeChat: Chat | null;
+  aiPrefill?: AiPrefill;
 }
 
 const SLOTS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-export default function BookedIt({ activeChat }: BookedItProps) {
+export default function BookedIt({ activeChat, aiPrefill }: BookedItProps) {
   const [booked, setBooked] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
+  // Apply AI prefill — auto-select the suggested slot if it's valid
+  useEffect(() => {
+    if (!aiPrefill?.suggestedSlot) return;
+    const slot = aiPrefill.suggestedSlot;
+    if (SLOTS.includes(slot) && !booked.has(slot)) {
+      setSelected(slot);
+    }
+  }, [aiPrefill, booked]);
+
   function toggleSlot(slot: string) {
-    if (booked.has(slot)) return; // can't unbook directly
+    if (booked.has(slot)) return;
     setSelected(slot === selected ? null : slot);
   }
 
@@ -68,6 +82,11 @@ export default function BookedIt({ activeChat }: BookedItProps) {
       <div className="flex items-center gap-2">
         <CalendarCheck size={16} className="text-amber-600" />
         <h3 className="text-sm font-bold text-zinc-900">BookedIt</h3>
+        {aiPrefill && (
+          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
+            AI filled
+          </span>
+        )}
       </div>
 
       <p className="text-xs text-zinc-600">
@@ -78,6 +97,7 @@ export default function BookedIt({ activeChat }: BookedItProps) {
         {SLOTS.map((slot) => {
           const isBooked = booked.has(slot);
           const isSelected = selected === slot;
+          const isAiSuggested = aiPrefill?.suggestedSlot === slot && !isBooked;
           return (
             <button
               key={slot}
@@ -88,6 +108,8 @@ export default function BookedIt({ activeChat }: BookedItProps) {
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 cursor-default'
                   : isSelected
                   ? 'bg-amber-600 text-white border border-amber-600'
+                  : isAiSuggested
+                  ? 'bg-violet-50 text-violet-700 border border-violet-300 hover:bg-amber-50 hover:border-amber-300 hover:text-zinc-700'
                   : 'bg-white text-zinc-700 border border-zinc-200 hover:border-amber-300 hover:bg-amber-50'
               }`}
             >
@@ -95,7 +117,10 @@ export default function BookedIt({ activeChat }: BookedItProps) {
               {isBooked && (
                 <span className="block text-[9px] mt-0.5 text-emerald-600 font-medium">Booked</span>
               )}
-              {!isBooked && !isSelected && (
+              {!isBooked && isAiSuggested && !isSelected && (
+                <span className="block text-[9px] mt-0.5 text-violet-500 font-medium">AI pick</span>
+              )}
+              {!isBooked && !isAiSuggested && !isSelected && (
                 <span className="block text-[9px] mt-0.5 text-zinc-500">Free</span>
               )}
             </button>
