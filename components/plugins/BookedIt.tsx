@@ -278,15 +278,15 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <CalendarCheck size={16} className="text-amber-600" />
-        <h3 className="text-sm font-bold text-zinc-900">BookedIt</h3>
+        <h3 className="text-sm font-bold text-zinc-200">BookedIt</h3>
         {Boolean(aiContext || aiPrefill) && (
-          <span className="ml-auto text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-semibold">
+          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
             AI matched
           </span>
         )}
       </div>
 
-      <p className="text-xs text-zinc-600">Pick a day to open its detailed range scheduler.</p>
+      <p className="text-xs text-zinc-400">Pick a day to open its detailed range scheduler.</p>
 
       <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
         {dayTiles.map((tile) => (
@@ -296,7 +296,7 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
             className={`rounded-lg border px-2 py-2 text-center transition-colors ${
               selectedDate === tile.iso
                 ? 'border-amber-500 bg-amber-50 text-amber-700'
-                : 'border-zinc-200 bg-white text-zinc-600 hover:border-amber-300'
+                : 'border-zinc-800/80 bg-[#1c1c22] text-zinc-300 hover:border-amber-500/50'
             }`}
           >
             <div className="text-[10px] uppercase tracking-wide">{tile.label}</div>
@@ -307,8 +307,8 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
       </div>
 
       {selectedDate && (
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 flex flex-col gap-3">
-          <p className="text-xs font-semibold text-zinc-700">Schedule for {selectedDate}</p>
+        <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3 flex flex-col gap-3">
+          <p className="text-xs font-semibold text-zinc-200">Schedule for {selectedDate}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-end">
             <div className="flex flex-col gap-1">
@@ -317,7 +317,7 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
                 type="time"
                 value={startTime}
                 onChange={(event) => setStartTime(event.target.value)}
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -326,7 +326,7 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
                 type="time"
                 value={endTime}
                 onChange={(event) => setEndTime(event.target.value)}
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
               />
             </div>
             <button
@@ -338,13 +338,13 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
             </button>
           </div>
 
-          <div className="rounded-lg border border-zinc-200 bg-white p-3">
+          <div className="rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3">
             <p className="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold mb-2">Existing bookings</p>
             {existing.length === 0 && <p className="text-xs text-zinc-500">No confirmed bookings on this day.</p>}
             {existing.length > 0 && (
               <div className="space-y-1">
                 {existing.map((row) => (
-                  <div key={row.id} className="text-xs text-zinc-700 flex items-center gap-2">
+                  <div key={row.id} className="text-xs text-zinc-300 flex items-center gap-2">
                     <Clock3 size={12} className="text-zinc-400" />
                     {row.start_time.slice(0, 5)} - {row.end_time.slice(0, 5)}
                   </div>

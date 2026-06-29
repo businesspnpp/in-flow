@@ -62,3 +62,21 @@ export async function ensureChatExists(
     throw new Error(`Failed to ensure chat exists: ${error.message}`);
   }
 }
+
+export function isMissingTableError(error: unknown, tableName: string): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const err = error as { code?: string; message?: string; details?: string; hint?: string };
+  const blob = `${err.code ?? ''} ${err.message ?? ''} ${err.details ?? ''} ${err.hint ?? ''}`.toLowerCase();
+  const table = tableName.toLowerCase();
+
+  return (
+    blob.includes(table) &&
+    (blob.includes('404') ||
+      blob.includes('not found') ||
+      blob.includes('does not exist') ||
+      blob.includes('could not find the table') ||
+      blob.includes('schema cache') ||
+      blob.includes('pgrst'))
+  );
+}

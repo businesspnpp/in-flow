@@ -177,17 +177,17 @@ export default function MenuDrop({ activeChat: _activeChat }: MenuDropProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <ShoppingBag size={16} className="text-rose-600" />
-        <h3 className="text-sm font-bold text-zinc-900">Menu Drop</h3>
+        <h3 className="text-sm font-bold text-zinc-200">Menu Drop</h3>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 p-3 bg-white">
+      <div className="rounded-xl border border-zinc-800/80 p-3 bg-[#1c1c22]">
         <p className="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold mb-2">Add New Item</p>
         <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px_auto] gap-2">
           <input
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
             placeholder="Item Name"
-            className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-rose-500"
+            className="w-full rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
           />
           <input
             value={newPrice}
@@ -196,7 +196,7 @@ export default function MenuDrop({ activeChat: _activeChat }: MenuDropProps) {
             type="number"
             min="0"
             step="0.01"
-            className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-rose-500"
+            className="w-full rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
           />
           <button
             onClick={addItem}
@@ -209,18 +209,18 @@ export default function MenuDrop({ activeChat: _activeChat }: MenuDropProps) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-zinc-50 max-h-72 overflow-y-auto divide-y divide-zinc-100">
+      <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 max-h-72 overflow-y-auto divide-y divide-zinc-800/70">
         {items.length === 0 && (
           <div className="p-4 text-xs text-zinc-500">No catalog items yet. Add your first item above.</div>
         )}
 
         {items.map((item) => (
-          <div key={item.id} className="p-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div key={item.id} className="p-3 flex flex-col gap-2 sm:flex-row sm:items-center bg-[#1c1c22]">
             <input
               value={item.name}
               onChange={(event) => updateLocalItem(item.id, { name: event.target.value })}
               onBlur={() => persistItem(item.id)}
-              className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-rose-500"
+              className="flex-1 rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
             />
             <div className="flex items-center gap-2">
               <span className="text-xs text-zinc-500">R</span>
@@ -231,7 +231,7 @@ export default function MenuDrop({ activeChat: _activeChat }: MenuDropProps) {
                 step="0.01"
                 onChange={(event) => updateLocalItem(item.id, { price: Number.parseFloat(event.target.value || '0') })}
                 onBlur={() => persistItem(item.id)}
-                className="w-28 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-rose-500"
+                className="w-28 rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
               />
 
               <button

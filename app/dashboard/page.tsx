@@ -12,6 +12,7 @@ import PinTracker from '@/components/plugins/PinTracker';
 import PayNow from '@/components/plugins/PayNow';
 import ReviewLink from '@/components/plugins/ReviewLink';
 import PromoBlast from '@/components/plugins/PromoBlast';
+import { isMissingTableError } from '@/lib/inflow-client';
 import {
   ArrowLeft,
   ArrowRight,
@@ -138,6 +139,47 @@ const TOOL_ACTIONS = [
   { label: 'Quote',    Icon: Wrench,          color: 'bg-amber-500',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00' },
   { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-500',    text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
 ];
+
+function getToolContext(activeModule: string | null): { title: string; description: string } {
+  switch (activeModule) {
+    case 'Invoice':
+      return {
+        title: 'Fast-Invoice Engine',
+        description:
+          'Instantly compile services and itemized amounts from your catalog into an interactive invoice. Confirming drafts automatically generates a secure link directly inside the active chat thread.',
+      };
+    case 'Booked':
+      return {
+        title: 'BookedIt Scheduler',
+        description:
+          'Manage real-time operational availability, review existing appointments, and drop structured calendar invite cards into the chat to prevent double-bookings.',
+      };
+    case 'Quote':
+      return {
+        title: 'QuoteCraft Estimator',
+        description:
+          'Draft comprehensive custom estimates and milestone itemizations for complex client inquiries before committing to a formal financial collection billing item.',
+      };
+    case 'Menu':
+      return {
+        title: 'MenuDrop Digital Catalog',
+        description:
+          'Configure and browse available inventories, core prices, and operational variants. Send structured micro-catalogs to customers directly within the chat timeline.',
+      };
+    case 'PayNow':
+      return {
+        title: 'PayNow Transaction Hub',
+        description:
+          'Generate rapid custom amounts or instantaneous secure link nodes for customer checkouts, facilitating immediate deposits or full settlements via integrated payment rails.',
+      };
+    default:
+      return {
+        title: 'Workspace Utility Tool',
+        description:
+          'Select an operational action module from the utility matrix deck bar above to activate contextual small business automation workflows.',
+      };
+  }
+}
 
 // ─── Channel helpers ──────────────────────────────────────────────────────────
 
@@ -401,7 +443,16 @@ export default function Dashboard() {
   const [aiExtraction, setAiExtraction]       = useState<AiExtraction | null>(null);
   const [customerTransactions, setCustomerTransactions] = useState<InflowTransaction[]>([]);
   const [txLoading, setTxLoading] = useState(false);
+  const [invoiceTableMissing, setInvoiceTableMissing] = useState(false);
   const [showMobileIntel, setShowMobileIntel] = useState(false);
+  const activeModuleLabel = useMemo(() => {
+    return ALL_TOOLS.find((tool) => tool.id === activeToolId)?.label ?? null;
+  }, [activeToolId]);
+
+  const activeToolContext = useMemo(() => {
+    return getToolContext(activeModuleLabel);
+  }, [activeModuleLabel]);
+
 
   const bottomRef  = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
@@ -471,7 +522,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadCustomerTransactions() {
-      if (!activeContact || !selectedContact) {
+      if (!activeContact || !selectedContact || invoiceTableMissing) {
         setCustomerTransactions([]);
         return;
       }
@@ -491,6 +542,9 @@ export default function Dashboard() {
 
         const { data, error } = await query;
         if (error) {
+          if (isMissingTableError(error, 'inflow_invoices')) {
+            setInvoiceTableMissing(true);
+          }
           setCustomerTransactions([]);
           setTxLoading(false);
           return;
@@ -505,7 +559,7 @@ export default function Dashboard() {
     }
 
     loadCustomerTransactions();
-  }, [activeContact, selectedContact]);
+  }, [activeContact, invoiceTableMissing, selectedContact]);
 
   useEffect(() => {
     if (!activeContact || globalTab !== 'chats') {
@@ -1496,11 +1550,10 @@ export default function Dashboard() {
                       <div className="rounded-2xl border border-zinc-800 bg-[#16161a] p-4">
                         <p className="text-[11px] uppercase tracking-widest text-zinc-500">Tool Context</p>
                         <p className="mt-2 text-sm text-zinc-300">
-                          Active module: <span className="font-semibold text-zinc-100">{ALL_TOOLS.find((tool) => tool.id === activeToolId)?.label}</span>
+                          Active module: <span className="font-semibold text-zinc-100">{activeModuleLabel}</span>
                         </p>
-                        <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                          Desktop mode allocates dedicated workspace depth to avoid compressed mobile-style rendering on wide screens.
-                        </p>
+                        <p className="mt-2 text-sm font-semibold text-zinc-100">{activeToolContext.title}</p>
+                        <p className="mt-2 text-xs leading-relaxed text-zinc-500">{activeToolContext.description}</p>
                       </div>
                     </div>
                   )}

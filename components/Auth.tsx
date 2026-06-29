@@ -179,34 +179,34 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#121214] p-4 sm:p-6 md:p-8">
-      <div className="w-full max-w-5xl min-h-[600px] grid grid-cols-1 md:grid-cols-12 bg-[#16161a] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50">
-        <aside className="hidden md:flex md:col-span-5 flex-col justify-between p-10 bg-gradient-to-b from-[#1a1a1f] to-[#141417] border-r border-zinc-800/60 relative">
+    <div className="min-h-screen w-full flex items-stretch justify-center bg-[#121214]">
+      <div className="w-full max-w-[1440px] min-h-screen grid grid-cols-1 md:grid-cols-12 bg-[#16161a]">
+        <aside className="hidden md:flex md:col-span-5 flex-col justify-between p-16 bg-gradient-to-b from-[#1a1a1f] to-[#141417] border-r border-zinc-800/60">
           <div>
             <div className="bg-amber-500/10 text-amber-500 rounded-xl p-2.5 w-fit">
               <Zap size={20} strokeWidth={2.5} />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mt-4">inFlow Console</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-zinc-100 mt-4">inFlow Console</h1>
             <p className="text-sm text-zinc-400 mt-2 max-w-xs">
               Manage conversations, tools, and customer context from one precise workspace.
             </p>
           </div>
 
-          <div className="space-y-3">
-            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-4 rounded-xl space-y-1">
+          <div className="space-y-6">
+            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-6 rounded-xl space-y-3">
               <p className="text-[10px] font-semibold tracking-wider text-amber-500/90">OPERATIONAL CLARITY</p>
               <p className="text-xs text-zinc-400">Minimal, high-contrast control surfaces for teams that move fast.</p>
             </div>
-            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-4 rounded-xl space-y-1">
+            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-6 rounded-xl space-y-3">
               <p className="text-[10px] font-semibold tracking-wider text-amber-500/90">UNIFIED COMMS</p>
               <p className="text-xs text-zinc-400">WhatsApp, Instagram, and Facebook routed into one structured inbox.</p>
             </div>
           </div>
         </aside>
 
-        <section className="col-span-1 md:col-span-7 flex flex-col justify-center items-center px-6 py-12 sm:px-12 md:px-16 bg-[#16161a]">
+        <section className="col-span-1 md:col-span-7 flex flex-col justify-center items-center p-12 sm:p-16 md:p-24 bg-[#16161a]">
           {user ? (
-            <div className="w-full max-w-sm flex flex-col space-y-6">
+            <div className="w-full max-w-md space-y-8">
               <div className="w-full border border-zinc-800 bg-[#17171c] p-8 rounded-2xl shadow-xl">
                 <div className="mb-6">
                   <h2 className="text-xl font-semibold text-white">Session Active</h2>
@@ -226,7 +226,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               </div>
             </div>
           ) : (
-            <div className="w-full max-w-sm flex flex-col space-y-6">
+            <div className="w-full max-w-md space-y-8">
               <div className="flex flex-col items-center text-center mb-1">
                 <h2 className="text-xl font-bold text-white">
                   {mode === 'signin' ? 'Sign in to inFlow' : 'Create your account'}

@@ -38,10 +38,10 @@ export default function ReviewLink({ activeChat, aiPrefill }: ReviewLinkProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Star size={16} className="text-yellow-500" />
-        <h3 className="text-sm font-bold text-zinc-900">Review Link</h3>
+        <h3 className="text-sm font-bold text-zinc-200">Review Link</h3>
       </div>
 
-      <p className="text-sm text-zinc-600">Send a Google review request to your customer</p>
+      <p className="text-sm text-zinc-400">Send a Google review request to your customer</p>
 
       <button
         onClick={sendReviewLink}

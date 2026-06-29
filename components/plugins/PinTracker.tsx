@@ -37,14 +37,14 @@ export default function PinTracker({ activeChat, aiPrefill }: PinTrackerProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <MapPin size={16} className="text-sky-600" />
-        <h3 className="text-sm font-bold text-zinc-900">Pin Tracker</h3>
+        <h3 className="text-sm font-bold text-zinc-200">Pin Tracker</h3>
       </div>
 
       <input
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder="Enter address"
-        className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+        className="w-full px-3 py-2 bg-[#121214] border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 focus:border-amber-500/50"
       />
 
       <button

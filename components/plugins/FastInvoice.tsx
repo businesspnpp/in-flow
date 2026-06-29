@@ -7,6 +7,7 @@ import {
   buildPublicLink,
   createShortToken,
   ensureChatExists,
+  isMissingTableError,
   isUuid,
   resolveBusinessId,
 } from '@/lib/inflow-client';
@@ -29,6 +30,8 @@ type DraftSelection = {
   quantity: number;
   unitPrice: number;
 };
+
+let invoiceTableUnavailable = false;
 
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -211,24 +214,30 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
 
     const chatId = isUuid(activeChat.id) ? activeChat.id : null;
 
-    const { error: insertInvoiceError } = await supabase.from('inflow_invoices').insert({
-      business_id: businessId,
-      chat_id: chatId,
-      type: 'invoice',
-      reference,
-      customer_name: activeChat.name,
-      line_items: lineItems,
-      subtotal,
-      vat_amount: 0,
-      total: subtotal,
-      currency: 'ZAR',
-      status: 'sent',
-    });
+    if (!invoiceTableUnavailable) {
+      const { error: insertInvoiceError } = await supabase.from('inflow_invoices').insert({
+        business_id: businessId,
+        chat_id: chatId,
+        type: 'invoice',
+        reference,
+        customer_name: activeChat.name,
+        line_items: lineItems,
+        subtotal,
+        vat_amount: 0,
+        total: subtotal,
+        currency: 'ZAR',
+        status: 'sent',
+      });
 
-    if (insertInvoiceError) {
-      setError(insertInvoiceError.message);
-      setSending(false);
-      return;
+      if (insertInvoiceError && !isMissingTableError(insertInvoiceError, 'inflow_invoices')) {
+        setError(insertInvoiceError.message);
+        setSending(false);
+        return;
+      }
+
+      if (insertInvoiceError && isMissingTableError(insertInvoiceError, 'inflow_invoices')) {
+        invoiceTableUnavailable = true;
+      }
     }
 
     const messageLines = selectedRows
@@ -282,9 +291,9 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
     <div className="flex flex-col gap-4 relative">
       <div className="flex items-center gap-2">
         <FileText size={16} className="text-amber-600" />
-        <h3 className="text-sm font-bold text-zinc-900">Fast Invoice</h3>
+        <h3 className="text-sm font-bold text-zinc-200">Fast Invoice</h3>
         {Boolean(aiContext || aiPrefill) && (
-          <span className="ml-auto text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-semibold">
+          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
             AI matched
           </span>
         )}
@@ -305,13 +314,13 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
           {catalog.map((item) => {
             const state = draft[item.id];
             return (
-              <div key={item.id} className="rounded-lg border border-zinc-200 bg-white p-3 flex flex-col gap-2">
+              <div key={item.id} className="rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3 flex flex-col gap-2">
                 <button
                   className="flex items-center gap-2 text-left"
                   onClick={() => patchDraft(item.id, { checked: !state?.checked })}
                 >
                   {state?.checked ? <CheckSquare size={16} className="text-amber-600" /> : <Square size={16} className="text-zinc-400" />}
-                  <span className="text-sm font-medium text-zinc-900">{item.name}</span>
+                  <span className="text-sm font-medium text-zinc-200">{item.name}</span>
                 </button>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -321,7 +330,7 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
                     step="1"
                     value={state?.quantity ?? 1}
                     onChange={(event) => patchDraft(item.id, { quantity: Math.max(1, Number.parseInt(event.target.value || '1', 10)) })}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
                     placeholder="Qty"
                   />
                   <input
@@ -330,7 +339,7 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
                     step="0.01"
                     value={state?.unitPrice ?? Number(item.price)}
                     onChange={(event) => patchDraft(item.id, { unitPrice: Math.max(0, Number.parseFloat(event.target.value || '0')) })}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
                     placeholder="Unit price"
                   />
                 </div>
@@ -340,13 +349,13 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
         </div>
       )}
 
-      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm">
+      <div className="rounded-lg border border-zinc-800/80 bg-zinc-900/60 p-3 text-sm">
         <div className="flex items-center justify-between">
-          <span className="text-zinc-600">Selected items</span>
-          <span className="font-semibold text-zinc-900">{selectedRows.length}</span>
+          <span className="text-zinc-400">Selected items</span>
+          <span className="font-semibold text-zinc-200">{selectedRows.length}</span>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-zinc-600">Total</span>
+          <span className="text-zinc-400">Total</span>
           <span className="font-bold text-amber-600">R{subtotal.toFixed(2)}</span>
         </div>
       </div>
@@ -363,9 +372,9 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
       {error && <p className="text-xs text-rose-500">{error}</p>}
 
       {showConfirm && (
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border border-zinc-200 p-4 flex flex-col gap-3 z-20">
-          <h4 className="text-sm font-semibold text-zinc-900">Confirm Invoice Payload</h4>
-          <div className="max-h-56 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-3 text-xs text-zinc-700 space-y-2">
+        <div className="absolute inset-0 bg-[#121214]/95 backdrop-blur-sm rounded-xl border border-zinc-800/80 p-4 flex flex-col gap-3 z-20">
+          <h4 className="text-sm font-semibold text-zinc-200">Confirm Invoice Payload</h4>
+          <div className="max-h-56 overflow-y-auto rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3 text-xs text-zinc-300 space-y-2">
             {selectedRows.map((row) => (
               <div key={row.item.id} className="flex justify-between gap-3">
                 <span>{row.item.name} x{row.state.quantity}</span>
@@ -373,14 +382,14 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-sm font-semibold text-zinc-900">
+          <div className="flex justify-between text-sm font-semibold text-zinc-200">
             <span>Total</span>
             <span>R{subtotal.toFixed(2)}</span>
           </div>
           <div className="flex gap-2 mt-auto">
             <button
               onClick={() => setShowConfirm(false)}
-              className="flex-1 rounded-lg border border-zinc-200 py-2 text-sm font-medium text-zinc-700"
+              className="flex-1 rounded-lg border border-zinc-800/80 bg-zinc-900/60 py-2 text-sm font-medium text-zinc-200"
             >
               Back
             </button>

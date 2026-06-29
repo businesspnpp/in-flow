@@ -40,27 +40,27 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <CreditCard size={16} className="text-blue-600" />
-        <h3 className="text-sm font-bold text-zinc-900">Pay Now</h3>
+        <h3 className="text-sm font-bold text-zinc-200">Pay Now</h3>
       </div>
 
       <div className="space-y-3">
         <div>
-          <label className="text-xs font-medium text-zinc-600 block mb-1">Amount *</label>
+          <label className="text-xs font-medium text-zinc-400 block mb-1">Amount *</label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-[#121214] border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 focus:border-amber-500/50"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-zinc-600 block mb-1">Description</label>
+          <label className="text-xs font-medium text-zinc-400 block mb-1">Description</label>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Payment for services"
-            className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-[#121214] border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 focus:border-amber-500/50"
           />
         </div>
       </div>

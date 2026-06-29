@@ -90,9 +90,9 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Megaphone size={16} className="text-pink-500" />
-        <h3 className="text-sm font-bold text-zinc-900">PromoBlast</h3>
+        <h3 className="text-sm font-bold text-zinc-200">PromoBlast</h3>
         {aiPrefill && (
-          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
+          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
             AI filled
           </span>
         )}
@@ -117,7 +117,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                   className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition-colors ${
                     voucherCode === p.code
                       ? 'bg-pink-500 border-pink-500 text-white'
-                      : 'bg-white border-zinc-200 text-zinc-700 hover:border-pink-300'
+                      : 'bg-[#1c1c22] border-zinc-800/80 text-zinc-300 hover:border-pink-400/40'
                   }`}
                 >
                   <span className="mr-1">{p.emoji}</span>
@@ -137,11 +137,11 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                 type="text"
                 value={voucherCode}
                 onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                className="flex-1 bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-100 transition-colors font-mono tracking-wider"
+                className="flex-1 bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors font-mono tracking-wider"
               />
               <button
                 onClick={() => setVoucherCode(generateCode())}
-                className="p-2.5 rounded-lg border border-zinc-200 text-zinc-500 hover:border-pink-300 hover:text-pink-500 transition-colors"
+                className="p-2.5 rounded-xl border border-zinc-800/80 bg-[#1c1c22] text-zinc-400 hover:border-pink-400/40 hover:text-pink-400 transition-colors"
                 title="Generate random code"
               >
                 <RefreshCw size={14} />
@@ -159,7 +159,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               placeholder="e.g. 10% off your next booking"
               value={discountText}
               onChange={(e) => setDiscountText(e.target.value)}
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-100 transition-colors"
+              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors"
             />
           </div>
 
@@ -172,7 +172,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               type="text"
               value={bookingLink}
               onChange={(e) => setBookingLink(e.target.value)}
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-100 transition-colors font-mono text-xs"
+              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors font-mono text-xs"
             />
           </div>
 
@@ -189,7 +189,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     expiry === opt
                       ? 'bg-pink-500 border-pink-500 text-white'
-                      : 'bg-white border-zinc-200 text-zinc-600 hover:border-pink-300'
+                      : 'bg-[#1c1c22] border-zinc-800/80 text-zinc-300 hover:border-pink-400/40'
                   }`}
                 >
                   {opt}
@@ -208,12 +208,12 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               placeholder="Leave blank to use auto-generated message…"
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-100 transition-colors resize-none"
+              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors resize-none"
             />
           </div>
 
           {/* Preview */}
-          <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-200 text-xs text-zinc-600 whitespace-pre-line leading-relaxed font-mono">
+          <div className="bg-zinc-900/60 rounded-lg p-3 border border-zinc-800/80 text-xs text-zinc-300 whitespace-pre-line leading-relaxed font-mono">
             {fullText}
           </div>
 
@@ -240,4 +240,4 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
       )}
     </div>
   );
-          }
+}
