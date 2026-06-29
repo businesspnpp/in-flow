@@ -24,31 +24,25 @@ export default function ReviewLink({ activeChat, aiPrefill }: ReviewLinkProps) {
   async function sendReviewLink() {
     if (!activeChat) return;
     setSending(true);
-
-    await supabase.from('messages').insert({
-      chat_id: activeChat.id,
-      sender: 'business',
-      body: reviewText,
-    });
-
+    await supabase.from('messages').insert({ chat_id: activeChat.id, sender: 'business', body: reviewText });
     setSending(false);
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Star size={16} className="text-yellow-500" />
-        <h3 className="text-sm font-bold text-zinc-200">Review Link</h3>
+        <Star size={15} className="text-yellow-500" />
+        <h3 className="text-sm font-semibold text-zinc-800">Review Link</h3>
       </div>
 
-      <p className="text-sm text-zinc-400">Send a Google review request to your customer</p>
+      <p className="text-sm text-zinc-500">Send a Google review request to your customer.</p>
 
       <button
         onClick={sendReviewLink}
         disabled={!activeChat || sending}
-        className="flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
-        <Send size={14} />
+        <Send size={13} />
         Send Review Request
       </button>
     </div>
