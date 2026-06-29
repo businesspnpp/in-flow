@@ -327,23 +327,23 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-5 w-full min-w-0 bg-white border-2 border-zinc-200 p-5 md:p-5">
+      <div className="space-y-6 w-full min-w-0 bg-white p-6 md:p-8">
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-0.5">Connected Channels</p>
+          <p className="text-xs font-bold uppercase tracking-tight text-zinc-500 mb-1">Connected Channels</p>
           <p className="text-xs text-zinc-500">
             Manage platform channels connected to your inFlow account.
           </p>
         </div>
 
-        <div className="flex flex-col gap-2 w-full min-w-0">
+        <div className="space-y-4 w-full min-w-0">
           {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel, showRetry, howItWorks }) => {
             const isSms = id === 'sms';
             const isOpen = activeChannel === id;
             const isLoading = loading === id;
 
             return (
-              <div key={id} className="flex flex-col w-full min-w-0">
+              <div key={id} className="flex flex-col w-full min-w-0 bg-white">
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
