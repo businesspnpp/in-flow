@@ -121,62 +121,56 @@ const ALL_TOOLS: {
   color: string;
   desc: string;
 }[] = [
-  { id: 'invoice',  label: 'Invoice',  Icon: FileText,        color: 'bg-violet-500',  desc: 'Generate & send invoice' },
-  { id: 'booked',   label: 'Booked',   Icon: CalendarCheck,   color: 'bg-emerald-500', desc: 'Schedule appointment' },
-  { id: 'quote',    label: 'Quote',    Icon: Calculator,      color: 'bg-amber-500',   desc: 'Send price estimate' },
-  { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,     color: 'bg-rose-500',    desc: 'Share product menu' },
-  { id: 'pin',      label: 'Pin',      Icon: MapPin,          color: 'bg-sky-500',     desc: 'Send location pin' },
-  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,      color: 'bg-blue-500',    desc: 'Send secure payment link' },
-  { id: 'review',   label: 'Review',   Icon: Star,            color: 'bg-yellow-500',  desc: 'Request Google review' },
-  { id: 'promo',    label: 'Promo',    Icon: Megaphone,       color: 'bg-pink-500',    desc: 'Send promo & voucher' },
-  { id: 'settings', label: 'Settings', Icon: Settings,        color: 'bg-slate-500',   desc: 'Channel & account settings' },
+  { id: 'invoice',  label: 'Invoice',  Icon: FileText,        color: 'bg-violet-600',  desc: 'Generate and send an invoice' },
+  { id: 'booked',   label: 'Booked',   Icon: CalendarCheck,   color: 'bg-emerald-600', desc: 'Schedule an appointment' },
+  { id: 'quote',    label: 'Quote',    Icon: Calculator,      color: 'bg-amber-600',   desc: 'Send a price estimate' },
+  { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,     color: 'bg-rose-600',    desc: 'Share your product menu' },
+  { id: 'pin',      label: 'Pin',      Icon: MapPin,          color: 'bg-sky-600',     desc: 'Send a location pin' },
+  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,      color: 'bg-blue-600',    desc: 'Send a secure payment link' },
+  { id: 'review',   label: 'Review',   Icon: Star,            color: 'bg-yellow-600',  desc: 'Request a Google review' },
+  { id: 'promo',    label: 'Promo',    Icon: Megaphone,       color: 'bg-pink-600',    desc: 'Send a promo or voucher' },
+  { id: 'settings', label: 'Settings', Icon: Settings,        color: 'bg-zinc-600',    desc: 'Channel and account settings' },
 ];
 
 // Legacy quick-action pills (no AI pre-fill needed — these are one-tap sends)
 const TOOL_ACTIONS = [
-  { label: 'Invoice',  Icon: FileText,        color: 'bg-violet-500',  text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
-  { label: 'BookedIt', Icon: CalendarCheck,   color: 'bg-emerald-500', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
-  { label: 'Quote',    Icon: Wrench,          color: 'bg-amber-500',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00' },
-  { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-500',    text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
+  { label: 'Invoice',  Icon: FileText,        color: 'bg-violet-600',  text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
+  { label: 'BookedIt', Icon: CalendarCheck,   color: 'bg-emerald-600', text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
+  { label: 'Quote',    Icon: Wrench,          color: 'bg-amber-600',   text: '🛠️ Quote Details: Basic Diagnostics & Labour — Total: R750.00' },
+  { label: 'Menu',     Icon: UtensilsCrossed, color: 'bg-rose-600',    text: '🍔 Order Summary: 1x Quarter Leg & Chips (R55). Processing order now.' },
 ];
 
 function getToolContext(activeModule: string | null): { title: string; description: string } {
   switch (activeModule) {
     case 'Invoice':
       return {
-        title: 'Fast-Invoice Engine',
-        description:
-          'Instantly compile services and itemized amounts from your catalog into an interactive invoice. Confirming drafts automatically generates a secure link directly inside the active chat thread.',
+        title: 'Fast-Invoice',
+        description: 'Pull items and amounts from your catalog into an invoice. Confirming a draft drops a payment link straight into the chat.',
       };
     case 'Booked':
       return {
-        title: 'BookedIt Scheduler',
-        description:
-          'Manage real-time operational availability, review existing appointments, and drop structured calendar invite cards into the chat to prevent double-bookings.',
+        title: 'BookedIt',
+        description: 'Check availability, review existing appointments, and send a calendar invite into the chat without double-booking.',
       };
     case 'Quote':
       return {
-        title: 'QuoteCraft Estimator',
-        description:
-          'Draft comprehensive custom estimates and milestone itemizations for complex client inquiries before committing to a formal financial collection billing item.',
+        title: 'QuoteCraft',
+        description: 'Put together a custom estimate with line items before turning it into a formal invoice.',
       };
     case 'Menu':
       return {
-        title: 'MenuDrop Digital Catalog',
-        description:
-          'Configure and browse available inventories, core prices, and operational variants. Send structured micro-catalogs to customers directly within the chat timeline.',
+        title: 'MenuDrop',
+        description: 'Manage your catalog, prices, and variants. Send a compact menu card straight into the chat.',
       };
     case 'PayNow':
       return {
-        title: 'PayNow Transaction Hub',
-        description:
-          'Generate rapid custom amounts or instantaneous secure link nodes for customer checkouts, facilitating immediate deposits or full settlements via integrated payment rails.',
+        title: 'PayNow',
+        description: 'Generate a one-off amount or a reusable payment link for deposits and full settlements.',
       };
     default:
       return {
-        title: 'Workspace Utility Tool',
-        description:
-          'Select an operational action module from the utility matrix deck bar above to activate contextual small business automation workflows.',
+        title: 'Tool panel',
+        description: 'Pick a tool above to send invoices, bookings, quotes, and more directly into the conversation.',
       };
   }
 }
@@ -184,17 +178,17 @@ function getToolContext(activeModule: string | null): { title: string; descripti
 // ─── Channel helpers ──────────────────────────────────────────────────────────
 
 const CHANNEL_COLORS: Record<string, string> = {
-  WhatsApp:  'bg-emerald-500',
+  WhatsApp:  'bg-emerald-600',
   Instagram: 'bg-zinc-700',
-  Email:     'bg-blue-500',
-  SMS:       'bg-slate-500',
+  Email:     'bg-blue-600',
+  SMS:       'bg-slate-600',
 };
 
 const CHANNEL_DOT: Record<string, string> = {
-  WhatsApp:  'bg-emerald-400',
-  Instagram: 'bg-zinc-400',
-  Email:     'bg-blue-400',
-  SMS:       'bg-slate-400',
+  WhatsApp:  'bg-emerald-500',
+  Instagram: 'bg-zinc-500',
+  Email:     'bg-blue-500',
+  SMS:       'bg-slate-500',
 };
 
 // ─── Mock contacts ────────────────────────────────────────────────────────────
@@ -208,7 +202,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: 'Now',
     unreadCount: 1,
     statusTag: 'New Lead',
-    statusColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    statusColor: 'border-emerald-200 text-emerald-700 bg-emerald-50',
     messages: [
       { sender: 'customer', time: '06:23 PM', text: "Hi! I'd like to book an appointment for a hair wash, treatment, and styling this week if you have any openings?" }
     ],
@@ -222,7 +216,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '2m',
     unreadCount: 3,
     statusTag: 'Urgent',
-    statusColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    statusColor: 'border-rose-200 text-rose-700 bg-rose-50',
     messages: [
       { sender: 'customer', time: '06:21 PM', text: 'Interested in the property you advertised on your stories, can we arrange a walkthrough schedule for Thursday afternoon?' }
     ],
@@ -236,7 +230,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '14m',
     unreadCount: 0,
     statusTag: 'Sales',
-    statusColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    statusColor: 'border-purple-200 text-purple-700 bg-purple-50',
     messages: [
       { sender: 'customer', time: '06:09 PM', text: 'My fixed term mortgage is up for renewal soon. Can you send over a formal quotation matching the rates we discussed?' }
     ],
@@ -250,7 +244,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '1h',
     unreadCount: 0,
     statusTag: 'General',
-    statusColor: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    statusColor: 'border-zinc-300 text-zinc-500 bg-zinc-100',
     messages: [
       { sender: 'customer', time: '05:15 PM', text: 'Thanks for the quick response! Let me know when the payment link is generated so I can wrap this up.' }
     ],
@@ -264,7 +258,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '15m',
     unreadCount: 2,
     statusTag: 'Retail Sale',
-    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    statusColor: 'border-amber-200 text-amber-700 bg-amber-50',
     messages: [
       { sender: 'customer', time: '06:28 PM', text: 'Hi, do you have 5 boxes of the high-top leather sneakers left in size 8? If yes, please send me an invoice directly so I can secure them right now.' }
     ],
@@ -278,7 +272,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '32m',
     unreadCount: 0,
     statusTag: 'Barber / Fade',
-    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    statusColor: 'border-blue-200 text-blue-700 bg-blue-50',
     messages: [
       { sender: 'customer', time: '06:11 PM', text: 'Yo! Need a sharp Taper Fade with dye before my weekend event. What slots does the master barber have open tomorrow afternoon?' }
     ],
@@ -292,7 +286,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '45m',
     unreadCount: 1,
     statusTag: 'Quote Request',
-    statusColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    statusColor: 'border-purple-200 text-purple-700 bg-purple-50',
     messages: [
       { sender: 'customer', time: '05:58 PM', text: 'Hello, I am interested in your custom catering menu for a corporate group of 45 people. Can you generate a custom price estimate for me?' }
     ],
@@ -306,7 +300,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '2h',
     unreadCount: 0,
     statusTag: 'Inventory Menu',
-    statusColor: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
+    statusColor: 'border-teal-200 text-teal-700 bg-teal-50',
     messages: [
       { sender: 'customer', time: '04:43 PM', text: 'Hey, could you send over your latest product catalog or digital price menu? I want to see what shades you have available in stock.' }
     ],
@@ -320,7 +314,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '3h',
     unreadCount: 0,
     statusTag: 'Payment Pending',
-    statusColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    statusColor: 'border-rose-200 text-rose-700 bg-rose-50',
     messages: [
       { sender: 'customer', time: '03:12 PM', text: "I'm ready to checkout for the custom jewelry piece. Can you drop a secure PayNow link here so I can process the transaction via EFT?" }
     ],
@@ -334,7 +328,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '4h',
     unreadCount: 0,
     statusTag: 'Wholesale Buyer',
-    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    statusColor: 'border-amber-200 text-amber-700 bg-amber-50',
     messages: [
       { sender: 'customer', time: '02:05 PM', text: 'We need to restock 50 units of the industrial valves for our site. Please issue a comprehensive itemized quote with bulk tier discounts.' }
     ],
@@ -348,7 +342,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '5h',
     unreadCount: 0,
     statusTag: 'New Lead',
-    statusColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    statusColor: 'border-emerald-200 text-emerald-700 bg-emerald-50',
     messages: [
       { sender: 'customer', time: '01:15 PM', text: 'Stumbled onto your design profile! Do you have a list of service pack rates or a menu of options for brand consulting?' }
     ],
@@ -362,7 +356,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '1d',
     unreadCount: 0,
     statusTag: 'Service Delivery',
-    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    statusColor: 'border-blue-200 text-blue-700 bg-blue-50',
     messages: [
       { sender: 'customer', time: 'Yesterday', text: 'The delivery arrived safely. Please send the final invoice statement so our accounting department can close out the ledger point.' }
     ],
@@ -376,7 +370,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '1d',
     unreadCount: 0,
     statusTag: 'General',
-    statusColor: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    statusColor: 'border-zinc-300 text-zinc-500 bg-zinc-100',
     messages: [
       { sender: 'customer', time: 'Yesterday', text: 'What are your operational hours over the coming public holiday? Just want to know if I can still come by for collections.' }
     ],
@@ -390,7 +384,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '2d',
     unreadCount: 0,
     statusTag: 'Barber / Cut',
-    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    statusColor: 'border-blue-200 text-blue-700 bg-blue-50',
     messages: [
       { sender: 'customer', time: '2 days ago', text: 'Hey check, can I change my appointment time from 10:00 AM to 02:30 PM this Saturday? Let me know if that spot is open on your book.' }
     ],
@@ -404,7 +398,7 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
     lastMessageTime: '3d',
     unreadCount: 0,
     statusTag: 'Bulk Order',
-    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    statusColor: 'border-amber-200 text-amber-700 bg-amber-50',
     messages: [
       { sender: 'customer', time: '3 days ago', text: 'We need an explicit cost estimation matrix for 100 customized hoodies with embroidered emblems. Please create a draft quote record.' }
     ],
@@ -729,7 +723,7 @@ export default function Dashboard() {
         return business ? (
           <BusinessSettings business={business} onUpdated={(b) => setBusiness(b)} />
         ) : (
-          <p className="text-sm text-slate-500">No business profile found.</p>
+          <p className="text-sm text-zinc-500">No business profile found.</p>
         );
       default:
         return null;
@@ -740,10 +734,10 @@ export default function Dashboard() {
 
   if (loadingSession) {
     return (
-      <div className="h-[100dvh] w-full flex items-center justify-center bg-[#0f1117]">
+      <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-xs text-slate-400 ">Loading inFlow…</p>
+          <div className="h-8 w-8 border-2 border-amber-500 border-t-transparent animate-spin" />
+          <p className="text-xs text-zinc-500">Loading inFlow…</p>
         </div>
       </div>
     );
@@ -758,7 +752,7 @@ export default function Dashboard() {
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-[#0f1117] text-white scrollbar-hide">
+    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-white text-zinc-900 scrollbar-hide">
       <style>{`
         .scrollbar-hide, .scrollbar-hide * {
           scrollbar-width: none; -ms-overflow-style: none;
@@ -768,9 +762,9 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-16 bg-[#0f1117] border-r border-zinc-800/80 items-center py-4 gap-2 z-20">
-        <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-amber-500 ">
-          <span className="text-xs font-black text-[#0f1117] ">iF</span>
+      <aside className="hidden md:flex flex-col w-16 bg-white border-r border-zinc-200 items-center py-4 gap-2 z-20">
+        <div className="mb-4 flex h-9 w-9 items-center justify-center bg-amber-600">
+          <span className="text-xs font-bold text-white">iF</span>
         </div>
 
         {[
@@ -782,15 +776,15 @@ export default function Dashboard() {
             key={tab}
             onClick={() => setGlobalTab(tab)}
             title={label}
-            className={`relative flex h-10 w-10 items-center justify-center rounded-md transition-colors ${
+            className={`relative flex h-10 w-10 items-center justify-center transition-colors ${
               globalTab === tab
-                ? 'bg-amber-500/15 text-amber-400'
-                : 'text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300'
+                ? 'bg-amber-600/15 text-amber-700'
+                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700'
             }`}
           >
             {icon}
             {globalTab === tab && (
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-amber-400" />
+              <span className="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-0.5 bg-amber-500" />
             )}
           </button>
         ))}
@@ -801,7 +795,7 @@ export default function Dashboard() {
           onClick={handleSignOut}
           disabled={isSigningOut}
           title="Sign out"
-          className="flex h-10 w-10 items-center justify-center rounded-md text-slate-600 hover:bg-rose-500/10 hover:text-rose-400 transition-colors disabled:opacity-40"
+          className="flex h-10 w-10 items-center justify-center text-zinc-400 hover:bg-red-50 hover:text-red-400 transition-colors disabled:opacity-40"
         >
           <LogOut size={18} />
         </button>
@@ -815,7 +809,7 @@ export default function Dashboard() {
           <>
             {/* ── Conversation list ── */}
             <div
-              className={`flex-shrink-0 flex flex-col bg-[#13161e] border-r border-zinc-800/80 overflow-hidden
+              className={`flex-shrink-0 flex flex-col bg-zinc-50 border-r border-zinc-200 overflow-hidden
                 ${activeContact ? 'hidden md:flex' : 'flex'}
                 w-full md:w-72 lg:w-80`}
             >
@@ -823,28 +817,28 @@ export default function Dashboard() {
               <div className="px-4 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-semibold text-white ">Inbox</h2>
-                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                    <h2 className="text-base font-semibold text-zinc-900">Inbox</h2>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">
                       {MOCK_CONVERSATIONS.length} conversations
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
+                    <button className="h-7 w-7 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
                       <Hash size={14} />
                     </button>
-                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
+                    <button className="h-7 w-7 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
                       <Users size={14} />
                     </button>
                   </div>
                 </div>
 
                 <div className="relative">
-                  <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search conversations…"
-                    className="w-full rounded-md bg-zinc-900/60 pl-8 pr-3 py-2 text-xs text-slate-300 placeholder:text-slate-500 outline-none focus:bg-zinc-900/70 focus:ring-1 focus:ring-amber-500/30 transition"
+                    className="w-full border border-zinc-200 bg-zinc-100 pl-8 pr-3 py-2 text-xs text-zinc-700 placeholder:text-zinc-500 outline-none focus:border-amber-600/50 transition"
                   />
                 </div>
 
@@ -852,10 +846,10 @@ export default function Dashboard() {
                   {['All', 'Unread', 'Mine'].map((f) => (
                     <button
                       key={f}
-                      className={`rounded-full px-3 py-1 text-[11px] font-semibold  transition ${
+                      className={`px-3 py-1 text-[11px] font-medium transition ${
                         f === 'All'
-                          ? 'bg-amber-500 text-[#0f1117]'
-                          : 'bg-zinc-900/60 text-slate-400 hover:bg-zinc-900/70'
+                          ? 'bg-amber-600 text-white'
+                          : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'
                       }`}
                     >
                       {f}
@@ -865,43 +859,43 @@ export default function Dashboard() {
               </div>
 
               {/* Contact list */}
-              <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/70">
+              <div className="flex-1 overflow-y-auto divide-y divide-zinc-100">
                 {filteredContacts.map((contact) => (
                   <button
                     key={contact.id}
                     onClick={() => setActiveContact(contact.id)}
-                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-900/60 ${
-                      activeContact === contact.id ? 'bg-zinc-900/70' : ''
+                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-100 ${
+                      activeContact === contact.id ? 'bg-zinc-100' : ''
                     }`}
                   >
                     <div className="relative flex-shrink-0">
                       <div
-                        className={`h-10 w-10 rounded-md flex items-center justify-center text-[13px] font-semibold text-white ${
-                          CHANNEL_COLORS[contact.channel] || 'bg-slate-500'
+                        className={`h-10 w-10 flex items-center justify-center text-[13px] font-semibold text-white ${
+                          CHANNEL_COLORS[contact.channel] || 'bg-zinc-600'
                         }`}
                       >
                         {contact.avatarColor}
                       </div>
                       <span
-                        className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${CHANNEL_DOT[contact.channel] || 'bg-slate-400'}`}
+                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 border-2 border-white ${CHANNEL_DOT[contact.channel] || 'bg-zinc-400'}`}
                       />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span className="text-[13px] font-medium text-slate-100 truncate">{contact.customerName}</span>
-                        <span className="text-[10px] text-slate-500 flex-shrink-0 font-medium">{contact.lastMessageTime}</span>
+                        <span className="text-[13px] font-medium text-zinc-900 truncate">{contact.customerName}</span>
+                        <span className="text-[10px] text-zinc-500 flex-shrink-0">{contact.lastMessageTime}</span>
                       </div>
-                      <p className="text-xs text-slate-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
+                      <p className="text-xs text-zinc-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
                       {contact.statusTag && (
-                        <span className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold  ${contact.statusColor}`}>
+                        <span className={`mt-1.5 inline-block border px-1.5 py-0.5 text-[10px] font-medium ${contact.statusColor}`}>
                           {contact.statusTag}
                         </span>
                       )}
                     </div>
 
                     {contact.unreadCount > 0 && (
-                      <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-[#0f1117]">
+                      <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center bg-amber-600 px-1 text-[10px] font-bold text-white">
                         {contact.unreadCount}
                       </span>
                     )}
@@ -912,33 +906,33 @@ export default function Dashboard() {
 
             {/* ── Thread view ── */}
             <div
-              className={`flex-1 flex flex-col overflow-hidden bg-[#0f1117] ${
+              className={`flex-1 flex flex-col overflow-hidden bg-white ${
                 !activeContact ? 'hidden md:flex' : 'flex'
               }`}
             >
               {!activeContact ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                  <div className="h-16 w-16 rounded-md bg-zinc-900/60 flex items-center justify-center">
-                    <MessageSquare size={28} className="text-slate-600" />
+                  <div className="h-16 w-16 bg-zinc-100 flex items-center justify-center">
+                    <MessageSquare size={28} className="text-zinc-400" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-medium text-slate-400">Select a conversation</p>
-                    <p className="text-xs text-slate-600 mt-1">Choose from the list to start replying</p>
+                    <p className="text-sm font-medium text-zinc-500">Select a conversation</p>
+                    <p className="text-xs text-zinc-400 mt-1">Choose from the list to start replying</p>
                   </div>
                 </div>
               ) : (
                 <>
                   {/* Thread header */}
-                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-zinc-800/80 bg-[#13161e]">
+                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-zinc-200 bg-zinc-50">
                     <button
                       onClick={() => setActiveContact(null)}
-                      className="md:hidden flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900/60 text-slate-400 hover:bg-zinc-900/70 transition"
+                      className="md:hidden flex h-8 w-8 items-center justify-center bg-zinc-100 text-zinc-500 hover:bg-zinc-100 transition"
                     >
                       <ArrowLeft size={16} />
                     </button>
 
                     <div
-                      className={`h-9 w-9 rounded-md flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
+                      className={`h-9 w-9 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
                         CHANNEL_COLORS[selectedContact?.channel || 'SMS']
                       }`}
                     >
@@ -946,10 +940,10 @@ export default function Dashboard() {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{selectedContact?.customerName}</p>
+                      <p className="text-sm font-semibold text-zinc-900 truncate">{selectedContact?.customerName}</p>
                       <div className="flex items-center gap-1.5">
-                        <span className={`h-1.5 w-1.5 rounded-full ${CHANNEL_DOT[selectedContact?.channel || 'SMS'] || 'bg-slate-400'}`} />
-                        <p className="text-xs text-slate-500">{selectedContact?.channel}</p>
+                        <span className={`h-1.5 w-1.5 ${CHANNEL_DOT[selectedContact?.channel || 'SMS'] || 'bg-zinc-400'}`} />
+                        <p className="text-xs text-zinc-500">{selectedContact?.channel}</p>
                       </div>
                     </div>
 
@@ -958,7 +952,7 @@ export default function Dashboard() {
                       <button
                         onClick={() => setShowMobileIntel(true)}
                         title="Open Customer Intelligence"
-                        className="xl:hidden flex items-center gap-1.5 h-8 px-2.5 rounded-md text-xs font-semibold bg-zinc-900/60 text-slate-300 hover:bg-zinc-900/70 border border-white/10 transition-colors"
+                        className="xl:hidden flex items-center gap-1.5 h-8 px-2.5 text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-100 border border-zinc-200 transition-colors"
                       >
                         <Users size={13} />
                         Intel
@@ -969,23 +963,23 @@ export default function Dashboard() {
                         onClick={handleAiAssist}
                         disabled={aiLoading}
                         title="AI Assist — auto-suggest tool from chat"
-                        className={`flex items-center gap-1.5 h-8 px-2.5 rounded-md text-xs font-semibold transition-colors ${
+                        className={`flex items-center gap-1.5 h-8 px-2.5 text-xs font-medium transition-colors border ${
                           aiLoading
-                            ? 'bg-amber-500/10 text-amber-400 animate-pulse cursor-wait'
-                            : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'
+                            ? 'bg-amber-600/10 text-amber-700 border-amber-600/20 animate-pulse cursor-wait'
+                            : 'bg-amber-600/10 text-amber-700 hover:bg-amber-600/20 border-amber-600/20'
                         }`}
                       >
                         <Sparkles size={13} />
                         {aiLoading ? 'Reading…' : 'AI Assist'}
                       </button>
 
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
                         <Phone size={15} />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
                         <Star size={15} />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
                         <MoreHorizontal size={15} />
                       </button>
                     </div>
@@ -993,9 +987,9 @@ export default function Dashboard() {
 
                   {/* AI suggestion banner */}
                   {aiExtraction?.tool && (
-                    <div className="flex-shrink-0 flex items-center gap-3 px-4 py-2.5 bg-amber-500/10 border-b border-amber-500/20">
-                      <Sparkles size={13} className="text-amber-400 flex-shrink-0" />
-                      <p className="text-xs text-amber-300 flex-1">
+                    <div className="flex-shrink-0 flex items-center gap-3 px-4 py-2.5 bg-amber-600/10 border-b border-amber-600/20">
+                      <Sparkles size={13} className="text-amber-700 flex-shrink-0" />
+                      <p className="text-xs text-amber-800 flex-1">
                         AI detected a <span className="font-semibold capitalize">{aiExtraction.tool}</span> request
                         {aiExtraction.confidence >= 0.8
                           ? ' — form pre-filled, review and send.'
@@ -1003,15 +997,15 @@ export default function Dashboard() {
                       </p>
                       <button
                         onClick={() => { setActiveToolId(aiExtraction.tool!); setGlobalTab('tools'); }}
-                        className="flex-shrink-0 text-[10px] font-bold text-amber-400 bg-amber-500/20 px-2.5 py-1 rounded-full hover:bg-amber-500/30 transition"
+                        className="flex-shrink-0 text-[10px] font-semibold text-amber-700 bg-amber-600/20 px-2 py-1 hover:bg-amber-600/30 transition"
                       >
-                        Open tool ↗
+                        Open tool →
                       </button>
                     </div>
                   )}
 
                   {/* Quick tool pills */}
-                  <div className="flex-shrink-0 border-b border-zinc-800/80 bg-[#13161e] overflow-x-auto scrollbar-none px-4 py-2">
+                  <div className="flex-shrink-0 border-b border-zinc-200 bg-zinc-50 overflow-x-auto scrollbar-none px-4 py-2">
                     <div className="flex gap-2 whitespace-nowrap">
                       {TOOL_ACTIONS.map((tool) => {
                         const ToolIcon = tool.Icon;
@@ -1019,7 +1013,7 @@ export default function Dashboard() {
                           <button
                             key={tool.label}
                             onClick={() => handleToolAction(tool.text)}
-                            className="flex-shrink-0 flex items-center gap-1.5 rounded-full bg-zinc-900/60 border border-zinc-800/80 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-300 transition-colors"
+                            className="flex-shrink-0 flex items-center gap-1.5 border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-amber-600/10 hover:border-amber-600/30 hover:text-amber-700 transition-colors"
                           >
                             <ToolIcon size={13} />
                             {tool.label}
@@ -1032,9 +1026,9 @@ export default function Dashboard() {
                   {/* Messages */}
                   <div key={activeContact ?? 'no-contact'} className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
                     <div className="flex items-center gap-3 my-2">
-                      <div className="flex-1 h-px bg-zinc-900/60" />
-                      <span className="text-[10px] text-slate-600 font-medium  uppercase">Today</span>
-                      <div className="flex-1 h-px bg-zinc-900/60" />
+                      <div className="flex-1 h-px bg-zinc-200" />
+                      <span className="text-[10px] text-zinc-400 font-medium uppercase">Today</span>
+                      <div className="flex-1 h-px bg-zinc-200" />
                     </div>
 
                     {currentMessages.map((message) => (
@@ -1044,8 +1038,8 @@ export default function Dashboard() {
                       >
                         {message.sender === 'customer' && (
                           <div
-                            className={`h-7 w-7 flex-shrink-0 self-end rounded-md flex items-center justify-center text-[10px] font-bold text-white ${
-                              CHANNEL_COLORS[selectedContact?.channel || 'SMS'] || 'bg-slate-500'
+                            className={`h-7 w-7 flex-shrink-0 self-end flex items-center justify-center text-[10px] font-bold text-white ${
+                              CHANNEL_COLORS[selectedContact?.channel || 'SMS'] || 'bg-zinc-600'
                             }`}
                           >
                             {selectedContact?.avatarColor}
@@ -1053,20 +1047,20 @@ export default function Dashboard() {
                         )}
                         <div className={`max-w-[75%] flex flex-col gap-1 ${message.sender === 'business' ? 'items-end' : 'items-start'}`}>
                           <div
-                            className={`rounded-md px-4 py-2.5 text-sm leading-relaxed ${
+                            className={`px-4 py-2.5 text-sm leading-relaxed ${
                               message.sender === 'business'
-                                ? 'rounded-br-sm bg-amber-500 text-[#0f1117] font-medium'
-                                : 'rounded-bl-sm bg-zinc-900/70 text-slate-200 border border-zinc-800/80'
+                                ? 'bg-amber-600 text-white font-medium'
+                                : 'bg-zinc-100 text-zinc-800 border border-zinc-200'
                             }`}
                           >
                             {message.body}
                           </div>
                           <div className={`flex items-center gap-1 ${message.sender === 'business' ? 'flex-row-reverse' : ''}`}>
-                            <span className="text-[10px] text-slate-600">
+                            <span className="text-[10px] text-zinc-400">
                               {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             {message.sender === 'business' && (
-                              <CheckCheck size={12} className="text-amber-400" />
+                              <CheckCheck size={12} className="text-amber-600" />
                             )}
                           </div>
                         </div>
@@ -1076,9 +1070,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Input bar */}
-                  <div className="flex-shrink-0 border-t border-zinc-800/80 bg-[#13161e] px-4 py-3">
-                    <div className="flex items-center gap-2 bg-zinc-900/60 border border-zinc-800/80 rounded-md px-3 py-2 focus-within:border-amber-500/40 focus-within:bg-zinc-900/70 transition-colors">
-                      <button className="text-slate-600 hover:text-slate-400 transition flex-shrink-0">
+                  <div className="flex-shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-3">
+                    <div className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-3 py-2 focus-within:border-amber-600/50 transition-colors">
+                      <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0">
                         <Paperclip size={16} />
                       </button>
                       <input
@@ -1088,15 +1082,15 @@ export default function Dashboard() {
                           if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
                         }}
                         placeholder="Type a message…"
-                        className="flex-1 bg-transparent text-sm text-slate-200 outline-none placeholder:text-slate-600"
+                        className="flex-1 bg-transparent text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
                       />
-                      <button className="text-slate-600 hover:text-slate-400 transition flex-shrink-0">
+                      <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0">
                         <Smile size={16} />
                       </button>
                       <button
                         onClick={handleSend}
                         disabled={!input.trim()}
-                        className="flex h-8 w-8 items-center justify-center rounded-md bg-amber-500 text-[#0f1117] transition hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"
+                        className="flex h-8 w-8 items-center justify-center bg-amber-600 text-white transition hover:bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"
                       >
                         <ArrowRight size={15} />
                       </button>
@@ -1107,28 +1101,28 @@ export default function Dashboard() {
             </div>
 
             {/* ── Right Context Column (Desktop XL) ── */}
-            <aside className="w-96 border-l border-zinc-800 bg-[#16161a] hidden xl:flex flex-col overflow-y-auto">
-              <div className="px-5 py-4 border-b border-zinc-800">
-                <p className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-semibold">Context Column</p>
-                <h3 className="text-sm text-zinc-100 font-semibold mt-1">Customer Intelligence</h3>
+            <aside className="w-96 border-l border-zinc-200 bg-white hidden xl:flex flex-col overflow-y-auto">
+              <div className="px-5 py-4 border-b border-zinc-200">
+                <p className="text-[10px] uppercase tracking-wide text-zinc-500 font-medium">Context</p>
+                <h3 className="text-sm text-zinc-900 font-semibold mt-1">Customer profile</h3>
               </div>
 
               {selectedContact ? (
                 <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
                   {/* CRM Meta Profile */}
-                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
+                  <section className="border border-zinc-200 bg-zinc-50 p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
-                        <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel} Profile</p>
+                        <p className="text-xs text-zinc-500 font-medium">{selectedContact.customerName}</p>
+                        <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel}</p>
                       </div>
                       <span
-                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${
+                        className={`text-[10px] font-medium px-2 py-1 border ${
                           customerOrderVolume === 0
-                            ? 'border-zinc-700 text-zinc-400 bg-zinc-900/40'
+                            ? 'border-zinc-200 text-zinc-500 bg-zinc-100'
                             : customerOrderVolume === 1
-                            ? 'border-amber-700 text-amber-300 bg-amber-950/30'
-                            : 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                            ? 'border-amber-200 text-amber-700 bg-amber-50'
+                            : 'border-emerald-200 text-emerald-700 bg-emerald-50'
                         }`}
                       >
                         {customerStatusLabel}
@@ -1136,9 +1130,9 @@ export default function Dashboard() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
-                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Spent (LTV)</p>
-                        <p className="text-lg font-semibold text-zinc-100 mt-1">
+                      <div className="border border-zinc-200 bg-white p-3">
+                        <p className="text-[10px] uppercase tracking-wide text-zinc-500">Total spent</p>
+                        <p className="text-lg font-semibold text-zinc-900 mt-1">
                           {new Intl.NumberFormat('en-ZA', {
                             style: 'currency',
                             currency: 'ZAR',
@@ -1146,50 +1140,50 @@ export default function Dashboard() {
                           }).format(customerLtv)}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
-                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Order Volume</p>
-                        <p className="text-lg font-semibold text-zinc-100 mt-1">{customerOrderVolume}</p>
+                      <div className="border border-zinc-200 bg-white p-3">
+                        <p className="text-[10px] uppercase tracking-wide text-zinc-500">Orders</p>
+                        <p className="text-lg font-semibold text-zinc-900 mt-1">{customerOrderVolume}</p>
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-zinc-800">
+                    <div className="mt-4 pt-4 border-t border-zinc-200">
                       <div className="flex items-center justify-between mb-1.5">
-                        <p className="text-[11px] text-zinc-400">Loyalty Standing</p>
-                        <p className="text-[11px] text-zinc-200 font-medium">{loyalty.tier}</p>
+                        <p className="text-[11px] text-zinc-500">Loyalty tier</p>
+                        <p className="text-[11px] text-zinc-800 font-medium">{loyalty.tier}</p>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+                      <div className="h-1.5 w-full bg-zinc-200 overflow-hidden">
                         <div
-                          className="h-full bg-zinc-300 transition-colors duration-500"
+                          className="h-full bg-amber-500 transition-all duration-500"
                           style={{ width: `${Math.max(3, loyalty.progress)}%` }}
                         />
                       </div>
                       <p className="text-[10px] text-zinc-500 mt-2">
-                        Next milestone: {loyalty.nextTier}
-                        {customerLtv < 2500 ? ` at R${Math.max(0, loyalty.currentTarget - customerLtv).toFixed(2)} remaining` : ''}
+                        Next: {loyalty.nextTier}
+                        {customerLtv < 2500 ? ` — R${Math.max(0, loyalty.currentTarget - customerLtv).toFixed(2)} to go` : ''}
                       </p>
                     </div>
                   </section>
 
                   {/* Transaction Snapshot */}
-                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
+                  <section className="border border-zinc-200 bg-zinc-50 p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-xs font-semibold text-zinc-200">5-Transaction Snapshot</h4>
-                      {txLoading && <span className="text-[10px] text-zinc-500">Loading...</span>}
+                      <h4 className="text-xs font-semibold text-zinc-800">Recent transactions</h4>
+                      {txLoading && <span className="text-[10px] text-zinc-500">Loading…</span>}
                     </div>
 
-                    <div className="space-y-2.5">
+                    <div className="space-y-2">
                       {!txLoading && customerTransactions.length === 0 && (
-                        <p className="text-[11px] text-zinc-500">No linked invoices or quotes found for this customer profile.</p>
+                        <p className="text-[11px] text-zinc-500">No invoices or quotes for this customer yet.</p>
                       )}
 
                       {customerTransactions.map((txn) => {
                         const status = String(txn.status || '').toLowerCase();
                         const statusClass =
                           status === 'paid'
-                            ? 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                            ? 'border-emerald-200 text-emerald-700 bg-emerald-50'
                             : status === 'pending' || status === 'sent' || status === 'draft'
-                            ? 'border-amber-700 text-amber-300 bg-amber-950/30'
-                            : 'border-rose-700 text-rose-300 bg-rose-950/30';
+                            ? 'border-amber-200 text-amber-700 bg-amber-50'
+                            : 'border-rose-200 text-rose-700 bg-rose-50';
 
                         const shortDate = new Date(txn.created_at).toLocaleDateString('en-ZA', {
                           day: '2-digit',
@@ -1199,16 +1193,16 @@ export default function Dashboard() {
                         return (
                           <div
                             key={txn.id}
-                            className="grid grid-cols-[58px_1fr_auto] items-center gap-2 rounded-lg border border-zinc-800 bg-[#16161a] px-2.5 py-2"
+                            className="grid grid-cols-[58px_1fr_auto] items-center gap-2 border border-zinc-200 bg-white px-2.5 py-2"
                           >
-                            <span className="text-[11px] text-zinc-400 font-medium">{shortDate}</span>
+                            <span className="text-[11px] text-zinc-500 font-medium">{shortDate}</span>
                             <div className="min-w-0 flex items-center gap-2">
-                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusClass}`}>
+                              <span className={`text-[10px] font-medium px-1.5 py-0.5 border ${statusClass}`}>
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
                               </span>
                               <span className="text-[10px] text-zinc-500 truncate">{txn.reference || txn.type}</span>
                             </div>
-                            <span className="text-[12px] text-zinc-100 font-semibold">
+                            <span className="text-[12px] text-zinc-900 font-semibold">
                               {new Intl.NumberFormat('en-ZA', {
                                 style: 'currency',
                                 currency: txn.currency || 'ZAR',
@@ -1222,44 +1216,43 @@ export default function Dashboard() {
                   </section>
 
                   {/* AI Diagnostics */}
-                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
-                    <h4 className="text-xs font-semibold text-zinc-200 mb-2.5">AI Diagnostics</h4>
+                  <section className="border border-zinc-200 bg-zinc-50 p-4">
+                    <h4 className="text-xs font-semibold text-zinc-800 mb-2.5">AI signal</h4>
 
-                    <div className="rounded-lg border border-zinc-800 bg-[#16161a] px-3 py-2.5">
-                      <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Intent Indicator</p>
-                      <p className="text-sm text-zinc-100 mt-1">
-                        Detected Intent:{' '}
+                    <div className="border border-zinc-200 bg-white px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-wide text-zinc-500">Detected intent</p>
+                      <p className="text-sm text-zinc-900 mt-1">
                         <span className="font-semibold">
                           {aiDetectedIntent === 'none'
                             ? 'No dominant intent'
                             : aiDetectedIntent === 'invoice'
-                            ? 'Invoice Creation'
+                            ? 'Invoice'
                             : aiDetectedIntent === 'booking'
-                            ? 'Booking Coordination'
+                            ? 'Booking'
                             : aiDetectedIntent === 'quote'
-                            ? 'Quote Generation'
-                            : 'Promo Trigger'}
+                            ? 'Quote'
+                            : 'Promo'}
                         </span>
                       </p>
-                      <p className="text-[11px] text-zinc-400 mt-1">Confidence: {aiConfidencePercent}%</p>
+                      <p className="text-[11px] text-zinc-500 mt-1">Confidence: {aiConfidencePercent}%</p>
                     </div>
 
                     <div className="mt-3">
-                      <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 mb-2">Predictive Action Pipeline</p>
+                      <p className="text-[10px] uppercase tracking-wide text-zinc-500 mb-2">Suggested actions</p>
                       <div className="space-y-2">
                         <button
                           onClick={() => {
                             setActiveToolId('booked');
                             setGlobalTab('tools');
                           }}
-                          className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
+                          className={`w-full px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'booking'
-                              ? 'border-amber-500/60 bg-amber-500/10'
-                              : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                              ? 'border-amber-600/60 bg-amber-600/10'
+                              : 'border-zinc-200 bg-white hover:border-zinc-300'
                           }`}
                         >
-                          <p className="text-[12px] text-zinc-100 font-medium">BookedIt Action Controller</p>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when booking intent probability is dominant.</p>
+                          <p className="text-[12px] text-zinc-900 font-medium">Open BookedIt</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Suggested when booking intent is dominant.</p>
                         </button>
 
                         <button
@@ -1267,14 +1260,14 @@ export default function Dashboard() {
                             setActiveToolId('invoice');
                             setGlobalTab('tools');
                           }}
-                          className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
+                          className={`w-full px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'invoice'
-                              ? 'border-amber-500/60 bg-amber-500/10'
-                              : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                              ? 'border-amber-600/60 bg-amber-600/10'
+                              : 'border-zinc-200 bg-white hover:border-zinc-300'
                           }`}
                         >
-                          <p className="text-[12px] text-zinc-100 font-medium">FastInvoice Action Controller</p>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when invoice intent probability is dominant.</p>
+                          <p className="text-[12px] text-zinc-900 font-medium">Open FastInvoice</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Suggested when invoice intent is dominant.</p>
                         </button>
                       </div>
                     </div>
@@ -1283,7 +1276,7 @@ export default function Dashboard() {
               ) : (
                 <div className="flex-1 flex items-center justify-center px-6 text-center">
                   <p className="text-xs text-zinc-500 leading-relaxed">
-                    Select an active conversation to load CRM profile analytics, transaction matrix, and AI diagnostics.
+                    Select a conversation to see customer profile, transactions, and AI signal.
                   </p>
                 </div>
               )}
@@ -1291,16 +1284,16 @@ export default function Dashboard() {
 
             {/* ── Mobile/Tablet Customer Intelligence Drawer ── */}
             {showMobileIntel && selectedContact && (
-              <div className="xl:hidden fixed inset-0 z-[70] bg-black/60 ">
-                <div className="absolute inset-x-0 bottom-0 max-h-[86vh] rounded-t-2xl border-t border-zinc-800 bg-[#16161a] flex flex-col">
-                  <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+              <div className="xl:hidden fixed inset-0 z-[70] bg-zinc-900/40">
+                <div className="absolute inset-x-0 bottom-0 max-h-[86vh] border-t border-zinc-200 bg-white flex flex-col">
+                  <div className="px-4 py-3 border-b border-zinc-200 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-semibold">Context Column</p>
-                      <h3 className="text-sm text-zinc-100 font-semibold mt-1">Customer Intelligence</h3>
+                      <p className="text-[10px] uppercase tracking-wide text-zinc-500 font-medium">Context</p>
+                      <h3 className="text-sm text-zinc-900 font-semibold mt-1">Customer profile</h3>
                     </div>
                     <button
                       onClick={() => setShowMobileIntel(false)}
-                      className="h-8 w-8 rounded-lg border border-zinc-700 text-zinc-300 hover:bg-zinc-800 transition"
+                      className="h-8 w-8 border border-zinc-300 text-zinc-700 hover:bg-zinc-100 transition"
                     >
                       <X size={14} className="mx-auto" />
                     </button>
@@ -1308,19 +1301,19 @@ export default function Dashboard() {
 
                   <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
                     {/* CRM Meta Profile */}
-                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
+                    <section className="border border-zinc-200 bg-zinc-50 p-4">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
-                          <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel} Profile</p>
+                          <p className="text-xs text-zinc-500 font-medium">{selectedContact.customerName}</p>
+                          <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel}</p>
                         </div>
                         <span
-                          className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${
+                          className={`text-[10px] font-medium px-2 py-1 border ${
                             customerOrderVolume === 0
-                              ? 'border-zinc-700 text-zinc-400 bg-zinc-900/40'
+                              ? 'border-zinc-200 text-zinc-500 bg-zinc-100'
                               : customerOrderVolume === 1
-                              ? 'border-amber-700 text-amber-300 bg-amber-950/30'
-                              : 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                              ? 'border-amber-200 text-amber-700 bg-amber-50'
+                              : 'border-emerald-200 text-emerald-700 bg-emerald-50'
                           }`}
                         >
                           {customerStatusLabel}
@@ -1328,9 +1321,9 @@ export default function Dashboard() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
-                          <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Spent (LTV)</p>
-                          <p className="text-lg font-semibold text-zinc-100 mt-1">
+                        <div className="border border-zinc-200 bg-white p-3">
+                          <p className="text-[10px] uppercase tracking-wide text-zinc-500">Total spent</p>
+                          <p className="text-lg font-semibold text-zinc-900 mt-1">
                             {new Intl.NumberFormat('en-ZA', {
                               style: 'currency',
                               currency: 'ZAR',
@@ -1338,50 +1331,50 @@ export default function Dashboard() {
                             }).format(customerLtv)}
                           </p>
                         </div>
-                        <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
-                          <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Order Volume</p>
-                          <p className="text-lg font-semibold text-zinc-100 mt-1">{customerOrderVolume}</p>
+                        <div className="border border-zinc-200 bg-white p-3">
+                          <p className="text-[10px] uppercase tracking-wide text-zinc-500">Orders</p>
+                          <p className="text-lg font-semibold text-zinc-900 mt-1">{customerOrderVolume}</p>
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-4 border-t border-zinc-800">
+                      <div className="mt-4 pt-4 border-t border-zinc-200">
                         <div className="flex items-center justify-between mb-1.5">
-                          <p className="text-[11px] text-zinc-400">Loyalty Standing</p>
-                          <p className="text-[11px] text-zinc-200 font-medium">{loyalty.tier}</p>
+                          <p className="text-[11px] text-zinc-500">Loyalty tier</p>
+                          <p className="text-[11px] text-zinc-800 font-medium">{loyalty.tier}</p>
                         </div>
-                        <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+                        <div className="h-1.5 w-full bg-zinc-200 overflow-hidden">
                           <div
-                            className="h-full bg-zinc-300 transition-colors duration-500"
+                            className="h-full bg-amber-500 transition-all duration-500"
                             style={{ width: `${Math.max(3, loyalty.progress)}%` }}
                           />
                         </div>
                         <p className="text-[10px] text-zinc-500 mt-2">
-                          Next milestone: {loyalty.nextTier}
-                          {customerLtv < 2500 ? ` at R${Math.max(0, loyalty.currentTarget - customerLtv).toFixed(2)} remaining` : ''}
+                          Next: {loyalty.nextTier}
+                          {customerLtv < 2500 ? ` — R${Math.max(0, loyalty.currentTarget - customerLtv).toFixed(2)} to go` : ''}
                         </p>
                       </div>
                     </section>
 
                     {/* Transaction Snapshot */}
-                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
+                    <section className="border border-zinc-200 bg-zinc-50 p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-xs font-semibold text-zinc-200">5-Transaction Snapshot</h4>
-                        {txLoading && <span className="text-[10px] text-zinc-500">Loading...</span>}
+                        <h4 className="text-xs font-semibold text-zinc-800">Recent transactions</h4>
+                        {txLoading && <span className="text-[10px] text-zinc-500">Loading…</span>}
                       </div>
 
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {!txLoading && customerTransactions.length === 0 && (
-                          <p className="text-[11px] text-zinc-500">No linked invoices or quotes found for this customer profile.</p>
+                          <p className="text-[11px] text-zinc-500">No invoices or quotes for this customer yet.</p>
                         )}
 
                         {customerTransactions.map((txn) => {
                           const status = String(txn.status || '').toLowerCase();
                           const statusClass =
                             status === 'paid'
-                              ? 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                              ? 'border-emerald-200 text-emerald-700 bg-emerald-50'
                               : status === 'pending' || status === 'sent' || status === 'draft'
-                              ? 'border-amber-700 text-amber-300 bg-amber-950/30'
-                              : 'border-rose-700 text-rose-300 bg-rose-950/30';
+                              ? 'border-amber-200 text-amber-700 bg-amber-50'
+                              : 'border-rose-200 text-rose-700 bg-rose-50';
 
                           const shortDate = new Date(txn.created_at).toLocaleDateString('en-ZA', {
                             day: '2-digit',
@@ -1391,16 +1384,16 @@ export default function Dashboard() {
                           return (
                             <div
                               key={txn.id}
-                              className="grid grid-cols-[58px_1fr_auto] items-center gap-2 rounded-lg border border-zinc-800 bg-[#16161a] px-2.5 py-2"
+                              className="grid grid-cols-[58px_1fr_auto] items-center gap-2 border border-zinc-200 bg-white px-2.5 py-2"
                             >
-                              <span className="text-[11px] text-zinc-400 font-medium">{shortDate}</span>
+                              <span className="text-[11px] text-zinc-500 font-medium">{shortDate}</span>
                               <div className="min-w-0 flex items-center gap-2">
-                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusClass}`}>
+                                <span className={`text-[10px] font-medium px-1.5 py-0.5 border ${statusClass}`}>
                                   {status.charAt(0).toUpperCase() + status.slice(1)}
                                 </span>
                                 <span className="text-[10px] text-zinc-500 truncate">{txn.reference || txn.type}</span>
                               </div>
-                              <span className="text-[12px] text-zinc-100 font-semibold">
+                              <span className="text-[12px] text-zinc-900 font-semibold">
                                 {new Intl.NumberFormat('en-ZA', {
                                   style: 'currency',
                                   currency: txn.currency || 'ZAR',
@@ -1414,30 +1407,29 @@ export default function Dashboard() {
                     </section>
 
                     {/* AI Diagnostics */}
-                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
-                      <h4 className="text-xs font-semibold text-zinc-200 mb-2.5">AI Diagnostics</h4>
+                    <section className="border border-zinc-200 bg-zinc-50 p-4">
+                      <h4 className="text-xs font-semibold text-zinc-800 mb-2.5">AI signal</h4>
 
-                      <div className="rounded-lg border border-zinc-800 bg-[#16161a] px-3 py-2.5">
-                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Intent Indicator</p>
-                        <p className="text-sm text-zinc-100 mt-1">
-                          Detected Intent:{' '}
+                      <div className="border border-zinc-200 bg-white px-3 py-2.5">
+                        <p className="text-[10px] uppercase tracking-wide text-zinc-500">Detected intent</p>
+                        <p className="text-sm text-zinc-900 mt-1">
                           <span className="font-semibold">
                             {aiDetectedIntent === 'none'
                               ? 'No dominant intent'
                               : aiDetectedIntent === 'invoice'
-                              ? 'Invoice Creation'
+                              ? 'Invoice'
                               : aiDetectedIntent === 'booking'
-                              ? 'Booking Coordination'
+                              ? 'Booking'
                               : aiDetectedIntent === 'quote'
-                              ? 'Quote Generation'
-                              : 'Promo Trigger'}
+                              ? 'Quote'
+                              : 'Promo'}
                           </span>
                         </p>
-                        <p className="text-[11px] text-zinc-400 mt-1">Confidence: {aiConfidencePercent}%</p>
+                        <p className="text-[11px] text-zinc-500 mt-1">Confidence: {aiConfidencePercent}%</p>
                       </div>
 
                       <div className="mt-3">
-                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 mb-2">Predictive Action Pipeline</p>
+                        <p className="text-[10px] uppercase tracking-wide text-zinc-500 mb-2">Suggested actions</p>
                         <div className="space-y-2">
                           <button
                             onClick={() => {
@@ -1445,14 +1437,14 @@ export default function Dashboard() {
                               setActiveToolId('booked');
                               setGlobalTab('tools');
                             }}
-                            className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
+                            className={`w-full px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'booking'
-                                ? 'border-amber-500/60 bg-amber-500/10'
-                                : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                                ? 'border-amber-600/60 bg-amber-600/10'
+                                : 'border-zinc-200 bg-white hover:border-zinc-300'
                             }`}
                           >
-                            <p className="text-[12px] text-zinc-100 font-medium">BookedIt Action Controller</p>
-                            <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when booking intent probability is dominant.</p>
+                            <p className="text-[12px] text-zinc-900 font-medium">Open BookedIt</p>
+                            <p className="text-[10px] text-zinc-500 mt-0.5">Suggested when booking intent is dominant.</p>
                           </button>
 
                           <button
@@ -1461,14 +1453,14 @@ export default function Dashboard() {
                               setActiveToolId('invoice');
                               setGlobalTab('tools');
                             }}
-                            className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
+                            className={`w-full px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'invoice'
-                                ? 'border-amber-500/60 bg-amber-500/10'
-                                : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                                ? 'border-amber-600/60 bg-amber-600/10'
+                                : 'border-zinc-200 bg-white hover:border-zinc-300'
                             }`}
                           >
-                            <p className="text-[12px] text-zinc-100 font-medium">FastInvoice Action Controller</p>
-                            <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when invoice intent probability is dominant.</p>
+                            <p className="text-[12px] text-zinc-900 font-medium">Open FastInvoice</p>
+                            <p className="text-[10px] text-zinc-500 mt-0.5">Suggested when invoice intent is dominant.</p>
                           </button>
                         </div>
                       </div>
@@ -1488,37 +1480,37 @@ export default function Dashboard() {
 
         {/* ══ TOOLS TAB ══════════════════════════════════════════════════════════ */}
         {globalTab === 'tools' && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0f1117]">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
             <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6">
 
             {/* ── TAB MODE ── */}
             {toolViewMode === 'tabs' && (
               <>
-                <div className="relative border border-zinc-800 rounded-md bg-[#13161e] overflow-hidden mb-4">
+                <div className="relative border border-zinc-200 bg-zinc-50 overflow-hidden mb-4">
                   <div className="flex items-center">
                     <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
                       {ALL_TOOLS.map(({ id, Icon, label }) => (
                         <button
                           key={id}
                           onClick={() => setActiveToolId(id)}
-                          className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] rounded-md transition-colors ${
+                          className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] transition-colors border ${
                             activeToolId === id
-                              ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
-                              : 'text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70'
+                              ? 'text-amber-700 bg-amber-600/10 border-amber-600/20'
+                              : 'text-zinc-500 border-transparent hover:text-zinc-700 hover:bg-zinc-100'
                           }`}
                         >
                           <Icon size={16} />
-                          <span className="text-[9px] font-bold uppercase r">{label}</span>
+                          <span className="text-[9px] font-semibold uppercase tracking-wide">{label}</span>
                           {/* AI indicator dot */}
                           {aiExtraction?.tool === id && (
-                            <span className="block h-1 w-1 rounded-full bg-amber-400" />
+                            <span className="block h-1 w-1 bg-amber-400" />
                           )}
                         </button>
                       ))}
                     </div>
                     <button
                       onClick={() => { setToolViewMode('list'); setActiveToolId(null); }}
-                      className="flex-shrink-0 p-2.5 mr-2 rounded-md text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70 transition-colors"
+                      className="flex-shrink-0 p-2.5 mr-2 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                       title="Switch to list view"
                     >
                       <LayoutList size={16} />
@@ -1526,27 +1518,27 @@ export default function Dashboard() {
                   </div>
                   <div
                     className="pointer-events-none absolute top-0 right-10 h-full w-8"
-                    style={{ background: 'linear-gradient(to left, #13161e, transparent)' }}
+                    style={{ background: 'linear-gradient(to left, #fafafa, transparent)' }}
                   />
                 </div>
 
                 <div className="pb-24">
                   {activeToolId === null ? (
-                    <div className="flex flex-col items-center justify-center gap-3 text-center py-20 rounded-md border border-zinc-800 bg-[#13161e]">
-                      <LayoutGrid size={28} className="text-slate-700" />
-                      <p className="text-sm text-slate-600">Select a tab above to open a tool</p>
+                    <div className="flex flex-col items-center justify-center gap-3 text-center py-20 border border-zinc-200 bg-zinc-50">
+                      <LayoutGrid size={28} className="text-zinc-700" />
+                      <p className="text-sm text-zinc-400">Select a tab above to open a tool</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                      <div className="rounded-md border border-zinc-800 bg-[#16161a] p-4 md:col-span-2 lg:col-span-2">
+                      <div className="border border-zinc-200 bg-white p-4 md:col-span-2 lg:col-span-2">
                         {renderPlugin(activeToolId)}
                       </div>
-                      <div className="rounded-md border border-zinc-800 bg-[#16161a] p-4">
-                        <p className="text-[11px] uppercase st text-zinc-500">Tool Context</p>
-                        <p className="mt-2 text-sm text-zinc-300">
-                          Active module: <span className="font-semibold text-zinc-100">{activeModuleLabel}</span>
+                      <div className="border border-zinc-200 bg-white p-4">
+                        <p className="text-[11px] uppercase tracking-wide text-zinc-500">Tool context</p>
+                        <p className="mt-2 text-sm text-zinc-700">
+                          Active module: <span className="font-semibold text-zinc-900">{activeModuleLabel}</span>
                         </p>
-                        <p className="mt-2 text-sm font-semibold text-zinc-100">{activeToolContext.title}</p>
+                        <p className="mt-2 text-sm font-semibold text-zinc-900">{activeToolContext.title}</p>
                         <p className="mt-2 text-xs leading-relaxed text-zinc-500">{activeToolContext.description}</p>
                       </div>
                     </div>
@@ -1558,14 +1550,14 @@ export default function Dashboard() {
             {/* ── LIST MODE ── */}
             {toolViewMode === 'list' && (
               <>
-                <div className="flex items-center justify-between px-4 py-3 border border-zinc-800 rounded-md bg-[#13161e] mb-4">
+                <div className="flex items-center justify-between px-4 py-3 border border-zinc-200 bg-zinc-50 mb-4">
                   <div>
-                    <p className="text-xs font-semibold text-slate-300">Tools</p>
-                    <p className="text-[10px] text-slate-600 mt-0.5">Tap to open</p>
+                    <p className="text-xs font-semibold text-zinc-700">Tools</p>
+                    <p className="text-[10px] text-zinc-400 mt-0.5">Tap to open</p>
                   </div>
                   <button
                     onClick={() => setToolViewMode('tabs')}
-                    className="p-2 rounded-md text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70 transition-colors"
+                    className="p-2 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                     title="Switch to tab view"
                   >
                     <LayoutGrid size={16} />
@@ -1578,37 +1570,37 @@ export default function Dashboard() {
                       const isOpen = activeToolId === id;
                       const hasAi  = aiExtraction?.tool === id;
                       return (
-                        <div key={id} className={`rounded-md border ${isOpen ? 'border-amber-500/30' : 'border-zinc-800'} bg-[#16161a] overflow-hidden`}>
+                        <div key={id} className={`border ${isOpen ? 'border-amber-600/30' : 'border-zinc-200'} bg-white overflow-hidden`}>
                           <button
                             onClick={() => setActiveToolId(isOpen ? null : id)}
                             className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors ${
-                              isOpen ? 'bg-zinc-900/60' : 'hover:bg-zinc-900/60'
+                              isOpen ? 'bg-zinc-100' : 'hover:bg-zinc-100'
                             }`}
                           >
-                            <div className={`relative flex-shrink-0 h-9 w-9 rounded-md ${color} flex items-center justify-center`}>
+                            <div className={`relative flex-shrink-0 h-9 w-9 ${color} flex items-center justify-center`}>
                               <Icon size={16} className="text-white" strokeWidth={2.25} />
                               {/* AI pre-fill indicator */}
                               {hasAi && (
-                                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border-2 border-[#0f1117] flex items-center justify-center">
-                                  <Sparkles size={6} className="text-[#0f1117]" />
+                                <span className="absolute -top-1 -right-1 h-3 w-3 bg-amber-400 border-2 border-white flex items-center justify-center">
+                                  <Sparkles size={6} className="text-white" />
                                 </span>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-400' : 'text-slate-200'}`}>
+                                <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-700' : 'text-zinc-800'}`}>
                                   {label}
                                 </p>
                                 {hasAi && (
-                                  <span className="text-[9px] font-bold bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">
+                                  <span className="text-[9px] font-semibold bg-amber-600/20 text-amber-700 px-1.5 py-0.5">
                                     AI ready
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-600 mt-0.5">{desc}</p>
+                              <p className="text-[10px] text-zinc-400 mt-0.5">{desc}</p>
                             </div>
                             <svg
-                              className={`flex-shrink-0 transition-transform duration-200 text-slate-600 ${isOpen ? 'rotate-90' : ''}`}
+                              className={`flex-shrink-0 transition-transform duration-200 text-zinc-400 ${isOpen ? 'rotate-90' : ''}`}
                               width="16" height="16" viewBox="0 0 16 16" fill="none"
                             >
                               <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -1616,7 +1608,7 @@ export default function Dashboard() {
                           </button>
 
                           {isOpen && (
-                            <div className="px-4 py-4 bg-[#121214] border-t border-zinc-800">
+                            <div className="px-4 py-4 bg-zinc-50 border-t border-zinc-200">
                               {renderPlugin(id)}
                             </div>
                           )}
@@ -1628,7 +1620,7 @@ export default function Dashboard() {
                   {!activeContact && (
                     <div className="mt-3 flex items-start gap-2.5 px-4">
                       <span className="text-amber-500 text-xs mt-0.5">↑</span>
-                      <p className="text-xs text-slate-600">
+                      <p className="text-xs text-zinc-400">
                         Open a conversation in Inbox first — actions will send directly into that chat.
                       </p>
                     </div>
@@ -1642,17 +1634,17 @@ export default function Dashboard() {
 
         {/* ══ SETTINGS TAB ═══════════════════════════════════════════════════════ */}
         {globalTab === 'settings' && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#09090b]">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-zinc-50">
             <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
               <div className="md:flex md:gap-8 w-full">
-                <aside className="md:w-64 flex flex-col gap-2 text-zinc-400 mb-5 md:mb-0">
+                <aside className="md:w-64 flex flex-col gap-2 text-zinc-500 mb-5 md:mb-0">
                   {['Business Info', 'Connected Channels', 'Billing', 'Team Security'].map((item, index) => (
                     <button
                       key={item}
-                      className={`w-full text-left rounded-md px-3 py-2.5 text-sm border transition ${
+                      className={`w-full text-left px-3 py-2.5 text-sm border transition ${
                         index === 1
-                          ? 'border-zinc-700 bg-[#18181b] text-zinc-100'
-                          : 'border-zinc-800 bg-[#121214] text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
+                          ? 'border-zinc-300 bg-zinc-100 text-zinc-900'
+                          : 'border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:text-zinc-800'
                       }`}
                     >
                       {item}
@@ -1660,11 +1652,11 @@ export default function Dashboard() {
                   ))}
                 </aside>
 
-                <section className="flex-1 bg-[#0c0c0e] border border-zinc-800 p-4 md:p-8 rounded-md min-w-0">
+                <section className="flex-1 bg-white border border-zinc-200 p-4 md:p-8 min-w-0">
                   {business ? (
                     <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
                   ) : (
-                    <p className="text-sm text-slate-500">Loading business profile…</p>
+                    <p className="text-sm text-zinc-500">Loading business profile…</p>
                   )}
                 </section>
               </div>
@@ -1674,7 +1666,7 @@ export default function Dashboard() {
       </div>
 
       {/* ─── Bottom nav (mobile) ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800/80 bg-[#161619] ">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-zinc-50">
         <div className="flex items-center justify-around px-2 py-2">
           {[
             { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} />, label: 'Inbox'    },
@@ -1684,10 +1676,10 @@ export default function Dashboard() {
             <button
               key={tab}
               onClick={() => { setGlobalTab(tab); if (tab !== 'chats') setActiveContact(null); }}
-              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-md transition-colors ${
+              className={`flex flex-col items-center gap-1 px-5 py-2 transition-colors ${
                 globalTab === tab
-                  ? 'text-amber-400 bg-amber-500/10'
-                  : 'text-slate-600 hover:text-slate-400'
+                  ? 'text-amber-700 bg-amber-600/10'
+                  : 'text-zinc-400 hover:text-zinc-500'
               }`}
             >
               {icon}
@@ -1697,7 +1689,7 @@ export default function Dashboard() {
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className="flex flex-col items-center gap-1 px-5 py-2 rounded-md text-slate-600 hover:text-rose-400 transition-colors disabled:opacity-40"
+            className="flex flex-col items-center gap-1 px-5 py-2 text-zinc-400 hover:text-red-400 transition-colors disabled:opacity-40"
           >
             <LogOut size={20} />
             <span className="text-[10px] font-medium">Out</span>
