@@ -179,7 +179,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   return (
-    <div className="h-[100dvh] w-full overflow-y-auto flex items-center justify-center bg-[#0f1117] px-3 py-3 scrollbar-hide">
+    <div className="min-h-screen w-full overflow-y-auto bg-[#121214] px-4 py-6 lg:px-8 scrollbar-hide">
       <style>{`
         .scrollbar-hide {
           scrollbar-width: none;
@@ -191,9 +191,34 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           height: 0;
         }
       `}</style>
+      <div className="mx-auto w-full max-w-6xl lg:grid lg:grid-cols-[1.1fr_1fr] lg:gap-8 lg:items-stretch">
+        <div className="hidden lg:flex flex-col justify-between rounded-xl border border-zinc-800 bg-[#16161a] p-10">
+          <div>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
+              <Zap size={22} className="text-[#0f1117]" strokeWidth={2.5} />
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight text-zinc-100">inFlow Console</h1>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-zinc-400">
+              Manage conversations, tools, and customer context from one precise workspace.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="rounded-lg border border-zinc-800 bg-[#121214] p-4">
+              <p className="text-xs uppercase tracking-widest text-zinc-500">Operational Clarity</p>
+              <p className="mt-1 text-sm text-zinc-300">Minimal, high-contrast control surfaces for teams that move fast.</p>
+            </div>
+            <div className="rounded-lg border border-zinc-800 bg-[#121214] p-4">
+              <p className="text-xs uppercase tracking-widest text-zinc-500">Unified Comms</p>
+              <p className="mt-1 text-sm text-zinc-300">WhatsApp, Instagram, and Facebook routed into one structured inbox.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full flex items-center justify-center">
       {/* If user is logged in, show sign out option */}
       {user && (
-        <div className="w-full max-w-md rounded-2xl bg-[#13161e] p-8 shadow-xl">
+        <div className="w-full max-w-md rounded-xl border border-zinc-800 bg-[#16161a] p-8 shadow-xl">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-white">Session Active</h2>
             <p className="text-sm text-slate-500 mt-2">
@@ -214,7 +239,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
       {/* If user is not logged in, show auth form */}
       {!user && (
-        <div className="w-full max-w-md rounded-2xl bg-[#13161e] px-5 pt-5 pb-4 shadow-xl my-auto">
+        <div className="w-full max-w-md rounded-xl border border-zinc-800 bg-[#16161a] px-5 pt-5 pb-4 shadow-xl my-auto">
           {/* Brand mark */}
           <div className="flex flex-col items-center text-center mb-4">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30">
@@ -393,6 +418,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           </p>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1229,12 +1229,13 @@ export default function Dashboard() {
 
         {/* ══ TOOLS TAB ══════════════════════════════════════════════════════════ */}
         {globalTab === 'tools' && (
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0f1117]">
+            <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6">
 
             {/* ── TAB MODE ── */}
             {toolViewMode === 'tabs' && (
               <>
-                <div className="flex-shrink-0 relative border-b border-white/[0.06] bg-[#13161e]">
+                <div className="relative border border-white/[0.06] rounded-2xl bg-[#13161e] overflow-hidden mb-4">
                   <div className="flex items-center">
                     <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
                       {ALL_TOOLS.map(({ id, Icon, label }) => (
@@ -1270,15 +1271,26 @@ export default function Dashboard() {
                   />
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
+                <div className="pb-24">
                   {activeToolId === null ? (
-                    <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
+                    <div className="flex flex-col items-center justify-center gap-3 text-center py-20 rounded-2xl border border-white/[0.06] bg-[#13161e]">
                       <LayoutGrid size={28} className="text-slate-700" />
                       <p className="text-sm text-slate-600">Select a tab above to open a tool</p>
                     </div>
                   ) : (
-                    <div className="bg-[#13161e] rounded-2xl p-4">
-                      {renderPlugin(activeToolId)}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                      <div className="rounded-2xl border border-zinc-800 bg-[#16161a] p-4 md:col-span-2 lg:col-span-2">
+                        {renderPlugin(activeToolId)}
+                      </div>
+                      <div className="rounded-2xl border border-zinc-800 bg-[#16161a] p-4">
+                        <p className="text-[11px] uppercase tracking-widest text-zinc-500">Tool Context</p>
+                        <p className="mt-2 text-sm text-zinc-300">
+                          Active module: <span className="font-semibold text-zinc-100">{ALL_TOOLS.find((tool) => tool.id === activeToolId)?.label}</span>
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+                          Desktop mode allocates dedicated workspace depth to avoid compressed mobile-style rendering on wide screens.
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1288,7 +1300,7 @@ export default function Dashboard() {
             {/* ── LIST MODE ── */}
             {toolViewMode === 'list' && (
               <>
-                <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-[#13161e]">
+                <div className="flex items-center justify-between px-4 py-3 border border-white/[0.06] rounded-2xl bg-[#13161e] mb-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-300">Tools</p>
                     <p className="text-[10px] text-slate-600 mt-0.5">Tap to open</p>
@@ -1302,13 +1314,13 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto pb-24">
-                  <div className="divide-y divide-white/[0.04]">
+                <div className="pb-24">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                     {ALL_TOOLS.map(({ id, Icon, label, color, desc }) => {
                       const isOpen = activeToolId === id;
                       const hasAi  = aiExtraction?.tool === id;
                       return (
-                        <div key={id}>
+                        <div key={id} className={`rounded-2xl border ${isOpen ? 'border-amber-500/30' : 'border-zinc-800'} bg-[#16161a] overflow-hidden`}>
                           <button
                             onClick={() => setActiveToolId(isOpen ? null : id)}
                             className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors ${
@@ -1346,7 +1358,7 @@ export default function Dashboard() {
                           </button>
 
                           {isOpen && (
-                            <div className="px-4 py-4 bg-[#0f1117] border-t border-white/[0.04]">
+                            <div className="px-4 py-4 bg-[#121214] border-t border-zinc-800">
                               {renderPlugin(id)}
                             </div>
                           )}
@@ -1366,18 +1378,38 @@ export default function Dashboard() {
                 </div>
               </>
             )}
+            </div>
           </div>
         )}
 
         {/* ══ SETTINGS TAB ═══════════════════════════════════════════════════════ */}
         {globalTab === 'settings' && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="px-4 py-6 max-w-2xl">
-              {business ? (
-                <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
-              ) : (
-                <p className="text-sm text-slate-500">Loading business profile…</p>
-              )}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0f1117]">
+            <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
+              <div className="md:flex md:gap-8 w-full">
+                <aside className="md:w-64 flex flex-col gap-2 text-zinc-400 mb-5 md:mb-0">
+                  {['Business Info', 'Connected Channels', 'Billing', 'Team Security'].map((item, index) => (
+                    <button
+                      key={item}
+                      className={`w-full text-left rounded-xl px-3 py-2.5 text-sm border transition ${
+                        index === 1
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                          : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700 hover:text-zinc-200'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </aside>
+
+                <section className="flex-1 bg-[#16161a] border border-zinc-800 p-4 md:p-8 rounded-xl min-w-0">
+                  {business ? (
+                    <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
+                  ) : (
+                    <p className="text-sm text-slate-500">Loading business profile…</p>
+                  )}
+                </section>
+              </div>
             </div>
           </div>
         )}
