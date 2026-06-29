@@ -1,72 +1,280 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Send, CheckCircle } from 'lucide-react';
+import { CheckSquare, FileText, Loader2, Send, Square } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
+import { buildPublicLink, createShortToken, isUuid, resolveBusinessId } from '@/lib/inflow-client';
+import type { InflowCatalogItem } from '@/lib/inflow-types';
 
-interface AiPrefill {
-  service?: string;
-  amount?: string;
+interface AiCandidateItem {
+  item: string;
+  quantity?: number;
+  price?: number;
 }
 
 interface FastInvoiceProps {
   activeChat: Chat | null;
-  aiPrefill?: AiPrefill;
+  aiContext?: unknown;
+  aiPrefill?: unknown;
 }
 
-export default function FastInvoice({ activeChat, aiPrefill }: FastInvoiceProps) {
-  const [service, setService] = useState('');
-  const [amount, setAmount] = useState('');
-  const [sent, setSent] = useState(false);
+type DraftSelection = {
+  checked: boolean;
+  quantity: number;
+  unitPrice: number;
+};
+
+function normalizeText(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function parseAiCandidates(payload: unknown): AiCandidateItem[] {
+  if (!payload || typeof payload !== 'object') return [];
+
+  const root = payload as Record<string, unknown>;
+  const output: AiCandidateItem[] = [];
+
+  const extraction = root.extraction as Record<string, unknown> | undefined;
+  const invoiceDetails = extraction?.invoiceDetails as Record<string, unknown> | undefined;
+  const lineItems = invoiceDetails?.lineItems;
+
+  if (Array.isArray(lineItems)) {
+    lineItems.forEach((entry) => {
+      if (!entry || typeof entry !== 'object') return;
+      const row = entry as Record<string, unknown>;
+      if (typeof row.item !== 'string') return;
+      output.push({
+        item: row.item,
+        quantity: typeof row.quantity === 'number' ? row.quantity : 1,
+        price: typeof row.price === 'number' ? row.price : undefined,
+      });
+    });
+  }
+
+  const prefill = root.prefill as Record<string, unknown> | undefined;
+  const selectedItems = prefill?.selectedItems;
+  if (Array.isArray(selectedItems)) {
+    selectedItems.forEach((entry) => {
+      if (!entry || typeof entry !== 'object') return;
+      const row = entry as Record<string, unknown>;
+      if (typeof row.item !== 'string') return;
+      output.push({
+        item: row.item,
+        quantity: typeof row.quantity === 'number' ? row.quantity : 1,
+        price: typeof row.price === 'number' ? row.price : undefined,
+      });
+    });
+  }
+
+  return output;
+}
+
+export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastInvoiceProps) {
+  const [businessId, setBusinessId] = useState<string | null>(null);
+  const [catalog, setCatalog] = useState<InflowCatalogItem[]>([]);
+  const [draft, setDraft] = useState<Record<string, DraftSelection>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [sending, setSending] = useState(false);
 
-  // Apply AI prefill when it arrives
   useEffect(() => {
-    if (aiPrefill?.service) setService(aiPrefill.service);
-    if (aiPrefill?.amount) setAmount(aiPrefill.amount);
-  }, [aiPrefill]);
+    async function loadCatalog() {
+      setLoading(true);
+      setError(null);
 
-  async function handleSend() {
-    if (!service.trim() || !amount.trim() || !activeChat) return;
+      const id = await resolveBusinessId();
+      if (!id) {
+        setError('Unable to resolve business profile.');
+        setLoading(false);
+        return;
+      }
+
+      setBusinessId(id);
+
+      const { data, error: catalogError } = await supabase
+        .from('inflow_items_catalog')
+        .select('*')
+        .eq('business_id', id)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (catalogError) {
+        setError(catalogError.message);
+        setLoading(false);
+        return;
+      }
+
+      const rows = (data ?? []) as InflowCatalogItem[];
+      setCatalog(rows);
+
+      const baseline: Record<string, DraftSelection> = {};
+      rows.forEach((item) => {
+        baseline[item.id] = {
+          checked: false,
+          quantity: 1,
+          unitPrice: Number(item.price),
+        };
+      });
+      setDraft(baseline);
+      setLoading(false);
+    }
+
+    loadCatalog();
+  }, []);
+
+  useEffect(() => {
+    if (catalog.length === 0) return;
+    const contextPayload = aiContext ?? aiPrefill;
+    if (!contextPayload) return;
+
+    const candidates = parseAiCandidates(contextPayload);
+    if (candidates.length === 0) {
+      const textBlob = JSON.stringify(contextPayload).toLowerCase();
+      setDraft((prev) => {
+        const next = { ...prev };
+        catalog.forEach((item) => {
+          if (textBlob.includes(item.name.toLowerCase())) {
+            next[item.id] = { ...next[item.id], checked: true };
+          }
+        });
+        return next;
+      });
+      return;
+    }
+
+    setDraft((prev) => {
+      const next = { ...prev };
+
+      candidates.forEach((candidate) => {
+        const target = catalog.find((item) => {
+          const itemName = normalizeText(item.name);
+          const candidateName = normalizeText(candidate.item);
+          return itemName.includes(candidateName) || candidateName.includes(itemName);
+        });
+
+        if (!target) return;
+
+        next[target.id] = {
+          checked: true,
+          quantity: candidate.quantity && candidate.quantity > 0 ? candidate.quantity : 1,
+          unitPrice: typeof candidate.price === 'number' && candidate.price > 0 ? candidate.price : Number(target.price),
+        };
+      });
+
+      return next;
+    });
+  }, [aiContext, aiPrefill, catalog]);
+
+  function patchDraft(itemId: string, patch: Partial<DraftSelection>) {
+    setDraft((prev) => ({
+      ...prev,
+      [itemId]: {
+        ...prev[itemId],
+        ...patch,
+      },
+    }));
+  }
+
+  const selectedRows = catalog
+    .map((item) => ({ item, state: draft[item.id] }))
+    .filter((row) => row.state?.checked);
+
+  const subtotal = selectedRows.reduce((sum, row) => {
+    const qty = Number.isFinite(row.state.quantity) ? row.state.quantity : 1;
+    const unit = Number.isFinite(row.state.unitPrice) ? row.state.unitPrice : Number(row.item.price);
+    return sum + qty * unit;
+  }, 0);
+
+  async function sendInvoice() {
+    if (!businessId || !activeChat || selectedRows.length === 0) return;
     setSending(true);
+    setError(null);
+
+    const reference = `INV-${Date.now().toString().slice(-8)}`;
+    const shortToken = createShortToken(12);
+    const invoiceLink = buildPublicLink(`/pay/${shortToken}`);
+
+    const lineItems = selectedRows.map((row) => ({
+      catalogItemId: row.item.id,
+      item: row.item.name,
+      description: row.item.description,
+      price: row.state.unitPrice,
+      quantity: row.state.quantity,
+    }));
+
+    const chatId = isUuid(activeChat.id) ? activeChat.id : null;
+
+    const { error: insertInvoiceError } = await supabase.from('inflow_invoices').insert({
+      business_id: businessId,
+      chat_id: chatId,
+      type: 'invoice',
+      reference,
+      customer_name: activeChat.name,
+      line_items: lineItems,
+      subtotal,
+      vat_amount: 0,
+      total: subtotal,
+      currency: 'ZAR',
+      status: 'sent',
+    });
+
+    if (insertInvoiceError) {
+      setError(insertInvoiceError.message);
+      setSending(false);
+      return;
+    }
+
+    const messageLines = selectedRows
+      .map((row) => `• ${row.item.name} x${row.state.quantity} — R${(row.state.quantity * row.state.unitPrice).toFixed(2)}`)
+      .join('\n');
 
     const invoiceText =
-      `📄 *INVOICE — inFlow*\n` +
+      `📄 *Invoice ${reference}*\n` +
       `━━━━━━━━━━━━━━━━━\n` +
-      `Service: ${service}\n` +
-      `Amount: R${amount}\n` +
+      `${messageLines}\n` +
       `━━━━━━━━━━━━━━━━━\n` +
-      `Please use EFT / PayFast to settle.\n` +
-      `Thank you for your business! 🙏`;
+      `Total: R${subtotal.toFixed(2)}\n` +
+      `Pay now: ${invoiceLink}`;
 
-    await supabase.from('messages').insert({
+    const { error: messageError } = await supabase.from('messages').insert({
       chat_id: activeChat.id,
       sender: 'business',
       body: invoiceText,
     });
 
+    if (messageError) {
+      setError(messageError.message);
+      setSending(false);
+      return;
+    }
+
     await supabase
       .from('chats')
-      .update({ last_message: `Invoice: R${amount}`, updated_at: new Date().toISOString() })
+      .update({ last_message: `Invoice ${reference}: R${subtotal.toFixed(2)}`, updated_at: new Date().toISOString() })
       .eq('id', activeChat.id);
 
-    setSent(true);
+    setShowConfirm(false);
     setSending(false);
-    setTimeout(() => {
-      setSent(false);
-      setService('');
-      setAmount('');
-    }, 2500);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 text-xs text-zinc-500">
+        <Loader2 size={14} className="animate-spin" />
+        Loading invoice catalog...
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 relative">
       <div className="flex items-center gap-2">
         <FileText size={16} className="text-amber-600" />
         <h3 className="text-sm font-bold text-zinc-900">Fast Invoice</h3>
-        {aiPrefill && (
-          <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-semibold">
-            AI filled
+        {Boolean(aiContext || aiPrefill) && (
+          <span className="ml-auto text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-semibold">
+            AI matched
           </span>
         )}
       </div>
@@ -77,58 +285,103 @@ export default function FastInvoice({ activeChat, aiPrefill }: FastInvoiceProps)
         </p>
       )}
 
-      {activeChat && (
-        <>
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Service Description
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Car Service — Full"
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-              className="bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
-            />
+      {catalog.length === 0 && (
+        <p className="text-xs text-zinc-500">No active catalog items available in MenuDrop yet.</p>
+      )}
+
+      {catalog.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {catalog.map((item) => {
+            const state = draft[item.id];
+            return (
+              <div key={item.id} className="rounded-lg border border-zinc-200 bg-white p-3 flex flex-col gap-2">
+                <button
+                  className="flex items-center gap-2 text-left"
+                  onClick={() => patchDraft(item.id, { checked: !state?.checked })}
+                >
+                  {state?.checked ? <CheckSquare size={16} className="text-amber-600" /> : <Square size={16} className="text-zinc-400" />}
+                  <span className="text-sm font-medium text-zinc-900">{item.name}</span>
+                </button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={state?.quantity ?? 1}
+                    onChange={(event) => patchDraft(item.id, { quantity: Math.max(1, Number.parseInt(event.target.value || '1', 10)) })}
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    placeholder="Qty"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={state?.unitPrice ?? Number(item.price)}
+                    onChange={(event) => patchDraft(item.id, { unitPrice: Math.max(0, Number.parseFloat(event.target.value || '0')) })}
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                    placeholder="Unit price"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-zinc-600">Selected items</span>
+          <span className="font-semibold text-zinc-900">{selectedRows.length}</span>
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-zinc-600">Total</span>
+          <span className="font-bold text-amber-600">R{subtotal.toFixed(2)}</span>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setShowConfirm(true)}
+        disabled={!activeChat || selectedRows.length === 0}
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+      >
+        <Send size={14} />
+        Review & Confirm Invoice
+      </button>
+
+      {error && <p className="text-xs text-rose-500">{error}</p>}
+
+      {showConfirm && (
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border border-zinc-200 p-4 flex flex-col gap-3 z-20">
+          <h4 className="text-sm font-semibold text-zinc-900">Confirm Invoice Payload</h4>
+          <div className="max-h-56 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-3 text-xs text-zinc-700 space-y-2">
+            {selectedRows.map((row) => (
+              <div key={row.item.id} className="flex justify-between gap-3">
+                <span>{row.item.name} x{row.state.quantity}</span>
+                <span className="font-medium">R{(row.state.quantity * row.state.unitPrice).toFixed(2)}</span>
+              </div>
+            ))}
           </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Amount (ZAR)
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500 font-medium">
-                R
-              </span>
-              <input
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-lg pl-7 pr-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
-              />
-            </div>
+          <div className="flex justify-between text-sm font-semibold text-zinc-900">
+            <span>Total</span>
+            <span>R{subtotal.toFixed(2)}</span>
           </div>
-
-          {/* Preview */}
-          {service && amount && (
-            <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-200 text-xs text-zinc-600 whitespace-pre-line leading-relaxed font-mono">
-              {`📄 INVOICE — inFlow\n━━━━━━━━━━━━━━━━━\nService: ${service}\nAmount: R${amount}\n━━━━━━━━━━━━━━━━━\nPlease use EFT / PayFast to settle.`}
-            </div>
-          )}
-
-          <button
-            onClick={handleSend}
-            disabled={!service.trim() || !amount.trim() || sending || sent}
-            className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
-          >
-            {sent ? (
-              <><CheckCircle size={14} /> Sent!</>
-            ) : (
-              <><Send size={14} /> Generate & Send</>
-            )}
-          </button>
-        </>
+          <div className="flex gap-2 mt-auto">
+            <button
+              onClick={() => setShowConfirm(false)}
+              className="flex-1 rounded-lg border border-zinc-200 py-2 text-sm font-medium text-zinc-700"
+            >
+              Back
+            </button>
+            <button
+              onClick={sendInvoice}
+              disabled={sending}
+              className="flex-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white py-2 text-sm font-semibold disabled:opacity-40"
+            >
+              {sending ? 'Sending...' : 'Confirm & Dispatch'}
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

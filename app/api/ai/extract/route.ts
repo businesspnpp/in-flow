@@ -1,100 +1,72 @@
-// app/api/ai/extract/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { GoogleGenAI, Type } from '@google/genai';
 import { getSupabase } from '@/lib/supabase';
 import type {
   AIContextExtraction,
-  AIExtractRequestBody,
   AIExtractResponse,
   InflowCatalogItem,
 } from '@/lib/inflow-types';
 
-// ───────────────────────────────────────────────────────────────────────
-// Gemini client — instantiated once per cold start
-// ───────────────────────────────────────────────────────────────────────
+type ExtractRequestBody = {
+  chatId?: string;
+  businessId?: string;
+  transcript?: string;
+};
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+type LegacyToolId = 'invoice' | 'booked' | 'quote' | 'promo' | null;
 
-if (!GEMINI_API_KEY) {
-  console.error(
-    '[inflow:ai/extract] GEMINI_API_KEY is not set. Set it in your environment before using AI extraction.'
-  );
-}
+type LegacyResponse = {
+  tool: LegacyToolId;
+  prefill: Record<string, unknown>;
+  confidence: number;
+};
 
-const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
+const apiKey = process.env.GEMINI_API_KEY;
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
-const MODEL = 'gemini-2.0-flash'; // Updated to current model name
-const MESSAGE_HISTORY_LIMIT = 15;
-
-// ───────────────────────────────────────────────────────────────────────
-// Structured Output schema — enforced by Gemini via responseSchema
-// ───────────────────────────────────────────────────────────────────────
+const MODEL = 'gemini-2.5-flash';
+const MESSAGE_HISTORY_LIMIT = 20;
 
 const EXTRACTION_SCHEMA = {
-  type: SchemaType.OBJECT,
+  type: Type.OBJECT,
   properties: {
     detectedIntent: {
-      type: SchemaType.STRING,
+      type: Type.STRING,
       enum: ['invoice', 'booking', 'quote', 'promo', 'none'],
-      description:
-        'The single most likely action the business owner wants to take based on the conversation.',
     },
     customerInfo: {
-      type: SchemaType.OBJECT,
+      type: Type.OBJECT,
       properties: {
-        name: {
-          type: SchemaType.STRING,
-          nullable: true,
-          description: "The customer's first name if mentioned anywhere in the thread, else null.",
-        },
-        phone: {
-          type: SchemaType.STRING,
-          nullable: true,
-          description: 'A phone number if explicitly shared in the conversation, else null.',
-        },
+        name: { type: Type.STRING, nullable: true },
+        phone: { type: Type.STRING, nullable: true },
       },
       required: ['name', 'phone'],
     },
     invoiceDetails: {
-      type: SchemaType.OBJECT,
+      type: Type.OBJECT,
       properties: {
         lineItems: {
-          type: SchemaType.ARRAY,
+          type: Type.ARRAY,
           items: {
-            type: SchemaType.OBJECT,
+            type: Type.OBJECT,
             properties: {
-              item: { type: SchemaType.STRING, description: 'Name of the service or product mentioned.' },
-              price: { type: SchemaType.NUMBER, description: 'Price in the detected currency, numeric only.' },
-              quantity: { type: SchemaType.NUMBER, description: 'Quantity requested, default 1.' },
+              item: { type: Type.STRING },
+              price: { type: Type.NUMBER },
+              quantity: { type: Type.NUMBER },
             },
             required: ['item', 'price', 'quantity'],
           },
         },
-        currency: {
-          type: SchemaType.STRING,
-          description: 'ISO-ish currency label, default to "ZAR" for South African Rand.',
-        },
+        currency: { type: Type.STRING },
       },
       required: ['lineItems', 'currency'],
     },
     bookingDetails: {
-      type: SchemaType.OBJECT,
+      type: Type.OBJECT,
       properties: {
-        requestedDate: {
-          type: SchemaType.STRING,
-          nullable: true,
-          description: 'ISO YYYY-MM-DD date if a specific date can be inferred from relative terms like "next Tuesday", else null.',
-        },
-        requestedTimeSlot: {
-          type: SchemaType.STRING,
-          nullable: true,
-          description: 'A time or time-of-day phrase such as "afternoon" or "14:00", else null.',
-        },
-        serviceType: {
-          type: SchemaType.STRING,
-          nullable: true,
-          description: 'The service or appointment type being discussed, else null.',
-        },
+        requestedDate: { type: Type.STRING, nullable: true },
+        requestedTimeSlot: { type: Type.STRING, nullable: true },
+        serviceType: { type: Type.STRING, nullable: true },
       },
       required: ['requestedDate', 'requestedTimeSlot', 'serviceType'],
     },
@@ -102,170 +74,294 @@ const EXTRACTION_SCHEMA = {
   required: ['detectedIntent', 'customerInfo', 'invoiceDetails', 'bookingDetails'],
 };
 
-// ───────────────────────────────────────────────────────────────────────
-// System prompt builder
-// ───────────────────────────────────────────────────────────────────────
+function emptyExtraction(): AIContextExtraction {
+  return {
+    detectedIntent: 'none',
+    customerInfo: {
+      name: null,
+      phone: null,
+    },
+    invoiceDetails: {
+      lineItems: [],
+      currency: 'ZAR',
+    },
+    bookingDetails: {
+      requestedDate: null,
+      requestedTimeSlot: null,
+      serviceType: null,
+    },
+  };
+}
+
+function fallbackFromTranscript(transcript: string): AIContextExtraction {
+  const extraction = emptyExtraction();
+  const text = transcript.toLowerCase();
+
+  const bookingPattern = /(book|booking|appointment|slot|schedule|reschedule)/;
+  const quotePattern = /(quote|estimate|pricing|price estimate)/;
+  const invoicePattern = /(invoice|bill|payment|pay now|amount due)/;
+  const promoPattern = /(promo|discount|voucher|special|deal)/;
+
+  if (bookingPattern.test(text)) {
+    extraction.detectedIntent = 'booking';
+  } else if (quotePattern.test(text)) {
+    extraction.detectedIntent = 'quote';
+  } else if (invoicePattern.test(text)) {
+    extraction.detectedIntent = 'invoice';
+  } else if (promoPattern.test(text)) {
+    extraction.detectedIntent = 'promo';
+  }
+
+  const moneyMatches = transcript.match(/(?:R|ZAR\s?)(\d+(?:\.\d{1,2})?)/gi) ?? [];
+  if (moneyMatches.length > 0) {
+    extraction.invoiceDetails.lineItems = moneyMatches.map((match, index) => {
+      const numeric = Number.parseFloat(match.replace(/[^\d.]/g, ''));
+      return {
+        item: `Detected item ${index + 1}`,
+        price: Number.isFinite(numeric) ? numeric : 0,
+        quantity: 1,
+      };
+    });
+  }
+
+  const timeMatch = transcript.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+  if (timeMatch) {
+    extraction.bookingDetails.requestedTimeSlot = `${timeMatch[1]}:${timeMatch[2]}`;
+  }
+
+  const dateMatch = transcript.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+  if (dateMatch) {
+    extraction.bookingDetails.requestedDate = dateMatch[1];
+  }
+
+  return extraction;
+}
 
 function buildSystemInstruction(catalogItems: InflowCatalogItem[]): string {
   const catalogList =
     catalogItems.length > 0
       ? catalogItems
-          .map((c) => `- ${c.name} (R${c.price}${c.description ? ` — ${c.description}` : ''})`)
+          .map((item) => `- ${item.name} (R${item.price}${item.description ? `, ${item.description}` : ''})`)
           .join('\n')
-      : '(No catalog items configured for this business yet.)';
+      : '(No catalog configured yet)';
 
-  return `You are the background context engine for the inFlow SaaS platform, used by South African small businesses.
+  return `You are inFlow's AI extraction engine.
 
-Your job is to analyze the provided chat history between a business and a customer and extract structured data to pre-fill a tool form (Invoice, Quote, BookedIt, or Promo). Today's date context should be used to resolve relative dates like "next Tuesday" or "tomorrow" into ISO YYYY-MM-DD format where possible.
+Return ONLY valid JSON matching the response schema.
+Infer the merchant intent from the conversation.
+Use these intents: invoice, booking, quote, promo, none.
+Never invent customer details.
+Prefer catalog prices when matching line items.
+Resolve relative dates to ISO format when possible.
 
-Cross-reference any items, services, or products the customer mentions against this business's actual catalog below. Prefer matching the customer's wording to the closest catalog entry and use the CATALOG price, not a guessed price, whenever there's a reasonable match:
-
-${catalogList}
-
-Rules:
-- Default currency is "ZAR" (South African Rand) unless another currency is explicitly mentioned.
-- If no clear commercial or booking intent exists in the conversation, set detectedIntent to "none" and leave the relevant detail fields empty/null.
-- Never invent a customer name or phone number that was not actually written in the chat.
-- Keep lineItems empty if no items/services were discussed.
-- Quantity defaults to 1 if not specified.`;
+Live catalog:
+${catalogList}`;
 }
 
-// ───────────────────────────────────────────────────────────────────────
-// POST /api/ai/extract
-// ───────────────────────────────────────────────────────────────────────
+function mapLegacyResponse(extraction: AIContextExtraction): LegacyResponse {
+  const intentMap: Record<AIContextExtraction['detectedIntent'], LegacyToolId> = {
+    invoice: 'invoice',
+    booking: 'booked',
+    quote: 'quote',
+    promo: 'promo',
+    none: null,
+  };
 
-export async function POST(request: NextRequest) {
-  if (!genAI) {
-    return NextResponse.json(
-      { error: 'AI extraction is not configured on this server (missing GEMINI_API_KEY).' },
-      { status: 503 }
-    );
+  const selectedItems = extraction.invoiceDetails.lineItems.map((line) => ({
+    item: line.item,
+    quantity: line.quantity,
+    price: line.price,
+  }));
+
+  if (extraction.detectedIntent === 'booking') {
+    return {
+      tool: 'booked',
+      prefill: {
+        suggestedDate: extraction.bookingDetails.requestedDate,
+        suggestedSlot: extraction.bookingDetails.requestedTimeSlot,
+        serviceType: extraction.bookingDetails.serviceType,
+      },
+      confidence: 0.86,
+    };
   }
 
-  let body: AIExtractRequestBody;
+  if (extraction.detectedIntent === 'quote' || extraction.detectedIntent === 'invoice') {
+    return {
+      tool: intentMap[extraction.detectedIntent],
+      prefill: {
+        selectedItems,
+        currency: extraction.invoiceDetails.currency,
+      },
+      confidence: selectedItems.length > 0 ? 0.9 : 0.74,
+    };
+  }
+
+  if (extraction.detectedIntent === 'promo') {
+    return {
+      tool: 'promo',
+      prefill: {},
+      confidence: 0.7,
+    };
+  }
+
+  return {
+    tool: null,
+    prefill: {},
+    confidence: 0.5,
+  };
+}
+
+async function buildTranscript(body: ExtractRequestBody): Promise<string | null> {
+  if (body.transcript && body.transcript.trim()) {
+    return body.transcript.trim();
+  }
+
+  if (!body.chatId) {
+    return null;
+  }
+
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('messages')
+    .select('sender, body, created_at')
+    .eq('chat_id', body.chatId)
+    .order('created_at', { ascending: false })
+    .limit(MESSAGE_HISTORY_LIMIT);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  return data
+    .slice()
+    .reverse()
+    .map((message) => `${message.sender === 'business' ? 'Business' : 'Customer'}: ${message.body}`)
+    .join('\n');
+}
+
+async function fetchCatalog(businessId?: string): Promise<InflowCatalogItem[]> {
+  if (!businessId) {
+    return [];
+  }
+
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('inflow_items_catalog')
+    .select('*')
+    .eq('business_id', businessId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data as InflowCatalogItem[];
+}
+
+function matchCatalogItems(extraction: AIContextExtraction, catalog: InflowCatalogItem[]) {
+  const normalizedLineItems = extraction.invoiceDetails.lineItems.map((line) => line.item.toLowerCase());
+
+  return catalog.filter((item) => {
+    const name = item.name.toLowerCase();
+    return normalizedLineItems.some((line) => line.includes(name) || name.includes(line));
+  });
+}
+
+export async function POST(request: NextRequest) {
+  let body: ExtractRequestBody;
   try {
-    body = await request.json();
+    body = (await request.json()) as ExtractRequestBody;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
   }
 
-  const { chatId, businessId } = body;
+  const transcript = await buildTranscript(body);
+  const safeTranscript = transcript ?? body.transcript?.trim() ?? '';
 
-  if (!chatId || !businessId) {
-    return NextResponse.json(
-      { error: 'Both chatId and businessId are required.' },
-      { status: 400 }
-    );
+  if (!safeTranscript) {
+    const extraction = emptyExtraction();
+    const legacy = mapLegacyResponse(extraction);
+    const payload: AIExtractResponse & LegacyResponse = {
+      extraction,
+      matchedCatalogItems: [],
+      tool: legacy.tool,
+      prefill: legacy.prefill,
+      confidence: legacy.confidence,
+    };
+    return NextResponse.json(payload, { status: 200 });
   }
 
   try {
-    const supabase = getSupabase();
+    const catalog = await fetchCatalog(body.businessId);
 
-    // 1. Fetch the last 15 messages for this chat thread
-    const { data: messages, error: messagesError } = await supabase
-      .from('messages')
-      .select('sender, body, created_at')
-      .eq('chat_id', chatId)
-      .order('created_at', { ascending: false })
-      .limit(MESSAGE_HISTORY_LIMIT);
+    if (!ai) {
+      const extraction = fallbackFromTranscript(safeTranscript);
+      const matchedCatalogItems = matchCatalogItems(extraction, catalog);
+      const legacy = mapLegacyResponse(extraction);
 
-    if (messagesError) {
-      console.error('[inflow:ai/extract] Failed to fetch messages:', messagesError);
-      return NextResponse.json({ error: 'Failed to load chat history.' }, { status: 500 });
+      const payload: AIExtractResponse & LegacyResponse = {
+        extraction,
+        matchedCatalogItems,
+        tool: legacy.tool,
+        prefill: legacy.prefill,
+        confidence: Math.max(0.55, legacy.confidence - 0.1),
+      };
+
+      return NextResponse.json(payload, { status: 200 });
     }
 
-    if (!messages || messages.length === 0) {
-      return NextResponse.json(
-        { error: 'No messages found in this chat to analyze.' },
-        { status: 404 }
-      );
-    }
-
-    const chronological = [...messages].reverse();
-
-    // 2. Fetch this business's active catalog
-    const { data: catalogItems, error: catalogError } = await supabase
-      .from('inflow_items_catalog')
-      .select('*')
-      .eq('business_id', businessId)
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
-
-    if (catalogError) {
-      console.warn('[inflow:ai/extract] Failed to fetch catalog, proceeding without it:', catalogError);
-    }
-
-    const activeCatalog: InflowCatalogItem[] = catalogItems ?? [];
-
-    // 3. Build the transcript for the model
-    const transcript = chronological
-      .map((m) => `${m.sender === 'business' ? 'Business' : 'Customer'}: ${m.body}`)
-      .join('\n');
-
-    // 4. Get the generative model
-    const model = genAI.getGenerativeModel({ 
+    const response = await ai.models.generateContent({
       model: MODEL,
-      generationConfig: {
+      contents: `Chat transcript:\n${safeTranscript}`,
+      config: {
         temperature: 0.1,
         responseMimeType: 'application/json',
         responseSchema: EXTRACTION_SCHEMA,
+        systemInstruction: buildSystemInstruction(catalog),
       },
-      systemInstruction: buildSystemInstruction(activeCatalog),
     });
 
-    // 5. Call Gemini with Structured Outputs
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            {
-              text: `Chat transcript (oldest to newest):\n\n${transcript}\n\nExtract the structured data now.`,
-            },
-          ],
-        },
-      ],
-    });
-
-    const response = result.response;
-    const rawText = response.text();
-    
-    if (!rawText) {
-      console.error('[inflow:ai/extract] Gemini returned an empty response.');
+    const raw = response.text?.trim();
+    if (!raw) {
       return NextResponse.json({ error: 'AI returned an empty response.' }, { status: 502 });
     }
 
     let extraction: AIContextExtraction;
     try {
-      extraction = JSON.parse(rawText) as AIContextExtraction;
-    } catch (parseErr) {
-      console.error('[inflow:ai/extract] Failed to parse Gemini JSON output:', parseErr, rawText);
-      return NextResponse.json(
-        { error: 'AI returned malformed JSON despite structured output enforcement.' },
-        { status: 502 }
-      );
+      extraction = JSON.parse(raw) as AIContextExtraction;
+    } catch {
+      extraction = emptyExtraction();
     }
 
-    // 6. Cross-reference matched catalog items
-    const matchedCatalogItems = activeCatalog.filter((catalogItem) =>
-      extraction.invoiceDetails.lineItems.some((line) => {
-        const a = line.item.toLowerCase();
-        const b = catalogItem.name.toLowerCase();
-        return a.includes(b) || b.includes(a);
-      })
-    );
+    const matchedCatalogItems = matchCatalogItems(extraction, catalog);
+    const legacy = mapLegacyResponse(extraction);
 
-    const resultData: AIExtractResponse = {
+    const payload: AIExtractResponse & LegacyResponse = {
       extraction,
       matchedCatalogItems,
+      tool: legacy.tool,
+      prefill: legacy.prefill,
+      confidence: legacy.confidence,
     };
 
-    return NextResponse.json(resultData, { status: 200 });
-  } catch (err) {
-    console.error('[inflow:ai/extract] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Unexpected error during AI context extraction.' },
-      { status: 500 }
-    );
+    return NextResponse.json(payload, { status: 200 });
+  } catch (error) {
+    console.error('[ai/extract] unexpected error:', error);
+
+    const catalog = await fetchCatalog(body.businessId);
+    const extraction = fallbackFromTranscript(safeTranscript);
+    const matchedCatalogItems = matchCatalogItems(extraction, catalog);
+    const legacy = mapLegacyResponse(extraction);
+
+    const payload: AIExtractResponse & LegacyResponse = {
+      extraction,
+      matchedCatalogItems,
+      tool: legacy.tool,
+      prefill: legacy.prefill,
+      confidence: Math.max(0.55, legacy.confidence - 0.1),
+    };
+
+    return NextResponse.json(payload, { status: 200 });
   }
 }
