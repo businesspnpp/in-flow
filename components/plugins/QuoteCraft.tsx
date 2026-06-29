@@ -292,9 +292,9 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
     <div className="flex flex-col gap-4 relative">
       <div className="flex items-center gap-2">
         <Calculator size={16} className="text-amber-600" />
-        <h3 className="text-sm font-bold text-zinc-200">QuoteCraft</h3>
+        <h3 className="text-sm font-semibold text-zinc-800">QuoteCraft</h3>
         {Boolean(aiContext || aiPrefill) && (
-          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
+          <span className="ml-auto text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 font-medium border border-zinc-300">
             AI matched
           </span>
         )}
@@ -304,13 +304,13 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
         {catalog.map((item) => {
           const state = draft[item.id];
           return (
-            <div key={item.id} className="rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3 flex flex-col gap-2">
+            <div key={item.id} className="border border-zinc-200 bg-white p-3 flex flex-col gap-2">
               <button
                 className="flex items-center gap-2 text-left"
                 onClick={() => patchDraft(item.id, { checked: !state?.checked })}
               >
                 {state?.checked ? <CheckSquare size={16} className="text-amber-600" /> : <Square size={16} className="text-zinc-400" />}
-                <span className="text-sm font-medium text-zinc-200">{item.name}</span>
+                <span className="text-sm font-medium text-zinc-800">{item.name}</span>
               </button>
 
               <div className="grid grid-cols-2 gap-2">
@@ -320,7 +320,7 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
                   step="1"
                   value={state?.quantity ?? 1}
                   onChange={(event) => patchDraft(item.id, { quantity: Math.max(1, Number.parseInt(event.target.value || '1', 10)) })}
-                  className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
+                  className="bg-white border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
                   placeholder="Qty"
                 />
                 <input
@@ -329,7 +329,7 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
                   step="0.01"
                   value={state?.unitPrice ?? Number(item.price)}
                   onChange={(event) => patchDraft(item.id, { unitPrice: Math.max(0, Number.parseFloat(event.target.value || '0')) })}
-                  className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
+                  className="bg-white border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
                   placeholder="Unit price"
                 />
               </div>
@@ -338,32 +338,32 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
         })}
       </div>
 
-      <div className="rounded-lg border border-zinc-800/80 bg-zinc-900/60 p-3 text-sm">
+      <div className="border border-zinc-200 bg-zinc-50 p-3 text-sm">
         <div className="flex items-center justify-between">
-          <span className="text-zinc-400">Selected items</span>
-          <span className="font-semibold text-zinc-200">{selectedRows.length}</span>
+          <span className="text-zinc-500">Selected items</span>
+          <span className="font-semibold text-zinc-800">{selectedRows.length}</span>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-zinc-400">Total</span>
-          <span className="font-bold text-amber-600">R{subtotal.toFixed(2)}</span>
+          <span className="text-zinc-500">Total</span>
+          <span className="font-semibold text-amber-600">R{subtotal.toFixed(2)}</span>
         </div>
       </div>
 
       <button
         onClick={() => setShowConfirm(true)}
         disabled={!activeChat || selectedRows.length === 0}
-        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
         <Send size={14} />
-        Review & Confirm Quote
+        Review and confirm quote
       </button>
 
-      {error && <p className="text-xs text-rose-500">{error}</p>}
+      {error && <p className="text-xs text-red-600">{error}</p>}
 
       {showConfirm && (
-        <div className="absolute inset-0 bg-[#121214]/95 backdrop-blur-sm rounded-xl border border-zinc-800/80 p-4 flex flex-col gap-3 z-20">
-          <h4 className="text-sm font-semibold text-zinc-200">Confirm Quote Payload</h4>
-          <div className="max-h-56 overflow-y-auto rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3 text-xs text-zinc-300 space-y-2">
+        <div className="absolute inset-0 bg-white border border-zinc-200 p-4 flex flex-col gap-3 z-20">
+          <h4 className="text-sm font-semibold text-zinc-800">Confirm quote</h4>
+          <div className="max-h-56 overflow-y-auto border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-700 space-y-2">
             {selectedRows.map((row) => (
               <div key={row.item.id} className="flex justify-between gap-3">
                 <span>{row.item.name} x{row.state.quantity}</span>
@@ -371,23 +371,23 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-sm font-semibold text-zinc-200">
+          <div className="flex justify-between text-sm font-semibold text-zinc-800">
             <span>Total</span>
             <span>R{subtotal.toFixed(2)}</span>
           </div>
           <div className="flex gap-2 mt-auto">
             <button
               onClick={() => setShowConfirm(false)}
-              className="flex-1 rounded-lg border border-zinc-800/80 bg-zinc-900/60 py-2 text-sm font-medium text-zinc-200"
+              className="flex-1 border border-zinc-300 bg-white py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50 transition-colors"
             >
               Back
             </button>
             <button
               onClick={sendQuote}
               disabled={sending}
-              className="flex-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white py-2 text-sm font-semibold disabled:opacity-40"
+              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2 text-sm font-medium disabled:opacity-40 transition-colors"
             >
-              {sending ? 'Sending...' : 'Confirm & Dispatch'}
+              {sending ? 'Sending...' : 'Confirm and dispatch'}
             </button>
           </div>
         </div>
