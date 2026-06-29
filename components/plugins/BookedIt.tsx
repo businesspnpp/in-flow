@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { CalendarCheck, Clock3, Loader2, Plus, Send, Trash2 } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
-import { buildPublicLink, createShortToken, isUuid, resolveBusinessId } from '@/lib/inflow-client';
+import {
+  buildPublicLink,
+  createShortToken,
+  ensureChatExists,
+  isUuid,
+  resolveBusinessId,
+} from '@/lib/inflow-client';
 import type { AIContextExtraction } from '@/lib/inflow-types';
 
 interface SlotRange {
@@ -218,6 +224,11 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
       `${rangeText}\n` +
       `━━━━━━━━━━━━━━━━━\n` +
       (bookingLink ? `Manage booking: ${bookingLink}` : 'Your booking has been reserved.');
+
+    await ensureChatExists(activeChat.id, {
+      name: activeChat.name,
+      lastMessage: messageBody,
+    });
 
     const { error: messageError } = await supabase.from('messages').insert({
       chat_id: activeChat.id,

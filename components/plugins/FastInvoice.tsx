@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { CheckSquare, FileText, Loader2, Send, Square } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
-import { buildPublicLink, createShortToken, isUuid, resolveBusinessId } from '@/lib/inflow-client';
+import {
+  buildPublicLink,
+  createShortToken,
+  ensureChatExists,
+  isUuid,
+  resolveBusinessId,
+} from '@/lib/inflow-client';
 import type { InflowCatalogItem } from '@/lib/inflow-types';
 
 interface AiCandidateItem {
@@ -236,6 +242,11 @@ export default function FastInvoice({ activeChat, aiContext, aiPrefill }: FastIn
       `━━━━━━━━━━━━━━━━━\n` +
       `Total: R${subtotal.toFixed(2)}\n` +
       `Pay now: ${invoiceLink}`;
+
+    await ensureChatExists(activeChat.id, {
+      name: activeChat.name,
+      lastMessage: invoiceText,
+    });
 
     const { error: messageError } = await supabase.from('messages').insert({
       chat_id: activeChat.id,

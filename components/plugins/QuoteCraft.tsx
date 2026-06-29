@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Calculator, CheckSquare, Loader2, Send, Square } from 'lucide-react';
 import { supabase, Chat } from '@/lib/supabase';
-import { buildPublicLink, createShortToken, isUuid, resolveBusinessId } from '@/lib/inflow-client';
+import {
+  buildPublicLink,
+  createShortToken,
+  ensureChatExists,
+  isUuid,
+  resolveBusinessId,
+} from '@/lib/inflow-client';
 import type { InflowCatalogItem } from '@/lib/inflow-types';
 
 interface AiCandidateItem {
@@ -237,6 +243,11 @@ export default function QuoteCraft({ activeChat, aiContext, aiPrefill }: QuoteCr
       `━━━━━━━━━━━━━━━━━\n` +
       `Total: R${subtotal.toFixed(2)}\n` +
       `Approve link: ${quoteLink}`;
+
+    await ensureChatExists(activeChat.id, {
+      name: activeChat.name,
+      lastMessage: body,
+    });
 
     const { error: messageError } = await supabase.from('messages').insert({
       chat_id: activeChat.id,

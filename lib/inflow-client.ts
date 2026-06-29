@@ -40,3 +40,25 @@ export function buildPublicLink(pathname: string): string {
 export function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
+
+export async function ensureChatExists(
+  chatId: string,
+  options?: {
+    name?: string | null;
+    lastMessage?: string | null;
+  }
+): Promise<void> {
+  const { error } = await supabase.from('chats').upsert(
+    {
+      id: chatId,
+      name: options?.name ?? chatId,
+      last_message: options?.lastMessage ?? null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'id' }
+  );
+
+  if (error) {
+    throw new Error(`Failed to ensure chat exists: ${error.message}`);
+  }
+}
