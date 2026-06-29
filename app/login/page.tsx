@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import Auth from "@/components/Auth";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import Auth from '@/components/Auth';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
 
-  // If a session already exists, redirect to dashboard.
+  // If a session already exists cleanly, push to dashboard once and don't render Auth form
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        router.push("/dashboard");
+        router.push('/dashboard');
       } else {
         setChecking(false);
       }
@@ -23,9 +23,7 @@ export default function LoginPage() {
   if (checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50">
-        <p className="text-sm font-semibold text-zinc-500 animate-pulse">
-          Initializing connection...
-        </p>
+        <p className="text-sm font-semibold text-zinc-500 animate-pulse">Initializing connection...</p>
       </div>
     );
   }
@@ -33,8 +31,8 @@ export default function LoginPage() {
   return (
     <div>
       <Auth
-        onSignedIn={() => router.push("/dashboard")}
-        onSignedOut={() => router.push("/login")}
+        onSignedIn={() => router.push('/dashboard')}
+        onSignedOut={() => router.push('/login')}
       />
     </div>
   );
