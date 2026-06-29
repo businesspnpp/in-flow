@@ -185,14 +185,14 @@ function getToolContext(activeModule: string | null): { title: string; descripti
 
 const CHANNEL_COLORS: Record<string, string> = {
   WhatsApp:  'bg-emerald-500',
-  Instagram: 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400',
+  Instagram: 'bg-zinc-700',
   Email:     'bg-blue-500',
   SMS:       'bg-slate-500',
 };
 
 const CHANNEL_DOT: Record<string, string> = {
   WhatsApp:  'bg-emerald-400',
-  Instagram: 'bg-pink-500',
+  Instagram: 'bg-zinc-400',
   Email:     'bg-blue-400',
   SMS:       'bg-slate-400',
 };
@@ -743,7 +743,7 @@ export default function Dashboard() {
       <div className="h-[100dvh] w-full flex items-center justify-center bg-[#0f1117]">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-xs text-slate-400 tracking-wide">Loading inFlow…</p>
+          <p className="text-xs text-slate-400 ">Loading inFlow…</p>
         </div>
       </div>
     );
@@ -768,9 +768,9 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-16 bg-[#0f1117] border-r border-white/5 items-center py-4 gap-2 z-20">
-        <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 shadow-lg shadow-amber-500/30">
-          <span className="text-xs font-black text-[#0f1117] tracking-tight">iF</span>
+      <aside className="hidden md:flex flex-col w-16 bg-[#0f1117] border-r border-zinc-800/80 items-center py-4 gap-2 z-20">
+        <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-amber-500 ">
+          <span className="text-xs font-black text-[#0f1117] ">iF</span>
         </div>
 
         {[
@@ -782,10 +782,10 @@ export default function Dashboard() {
             key={tab}
             onClick={() => setGlobalTab(tab)}
             title={label}
-            className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
+            className={`relative flex h-10 w-10 items-center justify-center rounded-md transition-colors ${
               globalTab === tab
                 ? 'bg-amber-500/15 text-amber-400'
-                : 'text-slate-500 hover:bg-white/5 hover:text-slate-300'
+                : 'text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300'
             }`}
           >
             {icon}
@@ -801,7 +801,7 @@ export default function Dashboard() {
           onClick={handleSignOut}
           disabled={isSigningOut}
           title="Sign out"
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-rose-500/10 hover:text-rose-400 transition-all disabled:opacity-40"
+          className="flex h-10 w-10 items-center justify-center rounded-md text-slate-600 hover:bg-rose-500/10 hover:text-rose-400 transition-colors disabled:opacity-40"
         >
           <LogOut size={18} />
         </button>
@@ -815,7 +815,7 @@ export default function Dashboard() {
           <>
             {/* ── Conversation list ── */}
             <div
-              className={`flex-shrink-0 flex flex-col bg-[#13161e] border-r border-white/5 overflow-hidden
+              className={`flex-shrink-0 flex flex-col bg-[#13161e] border-r border-zinc-800/80 overflow-hidden
                 ${activeContact ? 'hidden md:flex' : 'flex'}
                 w-full md:w-72 lg:w-80`}
             >
@@ -823,16 +823,16 @@ export default function Dashboard() {
               <div className="px-4 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-semibold text-white tracking-tight">Inbox</h2>
+                    <h2 className="text-base font-semibold text-white ">Inbox</h2>
                     <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
                       {MOCK_CONVERSATIONS.length} conversations
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
+                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
                       <Hash size={14} />
                     </button>
-                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
+                    <button className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
                       <Users size={14} />
                     </button>
                   </div>
@@ -844,7 +844,7 @@ export default function Dashboard() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search conversations…"
-                    className="w-full rounded-xl bg-white/[0.04] pl-8 pr-3 py-2 text-xs text-slate-300 placeholder:text-slate-500 outline-none focus:bg-white/[0.07] focus:ring-1 focus:ring-amber-500/30 transition"
+                    className="w-full rounded-md bg-zinc-900/60 pl-8 pr-3 py-2 text-xs text-slate-300 placeholder:text-slate-500 outline-none focus:bg-zinc-900/70 focus:ring-1 focus:ring-amber-500/30 transition"
                   />
                 </div>
 
@@ -852,10 +852,10 @@ export default function Dashboard() {
                   {['All', 'Unread', 'Mine'].map((f) => (
                     <button
                       key={f}
-                      className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition ${
+                      className={`rounded-full px-3 py-1 text-[11px] font-semibold  transition ${
                         f === 'All'
                           ? 'bg-amber-500 text-[#0f1117]'
-                          : 'bg-white/[0.04] text-slate-400 hover:bg-white/[0.08]'
+                          : 'bg-zinc-900/60 text-slate-400 hover:bg-zinc-900/70'
                       }`}
                     >
                       {f}
@@ -865,21 +865,19 @@ export default function Dashboard() {
               </div>
 
               {/* Contact list */}
-              <div className="flex-1 overflow-y-auto divide-y divide-white/[0.04]">
+              <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/70">
                 {filteredContacts.map((contact) => (
                   <button
                     key={contact.id}
                     onClick={() => setActiveContact(contact.id)}
-                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-all hover:bg-white/[0.03] ${
-                      activeContact === contact.id ? 'bg-white/[0.06]' : ''
+                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-900/60 ${
+                      activeContact === contact.id ? 'bg-zinc-900/70' : ''
                     }`}
                   >
                     <div className="relative flex-shrink-0">
                       <div
-                        className={`h-10 w-10 rounded-2xl flex items-center justify-center text-[13px] font-semibold text-white ${
-                          contact.channel === 'Instagram'
-                            ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
-                            : CHANNEL_COLORS[contact.channel] || 'bg-slate-500'
+                        className={`h-10 w-10 rounded-md flex items-center justify-center text-[13px] font-semibold text-white ${
+                          CHANNEL_COLORS[contact.channel] || 'bg-slate-500'
                         }`}
                       >
                         {contact.avatarColor}
@@ -896,7 +894,7 @@ export default function Dashboard() {
                       </div>
                       <p className="text-xs text-slate-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
                       {contact.statusTag && (
-                        <span className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${contact.statusColor}`}>
+                        <span className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold  ${contact.statusColor}`}>
                           {contact.statusTag}
                         </span>
                       )}
@@ -920,7 +918,7 @@ export default function Dashboard() {
             >
               {!activeContact ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                  <div className="h-16 w-16 rounded-3xl bg-white/5 flex items-center justify-center">
+                  <div className="h-16 w-16 rounded-md bg-zinc-900/60 flex items-center justify-center">
                     <MessageSquare size={28} className="text-slate-600" />
                   </div>
                   <div className="text-center">
@@ -931,19 +929,17 @@ export default function Dashboard() {
               ) : (
                 <>
                   {/* Thread header */}
-                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-white/5 bg-[#13161e]">
+                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-zinc-800/80 bg-[#13161e]">
                     <button
                       onClick={() => setActiveContact(null)}
-                      className="md:hidden flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-400 hover:bg-white/10 transition"
+                      className="md:hidden flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900/60 text-slate-400 hover:bg-zinc-900/70 transition"
                     >
                       <ArrowLeft size={16} />
                     </button>
 
                     <div
-                      className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
-                        selectedContact?.channel === 'Instagram'
-                          ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
-                          : CHANNEL_COLORS[selectedContact?.channel || 'SMS']
+                      className={`h-9 w-9 rounded-md flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${
+                        CHANNEL_COLORS[selectedContact?.channel || 'SMS']
                       }`}
                     >
                       {selectedContact?.avatarColor}
@@ -962,7 +958,7 @@ export default function Dashboard() {
                       <button
                         onClick={() => setShowMobileIntel(true)}
                         title="Open Customer Intelligence"
-                        className="xl:hidden flex items-center gap-1.5 h-8 px-2.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all"
+                        className="xl:hidden flex items-center gap-1.5 h-8 px-2.5 rounded-md text-xs font-semibold bg-zinc-900/60 text-slate-300 hover:bg-zinc-900/70 border border-white/10 transition-colors"
                       >
                         <Users size={13} />
                         Intel
@@ -973,7 +969,7 @@ export default function Dashboard() {
                         onClick={handleAiAssist}
                         disabled={aiLoading}
                         title="AI Assist — auto-suggest tool from chat"
-                        className={`flex items-center gap-1.5 h-8 px-2.5 rounded-xl text-xs font-semibold transition-all ${
+                        className={`flex items-center gap-1.5 h-8 px-2.5 rounded-md text-xs font-semibold transition-colors ${
                           aiLoading
                             ? 'bg-amber-500/10 text-amber-400 animate-pulse cursor-wait'
                             : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'
@@ -983,13 +979,13 @@ export default function Dashboard() {
                         {aiLoading ? 'Reading…' : 'AI Assist'}
                       </button>
 
-                      <button className="h-8 w-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
                         <Phone size={15} />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
                         <Star size={15} />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-white/5 hover:text-slate-300 transition">
+                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:bg-zinc-900/70 hover:text-slate-300 transition">
                         <MoreHorizontal size={15} />
                       </button>
                     </div>
@@ -1015,7 +1011,7 @@ export default function Dashboard() {
                   )}
 
                   {/* Quick tool pills */}
-                  <div className="flex-shrink-0 border-b border-white/5 bg-[#13161e] overflow-x-auto scrollbar-none px-4 py-2">
+                  <div className="flex-shrink-0 border-b border-zinc-800/80 bg-[#13161e] overflow-x-auto scrollbar-none px-4 py-2">
                     <div className="flex gap-2 whitespace-nowrap">
                       {TOOL_ACTIONS.map((tool) => {
                         const ToolIcon = tool.Icon;
@@ -1023,7 +1019,7 @@ export default function Dashboard() {
                           <button
                             key={tool.label}
                             onClick={() => handleToolAction(tool.text)}
-                            className="flex-shrink-0 flex items-center gap-1.5 rounded-full bg-white/5 border border-white/8 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-300 transition-all"
+                            className="flex-shrink-0 flex items-center gap-1.5 rounded-full bg-zinc-900/60 border border-zinc-800/80 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-300 transition-colors"
                           >
                             <ToolIcon size={13} />
                             {tool.label}
@@ -1036,9 +1032,9 @@ export default function Dashboard() {
                   {/* Messages */}
                   <div key={activeContact ?? 'no-contact'} className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
                     <div className="flex items-center gap-3 my-2">
-                      <div className="flex-1 h-px bg-white/5" />
-                      <span className="text-[10px] text-slate-600 font-medium tracking-wide uppercase">Today</span>
-                      <div className="flex-1 h-px bg-white/5" />
+                      <div className="flex-1 h-px bg-zinc-900/60" />
+                      <span className="text-[10px] text-slate-600 font-medium  uppercase">Today</span>
+                      <div className="flex-1 h-px bg-zinc-900/60" />
                     </div>
 
                     {currentMessages.map((message) => (
@@ -1048,10 +1044,8 @@ export default function Dashboard() {
                       >
                         {message.sender === 'customer' && (
                           <div
-                            className={`h-7 w-7 flex-shrink-0 self-end rounded-xl flex items-center justify-center text-[10px] font-bold text-white ${
-                              selectedContact?.channel === 'Instagram'
-                                ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
-                                : CHANNEL_COLORS[selectedContact?.channel || 'SMS'] || 'bg-slate-500'
+                            className={`h-7 w-7 flex-shrink-0 self-end rounded-md flex items-center justify-center text-[10px] font-bold text-white ${
+                              CHANNEL_COLORS[selectedContact?.channel || 'SMS'] || 'bg-slate-500'
                             }`}
                           >
                             {selectedContact?.avatarColor}
@@ -1059,10 +1053,10 @@ export default function Dashboard() {
                         )}
                         <div className={`max-w-[75%] flex flex-col gap-1 ${message.sender === 'business' ? 'items-end' : 'items-start'}`}>
                           <div
-                            className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                            className={`rounded-md px-4 py-2.5 text-sm leading-relaxed ${
                               message.sender === 'business'
                                 ? 'rounded-br-sm bg-amber-500 text-[#0f1117] font-medium'
-                                : 'rounded-bl-sm bg-white/8 text-slate-200 border border-white/5'
+                                : 'rounded-bl-sm bg-zinc-900/70 text-slate-200 border border-zinc-800/80'
                             }`}
                           >
                             {message.body}
@@ -1082,8 +1076,8 @@ export default function Dashboard() {
                   </div>
 
                   {/* Input bar */}
-                  <div className="flex-shrink-0 border-t border-white/5 bg-[#13161e] px-4 py-3">
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-2xl px-3 py-2 focus-within:border-amber-500/40 focus-within:bg-white/7 transition-all">
+                  <div className="flex-shrink-0 border-t border-zinc-800/80 bg-[#13161e] px-4 py-3">
+                    <div className="flex items-center gap-2 bg-zinc-900/60 border border-zinc-800/80 rounded-md px-3 py-2 focus-within:border-amber-500/40 focus-within:bg-zinc-900/70 transition-colors">
                       <button className="text-slate-600 hover:text-slate-400 transition flex-shrink-0">
                         <Paperclip size={16} />
                       </button>
@@ -1102,7 +1096,7 @@ export default function Dashboard() {
                       <button
                         onClick={handleSend}
                         disabled={!input.trim()}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500 text-[#0f1117] transition hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"
+                        className="flex h-8 w-8 items-center justify-center rounded-md bg-amber-500 text-[#0f1117] transition hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"
                       >
                         <ArrowRight size={15} />
                       </button>
@@ -1122,7 +1116,7 @@ export default function Dashboard() {
               {selectedContact ? (
                 <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
                   {/* CRM Meta Profile */}
-                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
@@ -1165,7 +1159,7 @@ export default function Dashboard() {
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
                         <div
-                          className="h-full bg-zinc-300 transition-all duration-500"
+                          className="h-full bg-zinc-300 transition-colors duration-500"
                           style={{ width: `${Math.max(3, loyalty.progress)}%` }}
                         />
                       </div>
@@ -1177,7 +1171,7 @@ export default function Dashboard() {
                   </section>
 
                   {/* Transaction Snapshot */}
-                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-xs font-semibold text-zinc-200">5-Transaction Snapshot</h4>
                       {txLoading && <span className="text-[10px] text-zinc-500">Loading...</span>}
@@ -1228,7 +1222,7 @@ export default function Dashboard() {
                   </section>
 
                   {/* AI Diagnostics */}
-                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                  <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                     <h4 className="text-xs font-semibold text-zinc-200 mb-2.5">AI Diagnostics</h4>
 
                     <div className="rounded-lg border border-zinc-800 bg-[#16161a] px-3 py-2.5">
@@ -1258,9 +1252,9 @@ export default function Dashboard() {
                             setActiveToolId('booked');
                             setGlobalTab('tools');
                           }}
-                          className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                          className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'booking'
-                              ? 'border-emerald-500/80 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.35)]'
+                              ? 'border-amber-500/60 bg-amber-500/10'
                               : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
                           }`}
                         >
@@ -1273,9 +1267,9 @@ export default function Dashboard() {
                             setActiveToolId('invoice');
                             setGlobalTab('tools');
                           }}
-                          className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                          className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'invoice'
-                              ? 'border-violet-500/80 bg-violet-500/10 shadow-[0_0_0_1px_rgba(139,92,246,0.35)]'
+                              ? 'border-amber-500/60 bg-amber-500/10'
                               : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
                           }`}
                         >
@@ -1297,7 +1291,7 @@ export default function Dashboard() {
 
             {/* ── Mobile/Tablet Customer Intelligence Drawer ── */}
             {showMobileIntel && selectedContact && (
-              <div className="xl:hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-[1px]">
+              <div className="xl:hidden fixed inset-0 z-[70] bg-black/60 ">
                 <div className="absolute inset-x-0 bottom-0 max-h-[86vh] rounded-t-2xl border-t border-zinc-800 bg-[#16161a] flex flex-col">
                   <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
                     <div>
@@ -1314,7 +1308,7 @@ export default function Dashboard() {
 
                   <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
                     {/* CRM Meta Profile */}
-                    <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
@@ -1357,7 +1351,7 @@ export default function Dashboard() {
                         </div>
                         <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
                           <div
-                            className="h-full bg-zinc-300 transition-all duration-500"
+                            className="h-full bg-zinc-300 transition-colors duration-500"
                             style={{ width: `${Math.max(3, loyalty.progress)}%` }}
                           />
                         </div>
@@ -1369,7 +1363,7 @@ export default function Dashboard() {
                     </section>
 
                     {/* Transaction Snapshot */}
-                    <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="text-xs font-semibold text-zinc-200">5-Transaction Snapshot</h4>
                         {txLoading && <span className="text-[10px] text-zinc-500">Loading...</span>}
@@ -1420,7 +1414,7 @@ export default function Dashboard() {
                     </section>
 
                     {/* AI Diagnostics */}
-                    <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <section className="rounded-md border border-zinc-800 bg-[#121214] p-4">
                       <h4 className="text-xs font-semibold text-zinc-200 mb-2.5">AI Diagnostics</h4>
 
                       <div className="rounded-lg border border-zinc-800 bg-[#16161a] px-3 py-2.5">
@@ -1451,9 +1445,9 @@ export default function Dashboard() {
                               setActiveToolId('booked');
                               setGlobalTab('tools');
                             }}
-                            className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                            className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'booking'
-                                ? 'border-emerald-500/80 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.35)]'
+                                ? 'border-amber-500/60 bg-amber-500/10'
                                 : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
                             }`}
                           >
@@ -1467,9 +1461,9 @@ export default function Dashboard() {
                               setActiveToolId('invoice');
                               setGlobalTab('tools');
                             }}
-                            className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                            className={`w-full rounded-lg px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'invoice'
-                                ? 'border-violet-500/80 bg-violet-500/10 shadow-[0_0_0_1px_rgba(139,92,246,0.35)]'
+                                ? 'border-amber-500/60 bg-amber-500/10'
                                 : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
                             }`}
                           >
@@ -1500,21 +1494,21 @@ export default function Dashboard() {
             {/* ── TAB MODE ── */}
             {toolViewMode === 'tabs' && (
               <>
-                <div className="relative border border-white/[0.06] rounded-2xl bg-[#13161e] overflow-hidden mb-4">
+                <div className="relative border border-zinc-800 rounded-md bg-[#13161e] overflow-hidden mb-4">
                   <div className="flex items-center">
                     <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
                       {ALL_TOOLS.map(({ id, Icon, label }) => (
                         <button
                           key={id}
                           onClick={() => setActiveToolId(id)}
-                          className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] rounded-xl transition-colors ${
+                          className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] rounded-md transition-colors ${
                             activeToolId === id
                               ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
-                              : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                              : 'text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70'
                           }`}
                         >
                           <Icon size={16} />
-                          <span className="text-[9px] font-bold uppercase tracking-wider">{label}</span>
+                          <span className="text-[9px] font-bold uppercase r">{label}</span>
                           {/* AI indicator dot */}
                           {aiExtraction?.tool === id && (
                             <span className="block h-1 w-1 rounded-full bg-amber-400" />
@@ -1524,7 +1518,7 @@ export default function Dashboard() {
                     </div>
                     <button
                       onClick={() => { setToolViewMode('list'); setActiveToolId(null); }}
-                      className="flex-shrink-0 p-2.5 mr-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"
+                      className="flex-shrink-0 p-2.5 mr-2 rounded-md text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70 transition-colors"
                       title="Switch to list view"
                     >
                       <LayoutList size={16} />
@@ -1538,17 +1532,17 @@ export default function Dashboard() {
 
                 <div className="pb-24">
                   {activeToolId === null ? (
-                    <div className="flex flex-col items-center justify-center gap-3 text-center py-20 rounded-2xl border border-white/[0.06] bg-[#13161e]">
+                    <div className="flex flex-col items-center justify-center gap-3 text-center py-20 rounded-md border border-zinc-800 bg-[#13161e]">
                       <LayoutGrid size={28} className="text-slate-700" />
                       <p className="text-sm text-slate-600">Select a tab above to open a tool</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                      <div className="rounded-2xl border border-zinc-800 bg-[#16161a] p-4 md:col-span-2 lg:col-span-2">
+                      <div className="rounded-md border border-zinc-800 bg-[#16161a] p-4 md:col-span-2 lg:col-span-2">
                         {renderPlugin(activeToolId)}
                       </div>
-                      <div className="rounded-2xl border border-zinc-800 bg-[#16161a] p-4">
-                        <p className="text-[11px] uppercase tracking-widest text-zinc-500">Tool Context</p>
+                      <div className="rounded-md border border-zinc-800 bg-[#16161a] p-4">
+                        <p className="text-[11px] uppercase st text-zinc-500">Tool Context</p>
                         <p className="mt-2 text-sm text-zinc-300">
                           Active module: <span className="font-semibold text-zinc-100">{activeModuleLabel}</span>
                         </p>
@@ -1564,14 +1558,14 @@ export default function Dashboard() {
             {/* ── LIST MODE ── */}
             {toolViewMode === 'list' && (
               <>
-                <div className="flex items-center justify-between px-4 py-3 border border-white/[0.06] rounded-2xl bg-[#13161e] mb-4">
+                <div className="flex items-center justify-between px-4 py-3 border border-zinc-800 rounded-md bg-[#13161e] mb-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-300">Tools</p>
                     <p className="text-[10px] text-slate-600 mt-0.5">Tap to open</p>
                   </div>
                   <button
                     onClick={() => setToolViewMode('tabs')}
-                    className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"
+                    className="p-2 rounded-md text-slate-500 hover:text-slate-300 hover:bg-zinc-900/70 transition-colors"
                     title="Switch to tab view"
                   >
                     <LayoutGrid size={16} />
@@ -1584,14 +1578,14 @@ export default function Dashboard() {
                       const isOpen = activeToolId === id;
                       const hasAi  = aiExtraction?.tool === id;
                       return (
-                        <div key={id} className={`rounded-2xl border ${isOpen ? 'border-amber-500/30' : 'border-zinc-800'} bg-[#16161a] overflow-hidden`}>
+                        <div key={id} className={`rounded-md border ${isOpen ? 'border-amber-500/30' : 'border-zinc-800'} bg-[#16161a] overflow-hidden`}>
                           <button
                             onClick={() => setActiveToolId(isOpen ? null : id)}
                             className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors ${
-                              isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.03]'
+                              isOpen ? 'bg-zinc-900/60' : 'hover:bg-zinc-900/60'
                             }`}
                           >
-                            <div className={`relative flex-shrink-0 h-9 w-9 rounded-xl ${color} flex items-center justify-center`}>
+                            <div className={`relative flex-shrink-0 h-9 w-9 rounded-md ${color} flex items-center justify-center`}>
                               <Icon size={16} className="text-white" strokeWidth={2.25} />
                               {/* AI pre-fill indicator */}
                               {hasAi && (
@@ -1655,7 +1649,7 @@ export default function Dashboard() {
                   {['Business Info', 'Connected Channels', 'Billing', 'Team Security'].map((item, index) => (
                     <button
                       key={item}
-                      className={`w-full text-left rounded-xl px-3 py-2.5 text-sm border transition ${
+                      className={`w-full text-left rounded-md px-3 py-2.5 text-sm border transition ${
                         index === 1
                           ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                           : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700 hover:text-zinc-200'
@@ -1666,7 +1660,7 @@ export default function Dashboard() {
                   ))}
                 </aside>
 
-                <section className="flex-1 bg-[#16161a] border border-zinc-800 p-4 md:p-8 rounded-xl min-w-0">
+                <section className="flex-1 bg-[#16161a] border border-zinc-800 p-4 md:p-8 rounded-md min-w-0">
                   {business ? (
                     <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
                   ) : (
@@ -1680,7 +1674,7 @@ export default function Dashboard() {
       </div>
 
       {/* ─── Bottom nav (mobile) ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/8 bg-[#13161e]/95 backdrop-blur-xl">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800/80 bg-[#161619] ">
         <div className="flex items-center justify-around px-2 py-2">
           {[
             { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} />, label: 'Inbox'    },
@@ -1690,7 +1684,7 @@ export default function Dashboard() {
             <button
               key={tab}
               onClick={() => { setGlobalTab(tab); if (tab !== 'chats') setActiveContact(null); }}
-              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
+              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-md transition-colors ${
                 globalTab === tab
                   ? 'text-amber-400 bg-amber-500/10'
                   : 'text-slate-600 hover:text-slate-400'
@@ -1703,7 +1697,7 @@ export default function Dashboard() {
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className="flex flex-col items-center gap-1 px-5 py-2 rounded-2xl text-slate-600 hover:text-rose-400 transition-all disabled:opacity-40"
+            className="flex flex-col items-center gap-1 px-5 py-2 rounded-md text-slate-600 hover:text-rose-400 transition-colors disabled:opacity-40"
           >
             <LogOut size={20} />
             <span className="text-[10px] font-medium">Out</span>
