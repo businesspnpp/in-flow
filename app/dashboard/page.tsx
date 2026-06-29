@@ -189,6 +189,34 @@ const initialMessages: Message[] = [
   },
 ];
 
+const INITIAL_MESSAGES_BY_CONTACT: Record<string, Message[]> = {
+  c1: initialMessages,
+  c2: [
+    {
+      id: 'm-2-1',
+      sender: 'customer',
+      body: 'Can you send me a quote for a premium package this week?',
+      created_at: new Date(Date.now() - 1000 * 60 * 6).toISOString(),
+    },
+  ],
+  c3: [
+    {
+      id: 'm-3-1',
+      sender: 'customer',
+      body: 'Please email invoice options for my renewal plan.',
+      created_at: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    },
+  ],
+  c4: [
+    {
+      id: 'm-4-1',
+      sender: 'customer',
+      body: 'Thanks, can we lock in that appointment tomorrow?',
+      created_at: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
+    },
+  ],
+};
+
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
@@ -196,7 +224,7 @@ export default function Dashboard() {
   const [loadingSession, setLoadingSession]   = useState(true);
   const [globalTab, setGlobalTab]             = useState<GlobalTab>('chats');
   const [activeContact, setActiveContact]     = useState<string | null>(null);
-  const [messages, setMessages]               = useState<Message[]>(initialMessages);
+  const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>(INITIAL_MESSAGES_BY_CONTACT);
   const [input, setInput]                     = useState('');
   const [isSigningOut, setIsSigningOut]       = useState(false);
   const [business, setBusiness]               = useState<Business | null>(null);
@@ -215,6 +243,10 @@ export default function Dashboard() {
   const replyTimer = useRef<number | null>(null);
 
   const selectedContact = MOCK_CONTACTS.find((c) => c.id === activeContact);
+  const currentMessages = useMemo(() => {
+    if (!activeContact) return [];
+    return messagesByContact[activeContact] ?? [];
+  }, [activeContact, messagesByContact]);
 
   const aiDetectedIntent = useMemo<'booking' | 'invoice' | 'quote' | 'promo' | 'none'>(() => {
     const extractionIntent = aiExtraction?.extraction?.detectedIntent;
@@ -317,6 +349,14 @@ export default function Dashboard() {
     }
   }, [activeContact, globalTab]);
 
+  useEffect(() => {
+    if (!activeContact) return;
+    setMessagesByContact((prev) => {
+      if (prev[activeContact]) return prev;
+      return { ...prev, [activeContact]: [] };
+    });
+  }, [activeContact]);
+
   // ── Auth ──
   useEffect(() => {
     async function verifyAuth() {
@@ -335,12 +375,24 @@ export default function Dashboard() {
   }
 
   // ── Messaging ──
-  function appendMessage(text: string, sender: 'business' | 'customer' = 'business') {
-    setMessages((prev) => [
+  function appendMessage(
+    text: string,
+    sender: 'business' | 'customer' = 'business',
+    contactId: string | null = activeContact
+  ) {
+    if (!contactId) return;
+
+    setMessagesByContact((prev) => ({
       ...prev,
-      { id: `m-${Date.now()}`, sender, body: text, created_at: new Date().toISOString() },
-    ]);
-    scrollToBottom();
+      [contactId]: [
+        ...(prev[contactId] ?? []),
+        { id: `m-${Date.now()}`, sender, body: text, created_at: new Date().toISOString() },
+      ],
+    }));
+
+    if (contactId === activeContact) {
+      scrollToBottom();
+    }
   }
 
   function getAutoReply(outgoing: string) {
@@ -351,11 +403,11 @@ export default function Dashboard() {
     return 'Sounds good, thanks for confirming! Let me know what the next steps are.';
   }
 
-  function scheduleAutoReply(outgoing: string) {
+  function scheduleAutoReply(outgoing: string, contactId: string) {
     if (replyTimer.current) window.clearTimeout(replyTimer.current);
     const reply = getAutoReply(outgoing);
     replyTimer.current = window.setTimeout(() => {
-      appendMessage(reply, 'customer');
+      appendMessage(reply, 'customer', contactId);
       replyTimer.current = null;
     }, 4000);
   }
@@ -363,17 +415,18 @@ export default function Dashboard() {
   useEffect(() => () => { if (replyTimer.current) window.clearTimeout(replyTimer.current); }, []);
 
   function handleSend() {
+    if (!activeContact) return;
     const trimmed = input.trim();
     if (!trimmed) return;
-    appendMessage(trimmed, 'business');
+    appendMessage(trimmed, 'business', activeContact);
     setInput('');
-    scheduleAutoReply(trimmed);
+    scheduleAutoReply(trimmed, activeContact);
   }
 
   function handleToolAction(text: string) {
     if (activeContact) {
-      appendMessage(text, 'business');
-      scheduleAutoReply(text);
+      appendMessage(text, 'business', activeContact);
+      scheduleAutoReply(text, activeContact);
     }
   }
 
@@ -381,12 +434,12 @@ export default function Dashboard() {
   // Reads the current conversation thread and asks the AI which tool to open
   // and what values to pre-populate.
   async function handleAiAssist() {
-    if (!activeContact || messages.length === 0) return;
+    if (!activeContact || currentMessages.length === 0) return;
     setAiLoading(true);
     setAiExtraction(null);
 
     try {
-      const transcript = messages
+      const transcript = currentMessages
         .map((m) => `${m.sender === 'business' ? 'Business' : 'Customer'}: ${m.body}`)
         .join('\n');
 
@@ -769,14 +822,14 @@ export default function Dashboard() {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
+                  <div key={activeContact ?? 'no-contact'} className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
                     <div className="flex items-center gap-3 my-2">
                       <div className="flex-1 h-px bg-white/5" />
                       <span className="text-[10px] text-slate-600 font-medium tracking-wide uppercase">Today</span>
                       <div className="flex-1 h-px bg-white/5" />
                     </div>
 
-                    {messages.map((message) => (
+                    {currentMessages.map((message) => (
                       <div
                         key={message.id}
                         className={`flex gap-2 ${message.sender === 'business' ? 'justify-end' : 'justify-start'}`}
