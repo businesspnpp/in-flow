@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { Business } from '@/lib/supabase';
@@ -71,7 +71,20 @@ interface AiExtraction {
   tool: ToolId | null;
   prefill: Record<string, unknown>;
   confidence: number;
+  extraction?: {
+    detectedIntent?: 'invoice' | 'booking' | 'quote' | 'promo' | 'none' | string;
+  };
 }
+
+type InflowTransaction = {
+  id: string;
+  created_at: string;
+  status: 'paid' | 'pending' | 'failed' | 'draft' | 'sent' | 'overdue' | 'cancelled' | string;
+  total: number;
+  currency: string;
+  type: 'invoice' | 'quote' | string;
+  reference: string;
+};
 
 // ─── Tool registry ────────────────────────────────────────────────────────────
 
@@ -193,11 +206,108 @@ export default function Dashboard() {
   // AI pre-fill state
   const [aiLoading, setAiLoading]             = useState(false);
   const [aiExtraction, setAiExtraction]       = useState<AiExtraction | null>(null);
+  const [customerTransactions, setCustomerTransactions] = useState<InflowTransaction[]>([]);
+  const [txLoading, setTxLoading] = useState(false);
 
   const bottomRef  = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
 
   const selectedContact = MOCK_CONTACTS.find((c) => c.id === activeContact);
+
+  const aiDetectedIntent = useMemo<'booking' | 'invoice' | 'quote' | 'promo' | 'none'>(() => {
+    const extractionIntent = aiExtraction?.extraction?.detectedIntent;
+    if (extractionIntent === 'booking' || extractionIntent === 'invoice' || extractionIntent === 'quote' || extractionIntent === 'promo') {
+      return extractionIntent;
+    }
+
+    if (aiExtraction?.tool === 'booked') return 'booking';
+    if (aiExtraction?.tool === 'invoice') return 'invoice';
+    if (aiExtraction?.tool === 'quote') return 'quote';
+    if (aiExtraction?.tool === 'promo') return 'promo';
+
+    return 'none';
+  }, [aiExtraction]);
+
+  const aiConfidencePercent = useMemo(() => {
+    return Math.max(0, Math.min(99, Math.round((aiExtraction?.confidence ?? 0) * 100)));
+  }, [aiExtraction]);
+
+  const customerLtv = useMemo(() => {
+    return customerTransactions.reduce((sum, transaction) => sum + Number(transaction.total || 0), 0);
+  }, [customerTransactions]);
+
+  const customerOrderVolume = useMemo(() => customerTransactions.length, [customerTransactions]);
+
+  const customerStatusLabel = useMemo(() => {
+    if (customerOrderVolume === 0) return 'New Lead';
+    if (customerOrderVolume === 1) return 'First-Time Buyer';
+    return 'Repeat Client';
+  }, [customerOrderVolume]);
+
+  const loyalty = useMemo(() => {
+    if (customerLtv < 500) {
+      return {
+        tier: 'Starter',
+        nextTier: 'Growth',
+        currentTarget: 500,
+        progress: Math.round((customerLtv / 500) * 100),
+      };
+    }
+
+    if (customerLtv < 2500) {
+      return {
+        tier: 'Growth',
+        nextTier: 'Elite',
+        currentTarget: 2500,
+        progress: Math.round((customerLtv / 2500) * 100),
+      };
+    }
+
+    return {
+      tier: 'Elite',
+      nextTier: 'Elite+',
+      currentTarget: customerLtv,
+      progress: 100,
+    };
+  }, [customerLtv]);
+
+  useEffect(() => {
+    async function loadCustomerTransactions() {
+      if (!activeContact || !selectedContact) {
+        setCustomerTransactions([]);
+        return;
+      }
+
+      setTxLoading(true);
+
+      try {
+        let query = supabase
+          .from('inflow_invoices')
+          .select('id, created_at, status, total, currency, type, reference')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        // This dashboard currently uses contact IDs from mock data; customer_name
+        // matching is reliable across uuid/non-uuid schemas.
+        query = query.eq('customer_name', selectedContact.name);
+
+        const { data, error } = await query;
+        if (error) {
+          setCustomerTransactions([]);
+          setTxLoading(false);
+          return;
+        }
+
+        setCustomerTransactions((data ?? []) as InflowTransaction[]);
+      } catch {
+        setCustomerTransactions([]);
+      } finally {
+        setTxLoading(false);
+      }
+    }
+
+    loadCustomerTransactions();
+  }, [activeContact, selectedContact]);
 
   // ── Auth ──
   useEffect(() => {
@@ -719,6 +829,189 @@ export default function Dashboard() {
                 </>
               )}
             </div>
+
+            {/* ── Right Context Column (Desktop XL) ── */}
+            <aside className="w-96 border-l border-zinc-800 bg-[#16161a] hidden xl:flex flex-col overflow-y-auto">
+              <div className="px-5 py-4 border-b border-zinc-800">
+                <p className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-semibold">Context Column</p>
+                <h3 className="text-sm text-zinc-100 font-semibold mt-1">Customer Intelligence</h3>
+              </div>
+
+              {selectedContact ? (
+                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
+                  {/* CRM Meta Profile */}
+                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs text-zinc-400 font-medium">{selectedContact.name}</p>
+                        <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel} Profile</p>
+                      </div>
+                      <span
+                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${
+                          customerOrderVolume === 0
+                            ? 'border-zinc-700 text-zinc-400 bg-zinc-900/40'
+                            : customerOrderVolume === 1
+                            ? 'border-amber-700 text-amber-300 bg-amber-950/30'
+                            : 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                        }`}
+                      >
+                        {customerStatusLabel}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Spent (LTV)</p>
+                        <p className="text-lg font-semibold text-zinc-100 mt-1">
+                          {new Intl.NumberFormat('en-ZA', {
+                            style: 'currency',
+                            currency: 'ZAR',
+                            maximumFractionDigits: 2,
+                          }).format(customerLtv)}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-zinc-800 bg-[#16161a] p-3">
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Total Order Volume</p>
+                        <p className="text-lg font-semibold text-zinc-100 mt-1">{customerOrderVolume}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-zinc-800">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <p className="text-[11px] text-zinc-400">Loyalty Standing</p>
+                        <p className="text-[11px] text-zinc-200 font-medium">{loyalty.tier}</p>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+                        <div
+                          className="h-full bg-zinc-300 transition-all duration-500"
+                          style={{ width: `${Math.max(3, loyalty.progress)}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-zinc-500 mt-2">
+                        Next milestone: {loyalty.nextTier}
+                        {customerLtv < 2500 ? ` at R${Math.max(0, loyalty.currentTarget - customerLtv).toFixed(2)} remaining` : ''}
+                      </p>
+                    </div>
+                  </section>
+
+                  {/* Transaction Snapshot */}
+                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs font-semibold text-zinc-200">5-Transaction Snapshot</h4>
+                      {txLoading && <span className="text-[10px] text-zinc-500">Loading...</span>}
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {!txLoading && customerTransactions.length === 0 && (
+                        <p className="text-[11px] text-zinc-500">No linked invoices or quotes found for this customer profile.</p>
+                      )}
+
+                      {customerTransactions.map((txn) => {
+                        const status = String(txn.status || '').toLowerCase();
+                        const statusClass =
+                          status === 'paid'
+                            ? 'border-emerald-700 text-emerald-300 bg-emerald-950/30'
+                            : status === 'pending' || status === 'sent' || status === 'draft'
+                            ? 'border-amber-700 text-amber-300 bg-amber-950/30'
+                            : 'border-rose-700 text-rose-300 bg-rose-950/30';
+
+                        const shortDate = new Date(txn.created_at).toLocaleDateString('en-ZA', {
+                          day: '2-digit',
+                          month: 'short',
+                        });
+
+                        return (
+                          <div
+                            key={txn.id}
+                            className="grid grid-cols-[58px_1fr_auto] items-center gap-2 rounded-lg border border-zinc-800 bg-[#16161a] px-2.5 py-2"
+                          >
+                            <span className="text-[11px] text-zinc-400 font-medium">{shortDate}</span>
+                            <div className="min-w-0 flex items-center gap-2">
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusClass}`}>
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                              </span>
+                              <span className="text-[10px] text-zinc-500 truncate">{txn.reference || txn.type}</span>
+                            </div>
+                            <span className="text-[12px] text-zinc-100 font-semibold">
+                              {new Intl.NumberFormat('en-ZA', {
+                                style: 'currency',
+                                currency: txn.currency || 'ZAR',
+                                maximumFractionDigits: 2,
+                              }).format(Number(txn.total || 0))}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  {/* AI Diagnostics */}
+                  <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
+                    <h4 className="text-xs font-semibold text-zinc-200 mb-2.5">AI Diagnostics</h4>
+
+                    <div className="rounded-lg border border-zinc-800 bg-[#16161a] px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Intent Indicator</p>
+                      <p className="text-sm text-zinc-100 mt-1">
+                        Detected Intent:{' '}
+                        <span className="font-semibold">
+                          {aiDetectedIntent === 'none'
+                            ? 'No dominant intent'
+                            : aiDetectedIntent === 'invoice'
+                            ? 'Invoice Creation'
+                            : aiDetectedIntent === 'booking'
+                            ? 'Booking Coordination'
+                            : aiDetectedIntent === 'quote'
+                            ? 'Quote Generation'
+                            : 'Promo Trigger'}
+                        </span>
+                      </p>
+                      <p className="text-[11px] text-zinc-400 mt-1">Confidence: {aiConfidencePercent}%</p>
+                    </div>
+
+                    <div className="mt-3">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 mb-2">Predictive Action Pipeline</p>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => {
+                            setActiveToolId('booked');
+                            setGlobalTab('tools');
+                          }}
+                          className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                            aiDetectedIntent === 'booking'
+                              ? 'border-emerald-500/80 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.35)]'
+                              : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                          }`}
+                        >
+                          <p className="text-[12px] text-zinc-100 font-medium">BookedIt Action Controller</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when booking intent probability is dominant.</p>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setActiveToolId('invoice');
+                            setGlobalTab('tools');
+                          }}
+                          className={`w-full rounded-lg px-3 py-2 text-left border transition-all ${
+                            aiDetectedIntent === 'invoice'
+                              ? 'border-violet-500/80 bg-violet-500/10 shadow-[0_0_0_1px_rgba(139,92,246,0.35)]'
+                              : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700'
+                          }`}
+                        >
+                          <p className="text-[12px] text-zinc-100 font-medium">FastInvoice Action Controller</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Elevated when invoice intent probability is dominant.</p>
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center px-6 text-center">
+                  <p className="text-xs text-zinc-500 leading-relaxed">
+                    Select an active conversation to load CRM profile analytics, transaction matrix, and AI diagnostics.
+                  </p>
+                </div>
+              )}
+            </aside>
           </>
         )}
 
