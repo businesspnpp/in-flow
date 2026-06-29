@@ -12,10 +12,7 @@ import {
 } from '@/lib/inflow-client';
 import type { AIContextExtraction } from '@/lib/inflow-types';
 
-interface SlotRange {
-  startTime: string;
-  endTime: string;
-}
+interface SlotRange { startTime: string; endTime: string; }
 
 interface BookedItProps {
   activeChat: Chat | null;
@@ -39,7 +36,7 @@ function toIsoDate(date: Date): string {
 }
 
 function toMinutes(value: string): number {
-  const [hour, minute] = value.split(':').map((part) => Number.parseInt(part, 10));
+  const [hour, minute] = value.split(':').map((p) => Number.parseInt(p, 10));
   return hour * 60 + minute;
 }
 
@@ -50,17 +47,12 @@ function normalizeTime(value: string): string {
 
 function parseBookingContext(payload: unknown): { date?: string; time?: string } {
   if (!payload || typeof payload !== 'object') return {};
-
   const root = payload as Record<string, unknown>;
   const extraction = root.extraction as AIContextExtraction | undefined;
   const bookingDetails = extraction?.bookingDetails;
-
-  const suggestedDate = bookingDetails?.requestedDate || (root.suggestedDate as string | undefined);
-  const suggestedTime = bookingDetails?.requestedTimeSlot || (root.suggestedSlot as string | undefined);
-
   return {
-    date: suggestedDate ?? undefined,
-    time: suggestedTime ?? undefined,
+    date: bookingDetails?.requestedDate || (root.suggestedDate as string | undefined) ?? undefined,
+    time: bookingDetails?.requestedTimeSlot || (root.suggestedSlot as string | undefined) ?? undefined,
   };
 }
 
@@ -79,24 +71,17 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
     async function init() {
       setLoading(true);
       const id = await resolveBusinessId();
-      if (!id) {
-        setError('Unable to resolve business profile.');
-        setLoading(false);
-        return;
-      }
-
+      if (!id) { setError('Unable to resolve business profile.'); setLoading(false); return; }
       setBusinessId(id);
       setSelectedDate(toIsoDate(new Date()));
       setLoading(false);
     }
-
     init();
   }, []);
 
   useEffect(() => {
     async function loadDayBookings() {
       if (!businessId || !selectedDate) return;
-
       const { data, error: queryError } = await supabase
         .from('inflow_bookings')
         .select('id, booking_date, start_time, end_time, status')
@@ -104,27 +89,17 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
         .eq('booking_date', selectedDate)
         .eq('status', 'confirmed')
         .order('start_time', { ascending: true });
-
-      if (queryError) {
-        setError(queryError.message);
-        return;
-      }
-
+      if (queryError) { setError(queryError.message); return; }
       setExisting((data ?? []) as BookingRow[]);
       setDraftRanges([]);
     }
-
     loadDayBookings();
   }, [businessId, selectedDate]);
 
   useEffect(() => {
     const contextPayload = aiContext ?? aiPrefill;
     const parsed = parseBookingContext(contextPayload);
-
-    if (parsed.date) {
-      setSelectedDate(parsed.date);
-    }
-
+    if (parsed.date) setSelectedDate(parsed.date);
     if (parsed.time && /^\d{1,2}:\d{2}/.test(parsed.time)) {
       const normalized = parsed.time.slice(0, 5);
       setStartTime(normalized);
@@ -133,9 +108,9 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
     }
   }, [aiContext, aiPrefill]);
 
-  const dayTiles = Array.from({ length: 14 }).map((_, index) => {
+  const dayTiles = Array.from({ length: 14 }).map((_, i) => {
     const date = new Date();
-    date.setDate(date.getDate() + index);
+    date.setDate(date.getDate() + i);
     return {
       iso: toIsoDate(date),
       label: date.toLocaleDateString('en-ZA', { weekday: 'short' }),
@@ -145,39 +120,25 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
   });
 
   function hasOverlap(candidate: SlotRange): boolean {
-    const candidateStart = toMinutes(candidate.startTime);
-    const candidateEnd = toMinutes(candidate.endTime);
-
+    const cStart = toMinutes(candidate.startTime);
+    const cEnd = toMinutes(candidate.endTime);
     const combined = [
       ...existing.map((item) => ({ start: item.start_time.slice(0, 5), end: item.end_time.slice(0, 5) })),
       ...draftRanges.map((item) => ({ start: item.startTime, end: item.endTime })),
     ];
-
     return combined.some((range) => {
       const start = toMinutes(range.start);
       const end = toMinutes(range.end);
-      return candidateStart < end && candidateEnd > start;
+      return cStart < end && cEnd > start;
     });
   }
 
   function addRange() {
     setError(null);
-    if (!startTime || !endTime) {
-      setError('Start and end time are required.');
-      return;
-    }
-
-    if (toMinutes(startTime) >= toMinutes(endTime)) {
-      setError('End time must be after start time.');
-      return;
-    }
-
+    if (!startTime || !endTime) { setError('Start and end time are required.'); return; }
+    if (toMinutes(startTime) >= toMinutes(endTime)) { setError('End time must be after start time.'); return; }
     const candidate = { startTime, endTime };
-    if (hasOverlap(candidate)) {
-      setError('This range overlaps with an existing booking.');
-      return;
-    }
-
+    if (hasOverlap(candidate)) { setError('This range overlaps with an existing booking.'); return; }
     setDraftRanges((prev) => [...prev, candidate]);
   }
 
@@ -207,15 +168,10 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
       .insert(rows)
       .select('public_booking_token, start_time, end_time');
 
-    if (insertError) {
-      setError(insertError.message);
-      setSending(false);
-      return;
-    }
+    if (insertError) { setError(insertError.message); setSending(false); return; }
 
     const firstToken = created?.[0]?.public_booking_token;
     const bookingLink = firstToken ? buildPublicLink(`/book/${firstToken}`) : null;
-
     const rangeText = draftRanges.map((range) => `• ${range.startTime} - ${range.endTime}`).join('\n');
     const messageBody =
       `📅 *Booking Confirmed*\n` +
@@ -225,50 +181,28 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
       `━━━━━━━━━━━━━━━━━\n` +
       (bookingLink ? `Manage booking: ${bookingLink}` : 'Your booking has been reserved.');
 
-    await ensureChatExists(activeChat.id, {
-      name: activeChat.name,
-      lastMessage: messageBody,
-    });
+    await ensureChatExists(activeChat.id, { name: activeChat.name, lastMessage: messageBody });
+    const { error: messageError } = await supabase.from('messages').insert({ chat_id: activeChat.id, sender: 'business', body: messageBody });
+    if (messageError) { setError(messageError.message); setSending(false); return; }
 
-    const { error: messageError } = await supabase.from('messages').insert({
-      chat_id: activeChat.id,
-      sender: 'business',
-      body: messageBody,
-    });
-
-    if (messageError) {
-      setError(messageError.message);
-      setSending(false);
-      return;
-    }
-
-    await supabase
-      .from('chats')
-      .update({
-        last_message: `Booking confirmed: ${selectedDate}`,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', activeChat.id);
-
+    await supabase.from('chats').update({ last_message: `Booking confirmed: ${selectedDate}`, updated_at: new Date().toISOString() }).eq('id', activeChat.id);
     setDraftRanges([]);
-    if (selectedDate) {
-      const { data } = await supabase
-        .from('inflow_bookings')
-        .select('id, booking_date, start_time, end_time, status')
-        .eq('business_id', businessId)
-        .eq('booking_date', selectedDate)
-        .eq('status', 'confirmed')
-        .order('start_time', { ascending: true });
-      setExisting((data ?? []) as BookingRow[]);
-    }
 
+    const { data } = await supabase
+      .from('inflow_bookings')
+      .select('id, booking_date, start_time, end_time, status')
+      .eq('business_id', businessId)
+      .eq('booking_date', selectedDate)
+      .eq('status', 'confirmed')
+      .order('start_time', { ascending: true });
+    setExisting((data ?? []) as BookingRow[]);
     setSending(false);
   }
 
   if (loading) {
     return (
       <div className="flex items-center gap-2 text-xs text-zinc-500">
-        <Loader2 size={14} className="animate-spin" />
+        <Loader2 size={13} className="animate-spin" />
         Loading schedule...
       </div>
     );
@@ -277,26 +211,27 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <CalendarCheck size={16} className="text-amber-600" />
-        <h3 className="text-sm font-bold text-zinc-200">BookedIt</h3>
+        <CalendarCheck size={15} className="text-amber-600" />
+        <h3 className="text-sm font-semibold text-zinc-800">BookedIt</h3>
         {Boolean(aiContext || aiPrefill) && (
-          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
+          <span className="ml-auto text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 font-medium border border-zinc-300">
             AI matched
           </span>
         )}
       </div>
 
-      <p className="text-xs text-zinc-400">Pick a day to open its detailed range scheduler.</p>
+      <p className="text-xs text-zinc-500">Pick a date to open the range scheduler.</p>
 
-      <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+      {/* Day tiles */}
+      <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
         {dayTiles.map((tile) => (
           <button
             key={tile.iso}
             onClick={() => setSelectedDate(tile.iso)}
-            className={`rounded-lg border px-2 py-2 text-center transition-colors ${
+            className={`border px-2 py-2 text-center transition-colors ${
               selectedDate === tile.iso
-                ? 'border-amber-500 bg-amber-50 text-amber-700'
-                : 'border-zinc-800/80 bg-[#1c1c22] text-zinc-300 hover:border-amber-500/50'
+                ? 'border-amber-600 bg-amber-50 text-amber-700'
+                : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400'
             }`}
           >
             <div className="text-[10px] uppercase tracking-wide">{tile.label}</div>
@@ -307,63 +242,61 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
       </div>
 
       {selectedDate && (
-        <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3 flex flex-col gap-3">
-          <p className="text-xs font-semibold text-zinc-200">Schedule for {selectedDate}</p>
+        <div className="border border-zinc-200 bg-white p-3 flex flex-col gap-3">
+          <p className="text-xs font-semibold text-zinc-800">Schedule for {selectedDate}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-end">
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] uppercase tracking-wide text-zinc-500">Start Time</label>
+              <label className="text-[10px] uppercase tracking-wide text-zinc-500 font-medium">Start</label>
               <input
                 type="time"
                 value={startTime}
-                onChange={(event) => setStartTime(event.target.value)}
-                className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
+                onChange={(e) => setStartTime(e.target.value)}
+                className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] uppercase tracking-wide text-zinc-500">End Time</label>
+              <label className="text-[10px] uppercase tracking-wide text-zinc-500 font-medium">End</label>
               <input
                 type="time"
                 value={endTime}
-                onChange={(event) => setEndTime(event.target.value)}
-                className="rounded-xl bg-[#121214] border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0"
+                onChange={(e) => setEndTime(e.target.value)}
+                className="border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500"
               />
             </div>
             <button
               onClick={addRange}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-900 text-white px-3 py-2 text-sm font-semibold hover:bg-zinc-700"
+              className="inline-flex items-center justify-center gap-2 border border-zinc-300 bg-white text-zinc-800 px-3 py-2 text-sm font-medium hover:bg-zinc-50 transition-colors"
             >
-              <Plus size={14} />
-              Add Range
+              <Plus size={13} />
+              Add
             </button>
           </div>
 
-          <div className="rounded-lg border border-zinc-800/80 bg-[#1c1c22] p-3">
-            <p className="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold mb-2">Existing bookings</p>
-            {existing.length === 0 && <p className="text-xs text-zinc-500">No confirmed bookings on this day.</p>}
-            {existing.length > 0 && (
-              <div className="space-y-1">
-                {existing.map((row) => (
-                  <div key={row.id} className="text-xs text-zinc-300 flex items-center gap-2">
-                    <Clock3 size={12} className="text-zinc-400" />
-                    {row.start_time.slice(0, 5)} - {row.end_time.slice(0, 5)}
-                  </div>
-                ))}
+          {/* Existing bookings */}
+          <div className="border border-zinc-200 bg-zinc-50 p-3">
+            <p className="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold mb-2">Existing bookings</p>
+            {existing.length === 0 && <p className="text-xs text-zinc-400">No confirmed bookings on this day.</p>}
+            {existing.map((row) => (
+              <div key={row.id} className="text-xs text-zinc-700 flex items-center gap-2 py-0.5">
+                <Clock3 size={11} className="text-zinc-400" />
+                {row.start_time.slice(0, 5)} – {row.end_time.slice(0, 5)}
               </div>
-            )}
+            ))}
           </div>
 
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-[11px] uppercase tracking-wide text-amber-700 font-semibold mb-2">Draft ranges to insert</p>
+          {/* Draft ranges */}
+          <div className="border border-amber-200 bg-amber-50 p-3">
+            <p className="text-[10px] uppercase tracking-wide text-amber-700 font-semibold mb-2">Ranges to send</p>
             {draftRanges.length === 0 && <p className="text-xs text-amber-700">Add one or more ranges before sending.</p>}
-            {draftRanges.map((range, index) => (
-              <div key={`${range.startTime}-${range.endTime}-${index}`} className="flex items-center justify-between text-xs text-zinc-800 py-1">
-                <span>{range.startTime} - {range.endTime}</span>
+            {draftRanges.map((range, i) => (
+              <div key={`${range.startTime}-${range.endTime}-${i}`} className="flex items-center justify-between text-xs text-zinc-800 py-1">
+                <span>{range.startTime} – {range.endTime}</span>
                 <button
-                  onClick={() => removeDraft(index)}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-rose-200 text-rose-600 hover:bg-rose-100"
+                  onClick={() => removeDraft(i)}
+                  className="inline-flex h-6 w-6 items-center justify-center border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
                 >
-                  <Trash2 size={12} />
+                  <Trash2 size={11} />
                 </button>
               </div>
             ))}
@@ -371,14 +304,14 @@ export default function BookedIt({ activeChat, aiContext, aiPrefill }: BookedItP
         </div>
       )}
 
-      {error && <p className="text-xs text-rose-500">{error}</p>}
+      {error && <p className="text-xs text-red-600">{error}</p>}
 
       <button
         onClick={sendBooking}
         disabled={!selectedDate || !activeChat || sending || draftRanges.length === 0}
-        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
-        <Send size={14} />
+        <Send size={13} />
         Send Booking
       </button>
     </div>
