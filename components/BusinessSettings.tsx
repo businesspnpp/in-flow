@@ -330,12 +330,12 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-6 w-full min-w-0">
+      <div className="space-y-6 w-full min-w-0 bg-[#0c0c0e] border border-zinc-800 rounded-md p-4 md:p-5">
 
         {/* Section label */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-600 mb-1">Connected Channels</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs font-semibold uppercase text-zinc-400 mb-1">Connected Channels</p>
+          <p className="text-xs text-zinc-400">
             Manage platform channels connected to your inFlow account.
           </p>
         </div>
@@ -353,50 +353,50 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
-                  className={`w-full min-w-0 text-left rounded-2xl px-4 py-4 flex items-center gap-4 transition-all ${
+                  className={`w-full min-w-0 text-left rounded-md px-4 py-3 flex items-center gap-3 transition-colors ${
                     isOpen
-                      ? 'bg-[#1a1d27] rounded-b-none border border-amber-500/30 border-b-0'
-                      : 'bg-[#13161e] border border-white/5 hover:border-white/10 hover:bg-[#1a1d27]'
+                      ? 'bg-[#121214] rounded-b-none border border-zinc-700 border-b-0'
+                      : 'bg-[#121214] border border-zinc-800 hover:border-zinc-700'
                   }`}
                 >
                   {/* Icon */}
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 overflow-hidden">
+                  <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-[#18181b] border border-zinc-800 overflow-hidden">
                     <Icon size={20} />
                   </div>
 
                   {/* Text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold text-slate-200">{name}</p>
+                      <p className="text-sm font-semibold text-zinc-100">{name}</p>
                       {isSms ? (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-600 border border-white/5">
+                        <span className="bg-zinc-800 text-zinc-400 border border-zinc-700 text-[11px] rounded-md px-2 py-0.5">
                           Coming Soon
                         </span>
                       ) : (
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${
+                        <span className={`text-[11px] rounded-md px-2 py-0.5 border shrink-0 ${
                           isConnected
-                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                            : 'bg-white/5 border-white/8 text-slate-500'
+                            ? 'bg-[#121214] border-zinc-700 text-emerald-400'
+                            : 'bg-zinc-800 text-zinc-400 border-zinc-700'
                         }`}>
                           {isConnected ? 'Connected' : 'Not Integrated'}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed truncate">{description}</p>
+                    <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed truncate">{description}</p>
                   </div>
 
                   {/* Chevron */}
-                  <span className="text-slate-700 text-[10px] shrink-0">{isOpen ? '▲' : '▼'}</span>
+                  <span className="text-zinc-500 text-[10px] shrink-0">{isOpen ? '▲' : '▼'}</span>
                 </button>
 
                 {/* Expanded panel */}
                 {isOpen && !isSms && onConnect && (
-                  <div className="w-full min-w-0 rounded-2xl rounded-t-none border border-amber-500/20 border-t-0 bg-[#1a1d27] divide-y divide-white/[0.05] overflow-hidden">
+                  <div className="w-full min-w-0 rounded-md rounded-t-none border border-zinc-700 border-t-0 bg-[#0c0c0e] divide-y divide-zinc-800 overflow-hidden">
                     <div className="p-4 space-y-4 min-w-0">
                       <div className="flex flex-col gap-3 min-w-0">
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</p>
-                          <p className="text-xs text-slate-600 mt-1">
+                          <p className="text-xs font-semibold text-zinc-400 uppercase">Status</p>
+                          <p className="text-xs text-zinc-400 mt-1">
                             {isConnected ? 'Active and receiving messages' : 'Not integrated'}
                           </p>
                         </div>
@@ -405,7 +405,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             type="button"
                             onClick={onConnect}
                             disabled={isLoading}
-                            className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-[#0f1117] hover:bg-amber-400 disabled:opacity-40 transition-colors"
+                            className="rounded-md bg-amber-500 px-4 py-2 text-xs font-semibold text-[#0f1117] hover:bg-amber-400 disabled:opacity-40 transition-colors"
                           >
                             {isLoading ? 'Connecting…' : connectLabel}
                           </button>
@@ -414,7 +414,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                               type="button"
                               onClick={onConnect}
                               disabled={isLoading}
-                              className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 disabled:opacity-40 transition-colors"
+                              className="rounded-md border border-zinc-700 bg-[#121214] px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-[#18181b] disabled:opacity-40 transition-colors"
                             >
                               Retry
                             </button>
@@ -423,7 +423,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             <button
                               type="button"
                               onClick={() => setShowTroubleshoot(true)}
-                              className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-slate-500 hover:bg-white/5 transition-colors"
+                              className="rounded-md border border-zinc-700 bg-[#121214] px-3 py-2 text-xs font-medium text-zinc-400 hover:bg-[#18181b] transition-colors"
                             >
                               Troubleshoot
                             </button>
@@ -432,12 +432,12 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                       </div>
 
                       {error && (
-                        <p className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20 break-words">
+                        <p className="text-xs text-rose-300 bg-[#121214] p-3 rounded-md border border-rose-900 break-words">
                           {error}
                         </p>
                       )}
                       {success && (
-                        <p className="text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20 break-words">
+                        <p className="text-xs text-emerald-300 bg-[#121214] p-3 rounded-md border border-emerald-900 break-words">
                           {success}
                         </p>
                       )}
@@ -445,11 +445,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
                     {howItWorks.length > 0 && (
                       <div className="px-4 py-3 min-w-0">
-                        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">How it works</p>
+                        <p className="text-[11px] font-semibold text-zinc-400 uppercase mb-2">How it works</p>
                         <ul className="space-y-1.5">
                           {howItWorks.map((step, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-slate-600 min-w-0">
-                              <span className="text-amber-500/60 mt-0.5 shrink-0">·</span>
+                            <li key={i} className="flex items-start gap-2 text-xs text-zinc-400 min-w-0">
+                              <span className="text-amber-500 mt-0.5 shrink-0">·</span>
                               <span className="min-w-0 break-words">{step}</span>
                             </li>
                           ))}
@@ -460,8 +460,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 )}
 
                 {isOpen && isSms && (
-                  <div className="w-full min-w-0 rounded-2xl rounded-t-none border border-white/5 border-t-0 bg-[#1a1d27] px-4 py-3 overflow-hidden">
-                    <p className="text-xs text-slate-600 italic break-words">
+                  <div className="w-full min-w-0 rounded-md rounded-t-none border border-zinc-800 border-t-0 bg-[#0c0c0e] px-4 py-3 overflow-hidden">
+                    <p className="text-xs text-zinc-400 italic break-words">
                       SMS integration is currently being provisioned. Full connection support is coming soon.
                     </p>
                   </div>
@@ -474,17 +474,17 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
       {/* Troubleshoot modal */}
       {showTroubleshoot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-[#13161e] border border-white/10 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#09090b] px-4">
+          <div className="w-full max-w-lg rounded-md bg-[#0c0c0e] border border-zinc-800 p-6">
             <div className="flex items-start justify-between mb-4 gap-3">
               <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-slate-200">WhatsApp Troubleshooting</h4>
-                <p className="text-xs text-slate-600 mt-0.5">Steps to resolve common connection issues.</p>
+                <h4 className="text-sm font-semibold text-zinc-100">WhatsApp Troubleshooting</h4>
+                <p className="text-xs text-zinc-400 mt-0.5">Steps to resolve common connection issues.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowTroubleshoot(false)}
-                className="text-slate-600 hover:text-slate-400 p-1 transition-colors shrink-0"
+                className="text-zinc-500 hover:text-zinc-300 p-1 transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -497,8 +497,8 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 'Temporarily disable browser extensions that may interfere.',
                 'Try again with the Retry button after applying the above steps.',
               ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-xs text-slate-500 min-w-0">
-                  <span className="flex-shrink-0 h-5 w-5 rounded-full bg-white/5 text-slate-400 flex items-center justify-center text-[10px] font-semibold mt-0.5">
+                <li key={i} className="flex items-start gap-3 text-xs text-zinc-400 min-w-0">
+                  <span className="flex-shrink-0 h-5 w-5 rounded-md bg-[#121214] border border-zinc-800 text-zinc-300 flex items-center justify-center text-[10px] font-semibold mt-0.5">
                     {i + 1}
                   </span>
                   <span className="min-w-0 break-words">{step}</span>
@@ -509,7 +509,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
               <button
                 type="button"
                 onClick={() => setShowTroubleshoot(false)}
-                className="rounded-xl px-4 py-2 text-xs font-semibold border border-white/10 text-slate-400 hover:bg-white/5 transition-colors"
+                className="rounded-md px-4 py-2 text-xs font-semibold border border-zinc-700 bg-[#121214] text-zinc-300 hover:bg-[#18181b] transition-colors"
               >
                 Done
               </button>

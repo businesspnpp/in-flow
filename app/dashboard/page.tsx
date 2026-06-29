@@ -1642,7 +1642,7 @@ export default function Dashboard() {
 
         {/* ══ SETTINGS TAB ═══════════════════════════════════════════════════════ */}
         {globalTab === 'settings' && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0f1117]">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#09090b]">
             <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
               <div className="md:flex md:gap-8 w-full">
                 <aside className="md:w-64 flex flex-col gap-2 text-zinc-400 mb-5 md:mb-0">
@@ -1651,8 +1651,8 @@ export default function Dashboard() {
                       key={item}
                       className={`w-full text-left rounded-md px-3 py-2.5 text-sm border transition ${
                         index === 1
-                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
-                          : 'border-zinc-800 bg-[#16161a] hover:border-zinc-700 hover:text-zinc-200'
+                          ? 'border-zinc-700 bg-[#18181b] text-zinc-100'
+                          : 'border-zinc-800 bg-[#121214] text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
                       }`}
                     >
                       {item}
@@ -1660,7 +1660,7 @@ export default function Dashboard() {
                   ))}
                 </aside>
 
-                <section className="flex-1 bg-[#16161a] border border-zinc-800 p-4 md:p-8 rounded-md min-w-0">
+                <section className="flex-1 bg-[#0c0c0e] border border-zinc-800 p-4 md:p-8 rounded-md min-w-0">
                   {business ? (
                     <BusinessSettings business={business} onUpdated={(updated) => setBusiness(updated)} />
                   ) : (
