@@ -51,8 +51,8 @@ function parseBookingContext(payload: unknown): { date?: string; time?: string }
   const extraction = root.extraction as AIContextExtraction | undefined;
   const bookingDetails = extraction?.bookingDetails;
   return {
-    date: bookingDetails?.requestedDate || (root.suggestedDate as string | undefined) ?? undefined,
-    time: bookingDetails?.requestedTimeSlot || (root.suggestedSlot as string | undefined) ?? undefined,
+    date: bookingDetails?.requestedDate || ((root.suggestedDate as string | undefined) ?? undefined),
+    time: bookingDetails?.requestedTimeSlot || ((root.suggestedSlot as string | undefined) ?? undefined),
   };
 }
 
