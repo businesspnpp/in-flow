@@ -25,7 +25,6 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [user, setUser] = useState<any>(null);
 
-  // Monitor auth state changes
   useEffect(() => {
     const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
@@ -37,11 +36,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       }
     });
 
-    // Get current session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user);
-      }
+      if (session?.user) setUser(session.user);
     });
 
     return () => subscription?.subscription.unsubscribe();
@@ -53,7 +49,6 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     setValidationErrors({});
 
     try {
-      // Validate inputs
       const validationResult = SignUpSchema.safeParse({
         email: sanitizeEmail(email),
         password,
@@ -63,8 +58,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       if (!validationResult.success) {
         const errors: ValidationErrors = {};
         validationResult.error.errors.forEach((err) => {
-          const path = err.path.join('.');
-          errors[path] = err.message;
+          errors[err.path.join('.')] = err.message;
         });
         setValidationErrors(errors);
         setLoading(false);
@@ -103,7 +97,6 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     setValidationErrors({});
 
     try {
-      // Validate inputs
       const validationResult = LoginSchema.safeParse({
         email: sanitizeEmail(email),
         password,
@@ -112,8 +105,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       if (!validationResult.success) {
         const errors: ValidationErrors = {};
         validationResult.error.errors.forEach((err) => {
-          const path = err.path.join('.');
-          errors[path] = err.message;
+          errors[err.path.join('.')] = err.message;
         });
         setValidationErrors(errors);
         setLoading(false);
@@ -125,9 +117,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
         password: validationResult.data.password,
       });
 
-      if (signInError) {
-        setError(signInError.message || 'Sign in failed');
-      }
+      if (signInError) setError(signInError.message || 'Sign in failed');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
@@ -140,27 +130,19 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     setError('');
 
     try {
-      // Call sign out API
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) {
-        throw new Error('Sign out failed');
-      }
+      if (!response.ok) throw new Error('Sign out failed');
 
-      // Clear local state
       setUser(null);
       setEmail('');
       setPassword('');
       setConfirmPassword('');
       setMode('signin');
-
-      // Redirect to login
       onSignedOut?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign out failed');
@@ -169,7 +151,6 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     }
   }
 
-  // Placeholder OAuth handlers - wired up later
   function handleAppleSignIn() {
     setError('Apple sign-in is coming soon.');
   }
@@ -179,168 +160,165 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-stretch justify-center bg-[#121214]">
-      <div className="w-full max-w-[1440px] min-h-screen grid grid-cols-1 md:grid-cols-12 bg-[#16161a]">
-        <aside className="hidden md:flex md:col-span-5 flex-col justify-between p-16 bg-gradient-to-b from-[#1a1a1f] to-[#141417] border-r border-zinc-800/60">
+    <div className="min-h-screen w-full flex items-stretch bg-white">
+      <div className="w-full max-w-[1200px] mx-auto min-h-screen grid grid-cols-1 md:grid-cols-12">
+
+        {/* Left panel */}
+        <aside className="hidden md:flex md:col-span-5 flex-col justify-between p-14 bg-zinc-50 border-r border-zinc-200">
           <div>
-            <div className="bg-amber-500/10 text-amber-500 rounded-xl p-2.5 w-fit">
-              <Zap size={20} strokeWidth={2.5} />
+            <div className="flex items-center gap-2 mb-8">
+              <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
+                <Zap size={14} className="text-white" strokeWidth={2.5} />
+              </div>
+              <span className="text-sm font-semibold text-zinc-900 tracking-tight">inFlow</span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-100 mt-4">inFlow Console</h1>
-            <p className="text-sm text-zinc-400 mt-2 max-w-xs">
-              Manage conversations, tools, and customer context from one precise workspace.
+            <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 leading-tight">
+              Business communications,<br />built for speed.
+            </h1>
+            <p className="text-sm text-zinc-500 mt-3 max-w-xs leading-relaxed">
+              Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
             </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-6 rounded-xl space-y-3">
-              <p className="text-[10px] font-semibold tracking-wider text-amber-500/90">OPERATIONAL CLARITY</p>
-              <p className="text-xs text-zinc-400">Minimal, high-contrast control surfaces for teams that move fast.</p>
+          <div className="space-y-3">
+            <div className="border border-zinc-200 bg-white p-5">
+              <p className="text-xs font-medium text-zinc-900 mb-1">Unified inbox</p>
+              <p className="text-xs text-zinc-500">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
             </div>
-            <div className="bg-[#1c1c22]/40 border border-zinc-800/80 p-6 rounded-xl space-y-3">
-              <p className="text-[10px] font-semibold tracking-wider text-amber-500/90">UNIFIED COMMS</p>
-              <p className="text-xs text-zinc-400">WhatsApp, Instagram, and Facebook routed into one structured inbox.</p>
+            <div className="border border-zinc-200 bg-white p-5">
+              <p className="text-xs font-medium text-zinc-900 mb-1">Instant tools</p>
+              <p className="text-xs text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
           </div>
         </aside>
 
-        <section className="col-span-1 md:col-span-7 flex flex-col justify-center items-center p-12 sm:p-16 md:p-24 bg-[#16161a]">
+        {/* Right panel */}
+        <section className="col-span-1 md:col-span-7 flex flex-col justify-center items-center px-8 py-16 md:px-20">
           {user ? (
-            <div className="w-full max-w-md space-y-8">
-              <div className="w-full border border-zinc-800 bg-[#17171c] p-8 rounded-2xl shadow-xl">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold text-white">Session Active</h2>
-                  <p className="text-sm text-slate-500 mt-2">
-                    You are signed in as <span className="font-medium text-slate-300">{user.email}</span>
-                  </p>
-                </div>
-
+            <div className="w-full max-w-sm">
+              <div className="border border-zinc-200 bg-white p-8">
+                <h2 className="text-base font-semibold text-zinc-900 mb-1">Session active</h2>
+                <p className="text-sm text-zinc-500 mb-6">
+                  Signed in as <span className="font-medium text-zinc-800">{user.email}</span>
+                </p>
                 <button
                   onClick={handleSignOut}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-rose-600 py-2.5 text-sm font-semibold text-white hover:bg-rose-500 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white py-2.5 text-sm font-medium hover:bg-zinc-800 disabled:opacity-50 transition-colors"
                 >
-                  <LogOut size={16} />
-                  {loading ? 'Signing out...' : 'Sign Out'}
+                  <LogOut size={14} />
+                  {loading ? 'Signing out...' : 'Sign out'}
                 </button>
               </div>
             </div>
           ) : (
-            <div className="w-full max-w-md space-y-8">
-              <div className="flex flex-col items-center text-center mb-1">
-                <h2 className="text-xl font-bold text-white">
-                  {mode === 'signin' ? 'Sign in to inFlow' : 'Create your account'}
+            <div className="w-full max-w-sm">
+              <div className="mb-7">
+                <h2 className="text-xl font-semibold text-zinc-900">
+                  {mode === 'signin' ? 'Sign in' : 'Create account'}
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-sm text-zinc-500 mt-1">
                   {mode === 'signin'
-                    ? 'Enter your email and password to access your inbox.'
-                    : 'Create a secure account to get started.'}
+                    ? 'Enter your credentials to access your workspace.'
+                    : 'Set up your inFlow account to get started.'}
                 </p>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
+                {/* Email */}
                 <div>
-                  <label className="relative block">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
-                      <Mail size={17} />
-                    </span>
+                  <label className="block text-xs font-medium text-zinc-700 mb-1.5">Email</label>
+                  <div className="relative">
+                    <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
-                        if (validationErrors.email) {
-                          setValidationErrors({ ...validationErrors, email: '' });
-                        }
+                        if (validationErrors.email) setValidationErrors({ ...validationErrors, email: '' });
                       }}
-                      placeholder="E-mail"
-                      className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                      placeholder="you@company.com"
+                      className="w-full pl-9 pr-3 py-2.5 text-sm border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
                     />
-                  </label>
+                  </div>
                   {validationErrors.email && (
-                    <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.email}</p>
+                    <p className="text-xs text-red-600 mt-1">{validationErrors.email}</p>
                   )}
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="relative block">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
-                      <Lock size={17} />
-                    </span>
+                  <label className="block text-xs font-medium text-zinc-700 mb-1.5">Password</label>
+                  <div className="relative">
+                    <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
-                        if (validationErrors.password) {
-                          setValidationErrors({ ...validationErrors, password: '' });
-                        }
+                        if (validationErrors.password) setValidationErrors({ ...validationErrors, password: '' });
                       }}
-                      placeholder={mode === 'signup' ? 'Min 8 characters, 1 uppercase, 1 number, 1 special' : 'Password'}
-                      className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                      placeholder={mode === 'signup' ? 'Min 8 chars, 1 uppercase, 1 number' : '••••••••'}
+                      className="w-full pl-9 pr-3 py-2.5 text-sm border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
                     />
-                  </label>
+                  </div>
                   {validationErrors.password && (
-                    <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.password}</p>
+                    <p className="text-xs text-red-600 mt-1">{validationErrors.password}</p>
                   )}
                 </div>
 
+                {/* Confirm password */}
                 {mode === 'signup' && (
                   <div>
-                    <label className="relative block">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
-                        <Lock size={17} />
-                      </span>
+                    <label className="block text-xs font-medium text-zinc-700 mb-1.5">Confirm password</label>
+                    <div className="relative">
+                      <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                       <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => {
                           setConfirmPassword(e.target.value);
-                          if (validationErrors.confirmPassword) {
-                            setValidationErrors({ ...validationErrors, confirmPassword: '' });
-                          }
+                          if (validationErrors.confirmPassword) setValidationErrors({ ...validationErrors, confirmPassword: '' });
                         }}
-                        placeholder="Confirm password"
-                        className="w-full rounded-xl pl-14 pr-4 py-3 bg-white/5 text-sm text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-amber-500/40 transition-colors"
+                        placeholder="Repeat password"
+                        className="w-full pl-9 pr-3 py-2.5 text-sm border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
                       />
-                    </label>
+                    </div>
                     {validationErrors.confirmPassword && (
-                      <p className="text-xs text-rose-400 mt-1 px-1">{validationErrors.confirmPassword}</p>
+                      <p className="text-xs text-red-600 mt-1">{validationErrors.confirmPassword}</p>
                     )}
                   </div>
                 )}
 
                 {mode === 'signin' && (
-                  <div className="text-right -mt-1">
-                    <button
-                      type="button"
-                      className="text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors"
-                    >
+                  <div className="text-right">
+                    <button type="button" className="text-xs text-zinc-500 hover:text-zinc-800 transition-colors">
                       Forgot password?
                     </button>
                   </div>
                 )}
 
                 {error && (
-                  <div className="text-sm text-rose-400 bg-rose-500/10 p-3.5 rounded-xl border border-rose-500/20">
+                  <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2.5">
                     {error}
                   </div>
                 )}
 
+                {/* Primary action */}
                 <button
                   onClick={mode === 'signin' ? handleSignIn : handleSignUp}
                   disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 py-3 text-sm font-semibold text-[#0f1117] hover:from-amber-300 hover:to-amber-500 transition-colors disabled:opacity-50"
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 text-sm font-medium disabled:opacity-50 transition-colors"
                 >
-                  {loading ? 'Processing...' : mode === 'signin' ? 'Continue' : 'Create Account'}
+                  {loading ? 'Processing...' : mode === 'signin' ? 'Sign in' : 'Create account'}
                 </button>
 
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-white/8" />
-                  <span className="text-xs text-slate-500 whitespace-nowrap px-1">
-                    {mode === 'signin' ? "Don't have an account yet?" : 'Already have an account?'}
+                  <div className="flex-1 h-px bg-zinc-200" />
+                  <span className="text-xs text-zinc-400">
+                    {mode === 'signin' ? 'No account yet?' : 'Have an account?'}
                   </span>
-                  <div className="flex-1 h-px bg-white/8" />
+                  <div className="flex-1 h-px bg-zinc-200" />
                 </div>
 
                 <button
@@ -351,9 +329,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     setValidationErrors({});
                   }}
                   disabled={loading}
-                  className="w-full rounded-xl bg-white/5 py-3 text-sm font-semibold text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+                  className="w-full border border-zinc-300 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
                 >
-                  {mode === 'signin' ? 'Create an account' : 'Back to Sign In'}
+                  {mode === 'signin' ? 'Create an account' : 'Back to sign in'}
                 </button>
 
                 <div className="space-y-2">
@@ -361,9 +339,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     type="button"
                     onClick={handleAppleSignIn}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 border border-zinc-300 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
                   >
-                    <svg width="16" height="16" viewBox="0 0 384 512" fill="currentColor">
+                    <svg width="14" height="14" viewBox="0 0 384 512" fill="currentColor">
                       <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z" />
                     </svg>
                     Sign in with Apple
@@ -372,9 +350,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-white/5 py-3 text-sm font-medium text-slate-200 hover:bg-white/8 transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 border border-zinc-300 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
                   >
-                    <svg width="17" height="17" viewBox="0 0 48 48">
+                    <svg width="14" height="14" viewBox="0 0 48 48">
                       <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
                       <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
                       <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
@@ -385,7 +363,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 </div>
               </div>
 
-              <p className="text-xs text-slate-500 text-center leading-relaxed">
+              <p className="text-xs text-zinc-400 mt-6 text-center leading-relaxed">
                 By continuing, you agree to the{' '}
                 <span className="underline cursor-pointer">Terms and Privacy Policy</span>.
               </p>
