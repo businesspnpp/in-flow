@@ -23,36 +23,30 @@ export default function PinTracker({ activeChat, aiPrefill }: PinTrackerProps) {
   async function sendPin() {
     if (!activeChat) return;
     setSending(true);
-
-    await supabase.from('messages').insert({
-      chat_id: activeChat.id,
-      sender: 'business',
-      body: pinText,
-    });
-
+    await supabase.from('messages').insert({ chat_id: activeChat.id, sender: 'business', body: pinText });
     setSending(false);
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <MapPin size={16} className="text-sky-600" />
-        <h3 className="text-sm font-bold text-zinc-200">Pin Tracker</h3>
+        <MapPin size={15} className="text-sky-600" />
+        <h3 className="text-sm font-semibold text-zinc-800">Pin Tracker</h3>
       </div>
 
       <input
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder="Enter address"
-        className="w-full px-3 py-2 bg-[#121214] border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 focus:border-amber-500/50"
+        className="w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
       />
 
       <button
         onClick={sendPin}
         disabled={!activeChat || !address || sending}
-        className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
-        <Send size={14} />
+        <Send size={13} />
         Send Location
       </button>
     </div>
