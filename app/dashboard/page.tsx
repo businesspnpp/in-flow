@@ -87,6 +87,30 @@ type InflowTransaction = {
   reference: string;
 };
 
+type MockConversationMessage = {
+  sender: 'business' | 'customer';
+  time: string;
+  text: string;
+};
+
+type MockConversation = {
+  id: string;
+  customerName: string;
+  channel: 'WhatsApp' | 'Instagram' | 'Email' | 'SMS' | 'Facebook Business';
+  avatarColor: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  statusTag: string;
+  statusColor: string;
+  messages: MockConversationMessage[];
+  context: {
+    totalSpent: string;
+    orderVolume: number;
+    loyalty: string;
+    intent: string;
+  };
+};
+
 // ─── Tool registry ────────────────────────────────────────────────────────────
 
 const ALL_TOOLS: {
@@ -133,89 +157,229 @@ const CHANNEL_DOT: Record<string, string> = {
 
 // ─── Mock contacts ────────────────────────────────────────────────────────────
 
-const MOCK_CONTACTS = [
+const MOCK_CONVERSATIONS: MockConversation[] = [
   {
-    id: 'c1',
-    name: 'Customer One',
+    id: 'chat_1',
+    customerName: 'Customer One',
     channel: 'WhatsApp',
-    preview: "I'd like to book an appointment this week…",
-    time: 'Now',
-    unread: 1,
-    status: 'online',
-    tag: 'New lead',
-    tagColor: 'bg-emerald-500/15 text-emerald-400',
+    avatarColor: 'CO',
+    lastMessageTime: 'Now',
+    unreadCount: 1,
+    statusTag: 'New Lead',
+    statusColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    messages: [
+      { sender: 'customer', time: '06:23 PM', text: "Hi! I'd like to book an appointment for a hair wash, treatment, and styling this week if you have any openings?" }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'BookedIt Action Controller' },
   },
   {
-    id: 'c2',
-    name: 'Thabo Nkosi',
+    id: 'chat_2',
+    customerName: 'Thabo Nkosi',
     channel: 'Instagram',
-    preview: 'Interested in the property you advertised…',
-    time: '2m',
-    unread: 3,
-    status: 'away',
-    tag: 'Urgent',
-    tagColor: 'bg-rose-500/15 text-rose-400',
+    avatarColor: 'TN',
+    lastMessageTime: '2m',
+    unreadCount: 3,
+    statusTag: 'Urgent',
+    statusColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    messages: [
+      { sender: 'customer', time: '06:21 PM', text: 'Interested in the property you advertised on your stories, can we arrange a walkthrough schedule for Thursday afternoon?' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'BookedIt Action Controller' },
   },
   {
-    id: 'c3',
-    name: 'Priya Maharaj',
+    id: 'chat_3',
+    customerName: 'Priya Maharaj',
     channel: 'Email',
-    preview: 'My fixed term mortgage is up for renewal…',
-    time: '14m',
-    unread: 0,
-    status: 'offline',
-    tag: 'Sales',
-    tagColor: 'bg-violet-500/15 text-violet-400',
+    avatarColor: 'PM',
+    lastMessageTime: '14m',
+    unreadCount: 0,
+    statusTag: 'Sales',
+    statusColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    messages: [
+      { sender: 'customer', time: '06:09 PM', text: 'My fixed term mortgage is up for renewal soon. Can you send over a formal quotation matching the rates we discussed?' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'QuoteCraft Action Controller' },
   },
   {
-    id: 'c4',
-    name: 'James Okafor',
+    id: 'chat_4',
+    customerName: 'James Okafor',
     channel: 'SMS',
-    preview: 'Thanks for the quick response!',
-    time: '1h',
-    unread: 0,
-    status: 'offline',
-    tag: '',
-    tagColor: '',
+    avatarColor: 'JO',
+    lastMessageTime: '1h',
+    unreadCount: 0,
+    statusTag: 'General',
+    statusColor: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    messages: [
+      { sender: 'customer', time: '05:15 PM', text: 'Thanks for the quick response! Let me know when the payment link is generated so I can wrap this up.' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'FastInvoice Action Controller' },
   },
-];
-
-const initialMessages: Message[] = [
   {
-    id: 'm-1',
-    sender: 'customer',
-    body: "Hi! I'd like to book an appointment for a hair wash, treatment, and styling this week if you have any openings?",
-    created_at: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
+    id: 'chat_5',
+    customerName: 'Lindiwe Dlamini',
+    channel: 'WhatsApp',
+    avatarColor: 'LD',
+    lastMessageTime: '15m',
+    unreadCount: 2,
+    statusTag: 'Retail Sale',
+    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    messages: [
+      { sender: 'customer', time: '06:28 PM', text: 'Hi, do you have 5 boxes of the high-top leather sneakers left in size 8? If yes, please send me an invoice directly so I can secure them right now.' }
+    ],
+    context: { totalSpent: 'R 4,200.00', orderVolume: 2, loyalty: 'Silver Tier', intent: 'FastInvoice Action Controller' },
+  },
+  {
+    id: 'chat_6',
+    customerName: 'Sipho Mthembu',
+    channel: 'WhatsApp',
+    avatarColor: 'SM',
+    lastMessageTime: '32m',
+    unreadCount: 0,
+    statusTag: 'Barber / Fade',
+    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    messages: [
+      { sender: 'customer', time: '06:11 PM', text: 'Yo! Need a sharp Taper Fade with dye before my weekend event. What slots does the master barber have open tomorrow afternoon?' }
+    ],
+    context: { totalSpent: 'R 1,850.00', orderVolume: 8, loyalty: 'Gold VIP', intent: 'BookedIt Action Controller' },
+  },
+  {
+    id: 'chat_7',
+    customerName: 'Elena Rostova',
+    channel: 'Instagram',
+    avatarColor: 'ER',
+    lastMessageTime: '45m',
+    unreadCount: 1,
+    statusTag: 'Quote Request',
+    statusColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    messages: [
+      { sender: 'customer', time: '05:58 PM', text: 'Hello, I am interested in your custom catering menu for a corporate group of 45 people. Can you generate a custom price estimate for me?' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'QuoteCraft Action Controller' },
+  },
+  {
+    id: 'chat_8',
+    customerName: 'Brandon Stark',
+    channel: 'Facebook Business',
+    avatarColor: 'BS',
+    lastMessageTime: '2h',
+    unreadCount: 0,
+    statusTag: 'Inventory Menu',
+    statusColor: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
+    messages: [
+      { sender: 'customer', time: '04:43 PM', text: 'Hey, could you send over your latest product catalog or digital price menu? I want to see what shades you have available in stock.' }
+    ],
+    context: { totalSpent: 'R 850.00', orderVolume: 1, loyalty: 'Starter', intent: 'MenuDrop Action Controller' },
+  },
+  {
+    id: 'chat_9',
+    customerName: 'Zanele Khumalo',
+    channel: 'WhatsApp',
+    avatarColor: 'ZK',
+    lastMessageTime: '3h',
+    unreadCount: 0,
+    statusTag: 'Payment Pending',
+    statusColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    messages: [
+      { sender: 'customer', time: '03:12 PM', text: "I'm ready to checkout for the custom jewelry piece. Can you drop a secure PayNow link here so I can process the transaction via EFT?" }
+    ],
+    context: { totalSpent: 'R 12,500.00', orderVolume: 3, loyalty: 'Gold VIP', intent: 'FastInvoice Action Controller' },
+  },
+  {
+    id: 'chat_10',
+    customerName: 'Marcus Vance',
+    channel: 'SMS',
+    avatarColor: 'MV',
+    lastMessageTime: '4h',
+    unreadCount: 0,
+    statusTag: 'Wholesale Buyer',
+    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    messages: [
+      { sender: 'customer', time: '02:05 PM', text: 'We need to restock 50 units of the industrial valves for our site. Please issue a comprehensive itemized quote with bulk tier discounts.' }
+    ],
+    context: { totalSpent: 'R 45,000.00', orderVolume: 5, loyalty: 'Enterprise Platinum', intent: 'QuoteCraft Action Controller' },
+  },
+  {
+    id: 'chat_11',
+    customerName: 'Amina Diop',
+    channel: 'Instagram',
+    avatarColor: 'AD',
+    lastMessageTime: '5h',
+    unreadCount: 0,
+    statusTag: 'New Lead',
+    statusColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    messages: [
+      { sender: 'customer', time: '01:15 PM', text: 'Stumbled onto your design profile! Do you have a list of service pack rates or a menu of options for brand consulting?' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'MenuDrop Action Controller' },
+  },
+  {
+    id: 'chat_12',
+    customerName: 'Tariq Mahmood',
+    channel: 'WhatsApp',
+    avatarColor: 'TM',
+    lastMessageTime: '1d',
+    unreadCount: 0,
+    statusTag: 'Service Delivery',
+    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    messages: [
+      { sender: 'customer', time: 'Yesterday', text: 'The delivery arrived safely. Please send the final invoice statement so our accounting department can close out the ledger point.' }
+    ],
+    context: { totalSpent: 'R 3,100.00', orderVolume: 1, loyalty: 'Silver Tier', intent: 'FastInvoice Action Controller' },
+  },
+  {
+    id: 'chat_13',
+    customerName: 'Chloe Jenkins',
+    channel: 'Facebook Business',
+    avatarColor: 'CJ',
+    lastMessageTime: '1d',
+    unreadCount: 0,
+    statusTag: 'General',
+    statusColor: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    messages: [
+      { sender: 'customer', time: 'Yesterday', text: 'What are your operational hours over the coming public holiday? Just want to know if I can still come by for collections.' }
+    ],
+    context: { totalSpent: 'R 450.00', orderVolume: 1, loyalty: 'Starter', intent: 'No dominant intent' },
+  },
+  {
+    id: 'chat_14',
+    customerName: 'Dumi Ndlovu',
+    channel: 'WhatsApp',
+    avatarColor: 'DN',
+    lastMessageTime: '2d',
+    unreadCount: 0,
+    statusTag: 'Barber / Cut',
+    statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    messages: [
+      { sender: 'customer', time: '2 days ago', text: 'Hey check, can I change my appointment time from 10:00 AM to 02:30 PM this Saturday? Let me know if that spot is open on your book.' }
+    ],
+    context: { totalSpent: 'R 900.00', orderVolume: 4, loyalty: 'Silver Tier', intent: 'BookedIt Action Controller' },
+  },
+  {
+    id: 'chat_15',
+    customerName: 'Sophia Martinez',
+    channel: 'Instagram',
+    avatarColor: 'SM',
+    lastMessageTime: '3d',
+    unreadCount: 0,
+    statusTag: 'Bulk Order',
+    statusColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    messages: [
+      { sender: 'customer', time: '3 days ago', text: 'We need an explicit cost estimation matrix for 100 customized hoodies with embroidered emblems. Please create a draft quote record.' }
+    ],
+    context: { totalSpent: 'R 0,00', orderVolume: 0, loyalty: 'Starter', intent: 'QuoteCraft Action Controller' },
   },
 ];
 
-const INITIAL_MESSAGES_BY_CONTACT: Record<string, Message[]> = {
-  c1: initialMessages,
-  c2: [
-    {
-      id: 'm-2-1',
-      sender: 'customer',
-      body: 'Can you send me a quote for a premium package this week?',
-      created_at: new Date(Date.now() - 1000 * 60 * 6).toISOString(),
-    },
-  ],
-  c3: [
-    {
-      id: 'm-3-1',
-      sender: 'customer',
-      body: 'Please email invoice options for my renewal plan.',
-      created_at: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-    },
-  ],
-  c4: [
-    {
-      id: 'm-4-1',
-      sender: 'customer',
-      body: 'Thanks, can we lock in that appointment tomorrow?',
-      created_at: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
-    },
-  ],
-};
+const INITIAL_MESSAGES_BY_CONTACT: Record<string, Message[]> = MOCK_CONVERSATIONS.reduce((acc, conversation) => {
+  const mappedMessages = conversation.messages.map((message, index) => ({
+    id: `${conversation.id}_m_${index + 1}`,
+    sender: message.sender,
+    body: message.text,
+    created_at: new Date(Date.now() - (conversation.messages.length - index) * 60_000).toISOString(),
+  }));
+  acc[conversation.id] = mappedMessages;
+  return acc;
+}, {} as Record<string, Message[]>);
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
@@ -242,7 +406,7 @@ export default function Dashboard() {
   const bottomRef  = useRef<HTMLDivElement | null>(null);
   const replyTimer = useRef<number | null>(null);
 
-  const selectedContact = MOCK_CONTACTS.find((c) => c.id === activeContact);
+  const selectedContact = MOCK_CONVERSATIONS.find((c) => c.id === activeContact);
   const currentMessages = useMemo(() => {
     if (!activeContact) return [];
     return messagesByContact[activeContact] ?? [];
@@ -323,7 +487,7 @@ export default function Dashboard() {
 
         // This dashboard currently uses contact IDs from mock data; customer_name
         // matching is reliable across uuid/non-uuid schemas.
-        query = query.eq('customer_name', selectedContact.name);
+        query = query.eq('customer_name', selectedContact.customerName);
 
         const { data, error } = await query;
         if (error) {
@@ -531,10 +695,10 @@ export default function Dashboard() {
     );
   }
 
-  const filteredContacts = MOCK_CONTACTS.filter(
+  const filteredContacts = MOCK_CONVERSATIONS.filter(
     (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.preview.toLowerCase().includes(search.toLowerCase()),
+      c.customerName.toLowerCase().includes(search.toLowerCase()) ||
+      c.messages.some((m) => m.text.toLowerCase().includes(search.toLowerCase())),
   );
 
   // ─── Render ───────────────────────────────────────────────────────────────────
@@ -607,7 +771,7 @@ export default function Dashboard() {
                   <div>
                     <h2 className="text-base font-semibold text-white tracking-tight">Inbox</h2>
                     <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
-                      {MOCK_CONTACTS.length} conversations
+                      {MOCK_CONVERSATIONS.length} conversations
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -661,38 +825,32 @@ export default function Dashboard() {
                         className={`h-10 w-10 rounded-2xl flex items-center justify-center text-[13px] font-semibold text-white ${
                           contact.channel === 'Instagram'
                             ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
-                            : CHANNEL_COLORS[contact.channel]
+                            : CHANNEL_COLORS[contact.channel] || 'bg-slate-500'
                         }`}
                       >
-                        {contact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                        {contact.avatarColor}
                       </div>
                       <span
-                        className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${
-                          contact.status === 'online'
-                            ? 'bg-emerald-400'
-                            : contact.status === 'away'
-                            ? 'bg-amber-400'
-                            : 'bg-slate-600'
-                        }`}
+                        className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#13161e] ${CHANNEL_DOT[contact.channel] || 'bg-slate-400'}`}
                       />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span className="text-[13px] font-medium text-slate-100 truncate">{contact.name}</span>
-                        <span className="text-[10px] text-slate-500 flex-shrink-0 font-medium">{contact.time}</span>
+                        <span className="text-[13px] font-medium text-slate-100 truncate">{contact.customerName}</span>
+                        <span className="text-[10px] text-slate-500 flex-shrink-0 font-medium">{contact.lastMessageTime}</span>
                       </div>
-                      <p className="text-xs text-slate-500 truncate leading-snug">{contact.preview}</p>
-                      {contact.tag && (
-                        <span className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide ${contact.tagColor}`}>
-                          {contact.tag}
+                      <p className="text-xs text-slate-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
+                      {contact.statusTag && (
+                        <span className={`mt-1.5 inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${contact.statusColor}`}>
+                          {contact.statusTag}
                         </span>
                       )}
                     </div>
 
-                    {contact.unread > 0 && (
+                    {contact.unreadCount > 0 && (
                       <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-[#0f1117]">
-                        {contact.unread}
+                        {contact.unreadCount}
                       </span>
                     )}
                   </button>
@@ -734,13 +892,13 @@ export default function Dashboard() {
                           : CHANNEL_COLORS[selectedContact?.channel || 'SMS']
                       }`}
                     >
-                      {selectedContact?.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                      {selectedContact?.avatarColor}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{selectedContact?.name}</p>
+                      <p className="text-sm font-semibold text-white truncate">{selectedContact?.customerName}</p>
                       <div className="flex items-center gap-1.5">
-                        <span className={`h-1.5 w-1.5 rounded-full ${CHANNEL_DOT[selectedContact?.channel || 'SMS']}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${CHANNEL_DOT[selectedContact?.channel || 'SMS'] || 'bg-slate-400'}`} />
                         <p className="text-xs text-slate-500">{selectedContact?.channel}</p>
                       </div>
                     </div>
@@ -839,10 +997,10 @@ export default function Dashboard() {
                             className={`h-7 w-7 flex-shrink-0 self-end rounded-xl flex items-center justify-center text-[10px] font-bold text-white ${
                               selectedContact?.channel === 'Instagram'
                                 ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400'
-                                : CHANNEL_COLORS[selectedContact?.channel || 'SMS']
+                                : CHANNEL_COLORS[selectedContact?.channel || 'SMS'] || 'bg-slate-500'
                             }`}
                           >
-                            {selectedContact?.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                            {selectedContact?.avatarColor}
                           </div>
                         )}
                         <div className={`max-w-[75%] flex flex-col gap-1 ${message.sender === 'business' ? 'items-end' : 'items-start'}`}>
@@ -913,7 +1071,7 @@ export default function Dashboard() {
                   <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-xs text-zinc-400 font-medium">{selectedContact.name}</p>
+                        <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
                         <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel} Profile</p>
                       </div>
                       <span
@@ -1105,7 +1263,7 @@ export default function Dashboard() {
                     <section className="rounded-xl border border-zinc-800 bg-[#121214] p-4">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <p className="text-xs text-zinc-400 font-medium">{selectedContact.name}</p>
+                          <p className="text-xs text-zinc-400 font-medium">{selectedContact.customerName}</p>
                           <p className="text-[11px] text-zinc-500 mt-0.5">{selectedContact.channel} Profile</p>
                         </div>
                         <span
