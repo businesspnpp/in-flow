@@ -327,7 +327,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-5 w-full min-w-0 bg-white border border-zinc-200 p-4 md:p-5">
+      <div className="space-y-5 w-full min-w-0 bg-white border-2 border-zinc-200 p-5 md:p-5">
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-0.5">Connected Channels</p>
@@ -347,7 +347,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
-                  className={`w-full min-w-0 text-left px-3 py-2.5 flex items-center gap-3 transition-colors border ${
+                  className={`w-full min-w-0 text-left px-4 py-3 flex items-center gap-3 transition-colors border ${
                     isOpen
                       ? 'border-zinc-300 border-b-0 bg-zinc-50'
                       : 'border-zinc-200 bg-white hover:border-zinc-300'
@@ -361,11 +361,11 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-semibold text-zinc-900">{name}</p>
                       {isSms ? (
-                        <span className="bg-zinc-100 text-zinc-500 border border-zinc-200 text-[10px] px-1.5 py-0.5 font-medium">
+                        <span className="bg-zinc-100 text-zinc-500 border border-zinc-200 text-[10px] px-1.5 py-0.5 font-semibold">
                           Coming Soon
                         </span>
                       ) : (
-                        <span className={`text-[10px] px-1.5 py-0.5 border font-medium shrink-0 ${
+                        <span className={`text-[10px] px-1.5 py-0.5 border font-semibold shrink-0 ${
                           isConnected
                             ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                             : 'bg-zinc-100 border-zinc-200 text-zinc-500'
@@ -377,12 +377,12 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                     <p className="text-xs text-zinc-500 mt-0.5 truncate">{description}</p>
                   </div>
 
-                  <span className="text-zinc-400 text-[10px] shrink-0">{isOpen ? '▲' : '▼'}</span>
+                  <span className="text-zinc-500 text-[10px] shrink-0">{isOpen ? '▲' : '▼'}</span>
                 </button>
 
                 {isOpen && !isSms && onConnect && (
                   <div className="w-full min-w-0 border border-zinc-200 border-t-0 bg-zinc-50 divide-y divide-zinc-200 overflow-hidden">
-                    <div className="p-3 space-y-3 min-w-0">
+                    <div className="p-4 space-y-3 min-w-0">
                       <div className="flex flex-col gap-2 min-w-0">
                         <div className="min-w-0">
                           <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Status</p>
@@ -395,7 +395,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             type="button"
                             onClick={onConnect}
                             disabled={isLoading}
-                            className="bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white px-3 py-1.5 text-xs font-semibold transition-colors"
+                            className="bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white px-3 py-2.5 text-xs font-semibold transition-colors"
                           >
                             {isLoading ? 'Connecting…' : connectLabel}
                           </button>
@@ -404,7 +404,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                               type="button"
                               onClick={onConnect}
                               disabled={isLoading}
-                              className="border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 transition-colors"
+                              className="border border-zinc-300 bg-white px-3 py-2.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 transition-colors"
                             >
                               Retry
                             </button>
@@ -413,7 +413,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             <button
                               type="button"
                               onClick={() => setShowTroubleshoot(true)}
-                              className="border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-500 hover:bg-zinc-50 transition-colors"
+                              className="border border-zinc-200 bg-white px-3 py-2.5 text-xs font-semibold text-zinc-500 hover:bg-zinc-50 transition-colors"
                             >
                               Troubleshoot
                             </button>
@@ -434,7 +434,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                     </div>
 
                     {howItWorks.length > 0 && (
-                      <div className="px-3 py-2.5 min-w-0">
+                      <div className="px-4 py-3 min-w-0">
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 mb-2">How it works</p>
                         <ul className="space-y-1.5">
                           {howItWorks.map((step, i) => (
@@ -450,7 +450,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 )}
 
                 {isOpen && isSms && (
-                  <div className="w-full min-w-0 border border-zinc-200 border-t-0 bg-zinc-50 px-3 py-2.5 overflow-hidden">
+                  <div className="w-full min-w-0 border border-zinc-200 border-t-0 bg-zinc-50 px-4 py-3 overflow-hidden">
                     <p className="text-xs text-zinc-500 italic break-words">
                       SMS integration is currently being provisioned. Full connection support is coming soon.
                     </p>
@@ -463,7 +463,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       </div>
 
       {showTroubleshoot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900 px-4">
           <div className="w-full max-w-lg bg-white border border-zinc-200 p-6">
             <div className="flex items-start justify-between mb-4 gap-3">
               <div className="min-w-0">
@@ -475,7 +475,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                 onClick={() => setShowTroubleshoot(false)}
                 className="text-zinc-400 hover:text-zinc-700 p-1 transition-colors shrink-0"
               >
-                <X size={16} />
+                <X size={18} strokeWidth={2.25} />
               </button>
             </div>
             <ol className="space-y-2.5">

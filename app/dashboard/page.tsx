@@ -762,15 +762,15 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-16 bg-white border-r border-zinc-200 items-center py-4 gap-2 z-20">
+      <aside className="hidden md:flex flex-col w-16 bg-white border-r-2 border-zinc-200 items-center py-4 gap-2 z-20">
         <div className="mb-4 flex h-9 w-9 items-center justify-center bg-amber-600">
           <span className="text-xs font-bold text-white">iF</span>
         </div>
 
         {[
-          { tab: 'chats'    as GlobalTab, icon: <Inbox    size={18} />, label: 'Inbox'    },
-          { tab: 'tools'    as GlobalTab, icon: <Zap      size={18} />, label: 'Tools'    },
-          { tab: 'settings' as GlobalTab, icon: <Settings size={18} />, label: 'Settings' },
+          { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} strokeWidth={2.25} />, label: 'Inbox'    },
+          { tab: 'tools'    as GlobalTab, icon: <Zap      size={20} strokeWidth={2.25} />, label: 'Tools'    },
+          { tab: 'settings' as GlobalTab, icon: <Settings size={20} strokeWidth={2.25} />, label: 'Settings' },
         ].map(({ tab, icon, label }) => (
           <button
             key={tab}
@@ -797,7 +797,7 @@ export default function Dashboard() {
           title="Sign out"
           className="flex h-10 w-10 items-center justify-center text-zinc-400 hover:bg-red-50 hover:text-red-400 transition-colors disabled:opacity-40"
         >
-          <LogOut size={18} />
+          <LogOut size={20} strokeWidth={2.25} />
         </button>
       </aside>
 
@@ -809,7 +809,7 @@ export default function Dashboard() {
           <>
             {/* ── Conversation list ── */}
             <div
-              className={`flex-shrink-0 flex flex-col bg-zinc-50 border-r border-zinc-200 overflow-hidden
+              className={`flex-shrink-0 flex flex-col bg-zinc-50 border-r-2 border-zinc-200 overflow-hidden
                 ${activeContact ? 'hidden md:flex' : 'flex'}
                 w-full md:w-72 lg:w-80`}
             >
@@ -817,28 +817,28 @@ export default function Dashboard() {
               <div className="px-4 pt-5 pb-3">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-semibold text-zinc-900">Inbox</h2>
+                    <h2 className="text-base font-semibold tracking-tight text-zinc-900">Inbox</h2>
                     <p className="text-[11px] text-zinc-500 mt-0.5">
                       {MOCK_CONVERSATIONS.length} conversations
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button className="h-7 w-7 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
-                      <Hash size={14} />
+                    <button className="h-8 w-8 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
+                      <Hash size={16} strokeWidth={2.25} />
                     </button>
-                    <button className="h-7 w-7 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
-                      <Users size={14} />
+                    <button className="h-8 w-8 flex items-center justify-center text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition">
+                      <Users size={16} strokeWidth={2.25} />
                     </button>
                   </div>
                 </div>
 
                 <div className="relative">
-                  <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <Search size={16} strokeWidth={2.25} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search conversations…"
-                    className="w-full border border-zinc-200 bg-zinc-100 pl-8 pr-3 py-2 text-xs text-zinc-700 placeholder:text-zinc-500 outline-none focus:border-amber-600/50 transition"
+                    className="w-full h-11 border border-zinc-200 bg-zinc-100 pl-9 pr-3 py-2.5 text-xs text-zinc-700 placeholder:text-zinc-500 outline-none focus:border-amber-600/50 transition"
                   />
                 </div>
 
@@ -846,7 +846,7 @@ export default function Dashboard() {
                   {['All', 'Unread', 'Mine'].map((f) => (
                     <button
                       key={f}
-                      className={`px-3 py-1 text-[11px] font-medium transition ${
+                      className={`px-3 py-1.5 text-[11px] font-semibold transition ${
                         f === 'All'
                           ? 'bg-amber-600 text-white'
                           : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'
@@ -864,7 +864,7 @@ export default function Dashboard() {
                   <button
                     key={contact.id}
                     onClick={() => setActiveContact(contact.id)}
-                    className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-100 ${
+                    className={`w-full flex items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-zinc-100 ${
                       activeContact === contact.id ? 'bg-zinc-100' : ''
                     }`}
                   >
@@ -883,7 +883,7 @@ export default function Dashboard() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span className="text-[13px] font-medium text-zinc-900 truncate">{contact.customerName}</span>
+                        <span className="text-[13px] font-semibold text-zinc-900 truncate">{contact.customerName}</span>
                         <span className="text-[10px] text-zinc-500 flex-shrink-0">{contact.lastMessageTime}</span>
                       </div>
                       <p className="text-xs text-zinc-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
