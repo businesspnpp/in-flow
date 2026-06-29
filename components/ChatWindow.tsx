@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase, Chat, Message } from '@/lib/supabase';
 import { sanitizeInput } from '@/lib/sanitize';
-import { ChatMessageSchema, type ChatMessageInput } from '@/lib/validation';
+import { ChatMessageSchema } from '@/lib/validation';
 import { Send, MessageSquare, AlertCircle } from 'lucide-react';
 
 interface ChatWindowProps {
@@ -17,12 +17,8 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
   const [error, setError] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Load messages when chat changes
   useEffect(() => {
-    if (!activeChat) {
-      setMessages([]);
-      return;
-    }
+    if (!activeChat) { setMessages([]); return; }
     async function fetchMessages() {
       const { data } = await supabase
         .from('messages')
@@ -34,59 +30,38 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
     fetchMessages();
   }, [activeChat]);
 
-  // Real-time subscription for messages
   useEffect(() => {
     if (!activeChat) return;
-
     const channel = supabase
       .channel(`messages-${activeChat.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_id=eq.${activeChat.id}`,
-        },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
-        }
-      )
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `chat_id=eq.${activeChat.id}`,
+      }, (payload) => {
+        setMessages((prev) => [...prev, payload.new as Message]);
+      })
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [activeChat]);
 
-  // Auto-scroll on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   async function sendMessage() {
     if (!input.trim() || !activeChat || sending) return;
-
     setError('');
 
     try {
-      // Sanitize the input
       const sanitizedBody = sanitizeInput(input.trim(), 4096);
+      if (!sanitizedBody) { setError('Message cannot be empty after sanitization'); return; }
 
-      if (!sanitizedBody) {
-        setError('Message cannot be empty after sanitization');
-        return;
-      }
-
-      // Validate the message using Zod schema
-      const validationResult = ChatMessageSchema.safeParse({
-        body: sanitizedBody,
-        chat_id: activeChat.id,
-      });
-
+      const validationResult = ChatMessageSchema.safeParse({ body: sanitizedBody, chat_id: activeChat.id });
       if (!validationResult.success) {
-        const errors = validationResult.error.errors.map((e) => e.message).join(', ');
-        setError(`Validation error: ${errors}`);
+        setError(`Validation error: ${validationResult.error.errors.map((e) => e.message).join(', ')}`);
         return;
       }
 
@@ -94,7 +69,6 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
       setInput('');
       setSending(true);
 
-      // Send via Meta WhatsApp API
       const metaResponse = await fetch(
         `https://graph.facebook.com/v20.0/${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER_ID}/messages`,
         {
@@ -103,53 +77,21 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_WHATSAPP_ACCESS_TOKEN}`,
           },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to: chat_id,
-            type: 'text',
-            text: { body },
-          }),
+          body: JSON.stringify({ messaging_product: 'whatsapp', to: chat_id, type: 'text', text: { body } }),
         }
       );
 
       if (!metaResponse.ok) {
-        const metaError = await metaResponse.json();
-        console.error('[WhatsApp API] Error:', metaError);
         setError('Failed to send message via WhatsApp');
         setSending(false);
         return;
       }
 
-      // Record outbound message in Supabase using parameterized query
-      const { error: insertError } = await supabase.from('messages').insert({
-        chat_id: chat_id,
-        sender: 'business',
-        body: body,
-      });
+      const { error: insertError } = await supabase.from('messages').insert({ chat_id, sender: 'business', body });
+      if (insertError) { setError('Failed to save message'); setSending(false); return; }
 
-      if (insertError) {
-        console.error('[Database] Insert error:', insertError);
-        setError('Failed to save message');
-        setSending(false);
-        return;
-      }
-
-      // Update chat last_message and timestamp
-      const { error: updateError } = await supabase
-        .from('chats')
-        .update({
-          last_message: body,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', chat_id);
-
-      if (updateError) {
-        console.error('[Database] Update error:', updateError);
-        // Don't fail silently - message was sent but metadata wasn't updated
-        setError('Message sent but failed to update chat metadata');
-      }
+      await supabase.from('chats').update({ last_message: body, updated_at: new Date().toISOString() }).eq('id', chat_id);
     } catch (err) {
-      console.error('[Send] Unexpected error:', err);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setSending(false);
@@ -157,26 +99,23 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
   }
 
   function formatTime(iso: string) {
-    return new Date(iso).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   if (!activeChat) {
     return (
       <div className="w-full flex flex-col items-center justify-center text-center p-6 h-full min-h-[50dvh]">
-        <MessageSquare size={56} strokeWidth={2} className="text-zinc-300 mb-4" />
-        <p className="text-sm text-zinc-600">Select a conversation to begin</p>
+        <MessageSquare size={40} strokeWidth={1.5} className="text-zinc-300 mb-3" />
+        <p className="text-sm text-zinc-500">Select a conversation to begin</p>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col h-full bg-zinc-50">
-      {/* Chat header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-200 bg-white">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-200 bg-white flex-shrink-0">
+        <div className="w-8 h-8 bg-zinc-800 flex items-center justify-center flex-shrink-0">
           <span className="text-white text-xs font-semibold">
             {(activeChat.name ?? activeChat.id).slice(0, 2).toUpperCase()}
           </span>
@@ -192,23 +131,16 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
         {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.sender === 'business' ? 'justify-end' : 'justify-start'}`}
-          >
+          <div key={msg.id} className={`flex ${msg.sender === 'business' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[85%] sm:max-w-[70%] px-3 py-2 rounded-lg text-sm leading-relaxed ${
+              className={`max-w-[85%] sm:max-w-[70%] px-3 py-2 text-sm leading-relaxed ${
                 msg.sender === 'business'
-                  ? 'bg-amber-600 text-white rounded-br-none'
-                  : 'bg-white border border-zinc-200 text-zinc-900 rounded-bl-none'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-white border border-zinc-200 text-zinc-900'
               }`}
             >
               <p>{msg.body}</p>
-              <p
-                className={`text-[10px] mt-1 ${
-                  msg.sender === 'business' ? 'text-amber-100' : 'text-zinc-500'
-                } text-right`}
-              >
+              <p className={`text-[10px] mt-1 text-right ${msg.sender === 'business' ? 'text-amber-100' : 'text-zinc-400'}`}>
                 {formatTime(msg.created_at)}
               </p>
             </div>
@@ -217,38 +149,30 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input area */}
-      <div className="p-4 border-t border-zinc-200 bg-white">
+      {/* Input */}
+      <div className="p-3 border-t border-zinc-200 bg-white flex-shrink-0">
         {error && (
-          <div className="mb-2 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-            <AlertCircle size={14} className="text-red-600 flex-shrink-0" />
+          <div className="mb-2 flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-2">
+            <AlertCircle size={13} className="text-red-600 flex-shrink-0" />
             <p className="text-xs text-red-600">{error}</p>
           </div>
         )}
-        <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2">
+        <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 px-3 py-2">
           <textarea
             rows={1}
-            placeholder="Type a reply... (text only, HTML/scripts will be sanitized)"
+            placeholder="Type a reply..."
             value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              if (error) setError('');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
+            onChange={(e) => { setInput(e.target.value); if (error) setError(''); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
             className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none resize-none max-h-32"
             maxLength={4096}
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0"
+            className="w-8 h-8 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0"
           >
-            <Send size={14} className="text-white" />
+            <Send size={13} className="text-white" />
           </button>
         </div>
       </div>
