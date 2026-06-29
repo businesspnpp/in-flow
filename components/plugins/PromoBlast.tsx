@@ -89,10 +89,10 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Megaphone size={16} className="text-pink-500" />
-        <h3 className="text-sm font-bold text-zinc-200">PromoBlast</h3>
+        <Megaphone size={16} className="text-amber-600" />
+        <h3 className="text-sm font-semibold text-zinc-800">PromoBlast</h3>
         {aiPrefill && (
-          <span className="ml-auto text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold border border-violet-500/30">
+          <span className="ml-auto text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 font-medium border border-zinc-300">
             AI filled
           </span>
         )}
@@ -106,18 +106,18 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
         <>
           {/* Preset pickers */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Quick Presets
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Quick presets
             </label>
             <div className="grid grid-cols-2 gap-2">
               {PRESET_PROMOS.map((p) => (
                 <button
                   key={p.code}
                   onClick={() => applyPreset(p)}
-                  className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition-colors ${
+                  className={`py-2 px-3 text-xs font-medium border text-left transition-colors ${
                     voucherCode === p.code
-                      ? 'bg-pink-500 border-pink-500 text-white'
-                      : 'bg-[#1c1c22] border-zinc-800/80 text-zinc-300 hover:border-pink-400/40'
+                      ? 'bg-amber-600 border-amber-600 text-white'
+                      : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400'
                   }`}
                 >
                   <span className="mr-1">{p.emoji}</span>
@@ -129,19 +129,19 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
 
           {/* Voucher code */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Voucher Code
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Voucher code
             </label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={voucherCode}
                 onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                className="flex-1 bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors font-mono tracking-wider"
+                className="flex-1 bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors font-mono tracking-wider"
               />
               <button
                 onClick={() => setVoucherCode(generateCode())}
-                className="p-2.5 rounded-xl border border-zinc-800/80 bg-[#1c1c22] text-zinc-400 hover:border-pink-400/40 hover:text-pink-400 transition-colors"
+                className="p-2.5 border border-zinc-300 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 transition-colors"
                 title="Generate random code"
               >
                 <RefreshCw size={14} />
@@ -151,45 +151,45 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
 
           {/* Discount text */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Offer Description
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Offer description
             </label>
             <input
               type="text"
               placeholder="e.g. 10% off your next booking"
               value={discountText}
               onChange={(e) => setDiscountText(e.target.value)}
-              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors"
+              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
             />
           </div>
 
           {/* Booking link */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Action Link
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Action link
             </label>
             <input
               type="text"
               value={bookingLink}
               onChange={(e) => setBookingLink(e.target.value)}
-              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors font-mono text-xs"
+              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors font-mono text-xs"
             />
           </div>
 
           {/* Expiry */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Valid For
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Valid for
             </label>
             <div className="flex flex-wrap gap-2">
               {EXPIRY_OPTIONS.map((opt) => (
                 <button
                   key={opt}
                   onClick={() => setExpiry(opt)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  className={`px-3 py-1.5 text-xs font-medium border transition-colors ${
                     expiry === opt
-                      ? 'bg-pink-500 border-pink-500 text-white'
-                      : 'bg-[#1c1c22] border-zinc-800/80 text-zinc-300 hover:border-pink-400/40'
+                      ? 'bg-amber-600 border-amber-600 text-white'
+                      : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400'
                   }`}
                 >
                   {opt}
@@ -200,40 +200,40 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
 
           {/* Custom message override */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-600 uppercase tracking-wide font-medium">
-              Custom Message (optional — overrides default)
+            <label className="text-[10px] text-zinc-500 uppercase tracking-wide font-medium">
+              Custom message (optional — overrides default)
             </label>
             <textarea
               rows={2}
               placeholder="Leave blank to use auto-generated message…"
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
-              className="bg-[#121214] border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-500/50 focus:ring-0 transition-colors resize-none"
+              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors resize-none"
             />
           </div>
 
           {/* Preview */}
-          <div className="bg-zinc-900/60 rounded-lg p-3 border border-zinc-800/80 text-xs text-zinc-300 whitespace-pre-line leading-relaxed font-mono">
+          <div className="bg-zinc-50 p-3 border border-zinc-200 text-xs text-zinc-700 whitespace-pre-line leading-relaxed font-mono">
             {fullText}
           </div>
 
           {/* Failsafe note */}
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-            <span className="text-amber-500 text-xs mt-0.5 flex-shrink-0">✓</span>
-            <p className="text-xs text-amber-700">
-              Failsafe text renders immediately — voucher code visible even if image fails to load on low-data networks.
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 px-3 py-2">
+            <span className="text-amber-600 text-xs mt-0.5 flex-shrink-0">✓</span>
+            <p className="text-xs text-amber-800">
+              This text sends immediately — the voucher code stays visible even if an image fails to load on a slow connection.
             </p>
           </div>
 
           <button
             onClick={handleSend}
             disabled={sending || sent}
-            className="flex items-center justify-center gap-2 bg-pink-500 hover:bg-pink-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+            className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
           >
             {sent ? (
-              <><CheckCircle size={14} /> Sent!</>
+              <><CheckCircle size={14} /> Sent</>
             ) : (
-              <><Send size={14} /> Send PromoBlast</>
+              <><Send size={14} /> Send promo</>
             )}
           </button>
         </>
