@@ -1,8 +1,8 @@
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-50 py-12 px-4 sm:px-6 lg:px-8">
       {" "}
-      <div className="max-w-2xl mx-auto">
+      <div className="if-card max-w-3xl mx-auto p-8">
         {" "}
         <div className="mb-10 border-b border-zinc-200 pb-6">
           {" "}

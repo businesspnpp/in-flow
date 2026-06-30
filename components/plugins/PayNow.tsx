@@ -33,7 +33,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="if-card-soft flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <CreditCard size={15} className="text-blue-600" />
         <h3 className="text-sm font-semibold text-zinc-800">Pay Now</h3>

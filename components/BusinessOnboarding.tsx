@@ -99,7 +99,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-zinc-50 px-4 py-8">
-      <div className="w-full max-w-3xl rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
+      <div className="if-card w-full max-w-3xl p-8">
         <div className="mb-8 border-b border-zinc-200 pb-6">
           <p className="text-xs uppercase tracking-widest text-amber-600 font-semibold">Welcome to inFlow</p>
           <h1 className="mt-4 text-3xl font-bold text-zinc-900">Set up your business account</h1>
@@ -116,7 +116,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
                 value={businessName}
                 onChange={e => setBusinessName(e.target.value)}
                 placeholder="e.g. Sunrise Salon"
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
+                className="if-input w-full px-4 py-3 text-sm placeholder-zinc-400 transition-colors"
               />
             </label>
             <label className="space-y-2 text-sm text-zinc-700 font-medium">
@@ -126,7 +126,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="hello@business.com"
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
+                className="if-input w-full px-4 py-3 text-sm placeholder-zinc-400 transition-colors"
               />
             </label>
           </div>
@@ -137,7 +137,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
               value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder="123 Business Avenue, City"
-              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-100 transition-colors"
+              className="if-input w-full px-4 py-3 text-sm placeholder-zinc-400 transition-colors"
             />
           </label>
 
@@ -155,7 +155,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
                   key={category}
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className={`rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
+                  className={`border px-4 py-3 text-left text-sm transition-all duration-200 ${
                     selectedCategories.includes(category)
                       ? 'border-amber-600 bg-amber-50 text-amber-900 font-medium'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:border-amber-300 hover:bg-amber-50'
@@ -168,14 +168,14 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>
+            <p className="text-sm text-red-600 bg-red-50 p-3 border border-red-200">{error}</p>
           )}
 
           <div className="flex justify-end pt-3">
             <button
               onClick={handleCreateAccount}
               disabled={saving}
-              className="rounded-lg bg-amber-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:opacity-50"
+              className="if-btn-primary px-6 py-3 text-sm font-semibold disabled:opacity-50"
             >
               {saving ? 'Creating profile...' : 'Finish setup'}
             </button>

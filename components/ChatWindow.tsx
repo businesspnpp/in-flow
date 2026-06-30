@@ -170,7 +170,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
           >
             {" "}
             <div
-              className={`max-w-[85%] sm:max-w-[70%] px-4 py-2.5 text-sm leading-relaxed ${msg.sender === "business" ? "bg-amber-600 text-white" : "bg-white border border-zinc-200 text-zinc-900"}`}
+              className={`max-w-[85%] sm:max-w-[70%] px-4 py-2.5 text-sm leading-relaxed ${msg.sender === "business" ? "bg-amber-600 text-white" : "if-card-soft text-zinc-900"}`}
             >
               {" "}
               <p>{msg.body}</p>{" "}
@@ -199,7 +199,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
             <p className="text-xs text-red-600">{error}</p>{" "}
           </div>
         )}{" "}
-        <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 px-4 py-2.5">
+        <div className="flex items-end gap-2 if-card-soft px-4 py-2.5">
           {" "}
           <textarea
             rows={1}
@@ -221,7 +221,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
           <button
             onClick={sendMessage}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0"
+            className="if-btn-primary w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0"
           >
             {" "}
             <Send size={13} className="text-white" strokeWidth={2.25} />{" "}

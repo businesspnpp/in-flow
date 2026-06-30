@@ -66,12 +66,12 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
     return `${Math.floor(hrs / 24)}d`;
   }
   return (
-    <div className="flex flex-col h-full w-full bg-white border-r-2 border-zinc-200">
+    <div className="flex flex-col h-full w-full bg-white border-r border-zinc-200">
       {" "}
       {/* Search */}{" "}
       <div className="p-5 border-b border-zinc-200">
         {" "}
-        <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 px-4 py-2.5 w-full">
+        <div className="flex items-center gap-2 if-card-soft px-4 py-2.5 w-full">
           {" "}
           <Search
             size={18}
@@ -102,7 +102,7 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
           <button
             key={chat.id}
             onClick={() => onSelectChat(chat)}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100 hover:bg-zinc-50 transition-colors text-left ${activeChat?.id === chat.id ? "bg-zinc-50 border-l-2 border-l-amber-600" : ""}`}
+            className={`w-full flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100 hover:bg-zinc-50 transition-colors text-left ${activeChat?.id === chat.id ? "bg-amber-50/40 border-l-2 border-l-amber-600" : ""}`}
           >
             {" "}
             {/* Avatar — solid color, no gradient */}{" "}

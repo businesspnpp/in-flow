@@ -17,6 +17,54 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  --if-bg: #fafafa;
+  --if-surface: #ffffff;
+  --if-border: #e4e4e7;
+  --if-ink: #18181b;
+  --if-muted: #71717a;
+  --if-accent: #d97706;
+}
+
+.if-card {
+  background: var(--if-surface);
+  border: 2px solid var(--if-ink);
+  box-shadow: 8px 8px 0 0 rgba(24, 24, 27, 1);
+}
+
+.if-card-soft {
+  background: var(--if-surface);
+  border: 1px solid var(--if-border);
+}
+
+.if-btn-primary {
+  background: var(--if-accent);
+  color: #fff;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease;
+}
+
+.if-btn-primary:hover {
+  background: #b45309;
+}
+
+.if-btn-muted {
+  background: #f4f4f5;
+  border: 1px solid var(--if-border);
+  color: #3f3f46;
+}
+
+.if-input {
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  color: var(--if-ink);
+  outline: none;
+}
+
+.if-input:focus {
+  border-color: var(--if-ink);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

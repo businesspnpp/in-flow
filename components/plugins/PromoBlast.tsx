@@ -87,7 +87,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="if-card-soft flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <Megaphone size={16} className="text-amber-600" />
         <h3 className="text-sm font-semibold text-zinc-800">PromoBlast</h3>

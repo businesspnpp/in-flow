@@ -153,7 +153,7 @@ export default function MenuDrop({ activeChat: _activeChat }: MenuDropProps) {
   if (!businessId)
     return <p className="text-xs text-red-600">Business profile not found.</p>;
   return (
-    <div className="flex flex-col gap-4">
+    <div className="if-card-soft flex flex-col gap-4 p-4">
       {" "}
       <div className="flex items-center gap-2">
         {" "}

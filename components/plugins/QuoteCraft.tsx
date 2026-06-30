@@ -253,7 +253,7 @@ export default function QuoteCraft({
     );
   }
   return (
-    <div className="flex flex-col gap-4 relative">
+    <div className="if-card-soft flex flex-col gap-4 relative p-4">
       {" "}
       <div className="flex items-center gap-2">
         {" "}

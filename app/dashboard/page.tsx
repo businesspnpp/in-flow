@@ -752,7 +752,7 @@ export default function Dashboard() {
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-white text-zinc-900 scrollbar-hide">
+    <div className="h-[100dvh] w-full overflow-hidden flex flex-col md:flex-row bg-zinc-50 text-zinc-900 scrollbar-hide">
       <style>{`
         .scrollbar-hide, .scrollbar-hide * {
           scrollbar-width: none; -ms-overflow-style: none;
@@ -762,7 +762,7 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-16 bg-white border-r-2 border-zinc-200 items-center py-4 gap-2 z-20">
+      <aside className="hidden md:flex flex-col w-16 bg-white/95 backdrop-blur-sm border-r border-zinc-200 items-center py-4 gap-2 z-20">
         <div className="mb-4 flex h-9 w-9 items-center justify-center bg-amber-600">
           <span className="text-xs font-bold text-white">iF</span>
         </div>
@@ -809,7 +809,7 @@ export default function Dashboard() {
           <>
             {/* ── Conversation list ── */}
             <div
-              className={`flex-shrink-0 flex flex-col bg-zinc-50 border-r-2 border-zinc-200 overflow-hidden
+              className={`flex-shrink-0 flex flex-col bg-white border-r border-zinc-200 overflow-hidden
                 ${activeContact ? 'hidden md:flex' : 'flex'}
                 w-full md:w-72 lg:w-80`}
             >
@@ -906,7 +906,7 @@ export default function Dashboard() {
 
             {/* ── Thread view ── */}
             <div
-              className={`flex-1 flex flex-col overflow-hidden bg-white ${
+              className={`flex-1 flex flex-col overflow-hidden bg-zinc-50 ${
                 !activeContact ? 'hidden md:flex' : 'flex'
               }`}
             >
@@ -923,7 +923,7 @@ export default function Dashboard() {
               ) : (
                 <>
                   {/* Thread header */}
-                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-zinc-200 bg-zinc-50">
+                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-zinc-200 bg-white">
                     <button
                       onClick={() => setActiveContact(null)}
                       className="md:hidden flex h-8 w-8 items-center justify-center bg-zinc-100 text-zinc-500 hover:bg-zinc-100 transition"
@@ -1005,7 +1005,7 @@ export default function Dashboard() {
                   )}
 
                   {/* Quick tool pills */}
-                  <div className="flex-shrink-0 border-b border-zinc-200 bg-zinc-50 overflow-x-auto scrollbar-none px-4 py-2">
+                  <div className="flex-shrink-0 border-b border-zinc-200 bg-white overflow-x-auto scrollbar-none px-4 py-2">
                     <div className="flex gap-2 whitespace-nowrap">
                       {TOOL_ACTIONS.map((tool) => {
                         const ToolIcon = tool.Icon;
@@ -1070,7 +1070,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Input bar */}
-                  <div className="flex-shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-3">
+                  <div className="flex-shrink-0 border-t border-zinc-200 bg-white px-4 py-3">
                     <div className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-3 py-2 focus-within:border-amber-600/50 transition-colors">
                       <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0">
                         <Paperclip size={16} />

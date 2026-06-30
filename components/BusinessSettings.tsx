@@ -327,7 +327,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
   return (
     <>
       <div id="fb-root" />
-      <div className="space-y-6 w-full min-w-0 bg-white p-6 md:p-8">
+      <div className="space-y-6 w-full min-w-0 bg-zinc-50 p-6 md:p-8">
 
         <div>
           <p className="text-xs font-bold uppercase tracking-tight text-zinc-500 mb-1">Connected Channels</p>
@@ -343,7 +343,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
             const isLoading = loading === id;
 
             return (
-              <div key={id} className="flex flex-col w-full min-w-0 bg-white">
+              <div key={id} className="flex flex-col w-full min-w-0 if-card-soft">
                 <button
                   type="button"
                   onClick={() => handleCardClick(id)}
@@ -395,7 +395,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
                             type="button"
                             onClick={onConnect}
                             disabled={isLoading}
-                            className="bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white px-3 py-2.5 text-xs font-semibold transition-colors"
+                            className="if-btn-primary disabled:opacity-40 px-3 py-2.5 text-xs font-semibold"
                           >
                             {isLoading ? 'Connecting…' : connectLabel}
                           </button>
@@ -464,7 +464,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
 
       {showTroubleshoot && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900 px-4">
-          <div className="w-full max-w-lg bg-white border border-zinc-200 p-6">
+          <div className="if-card w-full max-w-lg p-6">
             <div className="flex items-start justify-between mb-4 gap-3">
               <div className="min-w-0">
                 <h4 className="text-sm font-semibold text-zinc-900">WhatsApp Troubleshooting</h4>
