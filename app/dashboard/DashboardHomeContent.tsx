@@ -2,10 +2,6 @@ import {
   Calendar,
   Mail,
   RotateCcw,
-  Tag,
-  CalendarDays,
-  FileText,
-  Flag
 } from 'lucide-react';
 
 /* ---------------- ICONS ---------------- */
@@ -19,9 +15,9 @@ function WhatsAppIcon({ size = 16 }) {
   );
 }
 
-function InstagramIcon({ size = 16, rounded = false }) {
+function InstagramIcon({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ borderRadius: rounded ? '8px' : '0px' }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="dash-ig-grad" cx="30%" cy="107%" r="150%">
           <stop offset="0%" stopColor="#fdf497"/>
@@ -31,18 +27,18 @@ function InstagramIcon({ size = 16, rounded = false }) {
           <stop offset="90%" stopColor="#285AEB"/>
         </radialGradient>
       </defs>
-      <rect width="24" height="24" rx={rounded ? "6" : "0"} fill="url(#dash-ig-grad)"/>
+      <rect width="24" height="24" rx="6" fill="url(#dash-ig-grad)"/>
       <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
       <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
-      <rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="1.8" fill="none"/>
+      <rect x="3" y="3" width="18" height="18" rx="6" stroke="white" strokeWidth="1.8" fill="none"/>
     </svg>
   );
 }
 
-function TikTokIcon({ size = 16, rounded = false }) {
+function TikTokIcon({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ borderRadius: rounded ? '8px' : '0px' }}>
-      <rect width="24" height="24" rx={rounded ? "6" : "0"} fill="#000000"/>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="6" fill="#000000"/>
       <path d="M15.5 4.5c.4 1.6 1.5 2.7 3 3v2.3c-1.2 0-2.3-.4-3.2-1.1v5.3a4.7 4.7 0 11-4-4.6v2.4a2.3 2.3 0 102 2.3V4.5h2.2z" fill="white"/>
     </svg>
   );
@@ -50,8 +46,8 @@ function TikTokIcon({ size = 16, rounded = false }) {
 
 function MailIconBox({ size = 16 }) {
   return (
-    <div className="rounded-lg bg-blue-500 flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
-      <Mail size={size * 0.55} className="text-white" />
+    <div className="rounded-md bg-blue-500 flex items-center justify-center" style={{ width: size, height: size }}>
+      <Mail size={size * 0.62} className="text-white" />
     </div>
   );
 }
@@ -59,48 +55,65 @@ function MailIconBox({ size = 16 }) {
 /* ---------------- MOCK DATA ---------------- */
 
 const channelSync = [
-  { id: 'whatsapp', label: 'WhatsApp Business', status: 'Syncing', Icon: WhatsAppIcon, dot: 'bg-emerald-500' },
+  { id: 'whatsapp', label: 'WhatsApp Business', status: 'Syncing', Icon: WhatsAppIcon, dot: 'bg-amber-500' },
   { id: 'instagram', label: 'Instagram DMs', status: 'Connected', Icon: InstagramIcon, dot: 'bg-emerald-500' },
   { id: 'tiktok', label: 'TikTok', status: 'Connected', Icon: TikTokIcon, dot: 'bg-emerald-500' },
   { id: 'email', label: 'Email', status: 'Connected', Icon: MailIconBox, dot: 'bg-emerald-500' },
 ];
+
+const activeAutomations = ['WhatsApp Auto-Reply', 'Booking Reminder'];
 
 const conversations = [
   {
     id: 'c1',
     name: 'Braina Name',
     channel: 'whatsapp',
-    avatarType: 'image',
-    Icon: null,
-    preview: 'Hello, first you rewnered your messages?',
+    avatarColor: 'bg-amber-200',
+    initials: 'BN',
+    preview: 'Hello, first you renewed your messages?',
   },
   {
     id: 'c2',
-    name: 'Instagram Simith',
+    name: 'Instagram Smith',
     channel: 'instagram',
-    avatarType: 'icon',
-    Icon: () => <InstagramIcon size={36} rounded={true} />,
+    avatarColor: 'bg-zinc-100',
+    initials: 'IS',
     preview: 'Message is helov on your needs.',
   },
   {
     id: 'c3',
     name: 'Tiktok Soner',
     channel: 'tiktok',
-    avatarType: 'icon',
-    Icon: () => <TikTokIcon size={36} rounded={true} />,
-    preview: 'What you can rarly to your message.',
+    avatarColor: 'bg-zinc-100',
+    initials: 'TS',
+    preview: 'What you can rarely to your message.',
   },
   {
     id: 'c4',
     name: 'Email Amiltin',
     channel: 'email',
-    avatarType: 'icon',
-    Icon: () => <MailIconBox size={36} />,
+    avatarColor: 'bg-zinc-100',
+    initials: 'EA',
     preview: "Chek a'anting to ileave about!",
   },
 ];
 
-const scheduleHours = ['13 am', '10 am', '11 am', '12 am', '1 pm', '2 pm', '3 am'];
+const channelIconFor = (channel) => {
+  switch (channel) {
+    case 'whatsapp':
+      return <WhatsAppIcon size={18} />;
+    case 'instagram':
+      return <InstagramIcon size={18} />;
+    case 'tiktok':
+      return <TikTokIcon size={18} />;
+    case 'email':
+      return <MailIconBox size={18} />;
+    default:
+      return null;
+  }
+};
+
+const scheduleHours = ['1 am', '10 am', '11 am', '12 am', '1 pm', '2 pm', '3 am'];
 
 const customerActions = [
   { id: 'a1', label: 'Confirm 2 New Bookings', tone: 'blue' },
@@ -110,260 +123,229 @@ const customerActions = [
 ];
 
 const toneClasses = {
-  blue: 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm',
-  orange: 'bg-orange-600 text-white hover:bg-orange-700 shadow-sm',
-  rose: 'bg-orange-50 text-orange-950 border border-orange-100 hover:bg-orange-100',
+  blue: 'bg-blue-600 text-white hover:bg-blue-700',
+  orange: 'bg-orange-500 text-white hover:bg-orange-600',
+  rose: 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100',
 };
 
 export default function DashboardHomeContent() {
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-6 bg-white font-sans antialiased">
-      <div className="space-y-5 max-w-[1400px] mx-auto">
+    <div className="flex-1 overflow-y-auto px-4 py-6 md:px-6 bg-zinc-50">
+      <div className="space-y-4 max-w-[1400px] mx-auto">
 
         {/* WELCOME BANNER */}
-        <div className="bg-blue-50/60 border border-blue-100/70 rounded-xl p-5 flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden shrink-0 relative">
-            <svg viewBox="0 0 64 64" className="w-full h-full object-cover">
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden shrink-0">
+            <svg viewBox="0 0 64 64" width="68" height="68">
               <circle cx="32" cy="32" r="32" fill="#DBEAFE" />
-              <path d="M8 64c0-11 7-19 24-19s24 8 24 19H8z" fill="#E05A2B" />
-              <path d="M20 64c0-7 4-13 12-13s12 6 12 13H20z" fill="#334155" />
-              <circle cx="32" cy="23" r="11" fill="#A76F4C" />
-              <path d="M21 23c0-6 5-11 11-11s11 5 11 11c0 2-1 4-2 5h-18c-1-1-2-3-2-5z" fill="#1E293B" />
-              <rect x="36" y="38" width="16" height="12" rx="2" fill="#0F172A" />
-              <rect x="38" y="40" width="12" height="8" rx="1" fill="#38BDF8" />
+              <path d="M6 64c0-14 11-23 26-23s26 9 26 23H6z" fill="#C2410C" />
+              <path d="M21 64c0-10 5-16 11-16s11 6 11 16H21z" fill="#FAFAF9" />
+              <rect x="27" y="33" width="10" height="10" rx="3" fill="#6B4226" />
+              <circle cx="32" cy="24" r="11" fill="#8B5A3C" />
+              <path d="M21 24a11 11 0 0122 0v2H21v-2z" fill="#1C1410" />
+              <path d="M41 15c2 4 1 8-1 11c-3-3-7-4-11-3c3-4 7-7 12-8z" fill="#1C1410" />
+              <circle cx="40" cy="16" r="5" fill="#1C1410" />
+              <path d="M29 52c5-4 10-6 15-7l2 5c-6 1.5-10 4-14 7z" fill="#7C4A2D" />
+              <g transform="rotate(-8 44.5 46)">
+                <rect x="37" y="40" width="15" height="12" rx="2" fill="#0F172A" />
+                <rect x="38.5" y="41.5" width="12" height="9" rx="1" fill="#60A5FA" />
+              </g>
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Welcome Back, &lsquo;Lindiwe&rsquo;.</h2>
-            <p className="text-base text-slate-600 font-medium">Your business is looking good today.</p>
+            <h2 className="text-xl font-bold text-zinc-900">Welcome Back, &lsquo;Lindiwe&rsquo;.</h2>
+            <p className="text-sm text-zinc-600 mt-0.5">Your business is looking good today.</p>
           </div>
         </div>
 
         {/* TOP 3 SUMMARY CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           {/* Communications Summary */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Communications Summary</h3>
-              <p className="text-sm font-bold text-slate-900 mt-1 mb-4">Channel Sync Status</p>
-              <div className="space-y-3">
-                {channelSync.map(({ id, label, status, Icon, dot }) => (
-                  <div key={id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Icon size={18} />
-                      <span className="text-sm font-semibold text-slate-700">{label}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${dot}`} />
-                      <span className="text-sm font-semibold text-slate-700">{status}</span>
-                    </div>
+          <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+            <h3 className="text-base font-bold text-zinc-900">Communications Summary</h3>
+            <p className="text-xs font-semibold text-zinc-400 mt-3 mb-2">Channel Sync Status</p>
+            <div className="space-y-2.5">
+              {channelSync.map(({ id, label, status, Icon, dot }) => (
+                <div key={id} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon size={18} />
+                    <span className="text-sm text-zinc-700">{label}</span>
                   </div>
-                ))}
-              </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+                    <span className="text-sm text-zinc-500">{status}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="border-t border-slate-100 mt-6 pt-3 flex items-center justify-between text-sm">
-              <span className="font-semibold text-slate-700">Total incoming messages:</span>
-              <span className="font-bold text-slate-900 text-base">84</span>
+            <div className="border-t border-zinc-100 mt-4 pt-3 flex items-center justify-between">
+              <span className="text-sm text-zinc-500">Total incoming messages:</span>
+              <span className="text-base font-bold text-zinc-900">84</span>
             </div>
           </div>
 
           {/* Bookings & Schedules */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Bookings &amp; Schedules</h3>
-              <p className="text-sm font-bold text-slate-900 mt-1 mb-4">Bookings Today</p>
-              <div className="space-y-2">
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-xl font-bold text-slate-950">12</span>
-                  <span className="text-sm font-semibold text-slate-700">Confirmed</span>
-                </div>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-xl font-bold text-slate-950">2</span>
-                  <span className="text-sm font-semibold text-slate-700">New</span>
-                </div>
-                <div className="flex items-start gap-1.5 pt-1">
-                  <span className="text-xl font-bold text-orange-600 leading-none">1</span>
-                  <span className="text-xs font-semibold text-slate-800 leading-tight">
-                    Issue (Conflict detected with Google Calendar)
-                  </span>
-                </div>
+          <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+            <h3 className="text-base font-bold text-zinc-900">Bookings &amp; Schedules</h3>
+            <p className="text-xs font-semibold text-zinc-400 mt-3 mb-2">Bookings Today</p>
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-2xl font-bold text-zinc-900">12</span>
+                <span className="text-sm text-zinc-600">Confirmed</span>
               </div>
-              <button type="button" className="text-sm font-bold text-blue-600 hover:underline mt-4 block">
-                View Full Calendar
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span className="text-2xl font-bold text-zinc-900">2</span>
+                <span className="text-sm text-zinc-600">New</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2" />
+                <span className="text-2xl font-bold text-orange-600 leading-none">1</span>
+                <span className="text-sm text-orange-600 leading-snug">
+                  Issue (Conflict detected with Google Calendar)
+                </span>
+              </div>
             </div>
-            <div className="border-t border-slate-100 mt-6 pt-3 flex items-center justify-between text-sm">
-              <span className="font-semibold text-slate-700">Total bookings this week:</span>
-              <span className="font-bold text-slate-900 text-base">58</span>
+            <button type="button" className="text-sm font-semibold text-blue-600 hover:underline mt-3">
+              View Full Calendar
+            </button>
+            <div className="border-t border-zinc-100 mt-4 pt-3 flex items-center justify-between">
+              <span className="text-sm text-zinc-500">Total bookings this week:</span>
+              <span className="text-base font-bold text-zinc-900">58</span>
             </div>
           </div>
 
           {/* Active Workflows */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Active Workflows</h3>
-              <p className="text-sm font-bold text-slate-900 mt-1 mb-3">Operational Automations</p>
-              <div className="flex items-baseline gap-1.5 mb-3">
-                <span className="text-xl font-bold text-slate-950">3</span>
-                <span className="text-sm font-semibold text-slate-700">Live</span>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>WhatsApp Auto-Reply</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>Booking Reminder</span>
-                </div>
-              </div>
+          <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm flex flex-col">
+            <h3 className="text-base font-bold text-zinc-900">Active Workflows</h3>
+            <p className="text-xs font-semibold text-zinc-400 mt-3 mb-2">Operational Automations</p>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="text-2xl font-bold text-zinc-900">3</span>
+              <span className="text-sm text-zinc-600">Live</span>
             </div>
-            <div className="mt-6 space-y-3">
-              <button
-                type="button"
-                className="w-full bg-[#0B132B] text-white text-sm font-bold rounded-lg py-2.5 hover:bg-slate-800 transition-colors"
-              >
-                Create Workflow
-              </button>
-              <button type="button" className="w-full text-center text-sm font-bold text-slate-500 hover:underline">
-                View Workflow Performance
-              </button>
+            <div className="space-y-1.5 mb-4">
+              {activeAutomations.map((name) => (
+                <div key={name} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span className="text-sm text-zinc-700">{name}</span>
+                </div>
+              ))}
             </div>
+            <button
+              type="button"
+              className="bg-zinc-900 text-white text-sm font-semibold rounded-lg py-2.5 hover:bg-zinc-800 transition-colors mt-auto"
+            >
+              Create Workflow
+            </button>
+            <button type="button" className="text-sm font-semibold text-blue-600 hover:underline mt-3 text-left">
+              View Workflow Performance
+            </button>
           </div>
         </div>
 
-        {/* BOTTOM ROW: Unified Inbox + Integrated Schedule/Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* BOTTOM ROW: Unified Inbox + Schedule/Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
           {/* OMNICHANNEL CONVERSATIONS */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Omnichannel Conversations (Unified Inbox)</h3>
-            <div className="divide-y divide-slate-100">
-              {conversations.map((c) => {
-                const ComponentIcon = c.Icon;
-                return (
-                  <div key={c.id} className="py-4 first:pt-0 last:pb-0">
-                    <div className="flex items-start gap-3">
-                      <div className="relative shrink-0">
-                        {c.avatarType === 'image' ? (
-                          <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden relative">
-                            <svg viewBox="0 0 32 32" className="w-full h-full object-cover">
-                              <circle cx="16" cy="16" r="16" fill="#cbd5e1" />
-                              <circle cx="16" cy="12" r="6" fill="#475569" />
-                              <path d="M4 28c0-6 5-10 12-10s12 4 12 10H4z" fill="#475569" />
-                            </svg>
-                          </div>
-                        ) : (
-                          ComponentIcon ? <ComponentIcon /> : null
-                        )}
-                        
-                        {c.avatarType === 'image' && (
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-sm">
-                            <WhatsAppIcon size={12} />
-                          </div>
-                        )}
+          <div className="lg:col-span-2 bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+            <h3 className="text-base font-bold text-zinc-900 mb-4">Omnichannel Conversations (Unified Inbox)</h3>
+            <div className="space-y-3">
+              {conversations.map((c) => (
+                <div key={c.id} className="border border-zinc-100 rounded-xl p-3.5">
+                  <div className="flex items-start gap-3">
+                    <div className="relative shrink-0">
+                      <div className={`w-9 h-9 rounded-full ${c.avatarColor} flex items-center justify-center text-xs font-bold text-zinc-700`}>
+                        {c.initials}
                       </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-4">
-                          <p className="text-sm font-bold text-slate-900">{c.name}</p>
-                          <div className="flex items-center gap-2 text-[11px] font-bold">
-                            <span className="flex items-center gap-0.5 text-slate-700">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> New
-                            </span>
-                            <span className="flex items-center gap-0.5 text-slate-700">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Pending
-                            </span>
-                            <span className="flex items-center gap-0.5 text-slate-700">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Resolved
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-sm font-medium text-slate-900 mt-0.5">{c.preview}</p>
-                        
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                            <Tag size={12} className="text-slate-500" /> Smart-Tagging
-                          </button>
-                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-300 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200 shadow-xs">
-                            <CalendarDays size={12} className="text-slate-500" /> Suggest Booking Slot
-                          </button>
-                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                            <FileText size={12} className="text-slate-500" /> Create Order
-                          </button>
-                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                            <Flag size={12} className="text-slate-500" /> Flag &amp; Tag
-                          </button>
-                        </div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center ring-1 ring-zinc-100">
+                        {channelIconFor(c.channel)}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* INTEGRATED SCHEDULE & CUSTOMER ACTIONS PANEL */}
-          <div className="space-y-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Today&apos;s Schedule &amp; Customer Actions</h3>
-              
-              <div className="border border-slate-200 rounded-xl p-4 bg-white relative">
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Today&apos;s Schedule</h4>
-                
-                <div className="grid grid-cols-12 gap-2 relative">
-                  <div className="col-span-3 space-y-6">
-                    {scheduleHours.map((hour, idx) => (
-                      <div key={idx} className="text-xs font-bold text-slate-400 h-5 flex items-center">
-                        {hour}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <p className="text-sm font-bold text-zinc-900">{c.name}</p>
+                        <div className="flex items-center gap-3 text-xs">
+                          <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> New
+                          </span>
+                          <span className="flex items-center gap-1 text-amber-600 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Pending
+                          </span>
+                          <span className="flex items-center gap-1 text-zinc-400 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" /> Resolved
+                          </span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="col-span-9 relative border-l border-slate-100 pl-2">
-                    <div className="absolute top-0 left-2 right-0 h-10 bg-blue-50 border-b-2 border-dashed border-blue-200 rounded-xs opacity-70" />
-                    
-                    <div className="mt-8 space-y-3 relative z-10">
-                      <p className="text-xs font-bold text-slate-900">Customer Actions Needed</p>
-                      <div className="space-y-2">
-                        {customerActions.map((a) => (
-                          <button
-                            key={a.id}
-                            type="button"
-                            className={`w-full text-center text-xs font-bold rounded-lg py-2 transition-colors ${toneClasses[a.tone]}`}
-                          >
-                            {a.label}
-                          </button>
-                        ))}
+                      <p className="text-sm text-zinc-500 mt-0.5">{c.preview}</p>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        <button type="button" className="text-xs font-semibold bg-zinc-100 text-zinc-600 rounded-full px-3 py-1.5 hover:bg-zinc-200 transition-colors">
+                          Smart-Tagging
+                        </button>
+                        <button type="button" className="text-xs font-semibold bg-zinc-100 text-zinc-600 rounded-full px-3 py-1.5 hover:bg-zinc-200 transition-colors">
+                          Suggest Booking Slot
+                        </button>
+                        <button type="button" className="text-xs font-semibold bg-zinc-100 text-zinc-600 rounded-full px-3 py-1.5 hover:bg-zinc-200 transition-colors">
+                          Create Order
+                        </button>
+                        <button type="button" className="text-xs font-semibold bg-zinc-100 text-zinc-600 rounded-full px-3 py-1.5 hover:bg-zinc-200 transition-colors">
+                          Flag &amp; Tag
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* TODAY'S SCHEDULE & CUSTOMER ACTIONS */}
+          <div className="space-y-4">
+            <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+              <h3 className="text-base font-bold text-zinc-900 mb-3">Today&apos;s Schedule</h3>
+              <div className="space-y-2 mb-4">
+                {scheduleHours.map((hour, i) => (
+                  <div key={`${hour}-${i}`} className="flex items-center gap-3">
+                    <span className="text-xs text-zinc-400 w-12 shrink-0">{hour}</span>
+                    <div className={`h-2 flex-1 rounded-full ${i === 0 ? 'bg-blue-100' : 'bg-zinc-50'}`} />
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-xs font-semibold text-zinc-400 mb-2">Customer Actions Needed</p>
+              <div className="space-y-2">
+                {customerActions.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    className={`w-full text-left text-sm font-semibold rounded-lg px-3 py-2.5 transition-colors ${toneClasses[a.tone]}`}
+                  >
+                    {a.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Calendar Control Footer Block */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Google &amp; Apple Calendar Sync Status</h3>
+            <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+              <h3 className="text-base font-bold text-zinc-900 mb-3">Google &amp; Apple Calendar Sync Status</h3>
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-1.5 bg-[#0B132B] text-white text-xs font-bold rounded-md px-4 py-2 hover:bg-slate-800 transition-colors"
+                  className="flex items-center justify-center gap-1.5 bg-zinc-900 text-white text-sm font-semibold rounded-lg px-3 py-2.5 hover:bg-zinc-800 transition-colors"
                 >
-                  <RotateCcw size={12} /> Resync
+                  <RotateCcw size={14} /> Resync
                 </button>
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-md px-3 py-2 hover:bg-slate-200 transition-colors flex-1"
+                  className="flex items-center justify-center gap-1.5 bg-zinc-100 text-zinc-700 text-sm font-semibold rounded-lg px-3 py-2.5 hover:bg-zinc-200 transition-colors flex-1"
                 >
-                  Manage Synced Calendars
+                  <Calendar size={14} /> Manage Synced Calendars
                 </button>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
