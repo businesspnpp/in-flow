@@ -14,8 +14,7 @@ import {
   Sparkles, 
   Building2, 
   ArrowRight,
-  TrendingUp,
-  MessageSquare
+  TrendingUp
 } from 'lucide-react';
 
 interface Tier {
@@ -177,8 +176,6 @@ export default function PremiumPricingPage() {
   const router = useRouter();
   const [annual, setAnnual] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  
-  // Interactive Calculator State
   const [estimatedConversations, setEstimatedConversations] = useState(150);
 
   const calculateSuggestedPlan = (convos: number) => {
@@ -236,18 +233,24 @@ export default function PremiumPricingPage() {
 
       {/* Intercom-Style Asymmetric Split Hero Section */}
       <section className="w-full max-w-7xl mx-auto px-6 pt-10 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        {/* Left Side Column: Clean text-only tech badge instead of AI layout */}
         <div className="lg:col-span-7 text-left space-y-6">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase bg-amber-100/70 border border-amber-200 text-amber-900 px-3 py-1.5">
-            <Sparkles size={12} className="fill-amber-600 text-amber-600" /> Optimized for the African Tech Ecosystem
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 bg-zinc-900 rounded-none animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-zinc-400">
+              Infrastructure / Regional Billing Indices
+            </span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[0.95]">
+
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[0.92]">
             Pricing matched to your scale.
           </h1>
           <p className="text-lg md:text-xl text-zinc-500 max-w-xl font-medium leading-relaxed">
             Eliminate restrictive licensing. Deploy a permanent free foundation, adjust seasonal workflows with usage-based flexibility, or drop overhead with community pricing loops.
           </p>
 
-          {/* Centered Segmented Controller */}
+          {/* Billing Switcher Button Toggle */}
           <div className="inline-flex items-center p-1.5 bg-zinc-200/60 rounded-none border border-zinc-200 mt-4">
             <button
               onClick={() => setAnnual(false)}
@@ -271,7 +274,7 @@ export default function PremiumPricingPage() {
           </div>
         </div>
 
-        {/* Dynamic Calculator Interactive Tool Widget */}
+        {/* Right Side Column: Dynamic Calculator Widget */}
         <div className="lg:col-span-5 bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 space-y-6">
           <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
             <h3 className="font-bold text-base tracking-tight text-zinc-900 flex items-center gap-2">
@@ -471,7 +474,7 @@ export default function PremiumPricingPage() {
                 <p className="text-xl font-black text-zinc-900">R1.20</p>
                 <p className="text-[11px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">Per conversation</p>
               </div>
-              <div className="bg-zinc-50 border-zinc-200 p-4 flex flex-col justify-center items-center border-dashed">
+              <div className="bg-zinc-50 border border-zinc-200 p-4 flex flex-col justify-center items-center border-dashed">
                 <p className="text-xs font-extrabold text-amber-700 uppercase flex items-center gap-1">
                   Auto-Cap
                 </p>
@@ -515,7 +518,7 @@ export default function PremiumPricingPage() {
       {/* Social Trust Proof Testimonial Section Block */}
       <section className="w-full bg-zinc-100 border-t border-b border-zinc-200 py-20 px-6">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex justify-center text-amber-500 gap-1">
+          <div className="flex justify-center text-amber-500 gap-1">
             {[...Array(5)].map((_, i) => (
               <Zap key={i} size={18} className="fill-current text-amber-600" />
             ))}
