@@ -251,14 +251,14 @@ export default function PricingPage() {
       </section>
 
       {/* Tiers */}
-      <section className="w-full px-3 md:px-4 lg:px-6 pb-16">
-        <div className="max-w-none mx-auto pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+      <section className="w-full px-4 md:px-6 lg:px-8 pb-16">
+        <div className="max-w-5xl mx-auto pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 lg:[&>*+*]:-ml-px">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col min-w-0 p-6 md:p-7 border relative ${
+                className={`flex flex-col min-w-0 p-5 md:p-6 border relative ${
                   tier.highlighted ? 'border-amber-600 bg-amber-50/40' : 'border-zinc-200 bg-white'
                 }`}
               >
