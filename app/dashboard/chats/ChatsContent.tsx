@@ -414,28 +414,35 @@ export default function ChatsContent() {
   /* the mobile full-screen drill-down views.                          */
   /* ================================================================ */
 
-  function renderInboxList() {
+  function renderInboxList(mobile = false) {
     return (
       <>
-        <div className="px-4 pt-4 pb-3">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h2 className="text-sm font-bold tracking-tight text-zinc-900">Inbox</h2>
-              <p className="text-[11px] text-zinc-500 mt-0.5">{MOCK_CONVERSATIONS.length} conversations</p>
+        <div className={`px-4 ${mobile ? 'pt-3 pb-2' : 'pt-4 pb-3'}`}>
+          {!mobile && (
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h2 className="text-sm font-bold tracking-tight text-zinc-900">Inbox</h2>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{MOCK_CONVERSATIONS.length} conversations</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Hash size={14} /></button>
+                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Users size={14} /></button>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Hash size={14} /></button>
-              <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Users size={14} /></button>
-            </div>
-          </div>
+          )}
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input value={listSearch} onChange={e => setListSearch(e.target.value)} placeholder="Search conversations…" className="w-full h-9 rounded-lg border border-zinc-200 bg-zinc-50 pl-8 pr-3 text-xs text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 focus:bg-white transition" />
           </div>
-          <div className="flex gap-1.5 mt-2.5">
-            {['All', 'Unread', 'Mine'].map(f => (
-              <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${f === 'All' ? 'bg-blue-600 text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}>{f}</button>
-            ))}
+          <div className="flex items-center justify-between gap-2 mt-2.5">
+            <div className="flex gap-1.5">
+              {['All', 'Unread', 'Mine'].map(f => (
+                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${f === 'All' ? 'bg-blue-600 text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}>{f}</button>
+              ))}
+            </div>
+            {mobile && (
+              <span className="text-[10px] text-zinc-400 flex-shrink-0">{MOCK_CONVERSATIONS.length} chats</span>
+            )}
           </div>
         </div>
         <div className="divide-y divide-zinc-100">
@@ -929,7 +936,7 @@ export default function ChatsContent() {
           <div className="flex flex-col h-full min-h-0">
             <MobileListTabs active={mobileListTab} onChange={setMobileListTab} />
             <div className="flex-1 min-h-0 overflow-y-auto">
-              {mobileListTab === 'inbox' ? renderInboxList() : renderDirectory()}
+              {mobileListTab === 'inbox' ? renderInboxList(true) : renderDirectory()}
             </div>
           </div>
         )}
