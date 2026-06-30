@@ -194,7 +194,7 @@ export default function PremiumPricingPage() {
       <header className="w-full border-b border-zinc-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <img src="/dock-icon.svg" alt="Dock icon" className="w-9 h-9 transform group-hover:scale-105 transition-transform duration-200" />
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-12 h-12 transform group-hover:scale-105 transition-transform duration-200" />
             <span className="text-xl font-bold text-zinc-900 tracking-tight">Dock</span>
           </Link>
 
@@ -655,7 +655,7 @@ export default function PremiumPricingPage() {
       <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src="/dock-icon.svg" alt="Dock icon" className="w-6 h-6" />
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-9 h-9" />
             <span className="text-sm font-bold text-zinc-900 tracking-tight">Dock Automation Corp</span>
           </div>
           <p className="text-xs font-medium text-zinc-400">

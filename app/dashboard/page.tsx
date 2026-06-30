@@ -762,9 +762,9 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-16 bg-white/95 backdrop-blur-sm border-r border-zinc-200 items-center py-4 gap-2 z-20">
-        <div className="mb-4 flex h-11 w-11 items-center justify-center">
-          <img src="/dock-icon.svg" alt="Dock icon" className="h-11 w-11" />
+      <aside className="hidden md:flex flex-col w-20 bg-white/95 backdrop-blur-sm border-r border-zinc-200 items-center py-4 gap-2 z-20">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center">
+          <img src="/dock-icon.svg" alt="Dock icon" className="h-14 w-14" />
         </div>
 
         {[
