@@ -255,42 +255,46 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               <span className="text-lg font-semibold text-zinc-900 tracking-tight">inFlow</span>
             </div>
 
-            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.15]">
-              Run your business
-              <br />
-              <span className="inline-flex items-center whitespace-nowrap">
-                <span className="text-zinc-900 mr-2.5">#from</span>
-                
-                {/* 3D Perspective Box Frame with Dynamic Layout Sizing */}
-                <span className="relative inline-block h-[1.2em] transition-all duration-300 ease-in-out [perspective:1000px]">
-                  
-                  {/* Invisible ghost element that mirrors current word width to prevent text gaps or layout cutoffs */}
-                  <span className="invisible block h-full font-bold text-amber-600 select-none pointer-events-none">
-                    {channels[currentChannelIndex]}
-                  </span>
+            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.2]">
+  Run your business
+  <br />
+  {/* Added items-center to force strict cross-axis alignment */}
+  <span className="inline-flex items-center whitespace-nowrap">
+    <span className="text-zinc-900 mr-3 select-none">#from</span>
+    
+    {/* 3D Perspective Box Frame with Explicit Centering */}
+    <span className="relative inline-flex items-center h-[1.2em] [perspective:1000px]">
+      
+      {/* Invisible ghost element layout structure */}
+      <span className="invisible block font-bold text-amber-600 select-none pointer-events-none">
+        {channels[currentChannelIndex]}
+      </span>
 
-                  {channels.map((channel, index) => {
-                    const isActive = index === currentChannelIndex;
-                    const isPast = index === (currentChannelIndex - 1 + channels.length) % channels.length;
+      {channels.map((channel, index) => {
+        const isActive = index === currentChannelIndex;
+        const isPast = index === (currentChannelIndex - 1 + channels.length) % channels.length;
 
-                    return (
-                      <span
-                        key={channel}
-                        className={`absolute left-0 top-0 text-amber-600 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-bottom [backface-visibility:hidden] ${
-                          isActive
-                            ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
-                            : isPast
-                            ? 'opacity-0 [transform:rotateX(90deg)_translateY(-100%)]'
-                            : 'opacity-0 [transform:rotateX(-90deg)_translateY(100%)]'
-                        }`}
-                      >
-                        {channel}
-                      </span>
-                    );
-                  })}
-                </span>
-              </span>
-            </h1>
+        return (
+          <span
+            key={channel}
+            className={`absolute left-0 text-amber-600 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] [backface-visibility:hidden] ${
+              isActive
+                ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
+                : isPast
+                ? 'opacity-0 [transform:rotateX(90deg)_translateY(-60%)]'
+                : 'opacity-0 [transform:rotateX(-90deg)_translateY(60%)]'
+            }`}
+            /* origin-bottom can drag baseline-calculated elements out of alignment, so we use center origins instead */
+            style={{ transformOrigin: 'center center' }}
+          >
+            {channel}
+          </span>
+        );
+      })}
+    </span>
+  </span>
+</h1>
+            
             <p className="text-base text-zinc-500 mt-5 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
             </p>
