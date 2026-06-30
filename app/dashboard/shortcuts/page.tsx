@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Business } from '@/lib/supabase';
 import LinkAppsTool from '@/components/LinkAppsTool';
+import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContext';
 import FastInvoice from '@/components/plugins/FastInvoice';
 import BookedIt from '@/components/plugins/BookedIt';
 import QuoteCraft from '@/components/plugins/QuoteCraft';
@@ -43,9 +44,33 @@ function getToolCtx(label: string | null) {
 }
 
 export default function ShortcutsPage() {
+  const { setHeaderConfig, clearHeaderConfig } = useDashboardHeader();
   const [activeToolId, setActiveToolId] = useState<ToolId | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'tabs'>('list');
   const [business, setBusiness] = useState<Business | null>(null);
+
+  useEffect(() => {
+    setHeaderConfig({
+      title: 'Shortcuts',
+      subtitle: 'Open a tool and trigger fast actions from one workspace.',
+      showSearch: false,
+      actions: (
+        <button
+          type="button"
+          onClick={() => {
+            setViewMode('list');
+            setActiveToolId(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="h-10 border border-[#FB5801] bg-[#FB5801] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#e24d00]"
+        >
+          + Create Shortcut
+        </button>
+      ),
+    });
+
+    return () => clearHeaderConfig();
+  }, [clearHeaderConfig, setHeaderConfig]);
 
   useEffect(() => {
     supabase.from('businesses').select('*').single()

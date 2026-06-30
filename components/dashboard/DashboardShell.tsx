@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { Search } from 'lucide-react';
+import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContext';
 import {
   BarChart3,
   Calendar,
@@ -36,10 +38,12 @@ const NAV_ITEMS: NavItem[] = [
 export default function DashboardShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { headerConfig } = useDashboardHeader();
 
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     async function verifyAuth() {
@@ -68,6 +72,53 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
       }) ?? NAV_ITEMS[0]
     );
   }, [pathname]);
+
+  const defaultHeader = useMemo(() => {
+    const byPath: Record<string, { subtitle: string; showSearch: boolean; searchPlaceholder: string }> = {
+      '/dashboard': {
+        subtitle: 'Overview of messages, bookings, and revenue health.',
+        showSearch: false,
+        searchPlaceholder: 'Search dashboard',
+      },
+      '/dashboard/chats': {
+        subtitle: 'Find conversations, customers, and message context quickly.',
+        showSearch: true,
+        searchPlaceholder: 'Search chats or customers',
+      },
+      '/dashboard/shortcuts': {
+        subtitle: 'Launch tools and automations directly into conversations.',
+        showSearch: false,
+        searchPlaceholder: 'Search shortcuts',
+      },
+      '/dashboard/bookings-orders': {
+        subtitle: 'Track appointments, orders, and scheduling status.',
+        showSearch: true,
+        searchPlaceholder: 'Search bookings or orders',
+      },
+      '/dashboard/link-apps': {
+        subtitle: 'Connect channels and manage integrations from one place.',
+        showSearch: false,
+        searchPlaceholder: 'Search integrations',
+      },
+      '/dashboard/reports': {
+        subtitle: 'Read plain-English performance summaries and trends.',
+        showSearch: false,
+        searchPlaceholder: 'Search reports',
+      },
+      '/dashboard/settings': {
+        subtitle: 'Control account, team, and profile preferences.',
+        showSearch: false,
+        searchPlaceholder: 'Search settings',
+      },
+    };
+
+    return byPath[activeItem.path] ?? byPath['/dashboard'];
+  }, [activeItem.path]);
+
+  const headerTitle = headerConfig.title ?? activeItem.title;
+  const headerSubtitle = headerConfig.subtitle ?? defaultHeader.subtitle;
+  const showSearch = headerConfig.showSearch ?? defaultHeader.showSearch;
+  const searchPlaceholder = headerConfig.searchPlaceholder ?? defaultHeader.searchPlaceholder;
 
   async function handleSignOut() {
     setIsSigningOut(true);
@@ -158,9 +209,37 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden bg-zinc-50">
-        <div className="flex-shrink-0 border-b border-zinc-200 bg-white px-4 py-4 md:px-6">
-          <h1 className="text-2xl font-black tracking-tight text-zinc-900">{activeItem.title}</h1>
-        </div>
+        <header className="sticky top-0 z-40 w-full flex-shrink-0 border-b border-zinc-200 bg-white">
+          <div className="min-h-[68px] px-4 py-4 md:px-6">
+            <div className="grid grid-cols-1 items-center gap-3 md:grid-cols-[minmax(0,1fr)_minmax(340px,460px)_minmax(0,1fr)] md:gap-4">
+              <div className="min-w-0">
+                <h1 className="truncate text-2xl font-black tracking-tight text-zinc-900">{headerTitle}</h1>
+                <p className="mt-0.5 truncate text-xs text-zinc-500">{headerSubtitle}</p>
+              </div>
+
+              <div className="hidden md:block">
+                {showSearch ? (
+                  <div className="relative">
+                    <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                    <input
+                      type="text"
+                      value={searchValue}
+                      onChange={(event) => setSearchValue(event.target.value)}
+                      placeholder={searchPlaceholder}
+                      className="h-10 w-full border border-zinc-300 bg-white pl-9 pr-3 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-10" aria-hidden="true" />
+                )}
+              </div>
+
+              <div className="flex items-center justify-start md:justify-end">
+                {headerConfig.actions ?? <div className="h-10" aria-hidden="true" />}
+              </div>
+            </div>
+          </div>
+        </header>
 
         <div className="flex-1 overflow-hidden flex flex-col">{children}</div>
       </div>
