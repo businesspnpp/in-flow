@@ -120,7 +120,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
       if (signInError) setError(signInError.message || 'Sign in failed');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : 'Sign in failed');
     } finally {
       setLoading(false);
     }
@@ -153,17 +153,17 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   function handleAppleSignIn() {
-    setError('Apple integration framework incoming.');
+    setError('Apple login option coming soon.');
   }
 
   function handleGoogleSignIn() {
-    setError('Google integration framework incoming.');
+    setError('Google login option coming soon.');
   }
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-[#FAFAFA] text-zinc-900 font-sans antialiased selection:bg-amber-100 selection:text-amber-900">
       
-      {/* Premium Header Layout */}
+      {/* Simple, Professional Header */}
       <header className="w-full border-b border-zinc-200 bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -178,7 +178,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             <Link href="/pricing" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors">Pricing</Link>
             <a href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
               <HelpCircle size={16} />
-              Help & Resources
+              Help & Support
             </a>
           </nav>
 
@@ -193,63 +193,60 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 }}
                 className="text-xs font-mono font-bold tracking-wider uppercase bg-zinc-100 border border-zinc-200 px-4 py-2.5 hover:bg-zinc-200/70 transition-colors text-zinc-700"
               >
-                {mode === 'signin' ? 'Create Account' : 'Access Vault'}
+                {mode === 'signin' ? 'Create Account' : 'Sign In'}
               </button>
             )}
           </div>
         </div>
       </header>
 
-      {/* Main Structural Grid Split */}
+      {/* Main Grid Layout */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
         
-        {/* Left Side Column: Stark Technical Copy Block */}
+        {/* Left Side Column: Value Proposition & Product Features Grid */}
         <aside className="md:col-span-6 text-left space-y-6 py-8 pr-4">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 bg-zinc-900 rounded-none animate-pulse" />
-            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-zinc-400">
-              Identity Management & Protocols
-            </span>
+          <div className="space-y-2">
+            <p className="text-xs font-mono font-bold text-amber-600 uppercase tracking-widest">
+              Built for South African small businesses · Free to start
+            </p>
+            <h1 className="text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 leading-[0.95]">
+              Run your business <span className="text-amber-600">#fromWhatsApp</span>
+            </h1>
           </div>
-
-          <h1 className="text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 leading-[0.92]">
-            Unified commerce orchestrations.
-          </h1>
           
           <p className="text-lg text-zinc-500 max-w-md font-medium leading-relaxed">
-            Initialize your direct workspace interface. Deploy custom conversation layers, route transactional ledgers, and establish messaging triggers across active regional pathways.
+            Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
           </p>
 
-          <div className="pt-4 space-y-3 max-w-md">
-            <div className="border border-zinc-200 bg-white p-5 flex items-start gap-4">
-              <div className="w-2 h-2 bg-zinc-900 mt-1.5 shrink-0" />
+          {/* Feature Grid Blocks */}
+          <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl">
+            <div className="border border-zinc-200 bg-white p-5 flex flex-col justify-between min-h-[140px]">
               <div>
-                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Isolated Databases</p>
-                <p className="text-xs text-zinc-500 font-medium mt-0.5">Separate data pools protect customer logs, secure settlement tokens, and isolation models.</p>
+                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Unified inbox</p>
+                <p className="text-xs text-zinc-500 font-medium mt-1.5 leading-relaxed">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
               </div>
             </div>
-            <div className="border border-zinc-200 bg-white p-5 flex items-start gap-4">
-              <div className="w-2 h-2 bg-amber-500 mt-1.5 shrink-0" />
+            <div className="border border-zinc-200 bg-white p-5 flex flex-col justify-between min-h-[140px]">
               <div>
-                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Regional Hub Nodes</p>
-                <p className="text-xs text-zinc-500 font-medium mt-0.5">Optimized latency architecture handling Southern African communications stacks efficiently.</p>
+                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Instant tools</p>
+                <p className="text-xs text-zinc-500 font-medium mt-1.5 leading-relaxed">Send invoices, quotes, and bookings directly into chat.</p>
               </div>
             </div>
           </div>
         </aside>
 
-        {/* Right Side Column: Hard-Edged Form Panel Widget */}
+        {/* Right Side Column: Hard-Edged Simple Form Box */}
         <section className="md:col-span-6 flex flex-col justify-center items-stretch lg:px-8">
           
           {user ? (
             <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
               <div>
                 <span className="text-[10px] font-mono font-bold tracking-widest text-amber-800 bg-amber-400/30 border border-amber-300 px-2 py-0.5 uppercase">
-                  Authenticated Node
+                  Logged In
                 </span>
-                <h2 className="text-xl font-black tracking-tight text-zinc-900 mt-3">Session actively resolved</h2>
+                <h2 className="text-xl font-black tracking-tight text-zinc-900 mt-3">Welcome back</h2>
                 <p className="text-sm text-zinc-500 font-medium mt-1">
-                  Connected operator profile: <span className="font-bold text-zinc-800">{user.email}</span>
+                  You are signed in as: <span className="font-bold text-zinc-800">{user.email}</span>
                 </p>
               </div>
               <button
@@ -258,32 +255,28 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 className="w-full flex items-center justify-center gap-2 bg-zinc-950 text-white py-3.5 text-sm font-bold hover:bg-zinc-800 disabled:opacity-50 transition-all active:scale-[0.99]"
               >
                 <LogOut size={16} />
-                {loading ? 'Terminating Instance...' : 'Terminate Session'}
+                {loading ? 'Logging out...' : 'Sign Out'}
               </button>
             </div>
           ) : (
             <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
               
-              {/* Form Title */}
+              {/* Simplified Form Header */}
               <div className="border-b border-zinc-100 pb-4 flex justify-between items-end">
                 <div>
                   <h2 className="text-2xl font-black tracking-tight text-zinc-900">
-                    {mode === 'signin' ? 'Sign In' : 'Provision Console'}
+                    {mode === 'signin' ? 'Sign In' : 'Sign Up'}
                   </h2>
                   <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">
-                    {mode === 'signin' ? 'Operator Authorization' : 'New Client Registration'}
+                    {mode === 'signin' ? 'Access your account' : 'Start your free trial'}
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
-                  v2.04
-                </span>
               </div>
 
-              {/* Identity Form Controls */}
+              {/* Input Forms */}
               <div className="space-y-4">
-                {/* Email input field wrapper */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Network Identity (Email)</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Email Address</label>
                   <div className="relative">
                     <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
@@ -293,7 +286,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                         setEmail(e.target.value);
                         if (validationErrors.email) setValidationErrors({ ...validationErrors, email: '' });
                       }}
-                      placeholder="operator@company.co.za"
+                      placeholder="you@company.co.za"
                       className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                     />
                   </div>
@@ -302,9 +295,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                   )}
                 </div>
 
-                {/* Password input field wrapper */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Access Credentials</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Password</label>
                   <div className="relative">
                     <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
@@ -314,7 +306,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                         setPassword(e.target.value);
                         if (validationErrors.password) setValidationErrors({ ...validationErrors, password: '' });
                       }}
-                      placeholder={mode === 'signup' ? 'Requirements checklist' : '••••••••••••'}
+                      placeholder="••••••••••••"
                       className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                     />
                   </div>
@@ -323,10 +315,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                   )}
                 </div>
 
-                {/* Confirm password view configuration */}
                 {mode === 'signup' && (
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Verify Passphrase Integrity</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Confirm Password</label>
                     <div className="relative">
                       <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                       <input
@@ -336,7 +327,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                           setConfirmPassword(e.target.value);
                           if (validationErrors.confirmPassword) setValidationErrors({ ...validationErrors, confirmPassword: '' });
                         }}
-                        placeholder="Re-enter verification sequence"
+                        placeholder="Repeat your password"
                         className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                       />
                     </div>
@@ -349,7 +340,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 {mode === 'signin' && (
                   <div className="text-right">
                     <button type="button" className="text-xs font-semibold text-zinc-400 hover:text-zinc-900 transition-colors">
-                      Recover lost passphrase?
+                      Forgot password?
                     </button>
                   </div>
                 )}
@@ -360,17 +351,17 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                   </div>
                 )}
 
-                {/* Primary Executive Button Action Trigger */}
+                {/* Submit Action Button */}
                 <button
                   onClick={mode === 'signin' ? handleSignIn : handleSignUp}
                   disabled={loading}
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
                 >
-                  {loading ? 'Validating Sequences...' : mode === 'signin' ? 'Authorize Identity' : 'Initialize Base Environment'}
+                  {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In to Account' : 'Create My Account'}
                   <ArrowRight size={14} strokeWidth={2.5} />
                 </button>
 
-                {/* Minimalist Visual Switcher */}
+                {/* Relatable Alternate Mode Switcher */}
                 <div className="pt-2 flex flex-col items-center space-y-4">
                   <button
                     type="button"
@@ -382,16 +373,16 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     disabled={loading}
                     className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
                   >
-                    {mode === 'signin' ? "No sandbox account? Register entry" : "Existing instance recorded? Authenticate"}
+                    {mode === 'signin' ? "Don't have an account? Sign up here" : "Already have an account? Sign in"}
                   </button>
 
                   <div className="w-full flex items-center gap-3">
                     <div className="flex-1 h-px bg-zinc-100" />
-                    <span className="text-[10px] font-mono font-bold text-zinc-300 uppercase tracking-widest">Federated</span>
+                    <span className="text-[10px] font-mono font-bold text-zinc-300 uppercase tracking-widest">Or Sign In With</span>
                     <div className="flex-1 h-px bg-zinc-100" />
                   </div>
 
-                  {/* Federation Identity Providers */}
+                  {/* Clean Social Buttons */}
                   <div className="w-full grid grid-cols-2 gap-3">
                     <button
                       type="button"
@@ -416,7 +407,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                         <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
                         <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
                       </svg>
-                      Google Sync
+                      Google
                     </button>
                   </div>
                 </div>
@@ -424,25 +415,25 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               </div>
 
               <p className="text-[11px] text-zinc-400 mt-6 text-center leading-relaxed font-medium">
-                By entering this console instance, you agree to comply with standard regional encryption handling and our universal{' '}
-                <span className="underline cursor-pointer text-zinc-500">Service Framework Policies</span>.
+                By logging in, you agree to our standard{' '}
+                <span className="underline cursor-pointer text-zinc-500">Terms of Service</span>.
               </p>
             </div>
           )}
         </section>
       </div>
 
-      {/* Programmatic Terminal Style Footer */}
+      {/* Simple Footer */}
       <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-zinc-950 flex items-center justify-center">
               <Zap size={12} className="text-amber-400 fill-amber-400" />
             </div>
-            <span className="text-sm font-bold text-zinc-900 tracking-tight">inFlow Automation Corp</span>
+            <span className="text-sm font-bold text-zinc-900 tracking-tight">inFlow Automation</span>
           </div>
           <p className="text-xs font-mono font-bold text-zinc-400">
-            © {new Date().getFullYear()} inFlow Core Systems. SECURE REGIONAL PATHWAY.
+            © {new Date().getFullYear()} inFlow. All rights reserved.
           </p>
         </div>
       </footer>
