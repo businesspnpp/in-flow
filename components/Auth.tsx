@@ -207,7 +207,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         
         {/* Left panel EXACTLY as provided */}
-        <aside className="hidden md:flex relative flex-col justify-between p-14 md:pl-28 lg:p-20 lg:pl-36 overflow-hidden bg-zinc-50">
+        <aside className="hidden md:flex relative flex-col justify-between p-14 md:pl-32 lg:p-20 lg:pl-44 overflow-hidden bg-zinc-50">
           {/* Faded grid overlay */}
           <div
             className="pointer-events-none absolute inset-0"
