@@ -251,14 +251,14 @@ export default function PricingPage() {
       </section>
 
       {/* Tiers */}
-      <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto pt-4 flex flex-row items-stretch overflow-x-auto gap-4 md:gap-5 [&>*+*]:-ml-px">
+      <section className="w-full px-3 md:px-4 lg:px-6 pb-16">
+        <div className="max-w-none mx-auto pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col flex-1 min-w-[340px] md:min-w-[380px] p-8 md:p-10 border relative ${
+                className={`flex flex-col min-w-0 p-6 md:p-7 border relative ${
                   tier.highlighted ? 'border-amber-600 bg-amber-50/40' : 'border-zinc-200 bg-white'
                 }`}
               >
@@ -288,10 +288,10 @@ export default function PricingPage() {
 
                 <p className="text-sm text-zinc-600 mt-4 leading-relaxed">{tier.description}</p>
 
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <div className="flex mt-6">
                   <Link
                     href="/auth?mode=signup"
-                    className={`text-center px-5 py-3 text-sm font-semibold transition-colors ${
+                    className={`w-full text-center px-5 py-3 text-sm font-semibold transition-colors ${
                       tier.highlighted
                         ? 'bg-amber-600 hover:bg-amber-700 text-white'
                         : 'bg-zinc-900 hover:bg-zinc-800 text-white'
@@ -299,7 +299,6 @@ export default function PricingPage() {
                   >
                     {tier.cta}
                   </Link>
-                  <span className="text-xs text-zinc-400 self-center">{tier.footnote}</span>
                 </div>
 
                 <div className="h-px bg-zinc-200 my-7" />
