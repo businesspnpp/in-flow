@@ -442,26 +442,22 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
         {/* OVERVIEW BAR */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-8">
           <h2 className="text-lg font-bold text-zinc-900 mb-6">Integrations Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 md:divide-x md:divide-zinc-200/70 rounded-xl border border-zinc-200/70 bg-zinc-50/40">
-            <div className="px-0 py-0 md:px-6 md:py-2 md:first:pl-0 md:last:pr-0">
-              <div className="h-full px-0 py-0 md:pr-6">
-                <p className="text-sm text-zinc-500 mb-2">Active Connections:</p>
-                <p className="text-3xl font-bold text-zinc-900">{connectedCards.filter(c => c.isConnected).length}</p>
-              </div>
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-0">
+            <div className="md:flex-1">
+              <p className="text-sm text-zinc-500 mb-2">Active Connections:</p>
+              <p className="text-3xl font-bold text-zinc-900">{connectedCards.filter(c => c.isConnected).length}</p>
             </div>
-            <div className="px-0 py-0 md:px-6 md:py-2 md:first:pl-0 md:last:pr-0">
-              <div className="h-full px-0 py-0 md:px-6">
-                <p className="text-sm text-zinc-500 mb-2">Integrations with Issues:</p>
-                <p className="text-3xl font-bold text-red-600">
-                  1 ({connectedCards.find(c => c.hasIssue)?.name})
-                </p>
-              </div>
+            <div className="hidden md:block h-9 w-px bg-zinc-200/70 mx-8 shrink-0" aria-hidden="true" />
+            <div className="md:flex-1">
+              <p className="text-sm text-zinc-500 mb-2">Integrations with Issues:</p>
+              <p className="text-3xl font-bold text-red-600">
+                1 ({connectedCards.find(c => c.hasIssue)?.name})
+              </p>
             </div>
-            <div className="px-0 py-0 md:px-6 md:py-2 md:first:pl-0 md:last:pr-0">
-              <div className="h-full px-0 py-0 md:pl-6">
-                <p className="text-sm text-zinc-500 mb-2">New suggested integrations</p>
-                <p className="text-3xl font-bold text-zinc-300">-</p>
-              </div>
+            <div className="hidden md:block h-9 w-px bg-zinc-200/70 mx-8 shrink-0" aria-hidden="true" />
+            <div className="md:flex-1">
+              <p className="text-sm text-zinc-500 mb-2">New suggested integrations</p>
+              <p className="text-3xl font-bold text-zinc-300">-</p>
             </div>
           </div>
         </div>
