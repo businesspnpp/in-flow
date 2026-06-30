@@ -1,13 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Check, Zap, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Check, Minus, Zap, HelpCircle, ChevronDown } from 'lucide-react';
 
 interface Tier {
   name: string;
-  price: string;
-  period: string;
+  monthly: number;
   channels: string;
   description: string;
   features: string[];
@@ -18,8 +18,7 @@ interface Tier {
 const tiers: Tier[] = [
   {
     name: 'Free',
-    price: 'R0',
-    period: 'forever',
+    monthly: 0,
     channels: '1 channel',
     description: 'Testing the water — first-time software users',
     features: ['1 channel connected', '1 tool of your choice', '40 conversations / month'],
@@ -27,8 +26,7 @@ const tiers: Tier[] = [
   },
   {
     name: 'Starter',
-    price: 'R149',
-    period: '/mo',
+    monthly: 149,
     channels: '2 channels',
     description: 'Solo operators — barbers, single-chair salons',
     features: ['2 channels connected', 'All 4 built-in tools', '1 calendar sync'],
@@ -36,8 +34,7 @@ const tiers: Tier[] = [
   },
   {
     name: 'Growth',
-    price: 'R349',
-    period: '/mo',
+    monthly: 349,
     channels: 'All channels',
     description: 'Growing teams — multi-stylist salons, busy kitchens',
     features: ['All channels connected', 'All 4 built-in tools', 'Unlimited calendar sync', '3 team users'],
@@ -46,8 +43,7 @@ const tiers: Tier[] = [
   },
   {
     name: 'Pro',
-    price: 'R699',
-    period: '/mo',
+    monthly: 699,
     channels: 'All channels',
     description: 'Multi-location or franchise-style operators',
     features: ['Everything in Growth', 'Multi-location support', 'Team roles & permissions', 'Analytics'],
@@ -55,13 +51,88 @@ const tiers: Tier[] = [
   },
 ];
 
+type FeatureValue = boolean | string;
+
+const comparisonGroups: { group: string; rows: { label: string; values: FeatureValue[] }[] }[] = [
+  {
+    group: 'Channels',
+    rows: [
+      { label: 'WhatsApp Business', values: [true, true, true, true] },
+      { label: 'Instagram & Facebook DMs', values: [false, true, true, true] },
+      { label: 'TikTok & email', values: [false, false, true, true] },
+      { label: 'Channels included', values: ['1', '2', 'All', 'All'] },
+    ],
+  },
+  {
+    group: 'Tools',
+    rows: [
+      { label: 'Booking & Scheduling', values: ['1 tool of choice', true, true, true] },
+      { label: 'Order Capture', values: ['1 tool of choice', true, true, true] },
+      { label: 'FAQ Auto-Reply', values: ['1 tool of choice', true, true, true] },
+      { label: 'Reminders & Follow-ups', values: ['1 tool of choice', true, true, true] },
+      { label: 'Conversations / month', values: ['40', 'Unlimited', 'Unlimited', 'Unlimited'] },
+    ],
+  },
+  {
+    group: 'Calendar & team',
+    rows: [
+      { label: 'Calendar sync (Google/Apple)', values: [false, '1 calendar', 'Unlimited', 'Unlimited'] },
+      { label: 'Team users', values: ['1', '1', '3', 'Unlimited'] },
+      { label: 'Team roles & permissions', values: [false, false, false, true] },
+      { label: 'Multi-location support', values: [false, false, false, true] },
+    ],
+  },
+  {
+    group: 'Insights',
+    rows: [
+      { label: 'Analytics dashboard', values: [false, false, false, true] },
+      { label: 'Priority support', values: [false, false, true, true] },
+    ],
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is the Free plan really free forever?',
+    a: 'Yes. Free is not a time-boxed trial — there is no expiry date. You get 1 channel, 1 tool, and 40 conversations a month for as long as you want, with no card required to start.',
+  },
+  {
+    q: 'What is inFlow Flex and how is it billed?',
+    a: 'Flex is a pay-as-you-grow option for seasonal businesses: a R49/month base fee plus R1.20 per conversation a tool actually handles. If usage in a month would cost more than the flat Starter rate, you are automatically capped and billed at the Starter rate instead — you never pay more than the flat tier would cost.',
+  },
+  {
+    q: 'How does inFlow Circles group pricing work?',
+    a: 'Five or more independent businesses — each keeping their own separate inbox, customers, and data — can form a Circle to unlock a shared discount. The discount scales with group size: 10% off at 2–4 businesses, 20% off at 5–9, and 30% off at 10+.',
+  },
+  {
+    q: 'Can I change plans later?',
+    a: 'Yes, you can upgrade, downgrade, or switch to Flex at any time from your workspace settings. Changes take effect on your next billing cycle.',
+  },
+  {
+    q: 'What payment methods do you support?',
+    a: 'Card, EFT, and SnapScan/PayFast are supported on every plan. Mobile money, airtime billing, and a weekly payment option for cash-flow-sensitive businesses are also available.',
+  },
+  {
+    q: 'Do you offer discounts for annual billing?',
+    a: 'Annual billing is coming soon and will offer a meaningful discount over paying monthly. Join the Starter, Growth, or Pro waitlist and we will notify you when it is available.',
+  },
+];
+
+function FeatureCell({ value }: { value: FeatureValue }) {
+  if (value === true) return <Check size={16} className="text-amber-600 mx-auto" />;
+  if (value === false) return <Minus size={14} className="text-zinc-300 mx-auto" />;
+  return <span className="text-sm text-zinc-700">{value}</span>;
+}
+
 export default function PricingPage() {
   const router = useRouter();
+  const [annual, setAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-white">
       {/* Top nav */}
-      <header className="w-full border-b border-zinc-200 bg-white">
+      <header className="w-full border-b border-zinc-200 bg-white sticky top-0 z-10">
         <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
@@ -104,64 +175,92 @@ export default function PricingPage() {
       </div>
 
       {/* Hero */}
-      <section className="w-full px-6 md:px-10 pt-10 pb-14 text-center">
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-zinc-900 leading-tight">
+      <section className="w-full px-6 md:px-10 pt-10 pb-12 text-center">
+        <span className="inline-block text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 tracking-wide uppercase">
+          Built for African micro-enterprises
+        </span>
+        <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.05] mt-5">
           Pricing that matches how
           <br />
           your business actually earns.
         </h1>
-        <p className="text-base text-zinc-500 mt-4 max-w-xl mx-auto leading-relaxed">
+        <p className="text-base md:text-lg text-zinc-500 mt-5 max-w-2xl mx-auto leading-relaxed">
           A real free tier, not a time-boxed trial. No card required to start, and every plan grows
-          with you as your conversations do.
+          with you — pay flat, pay as you go, or pool costs with other businesses in a Circle.
         </p>
+
+        {/* Billing toggle */}
+        <div className="inline-flex items-center gap-3 mt-8 border border-zinc-200 p-1 bg-zinc-50">
+          <button
+            onClick={() => setAnnual(false)}
+            className={`px-4 py-2 text-sm font-semibold transition-colors ${
+              !annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
+            }`}
+          >
+            Pay monthly
+          </button>
+          <button
+            onClick={() => setAnnual(true)}
+            className={`px-4 py-2 text-sm font-semibold transition-colors flex items-center gap-2 ${
+              annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
+            }`}
+          >
+            Pay annually
+            <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5">Save 15%</span>
+          </button>
+        </div>
       </section>
 
       {/* Tiers */}
-      <section className="w-full px-6 md:px-10 pb-20">
+      <section className="w-full px-6 md:px-10 pb-16">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`flex flex-col p-6 border ${
-                tier.highlighted
-                  ? 'border-amber-600 bg-amber-50/40 relative'
-                  : 'border-zinc-200 bg-white'
-              }`}
-            >
-              {tier.highlighted && (
-                <span className="absolute -top-3 left-6 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 tracking-wide">
-                  MOST POPULAR
-                </span>
-              )}
-              <p className="text-sm font-semibold text-zinc-900">{tier.name}</p>
-              <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-3xl font-semibold text-zinc-900 tracking-tight">{tier.price}</span>
-                <span className="text-sm text-zinc-500">{tier.period}</span>
-              </div>
-              <p className="text-xs font-medium text-amber-700 mt-1.5">{tier.channels}</p>
-              <p className="text-sm text-zinc-500 mt-3 leading-relaxed min-h-[40px]">{tier.description}</p>
-
-              <ul className="mt-5 space-y-2.5 flex-1">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-zinc-700">
-                    <Check size={15} className="text-amber-600 mt-0.5 shrink-0" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/auth?mode=signup"
-                className={`mt-6 w-full text-center py-2.5 text-sm font-semibold transition-colors ${
-                  tier.highlighted
-                    ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                    : 'border border-zinc-300 text-zinc-700 hover:bg-zinc-50'
+          {tiers.map((tier) => {
+            const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
+            return (
+              <div
+                key={tier.name}
+                className={`flex flex-col p-6 border ${
+                  tier.highlighted ? 'border-amber-600 bg-amber-50/40 relative' : 'border-zinc-200 bg-white'
                 }`}
               >
-                {tier.cta}
-              </Link>
-            </div>
-          ))}
+                {tier.highlighted && (
+                  <span className="absolute -top-3 left-6 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 tracking-wide">
+                    MOST POPULAR
+                  </span>
+                )}
+                <p className="text-sm font-semibold text-zinc-900">{tier.name}</p>
+                <div className="mt-3 flex items-baseline gap-1">
+                  <span className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                    {price === 0 ? 'R0' : `R${price}`}
+                  </span>
+                  <span className="text-sm text-zinc-500">{price === 0 ? 'forever' : '/mo'}</span>
+                </div>
+                {annual && price !== 0 && <p className="text-xs text-zinc-400 mt-1">billed annually</p>}
+                <p className="text-xs font-medium text-amber-700 mt-1.5">{tier.channels}</p>
+                <p className="text-sm text-zinc-500 mt-3 leading-relaxed min-h-[40px]">{tier.description}</p>
+
+                <ul className="mt-5 space-y-2.5 flex-1">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-zinc-700">
+                      <Check size={15} className="text-amber-600 mt-0.5 shrink-0" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href="/auth?mode=signup"
+                  className={`mt-6 w-full text-center py-2.5 text-sm font-semibold transition-colors ${
+                    tier.highlighted
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                      : 'border border-zinc-300 text-zinc-700 hover:bg-zinc-50'
+                  }`}
+                >
+                  {tier.cta}
+                </Link>
+              </div>
+            );
+          })}
         </div>
         <p className="text-xs text-zinc-400 text-center mt-6 max-w-md mx-auto">
           Prices shown are starting points for the South African market and may be refined with
@@ -169,8 +268,32 @@ export default function PricingPage() {
         </p>
       </section>
 
+      {/* What's included band */}
+      <section className="w-full px-6 md:px-10 pb-16">
+        <div className="max-w-6xl mx-auto border border-zinc-200 bg-zinc-950 p-8 md:p-10">
+          <p className="text-sm font-semibold text-amber-400 tracking-wide uppercase">Every plan includes</p>
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-3">
+            {[
+              'Tagged, context-aware inbox',
+              'No-code workflow setup',
+              'Two-way calendar sync',
+              'Unlimited message history',
+              'Mobile money & EFT billing',
+              'SnapScan / PayFast support',
+              'Weekly payment option',
+              'Email support',
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2.5">
+                <Check size={15} className="text-amber-400 shrink-0" />
+                <span className="text-sm text-zinc-200">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Flex & Circles */}
-      <section className="w-full px-6 md:px-10 pb-20">
+      <section className="w-full px-6 md:px-10 pb-16">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="border border-zinc-200 bg-zinc-50 p-7">
             <p className="text-xs font-semibold text-amber-700 tracking-wide uppercase">Pay-as-you-grow</p>
@@ -218,6 +341,103 @@ export default function PricingPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Full comparison table */}
+      <section className="w-full px-6 md:px-10 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900 text-center">
+            Compare plans in detail
+          </h2>
+          <p className="text-sm text-zinc-500 text-center mt-2 mb-10">
+            Everything each tier unlocks, side by side.
+          </p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left text-sm font-medium text-zinc-500 pb-4 pl-2 w-1/3">Feature</th>
+                  {tiers.map((tier) => (
+                    <th key={tier.name} className="text-center pb-4 px-2">
+                      <span className={`text-sm font-semibold ${tier.highlighted ? 'text-amber-700' : 'text-zinc-900'}`}>
+                        {tier.name}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonGroups.map((group) => (
+                  <tbody key={group.group}>
+                    <tr className="bg-zinc-50">
+                      <td colSpan={5} className="text-xs font-semibold text-zinc-500 uppercase tracking-wide py-2 pl-2">
+                        {group.group}
+                      </td>
+                    </tr>
+                    {group.rows.map((row) => (
+                      <tr key={row.label} className="border-b border-zinc-100">
+                        <td className="text-sm text-zinc-700 py-3 pl-2">{row.label}</td>
+                        {row.values.map((value, i) => (
+                          <td key={i} className="text-center py-3 px-2">
+                            <FeatureCell value={value} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="w-full px-6 md:px-10 pb-20">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900 text-center">
+            Frequently asked questions
+          </h2>
+          <div className="mt-10 divide-y divide-zinc-200 border-t border-b border-zinc-200">
+            {faqs.map((item, i) => {
+              const open = openFaq === i;
+              return (
+                <div key={item.q}>
+                  <button
+                    onClick={() => setOpenFaq(open ? null : i)}
+                    className="w-full flex items-center justify-between py-5 text-left"
+                  >
+                    <span className="text-sm font-semibold text-zinc-900 pr-6">{item.q}</span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-zinc-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {open && <p className="text-sm text-zinc-500 leading-relaxed pb-5 pr-10">{item.a}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="w-full px-6 md:px-10 pb-20">
+        <div className="max-w-6xl mx-auto border border-zinc-200 bg-amber-50/50 p-10 md:p-14 text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900">
+            Ready to run your business from one place?
+          </h2>
+          <p className="text-sm text-zinc-500 mt-3 max-w-md mx-auto">
+            Start free, no card required. Upgrade whenever your conversations outgrow the basics.
+          </p>
+          <Link
+            href="/auth?mode=signup"
+            className="inline-block mt-6 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 text-sm font-semibold transition-colors"
+          >
+            Start for free
+          </Link>
         </div>
       </section>
 
