@@ -220,59 +220,67 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       {/* Body */}
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         {/* Left panel */}
-        <aside className="hidden md:flex relative flex-col justify-between p-14 lg:p-20 overflow-hidden bg-zinc-950">
-          {/* Decorative gradient + glow layers */}
+        <aside className="hidden md:flex relative flex-col justify-between p-14 lg:p-20 overflow-hidden bg-zinc-50 border-r border-zinc-200">
+          {/* Faded grid overlay */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                'radial-gradient(circle at 15% 15%, rgba(245,158,11,0.16), transparent 45%), radial-gradient(circle at 85% 90%, rgba(245,158,11,0.10), transparent 40%)',
+                'linear-gradient(to right, rgb(24 24 27 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(24 24 27 / 0.06) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 70% 60% at 30% 20%, black 0%, transparent 75%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 70% 60% at 30% 20%, black 0%, transparent 75%)',
             }}
           />
           <div
-            className="pointer-events-none absolute inset-0 opacity-[0.035]"
+            className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
+                'linear-gradient(to right, rgb(24 24 27 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(24 24 27 / 0.06) 1px, transparent 1px)',
               backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 55% 45% at 90% 95%, black 0%, transparent 75%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 55% 45% at 90% 95%, black 0%, transparent 75%)',
             }}
           />
-          <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
           {/* Content */}
           <div className="relative max-w-lg">
             <div className="flex items-center gap-2 mb-10">
-              <div className="w-8 h-8 bg-amber-500 flex items-center justify-center">
-                <Zap size={18} className="text-zinc-950" strokeWidth={2.5} />
+              <div className="w-8 h-8 bg-amber-600 flex items-center justify-center">
+                <Zap size={18} className="text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-lg font-semibold text-white tracking-tight">inFlow</span>
+              <span className="text-lg font-semibold text-zinc-900 tracking-tight">inFlow</span>
             </div>
 
-            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.05]">
+            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.05]">
               Run your business
               <br />
-              <span className="text-amber-500">#fromWhatsApp</span>
+              <span className="text-amber-600">#fromWhatsApp</span>
             </h1>
-            <p className="text-base text-zinc-300 mt-5 max-w-md leading-relaxed">
+            <p className="text-base text-zinc-500 mt-5 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
             </p>
-            <p className="text-sm text-zinc-500 mt-3 tracking-wide">
+            <p className="text-sm text-zinc-400 mt-3 tracking-wide">
               Built for South African small businesses · Free to start
             </p>
           </div>
 
           <div className="relative space-y-3 max-w-md">
-            <div className="border border-white/[0.08] bg-white/[0.03] p-5">
-              <p className="text-sm font-semibold text-white mb-1">Unified inbox</p>
-              <p className="text-sm text-zinc-400">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
+            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
+              <p className="text-sm font-semibold text-zinc-900 mb-1">Unified inbox</p>
+              <p className="text-sm text-zinc-500">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
             </div>
-            <div className="border border-white/[0.08] bg-white/[0.03] p-5">
-              <p className="text-sm font-semibold text-white mb-1">Instant tools</p>
-              <p className="text-sm text-zinc-400">Send invoices, quotes, and bookings directly into chat.</p>
+            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
+              <p className="text-sm font-semibold text-zinc-900 mb-1">Instant tools</p>
+              <p className="text-sm text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
           </div>
 
-          <p className="relative text-xs text-zinc-500">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
+          <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
         {/* Right panel */}
