@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
@@ -175,9 +176,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
               Product
             </a>
-            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+            <Link href="/pricing" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
               Pricing
-            </a>
+            </Link>
             <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
               <HelpCircle size={15} />
               Help
