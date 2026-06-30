@@ -222,17 +222,22 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
         {/* Left panel */}
         <aside className="hidden md:flex relative flex-col justify-between p-14 lg:p-20 overflow-hidden bg-zinc-950">
           {/* Decorative gradient + glow layers */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-700/40 via-zinc-950 to-zinc-950" />
-          <div className="pointer-events-none absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full bg-amber-500/30 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 -left-20 w-[360px] h-[360px] rounded-full bg-orange-600/20 blur-3xl" />
           <div
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 15% 15%, rgba(245,158,11,0.16), transparent 45%), radial-gradient(circle at 85% 90%, rgba(245,158,11,0.10), transparent 40%)',
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.035]"
             style={{
               backgroundImage:
                 'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
+              backgroundSize: '56px 56px',
             }}
           />
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
           {/* Content */}
           <div className="relative max-w-lg">
@@ -246,7 +251,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.05]">
               Run your business
               <br />
-              <span className="text-amber-400">#fromWhatsApp</span>
+              <span className="text-amber-500">#fromWhatsApp</span>
             </h1>
             <p className="text-base text-zinc-300 mt-5 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
@@ -257,11 +262,11 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           </div>
 
           <div className="relative space-y-3 max-w-md">
-            <div className="border border-white/10 bg-white/5 backdrop-blur-sm p-5">
+            <div className="border border-white/[0.08] bg-white/[0.03] p-5">
               <p className="text-sm font-semibold text-white mb-1">Unified inbox</p>
               <p className="text-sm text-zinc-400">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
             </div>
-            <div className="border border-white/10 bg-white/5 backdrop-blur-sm p-5">
+            <div className="border border-white/[0.08] bg-white/[0.03] p-5">
               <p className="text-sm font-semibold text-white mb-1">Instant tools</p>
               <p className="text-sm text-zinc-400">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
