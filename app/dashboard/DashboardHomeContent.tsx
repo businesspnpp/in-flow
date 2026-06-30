@@ -267,22 +267,47 @@ export default function DashboardHomeContent() {
           <div className="space-y-4">
             <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h3 className="mb-3 text-base font-bold text-zinc-900">Today&apos;s Schedule</h3>
-              <div className="mb-4 space-y-2">
-                {scheduleHours.map((hour, i) => (
-                  <div key={`${hour}-${i}`} className="flex items-center gap-3">
-                    <span className="w-12 shrink-0 text-xs text-zinc-400">{hour}</span>
-                    <div className={`h-2 flex-1 rounded-full ${i === 0 ? 'bg-blue-100' : 'bg-zinc-50'}`} />
-                  </div>
-                ))}
-              </div>
 
-              <p className="mb-2 text-xs font-semibold text-zinc-400">Customer Actions Needed</p>
-              <div className="space-y-2">
-                {customerActions.map((a) => (
+              {/* CSS grid timeline: 7 rows × [44px label | 1fr content] */}
+              <div
+                className="mb-1"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '44px 1fr',
+                  gridTemplateRows: 'repeat(7, 36px)',
+                }}
+              >
+                {/* Horizontal divider lines (rows 1-6) */}
+                {[1,2,3,4,5,6].map(r => (
+                  <div key={r} style={{ gridColumn: '1/-1', gridRow: r, borderBottom: '1px solid #f4f4f5' }} />
+                ))}
+
+                {/* Hour labels */}
+                {['13 am','10 am','11 am','12 am','1 pm','2 pm','3 am'].map((h, i) => (
+                  <div key={h} className="flex items-center text-xs text-zinc-400" style={{ gridColumn: 1, gridRow: i + 1 }}>{h}</div>
+                ))}
+
+                {/* Blue busy bar spanning rows 1–2 */}
+                <div
+                  className="self-center h-[22px] rounded-lg bg-blue-100"
+                  style={{ gridColumn: 2, gridRow: '1 / 3' }}
+                />
+
+                {/* "Customer Actions Needed" heading in row 3 */}
+                <div
+                  className="flex items-center text-sm font-bold text-zinc-900"
+                  style={{ gridColumn: 2, gridRow: 3 }}
+                >
+                  Customer Actions Needed
+                </div>
+
+                {/* Action buttons in rows 4–7 */}
+                {customerActions.map((a, i) => (
                   <button
                     key={a.id}
                     type="button"
-                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition-colors ${toneClasses[a.tone]}`}
+                    className={`self-center w-full rounded-lg px-3 py-2 text-left text-[13px] font-semibold transition-colors ${toneClasses[a.tone]}`}
+                    style={{ gridColumn: 2, gridRow: i + 4 }}
                   >
                     {a.label}
                   </button>
