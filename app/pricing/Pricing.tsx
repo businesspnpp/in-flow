@@ -1,10 +1,22 @@
 'use client';
 
-import { Fragment } from 'react';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Check, Minus, Zap, HelpCircle, ChevronDown } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Check, 
+  Minus, 
+  Zap, 
+  HelpCircle, 
+  ChevronDown, 
+  Users, 
+  Sparkles, 
+  Building2, 
+  ArrowRight,
+  TrendingUp,
+  MessageSquare
+} from 'lucide-react';
 
 interface Tier {
   name: string;
@@ -15,6 +27,7 @@ interface Tier {
   features: string[];
   footnote: string;
   highlighted?: boolean;
+  darkVariant?: boolean;
   cta: string;
 }
 
@@ -23,17 +36,17 @@ const tiers: Tier[] = [
     name: 'Free',
     monthly: 0,
     channels: '1 channel',
-    tagline: 'Start automating, no card needed',
-    description: 'For first-time software buyers who want to feel the value before paying anything.',
+    tagline: 'Start automating instantly',
+    description: 'For first-time operators who want to experience automated value before committing capital.',
     features: [
-      '1 channel connected (WhatsApp, Instagram, or Facebook)',
-      '1 tool of your choice',
-      '40 conversations / month',
-      'Tagged, context-aware inbox',
-      'Mobile money & EFT billing',
-      'Community support',
+      '1 channel connected (WhatsApp or IG)',
+      '1 automated tool of your choice',
+      '40 automated conversations / month',
+      'Tagged, context-aware unified inbox',
+      'Mobile money & EFT billing support',
+      'Community text support group',
     ],
-    footnote: 'Free forever — not a time-boxed trial.',
+    footnote: 'Free forever — no credit card required.',
     cta: 'Start for free',
   },
   {
@@ -41,33 +54,33 @@ const tiers: Tier[] = [
     monthly: 149,
     channels: '2 channels',
     tagline: 'Built for solo operators',
-    description: 'Run a single-chair salon, barbershop, or one-person service business end to end.',
+    description: 'Perfect for single-chair salons, independent barbers, or solo consultants managing client volume.',
     features: [
-      '2 channels connected',
-      'All 4 built-in tools (Booking, Orders, FAQ, Reminders)',
-      'Unlimited conversations',
-      '1 calendar sync (Google or Apple)',
-      'Mobile money & EFT billing',
-      'Email support',
+      '2 active channels connected',
+      'All 4 core tools (Booking, Orders, FAQ, Reminders)',
+      'Unlimited monthly conversations',
+      '1 calendar sync engine (Google/Apple)',
+      'Mobile money, EFT & card billing',
+      'Direct email support channels',
     ],
-    footnote: 'Most solo operators pay this off in 2-3 bookings.',
+    footnote: 'Most solo businesses clear this cost in 2 bookings.',
     cta: 'Choose Starter',
   },
   {
     name: 'Growth',
     monthly: 349,
     channels: 'All channels',
-    tagline: 'For teams that are scaling up',
-    description: 'Multiple stylists, a busy kitchen, or a team handling volume across every channel.',
+    tagline: 'For high-velocity teams',
+    description: 'Multiple staff members, a busy fulfillment kitchen, or teams scaling interaction volume across platforms.',
     features: [
-      'All channels connected (WhatsApp, IG, FB, TikTok, email)',
-      'All 4 built-in tools',
-      'Unlimited conversations',
-      'Unlimited calendar sync',
-      '3 team users included',
-      'Priority email support',
+      'All channels connected (WhatsApp, IG, FB, TikTok, Email)',
+      'All 4 core automated workflows',
+      'Unlimited conversations & automated updates',
+      'Unlimited calendar synchronization instances',
+      '3 core team seats included',
+      'Priority routing for customer support tickets',
     ],
-    footnote: 'The plan most growing teams land on.',
+    footnote: 'The standard destination for scaling service teams.',
     highlighted: true,
     cta: 'Choose Growth',
   },
@@ -75,435 +88,588 @@ const tiers: Tier[] = [
     name: 'Pro',
     monthly: 699,
     channels: 'All channels',
-    tagline: 'Multi-location & franchise-ready',
-    description: 'Run several branches or a franchise-style operation from a single workspace.',
+    tagline: 'Enterprise-grade orchestration',
+    description: 'Manage multiple operational sites, branch setups, or franchise-wide communications from one desk.',
     features: [
-      'Everything in Growth',
-      'Multi-location support',
-      'Team roles & permissions',
-      'Unlimited team users',
-      'Analytics dashboard',
-      'Priority support',
+      'Everything included in the Growth tier',
+      'Advanced multi-location branch support',
+      'Granular team roles & access permissions',
+      'Unlimited workspace team users',
+      'Real-time operations analytics dashboard',
+      'Dedicated manager priority support escalation',
     ],
-    footnote: 'Built for operators managing more than one site.',
+    footnote: 'Engineered for operators controlling complex footprints.',
+    darkVariant: true,
     cta: 'Choose Pro',
   },
 ];
 
 type FeatureValue = boolean | string;
 
-const comparisonGroups: { group: string; rows: { label: string; values: FeatureValue[] }[] }[] = [
+const comparisonGroups = [
   {
-    group: 'Channels',
+    group: 'Channels & Reach',
     rows: [
-      { label: 'WhatsApp Business', values: [true, true, true, true] },
+      { label: 'WhatsApp Business API Integration', values: [true, true, true, true] },
       { label: 'Instagram & Facebook DMs', values: [false, true, true, true] },
-      { label: 'TikTok & email', values: [false, false, true, true] },
-      { label: 'Channels included', values: ['1', '2', 'All', 'All'] },
+      { label: 'TikTok & Email Core Routing', values: [false, false, true, true] },
+      { label: 'Total active channel pathways', values: ['1 channel', '2 channels', 'All channels', 'All channels'] },
     ],
   },
   {
-    group: 'Tools',
+    group: 'Automation Mechanics',
     rows: [
-      { label: 'Booking & Scheduling', values: ['1 tool of choice', true, true, true] },
-      { label: 'Order Capture', values: ['1 tool of choice', true, true, true] },
-      { label: 'FAQ Auto-Reply', values: ['1 tool of choice', true, true, true] },
-      { label: 'Reminders & Follow-ups', values: ['1 tool of choice', true, true, true] },
-      { label: 'Conversations / month', values: ['40', 'Unlimited', 'Unlimited', 'Unlimited'] },
+      { label: 'Booking & Appointment Capture', values: ['1 active tool', true, true, true] },
+      { label: 'Direct Instant Order Capture', values: ['1 active tool', true, true, true] },
+      { label: 'Contextual AI FAQ Auto-Replies', values: ['1 active tool', true, true, true] },
+      { label: 'Automated Reminders & Follow-ups', values: ['1 active tool', true, true, true] },
+      { label: 'Monthly conversation volume capacity', values: ['40 interactions', 'Unlimited', 'Unlimited', 'Unlimited'] },
     ],
   },
   {
-    group: 'Calendar & team',
+    group: 'Team Management & Infrastructure',
     rows: [
-      { label: 'Calendar sync (Google/Apple)', values: [false, '1 calendar', 'Unlimited', 'Unlimited'] },
-      { label: 'Team users', values: ['1', '1', '3', 'Unlimited'] },
-      { label: 'Team roles & permissions', values: [false, false, false, true] },
-      { label: 'Multi-location support', values: [false, false, false, true] },
+      { label: 'Bi-directional Calendar Sync', values: [false, '1 calendar', 'Unlimited', 'Unlimited'] },
+      { label: 'Included active team workspace seats', values: ['1 seat', '1 seat', '3 seats', 'Unlimited seats'] },
+      { label: 'Granular user permissions & roles', values: [false, false, false, true] },
+      { label: 'Multi-location operations support', values: [false, false, false, true] },
     ],
   },
   {
-    group: 'Insights',
+    group: 'Intelligence & Core Support',
     rows: [
-      { label: 'Analytics dashboard', values: [false, false, false, true] },
-      { label: 'Priority support', values: [false, false, true, true] },
+      { label: 'Real-time performance analytics', values: [false, false, false, true] },
+      { label: 'Dedicated priority support handling', values: [false, false, true, true] },
     ],
   },
 ];
 
 const faqs = [
   {
-    q: 'Is the Free plan really free forever?',
-    a: 'Yes. Free is not a time-boxed trial — there is no expiry date. You get 1 channel, 1 tool, and 40 conversations a month for as long as you want, with no card required to start.',
+    q: 'Is the Free tier genuinely free indefinitely?',
+    a: 'Yes. The Free tier is built as a baseline infrastructure for micro-enterprises, not a hidden time-limited trial. There is no expiration timeline. You get access to 1 channel, 1 automation tool tool, and up to 40 managed interactions per month with absolutely zero card commitments required.',
   },
   {
-    q: 'What is inFlow Flex and how is it billed?',
-    a: 'Flex is a pay-as-you-grow option for seasonal businesses: a R49/month base fee plus R1.20 per conversation a tool actually handles. If usage in a month would cost more than the flat Starter rate, you are automatically capped and billed at the Starter rate instead — you never pay more than the flat tier would cost.',
+    q: 'What is inFlow Flex and how does the billing mechanism activate?',
+    a: 'Flex is designed for businesses with high seasonal variability. It functions on a baseline subscription of R49/month plus a transactional fee of R1.20 per customer interaction fully processed by our automation tools. To keep your costs predictable, Flex includes a guardrail system: if your transactional volume pushes your total cost above the standard flat Starter rate, your billing auto-caps at the Starter fee for that cycle.',
   },
   {
-    q: 'How does inFlow Circles group pricing work?',
-    a: 'Five or more independent businesses — each keeping their own separate inbox, customers, and data — can form a Circle to unlock a shared discount. The discount scales with group size: 10% off at 2–4 businesses, 20% off at 5–9, and 30% off at 10+.',
+    q: 'How do inFlow Circles group discounts operate?',
+    a: 'Inspired by collaborative stokvel dynamics, Circles allow 2 or more separate businesses to pool their networks to claim collective volume discounts. Each business operates completely independently with isolated messaging records, separate customer lists, and secure databases. Discounts scale naturally based on collective circle sizing: 10% off for 2-4 members, 20% off for 5-9 members, and 30% off for groups of 10 or more.',
   },
   {
-    q: 'Can I change plans later?',
-    a: 'Yes, you can upgrade, downgrade, or switch to Flex at any time from your workspace settings. Changes take effect on your next billing cycle.',
+    q: 'Can I dynamically scale or downgrade my plan options?',
+    a: 'Absolutely. You can shift tiers, transition directly onto our custom Flex configuration, or adjust configurations instantly from your organization management dashboard. Adjustments are applied immediately on the following billing statement cycle.',
   },
   {
-    q: 'What payment methods do you support?',
-    a: 'Card, EFT, and SnapScan/PayFast are supported on every plan. Mobile money, airtime billing, and a weekly payment option for cash-flow-sensitive businesses are also available.',
-  },
-  {
-    q: 'Do you offer discounts for annual billing?',
-    a: 'Annual billing is coming soon and will offer a meaningful discount over paying monthly. Join the Starter, Growth, or Pro waitlist and we will notify you when it is available.',
+    q: 'Which regional financial settlement methods are supported?',
+    a: 'We fully support credit/debit networks, direct manual and automated EFT options, along with integrated paths through SnapScan and PayFast gateways. Additionally, we provide mobile money integration, airtime balance billing structures, and weekly localized micro-payment frequencies for businesses balancing delicate immediate cash flows.',
   },
 ];
 
 function FeatureCell({ value }: { value: FeatureValue }) {
-  if (value === true) return <Check size={16} className="text-amber-600 mx-auto" />;
-  if (value === false) return <Minus size={14} className="text-zinc-300 mx-auto" />;
-  return <span className="text-sm text-zinc-700">{value}</span>;
+  if (value === true) return <Check size={18} className="text-amber-600 mx-auto" strokeWidth={3} />;
+  if (value === false) return <Minus size={14} className="text-zinc-200 mx-auto" strokeWidth={2.5} />;
+  return <span className="text-sm font-medium text-zinc-800">{value}</span>;
 }
 
-export default function PricingPage() {
+export default function PremiumPricingPage() {
   const router = useRouter();
   const [annual, setAnnual] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  
+  // Interactive Calculator State
+  const [estimatedConversations, setEstimatedConversations] = useState(150);
+
+  const calculateSuggestedPlan = (convos: number) => {
+    if (convos <= 40) return { name: 'Free', cost: 'R0' };
+    if (convos <= 300) return { name: 'Starter', cost: 'R149' };
+    if (convos <= 1000) return { name: 'Growth', cost: 'R349' };
+    return { name: 'Pro', cost: 'R699' };
+  };
+
+  const suggestedPlan = calculateSuggestedPlan(estimatedConversations);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-white">
-      {/* Top nav */}
-      <header className="w-full border-b border-zinc-200 bg-white sticky top-0 z-10">
-        <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
-              <Zap size={16} className="text-white" strokeWidth={2.5} />
+    <div className="min-h-screen w-full flex flex-col bg-[#FAFAFA] text-zinc-900 selection:bg-amber-100 selection:text-amber-900 font-sans antialiased">
+      
+      {/* Premium Header */}
+      <header className="w-full border-b border-zinc-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 bg-zinc-950 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+              <Zap size={18} className="text-amber-400 fill-amber-400" strokeWidth={1.5} />
             </div>
-            <span className="text-base font-semibold text-zinc-900 tracking-tight">inFlow</span>
+            <span className="text-xl font-bold text-zinc-900 tracking-tight">inFlow</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
-              Product
-            </Link>
-            <span className="text-sm font-semibold text-zinc-900">Pricing</span>
-            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
-              <HelpCircle size={15} />
-              Help
+          <nav className="hidden lg:flex items-center gap-10">
+            <Link href="/" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors">Product</Link>
+            <span className="text-sm font-bold text-zinc-900 relative after:absolute after:bottom-[-29px] after:left-0 after:right-0 after:h-[2px] after:bg-amber-600">Pricing</span>
+            <a href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
+              <HelpCircle size={16} />
+              Help & Resources
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link href="/auth" className="text-sm font-semibold px-3 py-2 text-zinc-500 hover:text-zinc-900 transition-colors">
+          <div className="flex items-center gap-4">
+            <Link href="/auth" className="text-sm font-bold px-4 py-2.5 text-zinc-600 hover:text-zinc-900 transition-colors">
               Sign in
             </Link>
-            <Link href="/auth?mode=signup" className="text-sm font-semibold px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white transition-colors">
-              Sign up
+            <Link href="/auth?mode=signup" className="text-sm font-bold px-5 py-2.5 bg-zinc-950 text-white hover:bg-zinc-800 transition-all shadow-sm hover:shadow-md">
+              Get Started Free
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Back arrow row */}
-      <div className="w-full px-6 md:px-10 pt-8">
+      {/* Navigation Return Hook */}
+      <div className="w-full max-w-7xl mx-auto px-6 pt-10">
         <button
           onClick={() => router.back()}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-400 hover:text-zinc-900 transition-colors group"
         >
-          <ArrowLeft size={16} />
-          Back
+          <ArrowLeft size={16} className="transform group-hover:-translate-x-0.5 transition-transform" />
+          Return to Dashboard
         </button>
       </div>
 
-      {/* Hero */}
-      <section className="w-full px-6 md:px-10 pt-10 pb-12 text-center">
-        <span className="inline-block text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 tracking-wide uppercase">
-          Built for African micro-enterprises
-        </span>
-        <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.05] mt-5">
-          Pricing that matches how
-          <br />
-          your business actually earns.
-        </h1>
-        <p className="text-base md:text-lg text-zinc-500 mt-5 max-w-2xl mx-auto leading-relaxed">
-          A real free tier, not a time-boxed trial. No card required to start, and every plan grows
-          with you — pay flat, pay as you go, or pool costs with other businesses in a Circle.
-        </p>
+      {/* Intercom-Style Asymmetric Split Hero Section */}
+      <section className="w-full max-w-7xl mx-auto px-6 pt-10 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="lg:col-span-7 text-left space-y-6">
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase bg-amber-100/70 border border-amber-200 text-amber-900 px-3 py-1.5">
+            <Sparkles size={12} className="fill-amber-600 text-amber-600" /> Optimized for the African Tech Ecosystem
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[0.95]">
+            Pricing matched to your scale.
+          </h1>
+          <p className="text-lg md:text-xl text-zinc-500 max-w-xl font-medium leading-relaxed">
+            Eliminate restrictive licensing. Deploy a permanent free foundation, adjust seasonal workflows with usage-based flexibility, or drop overhead with community pricing loops.
+          </p>
 
-        {/* Billing toggle */}
-        <div className="inline-flex items-center gap-3 mt-8 border border-zinc-200 p-1 bg-zinc-50">
-          <button
-            onClick={() => setAnnual(false)}
-            className={`px-4 py-2 text-sm font-semibold transition-colors ${
-              !annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
-            }`}
-          >
-            Pay monthly
-          </button>
-          <button
-            onClick={() => setAnnual(true)}
-            className={`px-4 py-2 text-sm font-semibold transition-colors flex items-center gap-2 ${
-              annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
-            }`}
-          >
-            Pay annually
-            <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5">Save 15%</span>
-          </button>
+          {/* Centered Segmented Controller */}
+          <div className="inline-flex items-center p-1.5 bg-zinc-200/60 rounded-none border border-zinc-200 mt-4">
+            <button
+              onClick={() => setAnnual(false)}
+              className={`px-5 py-2.5 text-sm font-bold transition-all ${
+                !annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
+              }`}
+            >
+              Commit Monthly
+            </button>
+            <button
+              onClick={() => setAnnual(true)}
+              className={`px-5 py-2.5 text-sm font-bold transition-all flex items-center gap-2 ${
+                annual ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
+              }`}
+            >
+              Commit Annually
+              <span className="text-[10px] font-extrabold tracking-wide text-amber-800 bg-amber-400/30 border border-amber-300 px-1.5 py-0.5 uppercase">
+                Save 15%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Calculator Interactive Tool Widget */}
+        <div className="lg:col-span-5 bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 space-y-6">
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+            <h3 className="font-bold text-base tracking-tight text-zinc-900 flex items-center gap-2">
+              <TrendingUp size={18} className="text-amber-600" /> Plan Matcher Estimate
+            </h3>
+            <span className="text-xs font-bold text-zinc-400 uppercase">Interactive</span>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm font-bold">
+              <span className="text-zinc-600">Expected monthly conversations:</span>
+              <span className="text-amber-700 text-base font-black">{estimatedConversations === 1500 ? '1,500+' : estimatedConversations}</span>
+            </div>
+            <input 
+              type="range" 
+              min="10" 
+              max="1500" 
+              step="10"
+              value={estimatedConversations} 
+              onChange={(e) => setEstimatedConversations(Number(e.target.value))}
+              className="w-full accent-zinc-950 bg-zinc-200 h-2 cursor-pointer"
+            />
+            <div className="flex justify-between text-[11px] text-zinc-400 font-bold">
+              <span>10 conversations</span>
+              <span>1,500+ interactions</span>
+            </div>
+          </div>
+
+          <div className="bg-zinc-50 p-4 border border-zinc-200 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-wide">Suggested Configuration</p>
+              <p className="text-lg font-black text-zinc-900 mt-0.5">inFlow {suggestedPlan.name} Plan</p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-black text-amber-700">{suggestedPlan.cost}</p>
+              <p className="text-[10px] font-bold text-zinc-400">estimated base / mo</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Tiers */}
-      <section className="w-full px-4 md:px-6 lg:px-8 pb-16">
-        <div className="max-w-[88rem] mx-auto pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 lg:[&>*+*]:-ml-px">
+      {/* Primary Tier Blueprint Grid */}
+      <section className="w-full max-w-7xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
+            
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col min-w-0 p-6 md:p-7 border relative ${
-                  tier.highlighted ? 'border-amber-600 bg-amber-50/40' : 'border-zinc-200 bg-white'
+                className={`flex flex-col min-w-0 p-8 border-2 transition-all duration-200 relative ${
+                  tier.highlighted 
+                    ? 'border-amber-600 bg-amber-50/40 shadow-[6px_6px_0px_0px_rgba(217,119,6,1)]' 
+                    : tier.darkVariant
+                    ? 'border-zinc-900 bg-zinc-950 text-white shadow-[6px_6px_0px_0px_rgba(24,24,27,1)]'
+                    : 'border-zinc-200 bg-white hover:border-zinc-400 hover:shadow-sm'
                 }`}
               >
                 {tier.highlighted && (
-                  <span className="absolute -top-3 left-9 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 tracking-wide">
-                    MOST POPULAR
+                  <span className="absolute -top-3.5 left-6 bg-amber-600 text-white text-[10px] font-black px-3 py-1 tracking-widest uppercase border border-amber-700">
+                    MOST POPULAR DEPLOYMENT
                   </span>
                 )}
 
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xl font-semibold text-zinc-900">{tier.name}</p>
-                    <p className="text-sm text-zinc-500 mt-1">{tier.tagline}</p>
+                    <h2 className="text-2xl font-black tracking-tight">{tier.name}</h2>
+                    <p className={`text-xs font-medium mt-1 ${tier.darkVariant ? 'text-zinc-400' : 'text-zinc-500'}`}>{tier.tagline}</p>
                   </div>
-                  <span className="shrink-0 text-xs font-medium text-amber-700 bg-amber-100 px-2.5 py-1">
+                  <span className={`shrink-0 text-[10px] font-extrabold tracking-wider uppercase px-2.5 py-1 border ${
+                    tier.darkVariant 
+                      ? 'bg-zinc-800 border-zinc-700 text-amber-400' 
+                      : 'bg-amber-100 border-amber-200 text-amber-900'
+                  }`}>
                     {tier.channels}
                   </span>
                 </div>
 
-                <div className="mt-6 flex items-baseline gap-1.5">
-                  <span className="text-5xl font-semibold text-zinc-900 tracking-tight">
+                <div className="mt-8 flex items-baseline gap-1">
+                  <span className="text-5xl font-black tracking-tighter">
                     {price === 0 ? 'R0' : `R${price}`}
                   </span>
-                  <span className="text-base text-zinc-500">{price === 0 ? 'forever' : '/ month'}</span>
+                  <span className={`text-sm font-semibold ${tier.darkVariant ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    {price === 0 ? 'forever' : '/ mo'}
+                  </span>
                 </div>
-                {annual && price !== 0 && <p className="text-xs text-zinc-400 mt-1">billed annually</p>}
+                {annual && price !== 0 && (
+                  <p className="text-[11px] font-bold text-amber-600 mt-1 uppercase tracking-wider">Billed annually upfront</p>
+                )}
 
-                <p className="text-sm text-zinc-600 mt-4 leading-relaxed">{tier.description}</p>
+                <p className={`text-sm mt-5 leading-relaxed font-medium ${tier.darkVariant ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                  {tier.description}
+                </p>
 
-                <div className="flex mt-6">
+                <div className="mt-8">
                   <Link
                     href="/auth?mode=signup"
-                    className={`w-full text-center px-5 py-3 text-sm font-semibold transition-colors ${
+                    className={`w-full block text-center px-5 py-3.5 text-sm font-bold tracking-tight transform active:scale-[0.99] transition-all rounded-none ${
                       tier.highlighted
-                        ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                        : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                        ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm'
+                        : tier.darkVariant
+                        ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black'
+                        : 'bg-zinc-950 hover:bg-zinc-800 text-white'
                     }`}
                   >
                     {tier.cta}
                   </Link>
                 </div>
 
-                <div className="h-px bg-zinc-200 my-7" />
+                <div className={`h-px my-8 ${tier.darkVariant ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
 
-                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-4">What's included</p>
-                <ul className="space-y-3">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-700">
-                      <Check size={16} className="text-amber-600 mt-0.5 shrink-0" />
-                      <span>{f}</span>
+                <p className={`text-[11px] font-extrabold uppercase tracking-widest mb-4 ${tier.darkVariant ? 'text-zinc-400' : 'text-zinc-400'}`}>
+                  Included capabilities
+                </p>
+                <ul className="space-y-3.5 flex-1">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm font-medium">
+                      <Check size={16} className="text-amber-600 shrink-0 mt-0.5" strokeWidth={3} />
+                      <span className={tier.darkVariant ? 'text-zinc-300' : 'text-zinc-700'}>{feature}</span>
                     </li>
                   ))}
                 </ul>
+
+                <div className={`h-px my-6 ${tier.darkVariant ? 'bg-zinc-900' : 'bg-zinc-100'}`} />
+                <p className={`text-[11px] font-bold italic ${tier.darkVariant ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  {tier.footnote}
+                </p>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-zinc-400 text-center mt-8 max-w-md mx-auto">
-          Prices shown are starting points for the South African market and may be refined with
-          pilot businesses before final launch pricing.
+        
+        <p className="text-[11px] text-zinc-400 text-center mt-10 max-w-xl mx-auto font-medium leading-relaxed">
+          * Regional benchmark modeling calculated for Southern African markets. Pricing indices may execute refinements in synergy with early sandbox pilot operators prior to official billing framework launches.
         </p>
       </section>
 
-      {/* What's included band */}
-      <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto border border-zinc-200 bg-zinc-950 p-8 md:p-10">
-          <p className="text-sm font-semibold text-amber-400 tracking-wide uppercase">Every plan includes</p>
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-3">
+      {/* Universal Baseline Horizontal Callout Band */}
+      <section className="w-full max-w-7xl mx-auto px-6 pb-20">
+        <div className="bg-zinc-950 text-white p-10 md:p-12 border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(217,119,6,1)] relative overflow-hidden">
+          <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-40 h-40 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="max-w-3xl">
+            <span className="text-[11px] font-black tracking-widest text-amber-400 uppercase bg-amber-400/10 border border-amber-500/20 px-2.5 py-1">
+              STANDARD FOUNDATION INFRASTRUCTURE
+            </span>
+            <h3 className="text-2xl md:text-3xl font-black tracking-tight text-white mt-4">
+              Core platform parameters enabled across every account tier
+            </h3>
+            <p className="text-zinc-400 text-sm font-medium mt-2 max-w-xl">
+              Zero compromises on vital operations. Every transaction strategy, reporting record, and pipeline tool scales down to the entry ledger.
+            </p>
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 border-t border-zinc-800 pt-8">
             {[
-              'Tagged, context-aware inbox',
-              'No-code workflow setup',
-              'Two-way calendar sync',
-              'Unlimited message history',
-              'Mobile money & EFT billing',
-              'SnapScan / PayFast support',
-              'Weekly payment option',
-              'Email support',
+              'Context-aware historical unified inbox',
+              'Visual zero-code logic builder setup',
+              'Omni-directional dual calendar sync engines',
+              'Uncapped message log histories',
+              'Mobile money & automated EFT systems',
+              'Native integration with SnapScan & PayFast gateways',
+              'Weekly micro-payment billing option setups',
+              'Standard email developer support channels',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2.5">
-                <Check size={15} className="text-amber-400 shrink-0" />
-                <span className="text-sm text-zinc-200">{item}</span>
+              <div key={item} className="flex items-start gap-3">
+                <Check size={16} className="text-amber-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <span className="text-sm text-zinc-300 font-medium leading-tight">{item}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Flex & Circles */}
-      <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="border border-zinc-200 bg-zinc-50 p-7">
-            <p className="text-xs font-semibold text-amber-700 tracking-wide uppercase">Pay-as-you-grow</p>
-            <h3 className="text-xl font-semibold text-zinc-900 mt-2">inFlow Flex</h3>
-            <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-              For seasonal businesses with irregular income. A small base fee plus a small charge
-              per conversation handled — so a slow week costs next to nothing, and a busy week is
-              clearly paying for itself.
-            </p>
-            <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-              <div className="bg-white border border-zinc-200 p-3">
-                <p className="text-base font-semibold text-zinc-900">R49</p>
-                <p className="text-xs text-zinc-500 mt-0.5">base / mo</p>
+      {/* Interactive Custom Add-on Modules (Flex & Circles) */}
+      <section className="w-full max-w-7xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Flex Addon Callout */}
+          <div className="lg:col-span-6 bg-white border-2 border-zinc-900 p-8 md:p-10 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-amber-900 bg-amber-100 px-2.5 py-1 uppercase border border-amber-200">
+                VARIABLE METRICS
+              </span>
+              <h3 className="text-3xl font-black tracking-tight text-zinc-900">inFlow Flex Billing Plan</h3>
+              <p className="text-sm font-medium text-zinc-500 leading-relaxed max-w-md">
+                Engineered for seasonal enterprises or businesses fluctuating on unpredictable demand trends. Retain operations on near-zero cost parameters when trade quietens down.
+              </p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+              <div className="bg-zinc-50 border border-zinc-200 p-4">
+                <p className="text-xl font-black text-zinc-900">R49</p>
+                <p className="text-[11px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">Base fee / mo</p>
               </div>
-              <div className="bg-white border border-zinc-200 p-3">
-                <p className="text-base font-semibold text-zinc-900">R1.20</p>
-                <p className="text-xs text-zinc-500 mt-0.5">per conversation</p>
+              <div className="bg-zinc-50 border border-zinc-200 p-4">
+                <p className="text-xl font-black text-zinc-900">R1.20</p>
+                <p className="text-[11px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">Per conversation</p>
               </div>
-              <div className="bg-white border border-zinc-200 p-3">
-                <p className="text-base font-semibold text-zinc-900">Capped</p>
-                <p className="text-xs text-zinc-500 mt-0.5">auto-converts to Starter</p>
+              <div className="bg-zinc-50 border-zinc-200 p-4 flex flex-col justify-center items-center border-dashed">
+                <p className="text-xs font-extrabold text-amber-700 uppercase flex items-center gap-1">
+                  Auto-Cap
+                </p>
+                <p className="text-[10px] text-zinc-400 mt-0.5 font-medium leading-none">Protects against overages</p>
               </div>
             </div>
           </div>
 
-          <div className="border border-zinc-200 bg-zinc-50 p-7">
-            <p className="text-xs font-semibold text-amber-700 tracking-wide uppercase">Group pricing</p>
-            <h3 className="text-xl font-semibold text-zinc-900 mt-2">inFlow Circles</h3>
-            <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-              Stokvel-style group pricing. Five or more independent businesses — each keeping their
-              own inbox and data — unlock a shared discount, the more businesses, the lower the
-              cost per business.
-            </p>
-            <div className="mt-5 space-y-2">
+          {/* Circles Callout */}
+          <div className="lg:col-span-6 bg-white border-2 border-zinc-900 p-8 md:p-10 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-amber-900 bg-amber-100 px-2.5 py-1 uppercase border border-amber-200">
+                COMMUNITY NETWORKS
+              </span>
+              <h3 className="text-3xl font-black tracking-tight text-zinc-900">inFlow Circles Pools</h3>
+              <p className="text-sm font-medium text-zinc-500 leading-relaxed max-w-md">
+                Stokvel-inspired localized community cost pooling. Group purchasing scale for decentralized independent operators to collapse structural overhead.
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-2">
               {[
-                ['2–4 businesses', '10% off', 'R134/mo'],
-                ['5–9 businesses', '20% off', 'R119/mo'],
-                ['10+ businesses', '30% off', 'R104/mo'],
-              ].map(([size, off, cost]) => (
-                <div key={size} className="flex items-center justify-between bg-white border border-zinc-200 px-4 py-2.5 text-sm">
-                  <span className="text-zinc-700">{size}</span>
-                  <span className="text-amber-700 font-medium">{off}</span>
-                  <span className="text-zinc-900 font-semibold">{cost}</span>
+                { size: '2–4 integrated businesses', benefit: '10% subscription cut', cost: 'R134 / mo base' },
+                { size: '5–9 integrated businesses', benefit: '20% subscription cut', cost: 'R119 / mo base' },
+                { size: '10+ bundled operations', benefit: '30% subscription cut', cost: 'R104 / mo base' },
+              ].map((row, idx) => (
+                <div key={idx} className="flex items-center justify-between bg-zinc-50 border border-zinc-200 px-4 py-3 text-sm font-semibold">
+                  <span className="text-zinc-600 flex items-center gap-2">
+                    <Users size={14} className="text-zinc-400" /> {row.size}
+                  </span>
+                  <span className="text-amber-700 font-extrabold text-xs bg-amber-50 border border-amber-200 px-2 py-0.5">{row.benefit}</span>
+                  <span className="text-zinc-900 font-black">{row.cost}</span>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* Full comparison table */}
-      <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900 text-center">
-            Compare plans in detail
-          </h2>
-          <p className="text-sm text-zinc-500 text-center mt-2 mb-10">
-            Everything each tier unlocks, side by side.
-          </p>
+      {/* Social Trust Proof Testimonial Section Block */}
+      <section className="w-full bg-zinc-100 border-t border-b border-zinc-200 py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <div className="inline-flex justify-center text-amber-500 gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Zap key={i} size={18} className="fill-current text-amber-600" />
+            ))}
+          </div>
+          <h4 className="text-2xl md:text-4xl font-black tracking-tight text-zinc-900 max-w-3xl mx-auto leading-tight">
+            “Deploying inFlow across our WhatsApp channels automated over 70% of our frontline booking capture in under three weeks. The interface design and flexible regional settlement options are an absolute standard.”
+          </h4>
+          <div className="space-y-0.5">
+            <p className="text-sm font-black text-zinc-900">Muzi Khumalo</p>
+            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Operations Lead, The Barber Hub Franchise</p>
+          </div>
+        </div>
+      </section>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse table-fixed">
-              <colgroup>
-                <col className="w-[34%]" />
-                <col className="w-[16.5%]" />
-                <col className="w-[16.5%]" />
-                <col className="w-[16.5%]" />
-                <col className="w-[16.5%]" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th className="text-left text-sm font-medium text-zinc-500 pb-4 pl-2">Feature</th>
-                  {tiers.map((tier) => (
-                    <th key={tier.name} className="text-center pb-4 px-2">
-                      <span className={`text-sm font-semibold ${tier.highlighted ? 'text-amber-700' : 'text-zinc-900'}`}>
-                        {tier.name}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonGroups.map((group) => (
-                  <Fragment key={group.group}>
-                    <tr className="bg-zinc-50">
-                      <td colSpan={5} className="text-xs font-semibold text-zinc-500 uppercase tracking-wide py-2 pl-2">
-                        {group.group}
-                      </td>
-                    </tr>
-                    {group.rows.map((row) => (
-                      <tr key={row.label} className="border-b border-zinc-100">
-                        <td className="text-sm text-zinc-700 py-3 pl-2">{row.label}</td>
-                        {row.values.map((value, i) => (
-                          <td key={i} className="text-center py-3 px-2">
-                            <FeatureCell value={value} />
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </Fragment>
+      {/* Comprehensive Feature Breakdown Matrix */}
+      <section className="w-full max-w-5xl mx-auto px-6 py-24">
+        <div className="text-center space-y-3 mb-16">
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-zinc-900">
+            Granular structural comparison
+          </h2>
+          <p className="text-base text-zinc-500 font-medium max-w-md mx-auto">
+            Deep dive architectural parameter breakdowns across our operational workflows.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto border-2 border-zinc-900 bg-white shadow-[6px_6px_0px_0px_rgba(24,24,27,1)]">
+          <table className="w-full min-w-[760px] border-collapse table-fixed">
+            <colgroup>
+              <col className="w-[36%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+            </colgroup>
+            <thead>
+              <tr className="border-b-2 border-zinc-900">
+                <th className="text-left text-xs font-black uppercase tracking-wider text-zinc-400 py-5 pl-6 bg-zinc-50/50">Core Matrices</th>
+                {tiers.map((tier) => (
+                  <th key={tier.name} className="text-center py-5 px-3 bg-zinc-50/50">
+                    <span className={`text-sm font-black tracking-tight block ${tier.highlighted ? 'text-amber-700' : 'text-zinc-900'}`}>
+                      {tier.name}
+                    </span>
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonGroups.map((group) => (
+                <Fragment key={group.group}>
+                  <tr className="bg-zinc-100 border-b border-zinc-200">
+                    <td colSpan={5} className="text-[10px] font-black text-zinc-500 uppercase tracking-widest py-3 pl-6">
+                      {group.group}
+                    </td>
+                  </tr>
+                  {group.rows.map((row) => (
+                    <tr key={row.label} className="border-b border-zinc-100 hover:bg-zinc-50/40 transition-colors">
+                      <td className="text-sm text-zinc-700 font-medium py-4 pl-6 pr-4 border-r border-zinc-100">{row.label}</td>
+                      {row.values.map((value, i) => (
+                        <td key={i} className="text-center py-4 px-3 border-r border-zinc-100 last:border-r-0">
+                          <FeatureCell value={value} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="w-full px-6 md:px-10 pb-20">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900 text-center">
-            Frequently asked questions
-          </h2>
-          <div className="mt-10 divide-y divide-zinc-200 border-t border-b border-zinc-200">
-            {faqs.map((item, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={item.q}>
-                  <button
-                    onClick={() => setOpenFaq(open ? null : i)}
-                    className="w-full flex items-center justify-between py-5 text-left"
-                  >
-                    <span className="text-sm font-semibold text-zinc-900 pr-6">{item.q}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`text-zinc-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  {open && <p className="text-sm text-zinc-500 leading-relaxed pb-5 pr-10">{item.a}</p>}
+      {/* Accordion FAQ Layout Section */}
+      <section className="w-full max-w-4xl mx-auto px-6 pb-24">
+        <div className="text-center space-y-3 mb-12">
+          <h2 className="text-3xl font-black tracking-tight text-zinc-900">Frequently Examined Frameworks</h2>
+          <p className="text-sm text-zinc-500 font-medium">Clear answers to fundamental parameters, payment lines, and operational constraints.</p>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((item, idx) => {
+            const open = openFaq === idx;
+            return (
+              <div 
+                key={item.q} 
+                className="bg-white border-2 border-zinc-900 transition-all shadow-[4px_4px_0px_0px_rgba(24,24,27,1)]"
+              >
+                <button
+                  onClick={() => setOpenFaq(open ? null : idx)}
+                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+                >
+                  <span className="text-base font-black text-zinc-950 pr-6">{item.q}</span>
+                  <ChevronDown
+                    size={20}
+                    className={`text-zinc-500 shrink-0 transform transition-transform duration-200 ${open ? 'rotate-180 text-amber-600' : ''}`}
+                    strokeWidth={2.5}
+                  />
+                </button>
+                <div 
+                  className={`transition-all duration-200 ease-in-out overflow-hidden ${
+                    open ? 'max-h-60 border-t border-zinc-100' : 'max-h-0'
+                  }`}
+                >
+                  <p className="text-sm text-zinc-600 leading-relaxed p-6 bg-zinc-50 font-medium">
+                    {item.a}
+                  </p>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Industrial High-Contrast Bottom Conversion Callout */}
+      <section className="w-full max-w-7xl mx-auto px-6 pb-24">
+        <div className="border-4 border-zinc-900 bg-amber-400 p-10 md:p-16 text-center shadow-[10px_10px_0px_0px_rgba(24,24,27,1)] relative overflow-hidden">
+          <div className="absolute left-0 bottom-0 translate-y-6 -translate-x-6 w-32 h-32 bg-white/20 rounded-full blur-2xl pointer-events-none" />
+          
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-950 max-w-2xl mx-auto leading-none">
+            Consolidate your customer interactions today.
+          </h2>
+          <p className="text-base text-zinc-900 font-semibold mt-4 max-w-md mx-auto leading-relaxed">
+            Initialize your permanent Free dashboard tier instantly. Elevate and pivot configurations as message routing scale intensifies.
+          </p>
+          
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Link
+              href="/auth?mode=signup"
+              className="w-full sm:w-auto px-8 py-4 bg-zinc-950 text-white text-sm font-black tracking-tight hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+            >
+              Deploy Free Architecture <ArrowRight size={16} strokeWidth={2.5} />
+            </Link>
+            <a
+              href="#"
+              className="w-full sm:w-auto px-6 py-4 bg-white text-zinc-950 border-2 border-zinc-900 text-sm font-bold hover:bg-zinc-50 transition-colors"
+            >
+              Speak to Product Engineers
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="w-full px-6 md:px-10 pb-20">
-        <div className="max-w-6xl mx-auto border border-zinc-200 bg-amber-50/50 p-10 md:p-14 text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-zinc-900">
-            Ready to run your business from one place?
-          </h2>
-          <p className="text-sm text-zinc-500 mt-3 max-w-md mx-auto">
-            Start free, no card required. Upgrade whenever your conversations outgrow the basics.
+      {/* Refined Terminal Footer */}
+      <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-zinc-950 flex items-center justify-center">
+              <Zap size={12} className="text-amber-400 fill-amber-400" />
+            </div>
+            <span className="text-sm font-bold text-zinc-900 tracking-tight">inFlow Automation Corp</span>
+          </div>
+          <p className="text-xs font-medium text-zinc-400">
+            © {new Date().getFullYear()} inFlow Core Systems. All programmatic rights reserved.
           </p>
-          <Link
-            href="/auth?mode=signup"
-            className="inline-block mt-6 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 text-sm font-semibold transition-colors"
-          >
-            Start for free
-          </Link>
         </div>
-      </section>
-
-      <footer className="w-full px-6 md:px-10 py-8 border-t border-zinc-200 text-center">
-        <p className="text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
       </footer>
     </div>
   );
