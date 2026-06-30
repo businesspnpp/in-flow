@@ -14,19 +14,23 @@ import ReviewLink from '@/components/plugins/ReviewLink';
 import PromoBlast from '@/components/plugins/PromoBlast';
 import { isMissingTableError } from '@/lib/inflow-client';
 import {
+  Home,
   ArrowLeft,
   ArrowRight,
   LogOut,
+  Menu,
   MessageSquare,
   Settings,
   Zap,
+  Calendar,
+  Plug,
+  BarChart3,
   Search,
   Phone,
   Star,
   MoreHorizontal,
   Hash,
   Users,
-  Inbox,
   Paperclip,
   Smile,
   CheckCheck,
@@ -55,7 +59,7 @@ type Message = {
   created_at: string;
 };
 
-type GlobalTab = 'chats' | 'tools' | 'settings';
+type GlobalTab = 'home' | 'chats' | 'shortcuts' | 'bookings' | 'linkapps' | 'reports' | 'settings';
 
 type ToolId =
   | 'invoice'
@@ -189,6 +193,26 @@ const CHANNEL_DOT: Record<string, string> = {
   Instagram: 'bg-zinc-500',
   Email:     'bg-blue-500',
   SMS:       'bg-slate-500',
+};
+
+const NAV_ITEMS: { tab: GlobalTab; label: string; Icon: LucideIcon }[] = [
+  { tab: 'home', label: 'Home', Icon: Home },
+  { tab: 'chats', label: 'Chats', Icon: MessageSquare },
+  { tab: 'shortcuts', label: 'Shortcuts', Icon: Zap },
+  { tab: 'bookings', label: 'Bookings & Orders', Icon: Calendar },
+  { tab: 'linkapps', label: 'Link Apps', Icon: Plug },
+  { tab: 'reports', label: 'Reports', Icon: BarChart3 },
+  { tab: 'settings', label: 'Settings', Icon: Settings },
+];
+
+const VIEW_TITLES: Record<GlobalTab, string> = {
+  home: 'Home',
+  chats: 'Chats',
+  shortcuts: 'Shortcuts',
+  bookings: 'Bookings & Orders',
+  linkapps: 'Link Apps',
+  reports: 'Reports',
+  settings: 'Settings',
 };
 
 // ─── Mock contacts ────────────────────────────────────────────────────────────
@@ -422,7 +446,8 @@ const INITIAL_MESSAGES_BY_CONTACT: Record<string, Message[]> = MOCK_CONVERSATION
 export default function Dashboard() {
   const router = useRouter();
   const [loadingSession, setLoadingSession]   = useState(true);
-  const [globalTab, setGlobalTab]             = useState<GlobalTab>('chats');
+  const [globalTab, setGlobalTab]             = useState<GlobalTab>('home');
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [activeContact, setActiveContact]     = useState<string | null>(null);
   const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>(INITIAL_MESSAGES_BY_CONTACT);
   const [input, setInput]                     = useState('');
@@ -669,7 +694,7 @@ export default function Dashboard() {
       // Auto-open the suggested tool and switch to Tools tab
       if (data.tool) {
         setActiveToolId(data.tool);
-        setGlobalTab('tools');
+        setGlobalTab('shortcuts');
       }
     } catch (err) {
       console.error('AI assist error:', err);
@@ -762,51 +787,106 @@ export default function Dashboard() {
       `}</style>
 
       {/* ─── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-20 bg-white/95 backdrop-blur-sm border-r border-zinc-200 items-center py-4 gap-2 z-20">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center">
-          <img src="/dock-icon.svg" alt="Dock icon" className="h-14 w-14" />
+      <aside
+        className={`hidden md:flex relative flex-col bg-[#0B1528] border-r border-[#16233f] text-white transition-[width] duration-200 ease-in-out ${
+          sidebarExpanded ? 'w-60' : 'w-16'
+        }`}
+      >
+        <div className="flex items-center justify-between px-3 py-3 border-b border-[#16233f]">
+          {sidebarExpanded ? (
+            <img src="/dock-logo.svg" alt="Dock logo" className="h-8 w-auto" />
+          ) : (
+            <img src="/dock-icon.svg" alt="Dock icon" className="h-8 w-8 mx-auto" />
+          )}
+          <button
+            type="button"
+            onClick={() => setSidebarExpanded((prev) => !prev)}
+            className="h-9 w-9 flex items-center justify-center rounded-md text-white/90 hover:bg-white/10 hover:text-white transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={18} strokeWidth={2.5} />
+          </button>
         </div>
 
-        {[
-          { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} strokeWidth={2.25} />, label: 'Inbox'    },
-          { tab: 'tools'    as GlobalTab, icon: <Zap      size={20} strokeWidth={2.25} />, label: 'Tools'    },
-          { tab: 'settings' as GlobalTab, icon: <Settings size={20} strokeWidth={2.25} />, label: 'Settings' },
-        ].map(({ tab, icon, label }) => (
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
+          {NAV_ITEMS.map(({ tab, label, Icon }) => {
+            const isActive = globalTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => {
+                  setGlobalTab(tab);
+                  if (tab !== 'chats') setActiveContact(null);
+                }}
+                title={label}
+                className={`w-full h-11 rounded-md flex items-center transition-colors ${
+                  sidebarExpanded ? 'px-3 gap-3 justify-start' : 'justify-center'
+                } ${
+                  isActive
+                    ? 'bg-[#FB5801] text-white'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Icon size={20} strokeWidth={2.25} className="flex-shrink-0" />
+                {sidebarExpanded && <span className="text-sm font-semibold truncate">{label}</span>}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="absolute left-0 right-0 bottom-0 px-2 pb-3">
           <button
-            key={tab}
-            onClick={() => setGlobalTab(tab)}
-            title={label}
-            className={`relative flex h-10 w-10 items-center justify-center transition-colors ${
-              globalTab === tab
-                ? 'bg-amber-600/15 text-amber-700'
-                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700'
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            title="Sign out"
+            className={`w-full h-11 rounded-md flex items-center text-white/80 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40 ${
+              sidebarExpanded ? 'px-3 gap-3 justify-start' : 'justify-center'
             }`}
           >
-            {icon}
-            {globalTab === tab && (
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-0.5 bg-amber-500" />
-            )}
+            <LogOut size={20} strokeWidth={2.25} className="flex-shrink-0" />
+            {sidebarExpanded && <span className="text-sm font-semibold">Logout</span>}
           </button>
-        ))}
-
-        <div className="flex-1" />
-
-        <button
-          onClick={handleSignOut}
-          disabled={isSigningOut}
-          title="Sign out"
-          className="flex h-10 w-10 items-center justify-center text-zinc-400 hover:bg-red-50 hover:text-red-400 transition-colors disabled:opacity-40"
-        >
-          <LogOut size={20} strokeWidth={2.25} />
-        </button>
+        </div>
       </aside>
 
       {/* ─── Main panel ── */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-zinc-50">
+        <div className="flex-shrink-0 border-b border-zinc-200 bg-white px-4 py-4 md:px-6">
+          <h1 className="text-2xl font-black tracking-tight text-zinc-900">{VIEW_TITLES[globalTab]}</h1>
+        </div>
+
+        {globalTab === 'home' && (
+          <div className="flex-1 overflow-y-auto px-4 py-6 md:px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="if-card-soft p-5">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Today</p>
+                <p className="mt-2 text-2xl font-black text-zinc-900">18</p>
+                <p className="text-sm text-zinc-500 mt-1">New messages across channels</p>
+              </div>
+              <div className="if-card-soft p-5">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Bookings</p>
+                <p className="mt-2 text-2xl font-black text-zinc-900">7</p>
+                <p className="text-sm text-zinc-500 mt-1">Appointments scheduled this week</p>
+              </div>
+              <div className="if-card-soft p-5">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Revenue</p>
+                <p className="mt-2 text-2xl font-black text-zinc-900">R12,400</p>
+                <p className="text-sm text-zinc-500 mt-1">Pending + paid invoices this month</p>
+              </div>
+            </div>
+            <div className="if-card-soft p-5 mt-4">
+              <p className="text-base font-semibold text-zinc-900">Friendly business overview dashboard</p>
+              <p className="text-sm text-zinc-500 mt-2">
+                This is your home snapshot. Use Chats to answer customers quickly, Shortcuts for automation tools,
+                and Reports for plain-English performance insights.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* ══ CHATS TAB ══════════════════════════════════════════════════════════ */}
         {globalTab === 'chats' && (
-          <>
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* ── Conversation list ── */}
             <div
               className={`flex-shrink-0 flex flex-col bg-white border-r border-zinc-200 overflow-hidden
@@ -996,7 +1076,7 @@ export default function Dashboard() {
                           : ' — check the pre-fill before sending.'}
                       </p>
                       <button
-                        onClick={() => { setActiveToolId(aiExtraction.tool!); setGlobalTab('tools'); }}
+                        onClick={() => { setActiveToolId(aiExtraction.tool!); setGlobalTab('shortcuts'); }}
                         className="flex-shrink-0 text-[10px] font-semibold text-amber-700 bg-amber-600/20 px-2 py-1 hover:bg-amber-600/30 transition"
                       >
                         Open tool →
@@ -1243,7 +1323,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setActiveToolId('booked');
-                            setGlobalTab('tools');
+                            setGlobalTab('shortcuts');
                           }}
                           className={`w-full px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'booking'
@@ -1258,7 +1338,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setActiveToolId('invoice');
-                            setGlobalTab('tools');
+                            setGlobalTab('shortcuts');
                           }}
                           className={`w-full px-3 py-2 text-left border transition-colors ${
                             aiDetectedIntent === 'invoice'
@@ -1435,7 +1515,7 @@ export default function Dashboard() {
                             onClick={() => {
                               setShowMobileIntel(false);
                               setActiveToolId('booked');
-                              setGlobalTab('tools');
+                              setGlobalTab('shortcuts');
                             }}
                             className={`w-full px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'booking'
@@ -1451,7 +1531,7 @@ export default function Dashboard() {
                             onClick={() => {
                               setShowMobileIntel(false);
                               setActiveToolId('invoice');
-                              setGlobalTab('tools');
+                              setGlobalTab('shortcuts');
                             }}
                             className={`w-full px-3 py-2 text-left border transition-colors ${
                               aiDetectedIntent === 'invoice'
@@ -1475,11 +1555,25 @@ export default function Dashboard() {
                 />
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {/* ══ TOOLS TAB ══════════════════════════════════════════════════════════ */}
-        {globalTab === 'tools' && (
+        {globalTab === 'bookings' && (
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
+            <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 space-y-4">
+              <div className="if-card-soft p-5">
+                <p className="text-base font-semibold text-zinc-900">Appointments, calendar, and sales tracking</p>
+                <p className="text-sm text-zinc-500 mt-2">
+                  This page is ready for your bookings and orders workspace. We can connect your BookedIt and order
+                  tracking flow here next.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══ SHORTCUTS TAB ══════════════════════════════════════════════════════ */}
+        {globalTab === 'shortcuts' && (
           <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
             <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6">
 
@@ -1621,7 +1715,7 @@ export default function Dashboard() {
                     <div className="mt-3 flex items-start gap-2.5 px-4">
                       <span className="text-amber-500 text-xs mt-0.5">↑</span>
                       <p className="text-xs text-zinc-400">
-                        Open a conversation in Inbox first — actions will send directly into that chat.
+                        Open a conversation in Chats first — actions will send directly into that chat.
                       </p>
                     </div>
                   )}
@@ -1632,8 +1726,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ══ SETTINGS TAB ═══════════════════════════════════════════════════════ */}
-        {globalTab === 'settings' && (
+        {/* ══ LINK APPS TAB ══════════════════════════════════════════════════════ */}
+        {globalTab === 'linkapps' && (
           <div className="flex-1 overflow-y-auto overflow-x-hidden bg-zinc-50">
             <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
               <div className="md:flex md:gap-8 w-full">
@@ -1663,26 +1757,48 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+
+        {globalTab === 'reports' && (
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
+            <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 space-y-4">
+              <div className="if-card-soft p-5">
+                <p className="text-base font-semibold text-zinc-900">Simple, plain-English business analytics</p>
+                <p className="text-sm text-zinc-500 mt-2">
+                  Reports will summarize chats, conversions, bookings, and revenue in everyday language for quick decisions.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {globalTab === 'settings' && (
+          <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
+            <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 space-y-4">
+              <div className="if-card-soft p-5">
+                <p className="text-base font-semibold text-zinc-900">Account and profile configurations</p>
+                <p className="text-sm text-zinc-500 mt-2">
+                  Manage profile details, password, notification preferences, and team access from this settings page.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ─── Bottom nav (mobile) ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-zinc-50">
-        <div className="flex items-center justify-around px-2 py-2">
-          {[
-            { tab: 'chats'    as GlobalTab, icon: <Inbox    size={20} />, label: 'Inbox'    },
-            { tab: 'tools'    as GlobalTab, icon: <Zap      size={20} />, label: 'Tools'    },
-            { tab: 'settings' as GlobalTab, icon: <Settings size={20} />, label: 'Settings' },
-          ].map(({ tab, icon, label }) => (
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white">
+        <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide">
+          {NAV_ITEMS.map(({ tab, Icon, label }) => (
             <button
               key={tab}
               onClick={() => { setGlobalTab(tab); if (tab !== 'chats') setActiveContact(null); }}
-              className={`flex flex-col items-center gap-1 px-5 py-2 transition-colors ${
+              className={`flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-md transition-colors ${
                 globalTab === tab
                   ? 'text-amber-700 bg-amber-600/10'
                   : 'text-zinc-400 hover:text-zinc-500'
               }`}
             >
-              {icon}
+              <Icon size={18} />
               <span className="text-[10px] font-medium">{label}</span>
             </button>
           ))}
