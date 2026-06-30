@@ -117,8 +117,11 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
 
   const headerTitle = headerConfig.title ?? activeItem.title;
   const headerSubtitle = headerConfig.subtitle ?? defaultHeader.subtitle;
-  const showSearch = headerConfig.showSearch ?? defaultHeader.showSearch;
-  const searchPlaceholder = headerConfig.searchPlaceholder ?? defaultHeader.searchPlaceholder;
+  const isChatsRoute = pathname === '/dashboard/chats' || pathname.startsWith('/dashboard/chats/');
+  const showSearch = isChatsRoute ? true : (headerConfig.showSearch ?? defaultHeader.showSearch);
+  const searchPlaceholder = isChatsRoute
+    ? 'Search chats or customers'
+    : (headerConfig.searchPlaceholder ?? defaultHeader.searchPlaceholder);
   const isLinkAppsRoute = pathname === '/dashboard/link-apps' || pathname.startsWith('/dashboard/link-apps/');
 
   async function handleSignOut() {
