@@ -162,7 +162,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
           <h1 className="text-2xl font-black tracking-tight text-zinc-900">{activeItem.title}</h1>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-6">{children}</div>
+        <div className="flex-1 overflow-hidden flex flex-col">{children}</div>
       </div>
 
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white">

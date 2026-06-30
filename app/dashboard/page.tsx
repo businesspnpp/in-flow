@@ -1,6 +1,7 @@
 export default function DashboardPage() {
   return (
-    <div className="space-y-4">
+    <div className="flex-1 overflow-y-auto px-4 py-6 md:px-6">
+      <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="if-card-soft p-5">
           <p className="text-xs uppercase tracking-wide text-zinc-500">Today</p>
@@ -26,6 +27,7 @@ export default function DashboardPage() {
           and Reports for plain-English performance insights.
         </p>
       </div>
+    </div>
     </div>
   );
 }
