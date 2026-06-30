@@ -220,28 +220,54 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       {/* Body */}
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         {/* Left panel */}
-        <aside className="hidden md:flex flex-col justify-between p-14 lg:p-20 bg-zinc-50 border-r border-zinc-200">
-          <div className="max-w-lg">
-            <h1 className="text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-900 leading-tight">
-              Business communications,<br />built for speed.
+        <aside className="hidden md:flex relative flex-col justify-between p-14 lg:p-20 overflow-hidden bg-zinc-950">
+          {/* Decorative gradient + glow layers */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-700/40 via-zinc-950 to-zinc-950" />
+          <div className="pointer-events-none absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full bg-amber-500/30 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 -left-20 w-[360px] h-[360px] rounded-full bg-orange-600/20 blur-3xl" />
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
+              backgroundSize: '48px 48px',
+            }}
+          />
+
+          {/* Content */}
+          <div className="relative max-w-lg">
+            <div className="flex items-center gap-2 mb-10">
+              <div className="w-8 h-8 bg-amber-500 flex items-center justify-center">
+                <Zap size={18} className="text-zinc-950" strokeWidth={2.5} />
+              </div>
+              <span className="text-lg font-semibold text-white tracking-tight">inFlow</span>
+            </div>
+
+            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.05]">
+              Run your business
+              <br />
+              <span className="text-amber-400">#fromWhatsApp</span>
             </h1>
-            <p className="text-base text-zinc-500 mt-4 max-w-md leading-relaxed">
+            <p className="text-base text-zinc-300 mt-5 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
+            </p>
+            <p className="text-sm text-zinc-500 mt-3 tracking-wide">
+              Built for South African small businesses · Free to start
             </p>
           </div>
 
-          <div className="space-y-3 max-w-md">
-            <div className="border border-zinc-200 bg-white p-5">
-              <p className="text-sm font-semibold text-zinc-900 mb-1">Unified inbox</p>
-              <p className="text-sm text-zinc-500">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
+          <div className="relative space-y-3 max-w-md">
+            <div className="border border-white/10 bg-white/5 backdrop-blur-sm p-5">
+              <p className="text-sm font-semibold text-white mb-1">Unified inbox</p>
+              <p className="text-sm text-zinc-400">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
             </div>
-            <div className="border border-zinc-200 bg-white p-5">
-              <p className="text-sm font-semibold text-zinc-900 mb-1">Instant tools</p>
-              <p className="text-sm text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
+            <div className="border border-white/10 bg-white/5 backdrop-blur-sm p-5">
+              <p className="text-sm font-semibold text-white mb-1">Instant tools</p>
+              <p className="text-sm text-zinc-400">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
           </div>
 
-          <p className="text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
+          <p className="relative text-xs text-zinc-500">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
         {/* Right panel */}
