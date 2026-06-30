@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 export type DashboardHeaderConfig = {
   title?: string;
@@ -21,13 +21,21 @@ const DashboardHeaderContext = createContext<DashboardHeaderContextValue | null>
 export function DashboardHeaderProvider({ children }: { children: ReactNode }) {
   const [headerConfig, setHeaderConfigState] = useState<DashboardHeaderConfig>({});
 
+  const setHeaderConfig = useCallback((next: DashboardHeaderConfig) => {
+    setHeaderConfigState(next);
+  }, []);
+
+  const clearHeaderConfig = useCallback(() => {
+    setHeaderConfigState({});
+  }, []);
+
   const value = useMemo<DashboardHeaderContextValue>(
     () => ({
       headerConfig,
-      setHeaderConfig: (next) => setHeaderConfigState(next),
-      clearHeaderConfig: () => setHeaderConfigState({}),
+      setHeaderConfig,
+      clearHeaderConfig,
     }),
-    [headerConfig],
+    [clearHeaderConfig, headerConfig, setHeaderConfig],
   );
 
   return <DashboardHeaderContext.Provider value={value}>{children}</DashboardHeaderContext.Provider>;
