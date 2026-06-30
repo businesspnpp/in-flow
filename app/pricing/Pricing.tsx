@@ -252,13 +252,13 @@ export default function PricingPage() {
 
       {/* Tiers */}
       <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto flex flex-row items-stretch overflow-x-auto gap-0 [&>*+*]:-ml-px">
+        <div className="max-w-6xl mx-auto pt-4 flex flex-row items-stretch overflow-x-auto gap-4 md:gap-5 [&>*+*]:-ml-px">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col flex-1 min-w-[280px] p-8 md:p-10 border relative ${
+                className={`flex flex-col flex-1 min-w-[340px] md:min-w-[380px] p-8 md:p-10 border relative ${
                   tier.highlighted ? 'border-amber-600 bg-amber-50/40' : 'border-zinc-200 bg-white'
                 }`}
               >
