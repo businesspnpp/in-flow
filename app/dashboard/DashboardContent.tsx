@@ -170,7 +170,7 @@ export default function Dashboard() {
           {" "}
           <div>
             {" "}
-            <p className="text-sm font-semibold text-zinc-900">inFlow</p>{" "}
+            <p className="text-sm font-semibold text-zinc-900">Dock</p>{" "}
             <p className="text-xs text-zinc-500">Production Dashboard</p>{" "}
           </div>{" "}
           <div className="flex items-center gap-3">

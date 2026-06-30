@@ -101,7 +101,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
     <div className="flex items-center justify-center min-h-screen bg-zinc-50 px-4 py-8">
       <div className="if-card w-full max-w-3xl p-8">
         <div className="mb-8 border-b border-zinc-200 pb-6">
-          <p className="text-xs uppercase tracking-widest text-amber-600 font-semibold">Welcome to inFlow</p>
+          <p className="text-xs uppercase tracking-widest text-amber-600 font-semibold">Welcome to Dock</p>
           <h1 className="mt-4 text-3xl font-bold text-zinc-900">Set up your business account</h1>
           <p className="mt-3 text-sm text-zinc-600">
             Create your business profile. You will link your communication channels inside the main dashboard.

@@ -737,7 +737,7 @@ export default function Dashboard() {
       <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 border-2 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-xs text-zinc-500">Loading inFlow…</p>
+          <p className="text-xs text-zinc-500">Loading Dock…</p>
         </div>
       </div>
     );
@@ -763,8 +763,8 @@ export default function Dashboard() {
 
       {/* ─── Desktop sidebar ── */}
       <aside className="hidden md:flex flex-col w-16 bg-white/95 backdrop-blur-sm border-r border-zinc-200 items-center py-4 gap-2 z-20">
-        <div className="mb-4 flex h-9 w-9 items-center justify-center bg-amber-600">
-          <span className="text-xs font-bold text-white">iF</span>
+        <div className="mb-4 flex h-9 w-9 items-center justify-center">
+          <img src="/dock-icon.svg" alt="Dock icon" className="h-9 w-9" />
         </div>
 
         {[

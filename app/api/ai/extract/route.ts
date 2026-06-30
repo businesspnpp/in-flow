@@ -145,7 +145,7 @@ function buildSystemInstruction(catalogItems: InflowCatalogItem[]): string {
           .join('\n')
       : '(No catalog configured yet)';
 
-  return `You are inFlow's AI extraction engine.
+  return `You are Dock's AI extraction engine.
 
 Return ONLY valid JSON matching the response schema.
 Infer the merchant intent from the conversation.

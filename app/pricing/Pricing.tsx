@@ -149,11 +149,11 @@ const faqs = [
     a: 'Yes. The Free tier is built as a baseline infrastructure for micro-enterprises, not a hidden time-limited trial. There is no expiration timeline. You get access to 1 channel, 1 automation tool tool, and up to 40 managed interactions per month with absolutely zero card commitments required.',
   },
   {
-    q: 'What is inFlow Flex and how does the billing mechanism activate?',
+    q: 'What is Dock Flex and how does the billing mechanism activate?',
     a: 'Flex is designed for businesses with high seasonal variability. It functions on a baseline subscription of R49/month plus a transactional fee of R1.20 per customer interaction fully processed by our automation tools. To keep your costs predictable, Flex includes a guardrail system: if your transactional volume pushes your total cost above the standard flat Starter rate, your billing auto-caps at the Starter fee for that cycle.',
   },
   {
-    q: 'How do inFlow Circles group discounts operate?',
+    q: 'How do Dock Circles group discounts operate?',
     a: 'Inspired by collaborative stokvel dynamics, Circles allow 2 or more separate businesses to pool their networks to claim collective volume discounts. Each business operates completely independently with isolated messaging records, separate customer lists, and secure databases. Discounts scale naturally based on collective circle sizing: 10% off for 2-4 members, 20% off for 5-9 members, and 30% off for groups of 10 or more.',
   },
   {
@@ -194,10 +194,8 @@ export default function PremiumPricingPage() {
       <header className="w-full border-b border-zinc-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 bg-zinc-950 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
-              <Zap size={18} className="text-amber-400 fill-amber-400" strokeWidth={1.5} />
-            </div>
-            <span className="text-xl font-bold text-zinc-900 tracking-tight">inFlow</span>
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-9 h-9 transform group-hover:scale-105 transition-transform duration-200" />
+            <span className="text-xl font-bold text-zinc-900 tracking-tight">Dock</span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-10">
@@ -299,7 +297,7 @@ export default function PremiumPricingPage() {
           <div className="bg-zinc-50 p-4 border border-zinc-200 flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-zinc-400 uppercase tracking-wide">Suggested Configuration</p>
-              <p className="text-lg font-black text-zinc-900 mt-0.5">inFlow {suggestedPlan.name} Plan</p>
+              <p className="text-lg font-black text-zinc-900 mt-0.5">Dock {suggestedPlan.name} Plan</p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-black text-amber-700">{suggestedPlan.cost}</p>
@@ -452,7 +450,7 @@ export default function PremiumPricingPage() {
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-amber-900 bg-amber-100 px-2.5 py-1 uppercase border border-amber-200">
                 VARIABLE METRICS
               </span>
-              <h3 className="text-3xl font-black tracking-tight text-zinc-900">inFlow Flex Billing Plan</h3>
+              <h3 className="text-3xl font-black tracking-tight text-zinc-900">Dock Flex Billing Plan</h3>
               <p className="text-sm font-medium text-zinc-500 leading-relaxed max-w-md">
                 Engineered for seasonal enterprises or businesses fluctuating on unpredictable demand trends. Retain operations on near-zero cost parameters when trade quietens down.
               </p>
@@ -482,7 +480,7 @@ export default function PremiumPricingPage() {
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-amber-900 bg-amber-100 px-2.5 py-1 uppercase border border-amber-200">
                 COMMUNITY NETWORKS
               </span>
-              <h3 className="text-3xl font-black tracking-tight text-zinc-900">inFlow Circles Pools</h3>
+              <h3 className="text-3xl font-black tracking-tight text-zinc-900">Dock Circles Pools</h3>
               <p className="text-sm font-medium text-zinc-500 leading-relaxed max-w-md">
                 Stokvel-inspired localized community cost pooling. Group purchasing scale for decentralized independent operators to collapse structural overhead.
               </p>
@@ -517,7 +515,7 @@ export default function PremiumPricingPage() {
             ))}
           </div>
           <h4 className="text-2xl md:text-4xl font-black tracking-tight text-zinc-900 max-w-3xl mx-auto leading-tight">
-            “Deploying inFlow across our WhatsApp channels automated over 70% of our frontline booking capture in under three weeks. The interface design and flexible regional settlement options are an absolute standard.”
+            “Deploying Dock across our WhatsApp channels automated over 70% of our frontline booking capture in under three weeks. The interface design and flexible regional settlement options are an absolute standard.”
           </h4>
           <div className="space-y-0.5">
             <p className="text-sm font-black text-zinc-900">Muzi Khumalo</p>
@@ -657,13 +655,11 @@ export default function PremiumPricingPage() {
       <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-zinc-950 flex items-center justify-center">
-              <Zap size={12} className="text-amber-400 fill-amber-400" />
-            </div>
-            <span className="text-sm font-bold text-zinc-900 tracking-tight">inFlow Automation Corp</span>
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-6 h-6" />
+            <span className="text-sm font-bold text-zinc-900 tracking-tight">Dock Automation Corp</span>
           </div>
           <p className="text-xs font-medium text-zinc-400">
-            © {new Date().getFullYear()} inFlow Core Systems. All programmatic rights reserved.
+            © {new Date().getFullYear()} Dock Core Systems. All programmatic rights reserved.
           </p>
         </div>
       </footer>

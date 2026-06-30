@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
-import { LogOut, Mail, Lock, Zap, HelpCircle, ArrowRight } from 'lucide-react';
+import { LogOut, Mail, Lock, HelpCircle, ArrowRight } from 'lucide-react';
 
 interface AuthProps {
   onSignedIn: () => void;
@@ -220,10 +220,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       <header className="w-full border-b border-zinc-200 bg-white">
         <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
-              <Zap size={16} className="text-white" strokeWidth={2.5} />
-            </div>
-            <span className="text-base font-semibold text-zinc-900 tracking-tight">inFlow</span>
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-7 h-7" />
+            <span className="text-base font-semibold text-zinc-900 tracking-tight">Dock</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-10">
@@ -291,10 +289,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           {/* Content */}
           <div className="relative max-w-lg">
             <div className="flex items-center gap-2 mb-10">
-              <div className="w-8 h-8 bg-amber-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-lg font-semibold text-zinc-900 tracking-tight">inFlow</span>
+              <img src="/dock-icon.svg" alt="Dock icon" className="w-8 h-8" />
+              <span className="text-lg font-semibold text-zinc-900 tracking-tight">Dock</span>
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.2]">
@@ -355,7 +351,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             </div>
           </div>
 
-          <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
+          <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} Dock. All rights reserved.</p>
         </aside>
 
         {/* Right panel (Responsive Card Container Layout) */}
@@ -583,7 +579,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           
           {/* Mobile Footer Area */}
           <p className="block md:hidden text-center text-[10px] text-zinc-400 mt-8">
-            © {new Date().getFullYear()} inFlow. All rights reserved.
+            © {new Date().getFullYear()} Dock. All rights reserved.
           </p>
         </section>
       </div>

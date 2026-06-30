@@ -33,7 +33,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
   const [voucherCode,   setVoucherCode]   = useState('INFLOW10');
   const [discountText,  setDiscountText]  = useState('10% off');
   const [promoEmoji,    setPromoEmoji]    = useState('🎉');
-  const [bookingLink,   setBookingLink]   = useState('inflow.to/book/biz_441');
+  const [bookingLink,   setBookingLink]   = useState('dock.to/book/biz_441');
   const [expiry,        setExpiry]        = useState('7 days');
   const [customMessage, setCustomMessage] = useState('');
   const [sending,       setSending]       = useState(false);

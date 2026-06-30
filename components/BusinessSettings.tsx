@@ -112,7 +112,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
     const oauthError = params.get('error');
 
     if (oauthStatus === 'success' && channel) {
-      setSuccess(`${channel.charAt(0).toUpperCase() + channel.slice(1)} connected to inFlow.`);
+      setSuccess(`${channel.charAt(0).toUpperCase() + channel.slice(1)} connected to Dock.`);
       setActiveChannel(channel);
       setChannelStatus(prev => ({ ...prev, [channel]: true }));
       window.history.replaceState({}, '', window.location.pathname);
@@ -201,7 +201,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
               .then(async (res) => {
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data?.error || `Error ${res.status}`);
-                setSuccess('WhatsApp Business connected to inFlow.');
+                setSuccess('WhatsApp Business connected to Dock.');
                 if (data.business) onUpdated(data.business);
                 setChannelStatus(prev => ({ ...prev, whatsapp: true }));
                 window.sessionStorage.removeItem('wa_embedded_signup');
@@ -278,7 +278,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       howItWorks: [
         "Authenticate your official business account via Meta's dialog.",
         'Select the WhatsApp phone number you want to track.',
-        'Inbound messages will stream into your inFlow inbox.',
+        'Inbound messages will stream into your Dock inbox.',
       ],
     },
     {
@@ -293,7 +293,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       howItWorks: [
         'You will be redirected to Facebook to grant Instagram messaging permissions.',
         'Your Instagram Professional account will be linked automatically.',
-        'DMs from followers will appear in your inFlow inbox.',
+        'DMs from followers will appear in your Dock inbox.',
       ],
     },
     {
@@ -308,7 +308,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
       howItWorks: [
         'You will be redirected to Facebook to select your Business Page.',
         'Grant messaging permissions for the selected Page.',
-        'Page conversations will route into your inFlow inbox.',
+        'Page conversations will route into your Dock inbox.',
       ],
     },
     {
@@ -332,7 +332,7 @@ export default function BusinessSettings({ business, onUpdated }: Props) {
         <div>
           <p className="text-xs font-bold uppercase tracking-tight text-zinc-500 mb-1">Connected Channels</p>
           <p className="text-xs text-zinc-500">
-            Manage platform channels connected to your inFlow account.
+            Manage platform channels connected to your Dock account.
           </p>
         </div>
 

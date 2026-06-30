@@ -7,7 +7,7 @@ export default function PrivacyPage() {
         <div className="mb-10 border-b border-zinc-200 pb-6">
           {" "}
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1">
-            inFlow
+            Dock
           </p>{" "}
           <h1 className="text-2xl font-bold text-zinc-900">Privacy Policy</h1>{" "}
           <p className="text-sm text-zinc-500 mt-1">
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
             </h2>{" "}
             <p>
               {" "}
-              InFlow ("we," "us," "our") operates the InFlow platform (the
+              Dock ("we," "us," "our") operates the Dock platform (the
               "Service"). This Privacy Policy explains how we collect, use,
               disclose, and safeguard your information when you use our
               services. If you do not agree with our practices, please do not
@@ -239,11 +239,11 @@ export default function PrivacyPage() {
                 To delete data retrieved via Meta integrations
                 (WhatsApp/Instagram), email{" "}
                 <a
-                  href="mailto:privacy@inflow.app"
+                  href="mailto:privacy@dock.app"
                   className="font-semibold text-red-700 underline"
                 >
                   {" "}
-                  privacy@inflow.app{" "}
+                  privacy@dock.app{" "}
                 </a>{" "}
                 . All connected platform data will be purged from active servers
                 within 30 days. Confirmation will be sent upon completion.{" "}
@@ -313,27 +313,27 @@ export default function PrivacyPage() {
             </h2>{" "}
             <div className="border border-zinc-200 bg-zinc-50 p-5">
               {" "}
-              <p className="font-semibold text-zinc-900 mb-2">InFlow</p>{" "}
+              <p className="font-semibold text-zinc-900 mb-2">Dock</p>{" "}
               <p className="text-zinc-600 mb-1">
                 {" "}
                 Privacy inquiries and data subject requests:{" "}
                 <a
-                  href="mailto:privacy@inflow.app"
+                  href="mailto:privacy@dock.app"
                   className="text-amber-700 font-semibold underline"
                 >
                   {" "}
-                  privacy@inflow.app{" "}
+                  privacy@dock.app{" "}
                 </a>{" "}
               </p>{" "}
               <p className="text-zinc-600">
                 {" "}
                 General support:{" "}
                 <a
-                  href="mailto:support@inflow.app"
+                  href="mailto:support@dock.app"
                   className="text-amber-700 font-semibold underline"
                 >
                   {" "}
-                  support@inflow.app{" "}
+                  support@dock.app{" "}
                 </a>{" "}
               </p>{" "}
               <p className="text-zinc-500 text-xs mt-3">
@@ -361,7 +361,7 @@ export default function PrivacyPage() {
           </section>{" "}
           <div className="border border-zinc-200 bg-zinc-50 p-5 text-xs text-zinc-500">
             {" "}
-            By using the InFlow Service, you acknowledge that you have read this
+            By using the Dock Service, you acknowledge that you have read this
             Privacy Policy and understand our privacy practices. If you do not
             agree with any part of this policy, please do not use our
             Service.{" "}

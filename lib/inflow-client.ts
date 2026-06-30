@@ -29,7 +29,7 @@ export function buildPublicLink(pathname: string): string {
   const base =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    'https://inflow.to';
+    'https://dock.to';
 
   const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
   const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
