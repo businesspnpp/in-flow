@@ -418,7 +418,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   );
 
   return (
-    <div className="w-full min-w-0 bg-zinc-50">
+    <div className="w-full min-w-0 h-full overflow-y-auto bg-zinc-50">
       <div id="fb-root" />
 
       <div className="w-full p-6 space-y-6">
@@ -442,30 +442,30 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
         )}
 
         {/* OVERVIEW BAR */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6">
-          <h2 className="text-base font-bold text-zinc-900 mb-4">Integrations Overview</h2>
-          <div className="flex flex-wrap gap-16">
+        <div className="bg-white border border-zinc-200 rounded-2xl p-8">
+          <h2 className="text-lg font-bold text-zinc-900 mb-6">Integrations Overview</h2>
+          <div className="grid grid-cols-3 gap-8">
             <div>
-              <p className="text-sm text-zinc-500 mb-1">Active Connections:</p>
-              <p className="text-2xl font-bold text-zinc-900">{connectedCards.filter(c => c.isConnected).length}</p>
+              <p className="text-sm text-zinc-500 mb-2">Active Connections:</p>
+              <p className="text-3xl font-bold text-zinc-900">{connectedCards.filter(c => c.isConnected).length}</p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500 mb-1">Integrations with Issues:</p>
-              <p className="text-2xl font-bold text-red-600">
+              <p className="text-sm text-zinc-500 mb-2">Integrations with Issues:</p>
+              <p className="text-3xl font-bold text-red-600">
                 1 ({connectedCards.find(c => c.hasIssue)?.name})
               </p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500 mb-1">New suggested integrations</p>
-              <p className="text-2xl font-bold text-zinc-300">-</p>
+              <p className="text-sm text-zinc-500 mb-2">New suggested integrations</p>
+              <p className="text-3xl font-bold text-zinc-300">-</p>
             </div>
           </div>
         </div>
 
         {/* ALL INTEGRATIONS PANEL */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-6">
-          <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
-            <h2 className="text-base font-bold text-zinc-900">All Integrations</h2>
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+            <h2 className="text-lg font-bold text-zinc-900">All Integrations</h2>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -474,57 +474,59 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+                  className="pl-9 pr-3 py-2.5 text-sm border border-zinc-200 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
                 />
               </div>
               <button
                 type="button"
-                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 border border-zinc-200 rounded-lg px-3 py-2 hover:bg-zinc-50"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 border border-zinc-200 rounded-lg px-3 py-2.5 hover:bg-zinc-50"
               >
                 Filter <ChevronDown className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <h3 className="text-base font-bold text-zinc-900 mb-3">Connected</h3>
+          <h3 className="text-lg font-bold text-zinc-900 mb-4">Connected</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {filteredConnected.map((card) => {
               const isLoading = loading === card.id;
               return (
                 <div
                   key={card.id}
-                  className={`border rounded-xl p-4 flex flex-col justify-between ${
+                  className={`border rounded-xl p-5 flex flex-col justify-between ${
                     card.hasIssue ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200'
                   }`}
                 >
                   <div>
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-lg overflow-hidden border border-zinc-200">
-                          <card.Icon size={22} />
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-14 h-14 flex items-center justify-center shrink-0 rounded-xl overflow-hidden border border-zinc-200">
+                          <card.Icon size={56} />
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-zinc-900 leading-tight">{card.name}</h4>
-                          <p className="text-xs text-zinc-500 leading-tight mt-0.5 max-w-[180px]">{card.description}</p>
+                          <h4 className="text-base font-bold text-zinc-900 leading-tight">{card.name}</h4>
+                          <p className="text-sm text-zinc-500 leading-snug mt-0.5 max-w-[200px]">{card.description}</p>
                         </div>
                       </div>
-                      {card.hasIssue && <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0" />}
+                      {card.hasIssue && <AlertTriangle className="w-6 h-6 text-orange-500 shrink-0" />}
                     </div>
 
                     {card.hasIssue && (
-                      <p className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5" /> Issue Detected
+                      <p className="text-sm font-semibold text-red-600 mb-3 flex items-center gap-1.5">
+                        <AlertCircle className="w-4 h-4" /> Issue Detected
                       </p>
                     )}
 
-                    <div className="flex gap-8 mt-3 mb-4">
-                      <div>
-                        <p className="text-base font-bold text-zinc-900">{card.mappedFields}</p>
-                        <p className="text-xs text-zinc-500">Mapped fields</p>
-                      </div>
-                      <div>
-                        <p className="text-base font-bold text-zinc-900">{card.syncFrequency}</p>
-                        <p className="text-xs text-zinc-500">Sync Frequency</p>
+                    <div className="border-t border-zinc-200 mt-3 mb-4">
+                      <div className="grid grid-cols-2 divide-x divide-zinc-200">
+                        <div className="pt-3 pr-4">
+                          <p className="text-xl font-bold text-zinc-900">{card.mappedFields}</p>
+                          <p className="text-sm text-zinc-500">Mapped fields</p>
+                        </div>
+                        <div className="pt-3 pl-4">
+                          <p className="text-xl font-bold text-zinc-900">{card.syncFrequency}</p>
+                          <p className="text-sm text-zinc-500">Sync Frequency</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -533,38 +535,38 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                     <div className="flex flex-col gap-2">
                       <button
                         type="button"
-                        className="text-xs font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-2.5 hover:bg-zinc-200 transition-colors"
+                        className="text-sm font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-3.5 hover:bg-zinc-200 transition-colors"
                       >
                         Re-authorize
                       </button>
-                      <div className="flex items-center gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
-                          className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 transition-colors"
+                          className="text-sm font-semibold text-white bg-zinc-900 rounded-lg px-3 py-3.5 hover:bg-zinc-800 transition-colors"
                         >
                           Manage
                         </button>
                         <button
                           type="button"
-                          className="text-xs font-semibold text-zinc-500 px-3 py-2 hover:text-zinc-800 transition-colors"
+                          className="text-sm font-semibold text-zinc-500 border border-zinc-200 rounded-lg px-3 py-3.5 hover:text-zinc-800 hover:bg-zinc-50 transition-colors"
                         >
                           Disconnect
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
                         onClick={card.onConnect || undefined}
                         disabled={isLoading || !card.isReal}
-                        className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 disabled:opacity-100 transition-colors"
+                        className="text-sm font-semibold text-white bg-zinc-900 rounded-lg px-3 py-3.5 hover:bg-zinc-800 disabled:opacity-100 transition-colors"
                       >
                         {isLoading ? 'Connecting…' : 'Manage'}
                       </button>
                       <button
                         type="button"
-                        className="text-xs font-semibold text-zinc-500 px-3 py-2 hover:text-zinc-800 transition-colors"
+                        className="text-sm font-semibold text-zinc-500 border border-zinc-200 rounded-lg px-3 py-3.5 hover:text-zinc-800 hover:bg-zinc-50 transition-colors"
                       >
                         Disconnect
                       </button>
@@ -575,7 +577,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                     <button
                       type="button"
                       onClick={() => setShowTroubleshoot(true)}
-                      className="text-[11px] text-zinc-400 hover:text-zinc-700 mt-2 text-left"
+                      className="text-xs text-zinc-400 hover:text-zinc-700 mt-2 text-left"
                     >
                       Troubleshoot connection
                     </button>
@@ -588,42 +590,44 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* AVAILABLE FOR CONNECTION */}
             <div>
-              <h3 className="text-base font-bold text-zinc-900 mb-3">Available for Connection</h3>
+              <h3 className="text-lg font-bold text-zinc-900 mb-4">Available for Connection</h3>
               <div className="space-y-3">
                 {availableCards.map((card) => (
                   <div
                     key={card.id}
-                    className="border border-zinc-200 rounded-xl p-4"
+                    className="border border-zinc-200 rounded-xl p-5"
                   >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-lg border border-zinc-200">
-                        <card.Icon size={22} />
+                    <div className="flex items-center gap-3.5 mb-4">
+                      <div className="w-14 h-14 flex items-center justify-center shrink-0 rounded-xl overflow-hidden border border-zinc-200">
+                        <card.Icon size={56} />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-zinc-400">{card.name}</p>
-                        <p className="text-xs text-zinc-400 max-w-[160px]">{card.description}</p>
+                        <p className="text-base font-bold text-zinc-400">{card.name}</p>
+                        <p className="text-sm text-zinc-400 max-w-[180px]">{card.description}</p>
                       </div>
                     </div>
-                    <div className="flex gap-8 mb-3">
-                      <div>
-                        <p className="text-base font-bold text-zinc-300">{card.mappedFields}</p>
-                        <p className="text-xs text-zinc-400">Mapped fields</p>
-                      </div>
-                      <div>
-                        <p className="text-base font-bold text-zinc-300">{card.syncFrequency}</p>
-                        <p className="text-xs text-zinc-400">Sync Frequency</p>
+                    <div className="border-t border-zinc-200 mb-4">
+                      <div className="grid grid-cols-2 divide-x divide-zinc-200">
+                        <div className="pt-3 pr-4">
+                          <p className="text-xl font-bold text-zinc-300">{card.mappedFields}</p>
+                          <p className="text-sm text-zinc-400">Mapped fields</p>
+                        </div>
+                        <div className="pt-3 pl-4">
+                          <p className="text-xl font-bold text-zinc-300">{card.syncFrequency}</p>
+                          <p className="text-sm text-zinc-400">Sync Frequency</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
-                        className="flex-1 text-xs font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-2 hover:bg-zinc-200 transition-colors"
+                        className="text-sm font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-3.5 hover:bg-zinc-200 transition-colors"
                       >
                         Connect
                       </button>
                       <button
                         type="button"
-                        className="flex-1 text-xs font-semibold text-white bg-zinc-400 rounded-lg px-3 py-2 cursor-not-allowed"
+                        className="text-sm font-semibold text-white bg-zinc-400 rounded-lg px-3 py-3.5 cursor-not-allowed"
                         disabled
                       >
                         Connect
@@ -636,19 +640,19 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
 
             {/* INTEGRATION LOG */}
             <div>
-              <h3 className="text-base font-bold text-zinc-900 mb-3">Integration Log</h3>
-              <div className="border border-zinc-200 rounded-xl p-4 h-full">
-                <p className="text-sm text-zinc-500 mb-3">Recent Last API events</p>
-                <p className="text-sm text-red-600 font-semibold">Issues: 1</p>
-                <p className="text-xs text-zinc-400 mt-1">events ali event sent ago</p>
+              <h3 className="text-lg font-bold text-zinc-900 mb-4">Integration Log</h3>
+              <div className="border border-zinc-200 rounded-xl p-5 h-full">
+                <p className="text-sm text-zinc-500 mb-4">Recent Last API events</p>
+                <p className="text-base text-red-600 font-semibold">Issues: 1</p>
+                <p className="text-sm text-zinc-400 mt-1">events ali event sent ago</p>
               </div>
             </div>
 
             {/* WORKFLOW-ACTIVATED */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-base font-bold text-zinc-900">Workflow-Activated</h3>
-                <button type="button" className="text-xs font-semibold text-blue-600 hover:underline">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-zinc-900">Workflow-Activated</h3>
+                <button type="button" className="text-sm font-semibold text-blue-600 hover:underline">
                   View All
                 </button>
               </div>
@@ -656,19 +660,19 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                 {workflowItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between border border-zinc-200 rounded-xl p-3"
+                    className="flex items-center justify-between border border-zinc-200 rounded-xl p-4"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 flex items-center justify-center shrink-0 rounded-lg border border-zinc-200 overflow-hidden">
-                        <item.Icon size={16} />
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 flex items-center justify-center shrink-0 rounded-lg border border-zinc-200 overflow-hidden">
+                        <item.Icon size={44} />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-zinc-900">{item.name}</p>
-                        <p className="text-[11px] text-zinc-400">{item.sub}</p>
+                        <p className="text-sm font-bold text-zinc-900">{item.name}</p>
+                        <p className="text-xs text-zinc-400">{item.sub}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 whitespace-nowrap">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Sync Status
+                    <div className="flex items-center gap-2 text-sm font-medium text-zinc-600 whitespace-nowrap">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Sync Status
                     </div>
                   </div>
                 ))}
