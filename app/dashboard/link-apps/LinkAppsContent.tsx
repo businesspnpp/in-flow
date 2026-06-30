@@ -19,7 +19,7 @@ export default function LinkAppsContent() {
 
   if (loading) {
     return (
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-zinc-50 flex items-center justify-center w-full">
+      <div className="flex-1 min-h-0 bg-zinc-50 flex items-center justify-center w-full">
         <p className="text-sm text-zinc-500 animate-pulse font-medium">Loading workspace profile…</p>
       </div>
     );
@@ -27,7 +27,7 @@ export default function LinkAppsContent() {
 
   if (!business) {
     return (
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-zinc-50 p-8 flex items-center justify-center w-full">
+      <div className="flex-1 min-h-0 bg-zinc-50 p-8 flex items-center justify-center w-full">
         <div className="bg-white border border-zinc-200 p-6 max-w-md text-center shadow-sm">
           <p className="text-sm font-semibold text-zinc-900 mb-1">No Profile Context Found</p>
           <p className="text-xs text-zinc-500">Please complete your base organization onboarding settings before configuring channel streams.</p>
@@ -37,7 +37,7 @@ export default function LinkAppsContent() {
   }
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-zinc-50 flex flex-col min-w-0 w-full">
+    <div className="flex-1 min-h-0 bg-zinc-50 flex flex-col min-w-0 w-full">
       {/* 
         The left side menu is removed entirely. 
         The component now renders full-bleed without max-width or nested card wrapping layouts.
