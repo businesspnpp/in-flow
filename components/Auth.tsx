@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
-import { LogOut, Mail, Lock, Zap } from 'lucide-react';
+import { LogOut, Mail, Lock, Zap, HelpCircle } from 'lucide-react';
 
 interface AuthProps {
   onSignedIn: () => void;
@@ -160,27 +160,77 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-stretch bg-white">
-      <div className="w-full max-w-[1200px] mx-auto min-h-screen grid grid-cols-1 md:grid-cols-12">
-
-        {/* Left panel */}
-        <aside className="hidden md:flex md:col-span-5 flex-col justify-between p-14 bg-zinc-50 border-r border-zinc-200">
-          <div>
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
-                <Zap size={16} className="text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-base font-semibold text-zinc-900 tracking-tight">inFlow</span>
+    <div className="min-h-screen w-full flex flex-col bg-white">
+      {/* Top nav */}
+      <header className="w-full border-b border-zinc-200 bg-white">
+        <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
+              <Zap size={16} className="text-white" strokeWidth={2.5} />
             </div>
-            <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 leading-tight">
+            <span className="text-base font-semibold text-zinc-900 tracking-tight">inFlow</span>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+              Product
+            </a>
+            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+              Pricing
+            </a>
+            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
+              <HelpCircle size={15} />
+              Help
+            </a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            {!user && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('signin');
+                    setError('');
+                    setValidationErrors({});
+                  }}
+                  className={`text-sm font-semibold px-3 py-2 transition-colors ${
+                    mode === 'signin' ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
+                  }`}
+                >
+                  Sign in
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('signup');
+                    setError('');
+                    setValidationErrors({});
+                  }}
+                  className="text-sm font-semibold px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white transition-colors"
+                >
+                  Sign up
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Body */}
+      <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
+        {/* Left panel */}
+        <aside className="hidden md:flex flex-col justify-between p-14 lg:p-20 bg-zinc-50 border-r border-zinc-200">
+          <div className="max-w-lg">
+            <h1 className="text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-900 leading-tight">
               Business communications,<br />built for speed.
             </h1>
-            <p className="text-base text-zinc-500 mt-3 max-w-xs leading-relaxed">
+            <p className="text-base text-zinc-500 mt-4 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 max-w-md">
             <div className="border border-zinc-200 bg-white p-5">
               <p className="text-sm font-semibold text-zinc-900 mb-1">Unified inbox</p>
               <p className="text-sm text-zinc-500">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
@@ -190,10 +240,12 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               <p className="text-sm text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
           </div>
+
+          <p className="text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
         {/* Right panel */}
-        <section className="col-span-1 md:col-span-7 flex flex-col justify-center items-center px-8 py-16 md:px-20">
+        <section className="flex flex-col justify-center items-center px-8 py-16 md:px-16 lg:px-24">
           {user ? (
             <div className="w-full max-w-sm">
               <div className="border border-zinc-200 bg-white p-8">
