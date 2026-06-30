@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, CheckCircle2, AlertCircle, Search, ChevronDown } from 'lucide-react';
 import { supabase, Business } from '@/lib/supabase';
 
 function WhatsAppIcon({ size = 20 }: { size?: number }) {
@@ -74,12 +74,21 @@ type ChannelStatus = {
   facebook: boolean;
 };
 
+// Placeholder display stats only — not backed by real sync data.
+// TODO: replace with real mapped-field / sync-frequency tracking once that exists.
+const DISPLAY_STATS: Record<string, { mappedFields: number; syncFrequency: string }> = {
+  whatsapp: { mappedFields: 318, syncFrequency: '20m' },
+  instagram: { mappedFields: 45, syncFrequency: '20m' },
+  facebook: { mappedFields: 45, syncFrequency: '20m' },
+};
+
 export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
   const [activeChannel, setActiveChannel] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [channelStatus, setChannelStatus] = useState<ChannelStatus>({
     whatsapp: Boolean(business.whatsapp_phone_number_id),
     instagram: false,
@@ -264,167 +273,354 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       id: 'whatsapp',
       name: 'WhatsApp Business',
       Icon: WhatsAppIcon,
-      description: 'Receive and reply to WhatsApp messages directly within Dock.',
+      description: 'Link your official WhatsApp Business profile via Meta Secure OAuth sync.',
       isConnected: channelStatus.whatsapp,
       onConnect: handleWhatsAppConnect,
-      connectLabel: channelStatus.whatsapp ? 'Connected' : 'Connect',
+      connectLabel: channelStatus.whatsapp ? 'Reconnect Channel' : 'Connect Account',
+      showRetry: true,
+      howItWorks: [
+        "Authenticate your official business account via Meta's dialogue tier.",
+        'Select the exact WhatsApp phone number you want to synchronize.',
+        'Inbound messages will automatically stream into your uniform inbox canvas.',
+      ],
     },
     {
       id: 'instagram',
-      name: 'Instagram',
+      name: 'Instagram Professional',
       Icon: InstagramIcon,
-      description: 'Sync your Instagram Direct Messages and story mentions.',
+      description: 'Manage premium Instagram direct messages, active story mentions, and reply strings.',
       isConnected: channelStatus.instagram,
       onConnect: handleInstagramConnect,
-      connectLabel: channelStatus.instagram ? 'Connected' : 'Connect',
+      connectLabel: channelStatus.instagram ? 'Reconnect Account' : 'Connect Account',
+      showRetry: false,
+      howItWorks: [
+        'You will be redirected safely to Facebook to assign Instagram mapping streams.',
+        'Your targeted Instagram Professional portfolio will tie seamlessly into the framework.',
+        'Active threads and contextual direct messages map instantly here.',
+      ],
     },
     {
       id: 'facebook',
       name: 'Facebook Pages',
       Icon: FacebookIcon,
-      description: 'Manage messages sent to your Facebook business pages.',
+      description: 'Sync comprehensive message channels, wall threads, and active community feedback lines.',
       isConnected: channelStatus.facebook,
       onConnect: handleFacebookConnect,
-      connectLabel: channelStatus.facebook ? 'Connected' : 'Connect',
+      connectLabel: channelStatus.facebook ? 'Reconnect Account' : 'Connect Account',
+      showRetry: false,
+      howItWorks: [
+        'Redirect dynamically to authenticate and identify specified client Pages.',
+        'Authorize messaging tracking scopes for your target business portal.',
+        'Native profile messages route automatically to the central ecosystem view.',
+      ],
     },
     {
       id: 'sms',
-      name: 'SMS',
+      name: 'SMS Gateway Core',
       Icon: SmsIcon,
-      description: 'Send and receive text messages natively with a dedicated phone number.',
+      description: 'Establish local direct telecom integrations for secure, prioritized outbound and native workflows.',
       isConnected: false,
       onConnect: null,
       connectLabel: 'Coming Soon',
+      showRetry: false,
+      howItWorks: [],
     },
   ];
 
+  const connectedChannels = CHANNELS.filter(c => c.isConnected);
+  const availableChannels = CHANNELS.filter(c => !c.isConnected);
+  const issueChannel = CHANNELS.find(c => c.id === 'whatsapp' && !c.isConnected); // example "issue" indicator
+
+  const filteredConnected = connectedChannels.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const filteredAvailable = availableChannels.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-w-0">
       <div id="fb-root" />
 
-      {/* FIXED BASE LABELS WORKSPACE WRAPPER */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="mb-8">
-          <h1 className="text-xl font-medium text-zinc-900 tracking-tight">Connected Apps</h1>
-          <p className="text-sm text-zinc-500 mt-1">Integrate third-party channels directly into your unified dashboard inbox pipeline.</p>
-        </div>
+      <div className="p-6 max-w-6xl w-full mx-auto space-y-6">
 
-        {/* ALERTS SCHEDULER CANVASES */}
+        {/* GLOBAL MESSAGES ALERT CONTAINER */}
         {(success || error) && (
-          <div className="mb-6 space-y-2">
+          <div className="space-y-3">
             {success && (
-              <div className="flex items-center gap-2.5 bg-zinc-50 border border-zinc-200 px-4 py-3 text-zinc-900 text-xs font-medium">
-                <CheckCircle2 className="w-4 h-4 text-zinc-900 shrink-0" />
-                <span className="break-words">{success}</span>
+              <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-800 text-sm">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="font-medium break-words">{success}</span>
               </div>
             )}
             {error && (
-              <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 px-4 py-3 text-red-700 text-xs font-medium">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                <span className="break-words">{error}</span>
+              <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-red-800 text-sm">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <span className="font-medium break-words">{error}</span>
               </div>
             )}
           </div>
         )}
 
-        {/* EXACT COMPONENT LIST ROW DESIGN LAYOUT CLONE */}
-        <div className="border border-zinc-200 divide-y divide-zinc-200 bg-white">
-          {CHANNELS.map(({ id, name, Icon, description, isConnected, onConnect, connectLabel }) => {
-            const isSms = id === 'sms';
-            const isLoading = loading === id;
+        {/* OVERVIEW BAR */}
+        <div className="bg-white border border-zinc-200 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-zinc-900 mb-4">Integrations Overview</h2>
+          <div className="flex flex-wrap gap-10">
+            <div>
+              <p className="text-xs text-zinc-500 mb-1">Active Connections:</p>
+              <p className="text-2xl font-bold text-zinc-900">{connectedChannels.length}</p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500 mb-1">Integrations with Issues:</p>
+              <p className="text-2xl font-bold text-red-600">
+                {issueChannel ? `1 (${issueChannel.name})` : '0'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500 mb-1">New suggested integrations</p>
+              <p className="text-2xl font-bold text-zinc-300">-</p>
+            </div>
+          </div>
+        </div>
 
-            return (
-              <div 
-                key={id} 
-                className="p-5 flex items-start justify-between gap-6 transition-colors hover:bg-zinc-50/50"
+        {/* ALL INTEGRATIONS PANEL */}
+        <div className="bg-white border border-zinc-200 rounded-2xl p-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+            <h2 className="text-lg font-bold text-zinc-900">All Integrations</h2>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+                />
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 border border-zinc-200 rounded-lg px-3 py-2 hover:bg-zinc-50"
               >
-                {/* LEFT BLOCK: ICON AND METRICS TEXT CONTENT */}
-                <div className="flex items-start gap-4 min-w-0">
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0 bg-white border border-zinc-200 rounded-lg shadow-2xs">
-                    <Icon size={20} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-zinc-900 tracking-tight">{name}</h3>
-                      {isConnected && (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      )}
-                    </div>
-                    <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed max-w-xl">{description}</p>
-                  </div>
-                </div>
+                Filter <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
 
-                {/* RIGHT BLOCK: EXACT BUTTON TRIGGER ELEMENTS */}
-                <div className="shrink-0 flex items-center gap-2">
-                  {id === 'whatsapp' && isConnected && (
+          <h3 className="text-sm font-bold text-zinc-900 mb-3">Connected</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {filteredConnected.map(({ id, name, Icon, description, isConnected, onConnect, showRetry }) => {
+              const isLoading = loading === id;
+              const hasIssue = id === issueChannel?.id;
+              const stats = DISPLAY_STATS[id];
+              return (
+                <div
+                  key={id}
+                  className={`border rounded-xl p-4 flex flex-col justify-between ${
+                    hasIssue ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200">
+                          <Icon size={20} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-zinc-900 leading-tight">{name}</h4>
+                          <p className="text-xs text-zinc-500 leading-tight mt-0.5 max-w-[180px]">{description}</p>
+                        </div>
+                      </div>
+                      {hasIssue && <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />}
+                    </div>
+
+                    {hasIssue && (
+                      <p className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Issue Detected
+                      </p>
+                    )}
+
+                    {stats && (
+                      <div className="flex gap-6 mt-3 mb-4">
+                        <div>
+                          <p className="text-base font-bold text-zinc-900">{stats.mappedFields}</p>
+                          <p className="text-[11px] text-zinc-500">Mapped fields</p>
+                        </div>
+                        <div>
+                          <p className="text-base font-bold text-zinc-900">{stats.syncFrequency}</p>
+                          <p className="text-[11px] text-zinc-500">Sync Frequency</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-2">
+                    {hasIssue && (
+                      <button
+                        type="button"
+                        onClick={onConnect || undefined}
+                        className="flex-1 text-xs font-semibold text-zinc-700 bg-zinc-100 rounded-lg px-3 py-2 hover:bg-zinc-200 transition-colors"
+                      >
+                        Re-authorize
+                      </button>
+                    )}
+                    {!hasIssue && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={onConnect || undefined}
+                          disabled={isLoading}
+                          className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 disabled:opacity-40 transition-colors"
+                        >
+                          {isLoading ? 'Connecting…' : 'Manage'}
+                        </button>
+                        <button
+                          type="button"
+                          className="text-xs font-semibold text-zinc-500 px-3 py-2 hover:text-zinc-800 transition-colors"
+                        >
+                          Disconnect
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {id === 'whatsapp' && (
                     <button
                       type="button"
                       onClick={() => setShowTroubleshoot(true)}
-                      className="text-xs text-zinc-500 font-medium px-3 py-1.5 border border-zinc-200 bg-white hover:bg-zinc-50 transition-colors rounded-md"
+                      className="text-[11px] text-zinc-400 hover:text-zinc-700 mt-2 text-left"
                     >
-                      Troubleshoot
+                      Troubleshoot connection
                     </button>
                   )}
-                  
-                  <button
-                    type="button"
-                    onClick={onConnect || undefined}
-                    disabled={isSms || isLoading || isConnected}
-                    className={`text-xs font-medium px-4 py-1.5 transition-all rounded-md shadow-2xs ${
-                      isSms
-                        ? 'bg-zinc-50 text-zinc-400 border border-zinc-200 cursor-not-allowed shadow-none'
-                        : isConnected
-                        ? 'bg-zinc-50 text-zinc-600 border border-zinc-200 font-normal shadow-none cursor-default'
-                        : 'bg-zinc-900 text-white hover:bg-zinc-800 border border-transparent'
-                    }`}
-                  >
-                    {isLoading ? 'Connecting…' : connectLabel}
-                  </button>
                 </div>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* AVAILABLE FOR CONNECTION */}
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 mb-3">Available for Connection</h3>
+              <div className="space-y-3">
+                {filteredAvailable.map(({ id, name, Icon, description, onConnect, connectLabel }) => {
+                  const isLoading = loading === id;
+                  const isSms = id === 'sms';
+                  return (
+                    <div
+                      key={id}
+                      className="border border-zinc-200 rounded-xl p-4 flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200 opacity-70">
+                          <Icon size={20} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-zinc-700">{name}</p>
+                          <p className="text-xs text-zinc-400 max-w-[200px]">{description}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={onConnect || undefined}
+                        disabled={isSms || isLoading}
+                        className="text-xs font-semibold text-zinc-700 bg-zinc-100 rounded-lg px-4 py-2 hover:bg-zinc-200 disabled:opacity-50 transition-colors whitespace-nowrap"
+                      >
+                        {isLoading ? 'Connecting…' : connectLabel}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+
+            {/* INTEGRATION LOG */}
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 mb-3">Integration Log</h3>
+              <div className="border border-zinc-200 rounded-xl p-4 h-full">
+                <p className="text-xs text-zinc-500 mb-1">Recent Last API events</p>
+                <p className="text-xs text-red-600 font-semibold mt-3">
+                  Issues: {issueChannel ? 1 : 0}
+                </p>
+                <p className="text-xs text-zinc-400 mt-1">events all event sent ago</p>
+              </div>
+            </div>
+          </div>
+
+          {/* WORKFLOW-ACTIVATED */}
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-zinc-900">Workflow-Activated</h3>
+              <button type="button" className="text-xs font-semibold text-blue-600 hover:underline">
+                View All
+              </button>
+            </div>
+            <div className="space-y-2">
+              {connectedChannels.slice(0, 3).map(({ id, name, Icon }) => (
+                <div
+                  key={id}
+                  className="flex items-center justify-between border border-zinc-200 rounded-xl p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200">
+                      <Icon size={16} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900">{name} Sync</p>
+                      <p className="text-[11px] text-zinc-400">{name} workflow</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Sync Status
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* TROUBLESHOOT MODAL WINDOW CANVAS */}
+      {/* DIAGNOSTICS MODAL */}
       {showTroubleshoot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-xs px-4">
-          <div className="bg-white border border-zinc-200 w-full max-w-md p-6 relative shadow-lg rounded-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-xs px-4">
+          <div className="bg-white border border-zinc-200 rounded-2xl w-full max-w-lg p-6 relative shadow-xl">
             <div className="flex items-start justify-between mb-4 gap-3">
               <div>
-                <h4 className="text-sm font-medium text-zinc-900 tracking-tight">WhatsApp Setup Check</h4>
-                <p className="text-xs text-zinc-500 mt-0.5">Follow these debug rules if authentication pops fail.</p>
+                <h4 className="text-sm font-bold text-zinc-900 uppercase tracking-tight">WhatsApp Diagnostics</h4>
+                <p className="text-xs text-zinc-500 mt-0.5">Resolve structural configuration blocks manually.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowTroubleshoot(false)}
-                className="text-zinc-400 hover:text-zinc-500 p-1 transition-colors shrink-0"
+                className="text-zinc-400 hover:text-zinc-700 p-1 transition-colors shrink-0"
               >
-                <X size={16} strokeWidth={2} />
+                <X size={18} strokeWidth={2.5} />
               </button>
             </div>
-            
-            <ul className="space-y-2.5 my-4">
+
+            <ol className="space-y-3 my-4">
               {[
-                'Allow site-wide layout popups inside your browser bar.',
-                'Verify that cookies match third-party authorization profiles.',
-                'Double check your local .env configuration flags.',
+                'Allow programmatic popups and redirects for this workspace environment.',
+                'Ensure tracking and cross-site cookies are permitted or test from a clean context.',
+                'Confirm target environmental tracking flags (NEXT_PUBLIC_META_APP_ID) align natively.',
+                'Temporarily turn off blocking extensions that interfere with dialogue triggers.',
               ].map((step, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-zinc-600">
-                  <span className="text-zinc-400 font-medium shrink-0 mt-0.5">•</span>
+                <li key={i} className="flex items-start gap-3 text-xs text-zinc-600">
+                  <span className="flex-shrink-0 h-5 w-5 bg-zinc-100 border border-zinc-200 text-zinc-700 flex items-center justify-center text-[10px] font-bold mt-0.5 rounded">
+                    {i + 1}
+                  </span>
                   <span className="leading-normal">{step}</span>
                 </li>
               ))}
-            </ul>
+            </ol>
 
-            <div className="mt-5 pt-3.5 border-t border-zinc-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-zinc-100 flex justify-end">
               <button
                 type="button"
                 onClick={() => setShowTroubleshoot(false)}
-                className="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-50 transition-colors rounded-md shadow-2xs"
+                className="px-4 py-2 text-xs font-bold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 rounded-lg transition-colors"
               >
-                Close
+                Dismiss
               </button>
             </div>
           </div>
