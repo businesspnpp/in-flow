@@ -13,6 +13,7 @@ function WhatsAppIcon({ size = 20 }: { size?: number }) {
   );
 }
 
+// ... Icons logic untouched for clean copy-pasting ...
 function InstagramIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -319,24 +320,14 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex flex-col w-full min-w-0">
+    <div className="w-full min-w-0">
       <div id="fb-root" />
 
-      {/* FIXED STANDARDIZED STICKY HEADER */}
-      <header className="sticky top-0 z-40 w-full bg-white border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-zinc-900 tracking-tight">Link Apps</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Manage data connectors, external application streams, and official messaging touchpoints.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Action slots space if needed later */}
-        </div>
-      </header>
-
-      {/* CONTENT INNER WRAPPER */}
-      <main className="flex-1 p-6 max-w-6xl w-full mx-auto space-y-6">
+      {/* 
+        INNER HEADER ELEMENT COMPLETELY REMOVED HERE 
+        The top-level structure now directly maps out your interactive cards layout grid.
+      */}
+      <div className="p-6 max-w-6xl w-full mx-auto space-y-6">
         
         {/* GLOBAL MESSAGES ALERT CONTAINER */}
         {(success || error) && (
@@ -368,7 +359,6 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                 className="bg-white border border-zinc-200 p-5 flex flex-col justify-between transition-all hover:border-zinc-300"
               >
                 <div>
-                  {/* Card Header Info Area */}
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="w-10 h-10 flex items-center justify-center shrink-0 bg-zinc-50 border border-zinc-200 rounded-sm">
                       <Icon size={22} />
@@ -393,7 +383,6 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                   <h3 className="text-base font-bold text-zinc-900 tracking-tight">{name}</h3>
                   <p className="text-xs text-zinc-500 mt-1 leading-relaxed mb-4">{description}</p>
 
-                  {/* Operational Steps list */}
                   {howItWorks.length > 0 && (
                     <div className="border-t border-zinc-100 pt-4 mb-6">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Integration Flow</h4>
@@ -409,7 +398,6 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                   )}
                 </div>
 
-                {/* Bottom Action Footer Segment */}
                 <div className="border-t border-zinc-100 pt-4 flex items-center justify-between gap-2 flex-wrap">
                   {isSms ? (
                     <p className="text-xs text-zinc-400 italic">Provisioning core pipeline...</p>
@@ -450,9 +438,9 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
             );
           })}
         </div>
-      </main>
+      </div>
 
-      {/* TROUBLESHOOTING MODAL DRAWER OVERLAY */}
+      {/* DIAGNOSTICS MODAL */}
       {showTroubleshoot && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-xs px-4">
           <div className="bg-white border border-zinc-200 w-full max-w-lg p-6 relative shadow-xl">
