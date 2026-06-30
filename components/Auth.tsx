@@ -218,7 +218,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       {/* Body */}
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         
-        {/* Left panel WITH isolated 3D box text rotation slider */}
+        {/* Left panel WITH dynamic 3D box text rotation slider */}
         <aside className="hidden md:flex relative flex-col justify-between p-14 md:pl-32 lg:p-20 lg:pl-44 overflow-hidden bg-zinc-50">
           {/* Faded grid overlay */}
           <div
@@ -258,10 +258,17 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.15]">
               Run your business
               <br />
-              <span className="inline-flex flex-wrap items-center">
-                <span className="text-zinc-900 mr-2">#from</span>
-                {/* 3D Perspective Box Frame */}
-                <span className="relative inline-block h-[1.2em] w-[260px] overflow-hidden [perspective:1000px]">
+              <span className="inline-flex items-center whitespace-nowrap">
+                <span className="text-zinc-900 mr-2.5">#from</span>
+                
+                {/* 3D Perspective Box Frame with Dynamic Layout Sizing */}
+                <span className="relative inline-block h-[1.2em] transition-all duration-300 ease-in-out [perspective:1000px]">
+                  
+                  {/* Invisible ghost element that mirrors current word width to prevent text gaps or layout cutoffs */}
+                  <span className="invisible block h-full font-bold text-amber-600 select-none pointer-events-none">
+                    {channels[currentChannelIndex]}
+                  </span>
+
                   {channels.map((channel, index) => {
                     const isActive = index === currentChannelIndex;
                     const isPast = index === (currentChannelIndex - 1 + channels.length) % channels.length;
@@ -269,7 +276,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                     return (
                       <span
                         key={channel}
-                        className={`absolute left-0 top-0 text-amber-600 font-bold transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-bottom [backface-visibility:hidden] ${
+                        className={`absolute left-0 top-0 text-amber-600 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-bottom [backface-visibility:hidden] ${
                           isActive
                             ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
                             : isPast
