@@ -220,7 +220,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       <header className="w-full border-b border-zinc-200 bg-white">
         <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/dock-icon.svg" alt="Dock icon" className="w-7 h-7" />
+            <img src="/dock-icon.svg" alt="Dock icon" className="w-9 h-9" />
             <span className="text-base font-semibold text-zinc-900 tracking-tight">Dock</span>
           </div>
 
@@ -288,11 +288,6 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
           {/* Content */}
           <div className="relative max-w-lg">
-            <div className="flex items-center gap-2 mb-10">
-              <img src="/dock-icon.svg" alt="Dock icon" className="w-8 h-8" />
-              <span className="text-lg font-semibold text-zinc-900 tracking-tight">Dock</span>
-            </div>
-
             <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.2]">
               Run your business
               <br />
