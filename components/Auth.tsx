@@ -285,7 +285,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
-        {/* Right panel */}
+        {/* Right panel EXACTLY as provided */}
         <section className="flex flex-col justify-center items-center px-8 py-16 md:px-16 lg:px-24">
           {user ? (
             <div className="w-full max-w-sm">
