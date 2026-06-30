@@ -21,6 +21,7 @@ type MockConversation = { id: string; customerName: string; channel: string; ava
 interface AiExtraction { tool: string | null; prefill: Record<string, unknown>; confidence: number; extraction?: { detectedIntent?: string }; }
 type PanelKey = 'list' | 'directory' | 'thread' | 'context';
 type DirChannel = 'whatsapp' | 'instagram' | 'tiktok';
+type DirChannelFilter = 'all' | DirChannel;
 type DirCustomer = { id: string; name: string; avatarColor: string; initials: string; contact: string; channels: DirChannel[]; online: boolean; lastInteractionDays: number; };
 type MobileScreen = 'list' | 'thread' | 'profile';
 type MobileListTab = 'inbox' | 'directory';
@@ -166,6 +167,23 @@ const ACTIVITY_COLOR: Record<ActivityType, string> = {
   payment: 'bg-emerald-50 text-emerald-600',
   note: 'bg-amber-50 text-amber-600',
 };
+const CHANNEL_FILTERS: { id: DirChannelFilter; label: string }[] = [
+  { id: 'all', label: 'All Channels' },
+  { id: 'whatsapp', label: 'WhatsApp' },
+  { id: 'instagram', label: 'Instagram DMs' },
+  { id: 'tiktok', label: 'TikTok DMs' },
+];
+const GOOGLE_REVIEW_LEADS = [
+  { id: 'r1', name: 'Lindiwe', rating: 5, status: 'Reviewed', followUp: 'Thank-you sent', lastTouch: '2d ago' },
+  { id: 'r2', name: 'Sipho', rating: 4, status: 'Reviewed', followUp: 'Reply needed', lastTouch: '5d ago' },
+  { id: 'r3', name: 'Thabo', rating: 0, status: 'Needs Link', followUp: 'Send review link', lastTouch: 'Today' },
+  { id: 'r4', name: 'Zanele', rating: 0, status: 'Needs Follow-up', followUp: 'Nudge after delivery', lastTouch: '1d ago' },
+];
+const SEGMENT_GROUPS = [
+  { id: 's1', name: 'VIP Customers', description: 'High LTV customers with repeat orders', members: ['c1', 'c3', 'c4'] },
+  { id: 's2', name: 'New This Month', description: 'Recently started conversations in the last 30 days', members: ['c2'] },
+  { id: 's3', name: 'Needs Follow-Up', description: 'Open loops that need a human response', members: ['c2', 'c4'] },
+];
 const SEGMENTS = ['VIP Customers', 'New This Month', 'Needs Follow-Up'];
 const TOP_BOOKING_CLIENTS = [
   { name: 'Lindiwe', count: 16 },
@@ -265,6 +283,7 @@ export default function ChatsContent() {
   // directory
   const [directorySearch, setDirectorySearch] = useState('');
   const [activeDirTab, setActiveDirTab] = useState(DIR_TABS[0]);
+  const [dirChannelFilter, setDirChannelFilter] = useState<DirChannelFilter>('all');
 
   // customer notes (internal record-keeping, separate from the live chat thread)
   const [customNotes, setCustomNotes] = useState<Record<string, ActivityItem[]>>({});
@@ -374,6 +393,10 @@ export default function ChatsContent() {
   const filteredCustomers = DIR_CUSTOMERS.filter(c =>
     c.name.toLowerCase().includes(directorySearch.toLowerCase()) || c.contact.toLowerCase().includes(directorySearch.toLowerCase())
   );
+  const filteredByChannel = filteredCustomers.filter(c => dirChannelFilter === 'all' || c.channels.includes(dirChannelFilter));
+  const filteredReviewLeads = GOOGLE_REVIEW_LEADS.filter((lead) =>
+    lead.name.toLowerCase().includes(directorySearch.toLowerCase()) || lead.status.toLowerCase().includes(directorySearch.toLowerCase())
+  );
 
   /* ================================================================ */
   /* Shared content blocks — reused by both the desktop columns and    */
@@ -465,91 +488,241 @@ export default function ChatsContent() {
         <div className="flex flex-wrap items-center gap-1.5">
           <div className="relative flex-1 min-w-[110px]">
             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-            <input value={directorySearch} onChange={e => setDirectorySearch(e.target.value)} placeholder="Search" className="w-full h-8 rounded-lg border border-zinc-200 bg-white pl-7 pr-2 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition" />
+            <input
+              value={directorySearch}
+              onChange={e => setDirectorySearch(e.target.value)}
+              placeholder={activeDirTab === 'Google Reviews' ? 'Search review leads' : 'Search'}
+              className="w-full h-8 rounded-lg border border-zinc-200 bg-white pl-7 pr-2 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition"
+            />
           </div>
           <button className="h-8 w-8 flex items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 transition"><Filter size={12} /></button>
           <button className="h-8 flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2 text-[10px] font-semibold text-zinc-700 hover:bg-zinc-50 transition">Segment <ChevronDown size={11} /></button>
         </div>
-        <div className="flex gap-1.5 -mt-2">
-          <button className="h-7 rounded-lg bg-zinc-100 px-2.5 text-[10px] font-semibold text-zinc-700 hover:bg-zinc-200 transition">Recent DM Inquiries</button>
-          <button className="h-7 rounded-lg bg-zinc-100 px-2.5 text-[10px] font-semibold text-zinc-700 hover:bg-zinc-200 transition">Frequent Bookers</button>
-        </div>
+        {activeDirTab === 'All Customers' && (
+          <>
+            <div className="flex gap-1.5 -mt-2">
+              <button className="h-7 rounded-lg bg-zinc-100 px-2.5 text-[10px] font-semibold text-zinc-700 hover:bg-zinc-200 transition">Recent DM Inquiries</button>
+              <button className="h-7 rounded-lg bg-zinc-100 px-2.5 text-[10px] font-semibold text-zinc-700 hover:bg-zinc-200 transition">Frequent Bookers</button>
+            </div>
 
-        {/* table */}
-        <div className="rounded-xl border border-zinc-200 bg-white overflow-x-auto">
-          <table className="w-full text-[11px] min-w-[480px]">
-            <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50">
-                <th className="py-2 pl-3 pr-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Profile</th>
-                <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Name</th>
-                <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Contact</th>
-                <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Channels</th>
-                <th className="py-2 px-2 pr-3 text-left font-semibold uppercase tracking-wide text-zinc-500">Last Seen</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filteredCustomers.map(c => (
-                <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-blue-50/50 active:bg-blue-50 transition-colors">
-                  <td className="py-2 pl-3 pr-2"><div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div></td>
-                  <td className="py-2 px-2 font-medium text-zinc-900">{c.name}</td>
-                  <td className="py-2 px-2 text-zinc-500 max-w-[120px] truncate">{c.contact}</td>
-                  <td className="py-2 px-2"><div className="flex items-center gap-1">{c.channels.map(ch => <span key={ch}>{DIR_CHANNEL_ICON[ch]({ size: 15 })}</span>)}{c.online && <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />}</div></td>
-                  <td className="py-2 px-2 pr-3 text-zinc-500">{c.lastInteractionDays}d ago</td>
-                </tr>
+            <div className="rounded-xl border border-zinc-200 bg-white overflow-x-auto">
+              <table className="w-full text-[11px] min-w-[480px]">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="py-2 pl-3 pr-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Profile</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Name</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Contact</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Channels</th>
+                    <th className="py-2 px-2 pr-3 text-left font-semibold uppercase tracking-wide text-zinc-500">Last Seen</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {filteredCustomers.map(c => (
+                    <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-blue-50/50 active:bg-blue-50 transition-colors">
+                      <td className="py-2 pl-3 pr-2"><div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div></td>
+                      <td className="py-2 px-2 font-medium text-zinc-900">{c.name}</td>
+                      <td className="py-2 px-2 text-zinc-500 max-w-[120px] truncate">{c.contact}</td>
+                      <td className="py-2 px-2"><div className="flex items-center gap-1">{c.channels.map(ch => <span key={ch}>{DIR_CHANNEL_ICON[ch]({ size: 15 })}</span>)}{c.online && <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />}</div></td>
+                      <td className="py-2 px-2 pr-3 text-zinc-500">{c.lastInteractionDays}d ago</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Recent Activity</h4>
+              <p className="text-[10px] text-zinc-400 mb-2">Tags, payments, bookings & notes — not chat messages</p>
+              <div className="space-y-2">
+                {ACTIVITY_FEED.map(entry => (
+                  <div key={entry.customerId} className="flex items-center gap-2">
+                    <div className="relative flex-shrink-0">
+                      <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[9px] font-semibold text-white ${entry.avatarColor}`}>{entry.initials}</div>
+                      <span className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center ${ACTIVITY_COLOR[entry.item.type]}`}>{ACTIVITY_ICON[entry.item.type]({ size: 9 })}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold text-zinc-900">{entry.name}</p>
+                      <p className="text-[9px] text-zinc-500 truncate">{entry.item.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Segment & Tag</h4>
+              <div className="relative mb-2 mt-2">
+                <Tag size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <input placeholder="Tag customer..." className="w-full h-7 rounded-lg border border-zinc-200 bg-zinc-50 pl-7 pr-2 text-[10px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition" />
+              </div>
+              <div className="space-y-1.5">
+                {SEGMENTS.map(seg => (
+                  <button key={seg} className="w-full flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition">
+                    {seg} <ChevronRight size={12} className="text-zinc-400" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Customer Insights</h4>
+              <p className="text-[10px] text-zinc-400">New Customers (Last 30 Days)</p>
+              <p className="text-2xl font-bold text-zinc-900 mt-0.5 mb-2">13</p>
+              <p className="text-[10px] text-zinc-400 mb-1.5">Top Booking Clients</p>
+              <div className="space-y-1">
+                {TOP_BOOKING_CLIENTS.map(client => (
+                  <div key={client.name} className="flex items-center justify-between text-[11px]">
+                    <span className="text-zinc-700 font-medium">{client.name}</span>
+                    <span className="text-zinc-900 font-semibold">{client.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeDirTab === 'Channels & DMs' && (
+          <>
+            <div className="flex flex-wrap gap-1.5 -mt-2">
+              {CHANNEL_FILTERS.map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setDirChannelFilter(filter.id)}
+                  className={`h-7 rounded-lg px-2.5 text-[10px] font-semibold transition ${dirChannelFilter === filter.id ? 'bg-blue-600 text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
+                >
+                  {filter.label}
+                </button>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
 
-        {/* insight cards (stacked) */}
-        <div className="rounded-xl border border-zinc-200 bg-white p-3">
-          <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Recent Activity</h4>
-          <p className="text-[10px] text-zinc-400 mb-2">Tags, payments, bookings & notes — not chat messages</p>
-          <div className="space-y-2">
-            {ACTIVITY_FEED.map(entry => (
-              <div key={entry.customerId} className="flex items-center gap-2">
-                <div className="relative flex-shrink-0">
-                  <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[9px] font-semibold text-white ${entry.avatarColor}`}>{entry.initials}</div>
-                  <span className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center ${ACTIVITY_COLOR[entry.item.type]}`}>{ACTIVITY_ICON[entry.item.type]({ size: 9 })}</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold text-zinc-900">{entry.name}</p>
-                  <p className="text-[9px] text-zinc-500 truncate">{entry.item.label}</p>
-                </div>
+            <div className="rounded-xl border border-zinc-200 bg-white overflow-x-auto">
+              <table className="w-full text-[11px] min-w-[520px]">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="py-2 pl-3 pr-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Customer</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Channels</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Unread</th>
+                    <th className="py-2 px-2 pr-3 text-left font-semibold uppercase tracking-wide text-zinc-500">Last DM</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {filteredByChannel.map(c => {
+                    const relatedChat = MOCK_CONVERSATIONS.find(chat => chat.customerName.toLowerCase().includes(c.name.toLowerCase()));
+                    return (
+                      <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-blue-50/50 active:bg-blue-50 transition-colors">
+                        <td className="py-2 pl-3 pr-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div>
+                            <span className="font-medium text-zinc-900">{c.name}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-2"><div className="flex items-center gap-1">{c.channels.map(ch => <span key={ch}>{DIR_CHANNEL_ICON[ch]({ size: 15 })}</span>)}</div></td>
+                        <td className="py-2 px-2 text-zinc-700">{relatedChat?.unreadCount ?? 0}</td>
+                        <td className="py-2 px-2 pr-3 text-zinc-500">{relatedChat?.lastMessageTime ?? `${c.lastInteractionDays}d ago`}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Channel Snapshot</h4>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-2.5"><p className="text-[10px] text-emerald-700">WhatsApp</p><p className="text-lg font-bold text-emerald-900">9</p></div>
+                <div className="rounded-lg border border-fuchsia-200 bg-fuchsia-50 p-2.5"><p className="text-[10px] text-fuchsia-700">Instagram</p><p className="text-lg font-bold text-fuchsia-900">6</p></div>
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-2.5"><p className="text-[10px] text-zinc-700">TikTok</p><p className="text-lg font-bold text-zinc-900">2</p></div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          </>
+        )}
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-3">
-          <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Segment & Tag</h4>
-          <div className="relative mb-2 mt-2">
-            <Tag size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-            <input placeholder="Tag customer..." className="w-full h-7 rounded-lg border border-zinc-200 bg-zinc-50 pl-7 pr-2 text-[10px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition" />
-          </div>
-          <div className="space-y-1.5">
-            {SEGMENTS.map(seg => (
-              <button key={seg} className="w-full flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition">
-                {seg} <ChevronRight size={12} className="text-zinc-400" />
-              </button>
-            ))}
-          </div>
-        </div>
+        {activeDirTab === 'Google Reviews' && (
+          <>
+            <div className="flex gap-1.5 -mt-2">
+              <button className="h-7 rounded-lg bg-emerald-100 px-2.5 text-[10px] font-semibold text-emerald-800">Reviewed</button>
+              <button className="h-7 rounded-lg bg-amber-100 px-2.5 text-[10px] font-semibold text-amber-800">Needs Link</button>
+              <button className="h-7 rounded-lg bg-rose-100 px-2.5 text-[10px] font-semibold text-rose-800">Needs Follow-up</button>
+            </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-3">
-          <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Customer Insights</h4>
-          <p className="text-[10px] text-zinc-400">New Customers (Last 30 Days)</p>
-          <p className="text-2xl font-bold text-zinc-900 mt-0.5 mb-2">13</p>
-          <p className="text-[10px] text-zinc-400 mb-1.5">Top Booking Clients</p>
-          <div className="space-y-1">
-            {TOP_BOOKING_CLIENTS.map(client => (
-              <div key={client.name} className="flex items-center justify-between text-[11px]">
-                <span className="text-zinc-700 font-medium">{client.name}</span>
-                <span className="text-zinc-900 font-semibold">{client.count}</span>
+            <div className="rounded-xl border border-zinc-200 bg-white overflow-x-auto">
+              <table className="w-full text-[11px] min-w-[520px]">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="py-2 pl-3 pr-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Customer</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Rating</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Status</th>
+                    <th className="py-2 px-2 text-left font-semibold uppercase tracking-wide text-zinc-500">Next Action</th>
+                    <th className="py-2 px-2 pr-3 text-left font-semibold uppercase tracking-wide text-zinc-500">Last Touch</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {filteredReviewLeads.map((lead) => (
+                    <tr key={lead.id} className="hover:bg-blue-50/40 transition-colors">
+                      <td className="py-2 pl-3 pr-2 font-medium text-zinc-900">{lead.name}</td>
+                      <td className="py-2 px-2 text-zinc-700">{lead.rating === 0 ? 'Pending' : `${lead.rating} / 5`}</td>
+                      <td className="py-2 px-2">
+                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${lead.status === 'Reviewed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : lead.status === 'Needs Link' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-rose-200 bg-rose-50 text-rose-700'}`}>
+                          {lead.status}
+                        </span>
+                      </td>
+                      <td className="py-2 px-2 text-zinc-600">{lead.followUp}</td>
+                      <td className="py-2 px-2 pr-3 text-zinc-500">{lead.lastTouch}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Review Pipeline</h4>
+              <p className="text-[10px] text-zinc-500">Average rating: <span className="font-semibold text-zinc-900">4.5</span> from <span className="font-semibold text-zinc-900">22</span> total Google reviews.</p>
+            </div>
+          </>
+        )}
+
+        {activeDirTab === 'VIP / Segments' && (
+          <>
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-2">Smart Segment Folders</h4>
+              <div className="space-y-2">
+                {SEGMENT_GROUPS.map((segment) => (
+                  <div key={segment.id} className="rounded-lg border border-zinc-200 bg-zinc-50 p-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] font-semibold text-zinc-900">{segment.name}</p>
+                      <span className="rounded-full bg-white border border-zinc-200 px-2 py-0.5 text-[10px] text-zinc-600">{segment.members.length} members</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-500 mt-1">{segment.description}</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {segment.members.map((memberId) => {
+                        const member = DIR_CUSTOMERS.find((customer) => customer.id === memberId);
+                        if (!member) return null;
+                        return (
+                          <button
+                            key={member.id}
+                            onClick={() => selectCustomerRow(member.id)}
+                            className="rounded-full border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition"
+                          >
+                            {member.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Segment Actions</h4>
+              <div className="space-y-1.5 mt-2">
+                <button className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2 text-left text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition">Send promo to VIP Customers</button>
+                <button className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2 text-left text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition">Review New This Month onboarding flow</button>
+                <button className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2 text-left text-[10px] font-medium text-zinc-700 hover:bg-zinc-100 transition">Run follow-up checklist</button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     );
   }
