@@ -131,8 +131,8 @@ type IntegrationCard = {
   description: string;
   isConnected: boolean;
   hasIssue?: boolean;
-  mappedFields: number;
-  syncFrequency: string;
+  mappedFields?: number;
+  syncFrequency?: string;
   onConnect?: (() => void) | null;
   isReal?: boolean; // backed by actual OAuth logic, vs. mock display-only card
 };
@@ -356,8 +356,6 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       description: 'Your automation in Webflow.',
       isConnected: true,
       hasIssue: true,
-      mappedFields: 45,
-      syncFrequency: '20m',
       onConnect: null,
       isReal: false,
     },
@@ -517,18 +515,20 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                       </p>
                     )}
 
-                    <div className="border-t border-zinc-200 mt-3 mb-4">
-                      <div className="grid grid-cols-2 divide-x divide-zinc-200">
-                        <div className="pt-3 pr-4">
-                          <p className="text-xl font-bold text-zinc-900">{card.mappedFields}</p>
-                          <p className="text-sm text-zinc-500">Mapped fields</p>
-                        </div>
-                        <div className="pt-3 pl-4">
-                          <p className="text-xl font-bold text-zinc-900">{card.syncFrequency}</p>
-                          <p className="text-sm text-zinc-500">Sync Frequency</p>
+                    {card.id !== 'webflow' && (
+                      <div className="border-t border-zinc-200 mt-3 mb-4">
+                        <div className="grid grid-cols-2 divide-x divide-zinc-200">
+                          <div className="pt-3 pr-4">
+                            <p className="text-xl font-bold text-zinc-900">{card.mappedFields}</p>
+                            <p className="text-sm text-zinc-500">Mapped fields</p>
+                          </div>
+                          <div className="pt-3 pl-4">
+                            <p className="text-xl font-bold text-zinc-900">{card.syncFrequency}</p>
+                            <p className="text-sm text-zinc-500">Sync Frequency</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {card.hasIssue ? (
