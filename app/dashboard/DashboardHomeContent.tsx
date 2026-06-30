@@ -106,7 +106,7 @@ const toneClasses: Record<Tone, string> = {
 export default function DashboardHomeContent() {
   return (
     <div className="flex-1 overflow-y-auto bg-zinc-50 px-4 py-6 md:px-6">
-      <div className="mx-auto max-w-[1400px] space-y-4">
+      <div className="w-full space-y-4">
         <div className="flex items-center gap-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100">
             <svg viewBox="0 0 64 64" width="68" height="68">
