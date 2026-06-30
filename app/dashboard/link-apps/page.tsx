@@ -19,41 +19,32 @@ export default function LinkAppsPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 overflow-y-auto overflow-x-hidden bg-zinc-50">
-        <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
-          <p className="text-sm text-zinc-500 animate-pulse">Loading business profile…</p>
+      <div className="flex-1 bg-zinc-50 flex items-center justify-center min-h-screen w-full">
+        <p className="text-sm text-zinc-500 animate-pulse font-medium">Loading workspace profile…</p>
+      </div>
+    );
+  }
+
+  if (!business) {
+    return (
+      <div className="flex-1 bg-zinc-50 p-8 flex items-center justify-center min-h-screen w-full">
+        <div className="bg-white border border-zinc-200 p-6 max-w-md text-center shadow-sm">
+          <p className="text-sm font-semibold text-zinc-900 mb-1">No Profile Context Found</p>
+          <p className="text-xs text-zinc-500">Please complete your base organization onboarding settings before configuring channel streams.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-zinc-50">
-      <div className="px-4 py-6 md:py-8 md:px-6 max-w-6xl mx-auto w-full">
-        <div className="md:flex md:gap-8 w-full">
-          <aside className="md:w-64 flex flex-col gap-2 text-zinc-500 mb-5 md:mb-0">
-            {['Business Info', 'Connected Channels', 'Billing', 'Team Security'].map((item, index) => (
-              <button
-                key={item}
-                className={`w-full text-left px-3 py-2.5 text-sm border transition ${
-                  index === 1
-                    ? 'border-zinc-300 bg-zinc-100 text-zinc-900'
-                    : 'border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:text-zinc-800'
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </aside>
-          <section className="flex-1 bg-white border border-zinc-200 p-4 md:p-8 min-w-0">
-            {business ? (
-              <LinkAppsTool business={business} onUpdated={updated => setBusiness(updated)} />
-            ) : (
-              <p className="text-sm text-zinc-500">No business profile found. Complete onboarding to connect your channels.</p>
-            )}
-          </section>
-        </div>
-      </div>
+    <div className="flex-1 bg-zinc-50 flex flex-col min-w-0 w-full min-h-screen">
+      {/* 
+        The left side menu is removed entirely. 
+        The component now renders full-bleed without max-width or nested card wrapping layouts.
+      */}
+      <main className="flex-1 min-w-0 w-full">
+        <LinkAppsTool business={business} onUpdated={updated => setBusiness(updated)} />
+      </main>
     </div>
   );
 }
