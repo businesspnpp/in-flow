@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
-import { LogOut, Mail, Lock, Zap, HelpCircle } from 'lucide-react';
+import { LogOut, Mail, Lock, Zap, HelpCircle, ArrowRight } from 'lucide-react';
 
 interface AuthProps {
   onSignedIn: () => void;
@@ -153,175 +153,139 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   }
 
   function handleAppleSignIn() {
-    setError('Apple sign-in is coming soon.');
+    setError('Apple integration framework incoming.');
   }
 
   function handleGoogleSignIn() {
-    setError('Google sign-in is coming soon.');
+    setError('Google integration framework incoming.');
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-white">
-      {/* Top nav */}
-      <header className="w-full border-b border-zinc-200 bg-white">
-        <div className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-amber-600 flex items-center justify-center">
-              <Zap size={16} className="text-white" strokeWidth={2.5} />
+    <div className="min-h-screen w-full flex flex-col bg-[#FAFAFA] text-zinc-900 font-sans antialiased selection:bg-amber-100 selection:text-amber-900">
+      
+      {/* Premium Header Layout */}
+      <header className="w-full border-b border-zinc-200 bg-white sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 bg-zinc-950 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+              <Zap size={18} className="text-amber-400 fill-amber-400" strokeWidth={1.5} />
             </div>
-            <span className="text-base font-semibold text-zinc-900 tracking-tight">inFlow</span>
-          </div>
+            <span className="text-xl font-bold text-zinc-900 tracking-tight">inFlow</span>
+          </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
-              Product
-            </a>
-            <Link href="/pricing" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
-              Pricing
-            </Link>
-            <a href="#" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
-              <HelpCircle size={15} />
-              Help
+          <nav className="hidden md:flex items-center gap-10">
+            <Link href="/" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors">Product</Link>
+            <Link href="/pricing" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors">Pricing</Link>
+            <a href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
+              <HelpCircle size={16} />
+              Help & Resources
             </a>
           </nav>
 
           <div className="flex items-center gap-3">
             {!user && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('signin');
-                    setError('');
-                    setValidationErrors({});
-                  }}
-                  className={`text-sm font-semibold px-3 py-2 transition-colors ${
-                    mode === 'signin' ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
-                  }`}
-                >
-                  Sign in
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('signup');
-                    setError('');
-                    setValidationErrors({});
-                  }}
-                  className="text-sm font-semibold px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white transition-colors"
-                >
-                  Sign up
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === 'signin' ? 'signup' : 'signin');
+                  setError('');
+                  setValidationErrors({});
+                }}
+                className="text-xs font-mono font-bold tracking-wider uppercase bg-zinc-100 border border-zinc-200 px-4 py-2.5 hover:bg-zinc-200/70 transition-colors text-zinc-700"
+              >
+                {mode === 'signin' ? 'Create Account' : 'Access Vault'}
+              </button>
             )}
           </div>
         </div>
       </header>
 
-      {/* Body */}
-      <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
-        {/* Left panel */}
-        <aside className="hidden md:flex relative flex-col justify-between p-14 lg:p-20 overflow-hidden bg-zinc-50 border-r border-zinc-200">
-          {/* Faded grid overlay */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, rgb(24 24 27 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(24 24 27 / 0.06) 1px, transparent 1px)',
-              backgroundSize: '56px 56px',
-              maskImage:
-                'radial-gradient(ellipse 70% 60% at 30% 20%, black 0%, transparent 75%)',
-              WebkitMaskImage:
-                'radial-gradient(ellipse 70% 60% at 30% 20%, black 0%, transparent 75%)',
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, rgb(24 24 27 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(24 24 27 / 0.06) 1px, transparent 1px)',
-              backgroundSize: '56px 56px',
-              maskImage:
-                'radial-gradient(ellipse 55% 45% at 90% 95%, black 0%, transparent 75%)',
-              WebkitMaskImage:
-                'radial-gradient(ellipse 55% 45% at 90% 95%, black 0%, transparent 75%)',
-            }}
-          />
+      {/* Main Structural Grid Split */}
+      <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+        
+        {/* Left Side Column: Stark Technical Copy Block */}
+        <aside className="md:col-span-6 text-left space-y-6 py-8 pr-4">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 bg-zinc-900 rounded-none animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-zinc-400">
+              Identity Management & Protocols
+            </span>
+          </div>
 
-          {/* Content */}
-          <div className="relative max-w-lg">
-            <div className="flex items-center gap-2 mb-10">
-              <div className="w-8 h-8 bg-amber-600 flex items-center justify-center">
-                <Zap size={18} className="text-white" strokeWidth={2.5} />
+          <h1 className="text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 leading-[0.92]">
+            Unified commerce orchestrations.
+          </h1>
+          
+          <p className="text-lg text-zinc-500 max-w-md font-medium leading-relaxed">
+            Initialize your direct workspace interface. Deploy custom conversation layers, route transactional ledgers, and establish messaging triggers across active regional pathways.
+          </p>
+
+          <div className="pt-4 space-y-3 max-w-md">
+            <div className="border border-zinc-200 bg-white p-5 flex items-start gap-4">
+              <div className="w-2 h-2 bg-zinc-900 mt-1.5 shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Isolated Databases</p>
+                <p className="text-xs text-zinc-500 font-medium mt-0.5">Separate data pools protect customer logs, secure settlement tokens, and isolation models.</p>
               </div>
-              <span className="text-lg font-semibold text-zinc-900 tracking-tight">inFlow</span>
             </div>
-
-            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.05]">
-              Run your business
-              <br />
-              <span className="text-amber-600">#fromWhatsApp</span>
-            </h1>
-            <p className="text-base text-zinc-500 mt-5 max-w-md leading-relaxed">
-              Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
-            </p>
-            <p className="text-sm text-zinc-400 mt-3 tracking-wide">
-              Built for South African small businesses · Free to start
-            </p>
-          </div>
-
-          <div className="relative space-y-3 max-w-md">
-            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
-              <p className="text-sm font-semibold text-zinc-900 mb-1">Unified inbox</p>
-              <p className="text-sm text-zinc-500">WhatsApp, Instagram, and Facebook in one structured inbox.</p>
-            </div>
-            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
-              <p className="text-sm font-semibold text-zinc-900 mb-1">Instant tools</p>
-              <p className="text-sm text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
+            <div className="border border-zinc-200 bg-white p-5 flex items-start gap-4">
+              <div className="w-2 h-2 bg-amber-500 mt-1.5 shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">Regional Hub Nodes</p>
+                <p className="text-xs text-zinc-500 font-medium mt-0.5">Optimized latency architecture handling Southern African communications stacks efficiently.</p>
+              </div>
             </div>
           </div>
-
-          <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
-        {/* Right panel */}
-        <section className="flex flex-col justify-center items-center px-8 py-16 md:px-16 lg:px-24">
+        {/* Right Side Column: Hard-Edged Form Panel Widget */}
+        <section className="md:col-span-6 flex flex-col justify-center items-stretch lg:px-8">
+          
           {user ? (
-            <div className="w-full max-w-sm">
-              <div className="border border-zinc-200 bg-white p-8">
-                <h2 className="text-lg font-semibold text-zinc-900 mb-1">Session active</h2>
-                <p className="text-base text-zinc-500 mb-6">
-                  Signed in as <span className="font-semibold text-zinc-800">{user.email}</span>
+            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
+              <div>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-amber-800 bg-amber-400/30 border border-amber-300 px-2 py-0.5 uppercase">
+                  Authenticated Node
+                </span>
+                <h2 className="text-xl font-black tracking-tight text-zinc-900 mt-3">Session actively resolved</h2>
+                <p className="text-sm text-zinc-500 font-medium mt-1">
+                  Connected operator profile: <span className="font-bold text-zinc-800">{user.email}</span>
                 </p>
-                <button
-                  onClick={handleSignOut}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white py-3 text-base font-semibold hover:bg-zinc-800 disabled:opacity-50 transition-colors"
-                >
-                  <LogOut size={16} />
-                  {loading ? 'Signing out...' : 'Sign out'}
-                </button>
               </div>
+              <button
+                onClick={handleSignOut}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 bg-zinc-950 text-white py-3.5 text-sm font-bold hover:bg-zinc-800 disabled:opacity-50 transition-all active:scale-[0.99]"
+              >
+                <LogOut size={16} />
+                {loading ? 'Terminating Instance...' : 'Terminate Session'}
+              </button>
             </div>
           ) : (
-            <div className="w-full max-w-sm">
-              <div className="mb-7">
-                <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight">
-                  {mode === 'signin' ? 'Sign in' : 'Create account'}
-                </h2>
-                <p className="text-base text-zinc-500 mt-1">
-                  {mode === 'signin'
-                    ? 'Enter your credentials to access your workspace.'
-                    : 'Set up your inFlow account to get started.'}
-                </p>
+            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
+              
+              {/* Form Title */}
+              <div className="border-b border-zinc-100 pb-4 flex justify-between items-end">
+                <div>
+                  <h2 className="text-2xl font-black tracking-tight text-zinc-900">
+                    {mode === 'signin' ? 'Sign In' : 'Provision Console'}
+                  </h2>
+                  <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">
+                    {mode === 'signin' ? 'Operator Authorization' : 'New Client Registration'}
+                  </p>
+                </div>
+                <span className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                  v2.04
+                </span>
               </div>
 
-              <div className="space-y-3">
-                {/* Email */}
+              {/* Identity Form Controls */}
+              <div className="space-y-4">
+                {/* Email input field wrapper */}
                 <div>
-                  <label className="block text-sm font-semibold text-zinc-700 mb-1.5">Email</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Network Identity (Email)</label>
                   <div className="relative">
-                    <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                    <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
                       type="email"
                       value={email}
@@ -329,20 +293,20 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                         setEmail(e.target.value);
                         if (validationErrors.email) setValidationErrors({ ...validationErrors, email: '' });
                       }}
-                      placeholder="you@company.com"
-                      className="w-full pl-10 pr-3 py-3 text-base border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
+                      placeholder="operator@company.co.za"
+                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                     />
                   </div>
                   {validationErrors.email && (
-                    <p className="text-xs text-red-600 mt-1">{validationErrors.email}</p>
+                    <p className="text-xs font-mono font-bold text-red-600 mt-1">{validationErrors.email}</p>
                   )}
                 </div>
 
-                {/* Password */}
+                {/* Password input field wrapper */}
                 <div>
-                  <label className="block text-sm font-semibold text-zinc-700 mb-1.5">Password</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Access Credentials</label>
                   <div className="relative">
-                    <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                    <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
                       type="password"
                       value={password}
@@ -350,21 +314,21 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                         setPassword(e.target.value);
                         if (validationErrors.password) setValidationErrors({ ...validationErrors, password: '' });
                       }}
-                      placeholder={mode === 'signup' ? 'Min 8 chars, 1 uppercase, 1 number' : '••••••••'}
-                      className="w-full pl-10 pr-3 py-3 text-base border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
+                      placeholder={mode === 'signup' ? 'Requirements checklist' : '••••••••••••'}
+                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                     />
                   </div>
                   {validationErrors.password && (
-                    <p className="text-xs text-red-600 mt-1">{validationErrors.password}</p>
+                    <p className="text-xs font-mono font-bold text-red-600 mt-1">{validationErrors.password}</p>
                   )}
                 </div>
 
-                {/* Confirm password */}
+                {/* Confirm password view configuration */}
                 {mode === 'signup' && (
                   <div>
-                    <label className="block text-sm font-semibold text-zinc-700 mb-1.5">Confirm password</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">Verify Passphrase Integrity</label>
                     <div className="relative">
-                      <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                      <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                       <input
                         type="password"
                         value={confirmPassword}
@@ -372,97 +336,116 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                           setConfirmPassword(e.target.value);
                           if (validationErrors.confirmPassword) setValidationErrors({ ...validationErrors, confirmPassword: '' });
                         }}
-                        placeholder="Repeat password"
-                        className="w-full pl-10 pr-3 py-3 text-base border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
+                        placeholder="Re-enter verification sequence"
+                        className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
                       />
                     </div>
                     {validationErrors.confirmPassword && (
-                      <p className="text-xs text-red-600 mt-1">{validationErrors.confirmPassword}</p>
+                      <p className="text-xs font-mono font-bold text-red-600 mt-1">{validationErrors.confirmPassword}</p>
                     )}
                   </div>
                 )}
 
                 {mode === 'signin' && (
                   <div className="text-right">
-                    <button type="button" className="text-sm font-semibold text-zinc-500 hover:text-zinc-800 transition-colors">
-                      Forgot password?
+                    <button type="button" className="text-xs font-semibold text-zinc-400 hover:text-zinc-900 transition-colors">
+                      Recover lost passphrase?
                     </button>
                   </div>
                 )}
 
                 {error && (
-                  <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2.5">
+                  <div className="text-xs font-medium text-red-700 bg-red-50 border border-red-200 px-3 py-2.5">
                     {error}
                   </div>
                 )}
 
-                {/* Primary action */}
+                {/* Primary Executive Button Action Trigger */}
                 <button
                   onClick={mode === 'signin' ? handleSignIn : handleSignUp}
                   disabled={loading}
-                  className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 text-base font-semibold disabled:opacity-50 transition-colors"
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
                 >
-                  {loading ? 'Processing...' : mode === 'signin' ? 'Sign in' : 'Create account'}
+                  {loading ? 'Validating Sequences...' : mode === 'signin' ? 'Authorize Identity' : 'Initialize Base Environment'}
+                  <ArrowRight size={14} strokeWidth={2.5} />
                 </button>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-zinc-200" />
-                  <span className="text-sm font-medium text-zinc-400">
-                    {mode === 'signin' ? 'No account yet?' : 'Have an account?'}
-                  </span>
-                  <div className="flex-1 h-px bg-zinc-200" />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode(mode === 'signin' ? 'signup' : 'signin');
-                    setError('');
-                    setValidationErrors({});
-                  }}
-                  disabled={loading}
-                  className="w-full border border-zinc-300 py-3 text-base font-semibold text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
-                >
-                  {mode === 'signin' ? 'Create an account' : 'Back to sign in'}
-                </button>
-
-                <div className="space-y-2">
+                {/* Minimalist Visual Switcher */}
+                <div className="pt-2 flex flex-col items-center space-y-4">
                   <button
                     type="button"
-                    onClick={handleAppleSignIn}
+                    onClick={() => {
+                      setMode(mode === 'signin' ? 'signup' : 'signin');
+                      setError('');
+                      setValidationErrors({});
+                    }}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 border border-zinc-300 py-3 text-base font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
+                    className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
                   >
-                    <svg width="14" height="14" viewBox="0 0 384 512" fill="currentColor">
-                      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z" />
-                    </svg>
-                    Sign in with Apple
+                    {mode === 'signin' ? "No sandbox account? Register entry" : "Existing instance recorded? Authenticate"}
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 border border-zinc-300 py-3 text-base font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 transition-colors"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 48 48">
-                      <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
-                      <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
-                      <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
-                      <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
-                    </svg>
-                    Sign in with Google
-                  </button>
+
+                  <div className="w-full flex items-center gap-3">
+                    <div className="flex-1 h-px bg-zinc-100" />
+                    <span className="text-[10px] font-mono font-bold text-zinc-300 uppercase tracking-widest">Federated</span>
+                    <div className="flex-1 h-px bg-zinc-100" />
+                  </div>
+
+                  {/* Federation Identity Providers */}
+                  <div className="w-full grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={handleAppleSignIn}
+                      disabled={loading}
+                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-none"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor">
+                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z" />
+                      </svg>
+                      Apple ID
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGoogleSignIn}
+                      disabled={loading}
+                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-none"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 48 48">
+                        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+                        <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
+                        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
+                        <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
+                      </svg>
+                      Google Sync
+                    </button>
+                  </div>
                 </div>
+
               </div>
 
-              <p className="text-sm text-zinc-400 mt-6 text-center leading-relaxed">
-                By continuing, you agree to the{' '}
-                <span className="underline cursor-pointer">Terms and Privacy Policy</span>.
+              <p className="text-[11px] text-zinc-400 mt-6 text-center leading-relaxed font-medium">
+                By entering this console instance, you agree to comply with standard regional encryption handling and our universal{' '}
+                <span className="underline cursor-pointer text-zinc-500">Service Framework Policies</span>.
               </p>
             </div>
           )}
         </section>
       </div>
+
+      {/* Programmatic Terminal Style Footer */}
+      <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-zinc-950 flex items-center justify-center">
+              <Zap size={12} className="text-amber-400 fill-amber-400" />
+            </div>
+            <span className="text-sm font-bold text-zinc-900 tracking-tight">inFlow Automation Corp</span>
+          </div>
+          <p className="text-xs font-mono font-bold text-zinc-400">
+            © {new Date().getFullYear()} inFlow Core Systems. SECURE REGIONAL PATHWAY.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
