@@ -239,7 +239,7 @@ export default function PremiumPricingPage() {
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-1.5 bg-zinc-900 rounded-none animate-pulse" />
             <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-zinc-400">
-              Infrastructure / Regional Billing Indices
+              Regional Billing Framework
             </span>
           </div>
 
@@ -317,7 +317,7 @@ export default function PremiumPricingPage() {
       </section>
 
       {/* Primary Tier Blueprint Grid */}
-      <section className="w-full max-w-7xl mx-auto px-6 pb-24">
+      <section className="w-full max-w-[84rem] mx-auto px-6 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
