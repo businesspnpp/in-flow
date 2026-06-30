@@ -109,7 +109,7 @@ const INIT_MSGS: Record<string, Message[]> = MOCK_CONVERSATIONS.reduce((acc, con
 /* Mock data — Customer directory                                      */
 /* ================================================================== */
 
-const DIR_TABS = ['All Customers', 'Channels & DMs', 'Team Members', 'Workflows & Plugins', 'Calendars & Sync', 'Billing & Plan'];
+const DIR_TABS = ['All Customers', 'Channels & DMs', 'Google Reviews', 'VIP / Segments'];
 
 const DIR_CUSTOMERS: DirCustomer[] = [
   { id: 'c1', name: 'Lindiwe', avatarColor: 'bg-amber-700', initials: 'LD', contact: '+27 82 386 0192 / lindiwe@gmail.com', channels: ['whatsapp', 'instagram'], online: true, lastInteractionDays: 13 },
