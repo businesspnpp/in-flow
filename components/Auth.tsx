@@ -221,10 +221,10 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
         </div>
       </header>
 
-      {/* Body */}
+      {/* Body Container */}
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         
-        {/* Left panel WITH dynamic 3D box text rotation slider */}
+        {/* Left panel (Hidden on mobile, pristine typography on desktop) */}
         <aside className="hidden md:flex relative flex-col justify-between p-14 md:pl-32 lg:p-20 lg:pl-44 overflow-hidden bg-zinc-50">
           {/* Faded grid overlay */}
           <div
@@ -267,10 +267,9 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               <span className="inline-flex items-center whitespace-nowrap">
                 <span className="text-zinc-900 mr-3 select-none">#from</span>
                 
-                {/* 3D Perspective Box Frame with Explicit Centering */}
+                {/* 3D Perspective Box Frame */}
                 <span className="relative inline-flex items-center h-[1.2em] [perspective:1000px]">
-                  
-                  {/* Invisible ghost element to maintain container dimensions */}
+                  {/* Invisible ghost element */}
                   <span className={`invisible block font-bold select-none pointer-events-none transition-colors duration-500 ${channelsConfig[currentChannelIndex].color}`}>
                     {channelsConfig[currentChannelIndex].name}
                   </span>
@@ -321,10 +320,10 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           <p className="relative text-xs text-zinc-400">© {new Date().getFullYear()} inFlow. All rights reserved.</p>
         </aside>
 
-        {/* Right panel */}
-        <section className="flex flex-col justify-center items-stretch px-8 py-16 md:px-16 lg:px-24">
+        {/* Right panel (Responsive Form wrapper) */}
+        <section className="flex flex-col justify-center items-stretch px-4 py-10 sm:px-8 md:px-16 lg:px-24 bg-white">
           {user ? (
-            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
+            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
               <div>
                 <span className="text-[10px] font-mono font-bold tracking-widest text-amber-800 bg-amber-400/30 border border-amber-300 px-2 py-0.5 uppercase">
                   Logged In
@@ -344,15 +343,49 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               </button>
             </div>
           ) : (
-            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 max-w-md mx-auto w-full space-y-6">
+            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
 
-              {/* Simplified Form Header */}
+              {/* Mobile-Only Interactive Header Hook */}
+              <div className="block md:hidden mb-2">
+                <span className="text-xs font-bold tracking-tight text-zinc-900 inline-flex items-center whitespace-nowrap">
+                  Run your business
+                  <span className="mx-1.5 font-normal text-zinc-400 select-none">#from</span>
+                  
+                  {/* Dynamic Inline Micro 3D Box for mobile header */}
+                  <span className="relative inline-flex items-center h-[1.2em] [perspective:1000px]">
+                    <span className={`invisible block font-bold select-none pointer-events-none ${channelsConfig[currentChannelIndex].color}`}>
+                      {channelsConfig[currentChannelIndex].name}
+                    </span>
+                    {channelsConfig.map((channel, index) => {
+                      const isActive = index === currentChannelIndex;
+                      const isPast = index === (currentChannelIndex - 1 + channelsConfig.length) % channelsConfig.length;
+                      return (
+                        <span
+                          key={`mobile-${channel.name}`}
+                          className={`absolute left-0 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] [backface-visibility:hidden] ${channel.color} ${
+                            isActive
+                              ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
+                              : isPast
+                              ? 'opacity-0 [transform:rotateX(90deg)_translateY(-60%)]'
+                              : 'opacity-0 [transform:rotateX(-90deg)_translateY(60%)]'
+                          }`}
+                          style={{ transformOrigin: 'center center' }}
+                        >
+                          {channel.name}
+                        </span>
+                      );
+                    })}
+                  </span>
+                </span>
+              </div>
+
+              {/* Form Header Line */}
               <div className="border-b border-zinc-100 pb-4 flex justify-between items-end">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-zinc-900">
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900">
                     {mode === 'signin' ? 'Sign In' : 'Sign Up'}
                   </h2>
-                  <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">
                     {mode === 'signin' ? 'Access your account' : 'Start your free trial'}
                   </p>
                 </div>
@@ -459,7 +492,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                       setValidationErrors({});
                     }}
                     disabled={loading}
-                    className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                    className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors text-center"
                   >
                     {mode === 'signin' ? "Don't have an account? Sign up here" : "Already have an account? Sign in"}
                   </button>
@@ -507,6 +540,11 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               </p>
             </div>
           )}
+          
+          {/* Mobile Footer Copyright visibility catch */}
+          <p className="block md:hidden text-center text-[10px] text-zinc-400 mt-8">
+            © {new Date().getFullYear()} inFlow. All rights reserved.
+          </p>
         </section>
       </div>
     </div>
