@@ -220,14 +220,14 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
 
               <div className="hidden md:block">
                 {showSearch ? (
-                  <div className="relative">
-                    <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                  <div className="relative w-full">
+                    <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                     <input
                       type="text"
                       value={searchValue}
                       onChange={(event) => setSearchValue(event.target.value)}
                       placeholder={searchPlaceholder}
-                      className="h-10 w-full border border-zinc-300 bg-white pl-9 pr-3 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-500"
+                      className="h-9 w-full rounded-lg border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm text-zinc-700 placeholder:text-zinc-400 outline-none transition focus:border-blue-400 focus:bg-white"
                     />
                   </div>
                 ) : (
