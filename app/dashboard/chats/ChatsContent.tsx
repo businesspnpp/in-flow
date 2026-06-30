@@ -136,7 +136,7 @@ export default function ChatsContent() {
       if (!res.ok) throw new Error('failed');
       const data: AiExtraction = await res.json();
       setAiExtraction(data);
-      if (data.tool) router.push('/dashboard/shortcuts');
+      if (data.tool) router.push('/dashboard/tools');
     } catch (e) { console.error(e); } finally { setAiLoading(false); }
   }
 
@@ -219,7 +219,7 @@ export default function ChatsContent() {
               <div className="flex-shrink-0 flex items-center gap-3 px-4 py-2.5 bg-amber-600/10 border-b border-amber-600/20">
                 <Sparkles size={13} className="text-amber-700 flex-shrink-0" />
                 <p className="text-xs text-amber-800 flex-1">AI detected a <span className="font-semibold capitalize">{aiExtraction.tool}</span> request{aiExtraction.confidence >= 0.8 ? ' — form pre-filled, review and send.' : ' — check the pre-fill before sending.'}</p>
-                <button onClick={() => router.push('/dashboard/shortcuts')} className="flex-shrink-0 text-[10px] font-semibold text-amber-700 bg-amber-600/20 px-2 py-1 hover:bg-amber-600/30 transition">Open tool →</button>
+                <button onClick={() => router.push('/dashboard/tools')} className="flex-shrink-0 text-[10px] font-semibold text-amber-700 bg-amber-600/20 px-2 py-1 hover:bg-amber-600/30 transition">Open tool →</button>
               </div>
             )}
             <div className="flex-shrink-0 border-b border-zinc-200 bg-white overflow-x-auto scrollbar-none px-4 py-2">
@@ -304,7 +304,7 @@ export default function ChatsContent() {
                 <div className="space-y-2">
                   {(['booked', 'invoice'] as const).map(tool => {
                     const isMatch = (tool === 'booked' && aiIntent === 'booking') || (tool === 'invoice' && aiIntent === 'invoice');
-                    return <button key={tool} onClick={() => router.push('/dashboard/shortcuts')} className={`w-full px-3 py-2 text-left border transition-colors ${isMatch ? 'border-amber-600/60 bg-amber-600/10' : 'border-zinc-200 bg-white hover:border-zinc-300'}`}><p className="text-[12px] text-zinc-900 font-medium">{tool === 'booked' ? 'Open BookedIt' : 'Open FastInvoice'}</p><p className="text-[10px] text-zinc-500 mt-0.5">{tool === 'booked' ? 'Suggested when booking intent is dominant.' : 'Suggested when invoice intent is dominant.'}</p></button>;
+                    return <button key={tool} onClick={() => router.push('/dashboard/tools')} className={`w-full px-3 py-2 text-left border transition-colors ${isMatch ? 'border-amber-600/60 bg-amber-600/10' : 'border-zinc-200 bg-white hover:border-zinc-300'}`}><p className="text-[12px] text-zinc-900 font-medium">{tool === 'booked' ? 'Open BookedIt' : 'Open FastInvoice'}</p><p className="text-[10px] text-zinc-500 mt-0.5">{tool === 'booked' ? 'Suggested when booking intent is dominant.' : 'Suggested when invoice intent is dominant.'}</p></button>;
                   })}
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function ChatsContent() {
                 <div className="border border-zinc-200 bg-white p-3"><p className="text-[10px] uppercase tracking-wide text-zinc-500">Orders</p><p className="text-lg font-semibold text-zinc-900 mt-1">{orderVol}</p></div>
               </div>
               <p className="text-xs text-zinc-500">AI Intent: <span className="font-semibold text-zinc-800">{aiIntent}</span></p>
-              <button onClick={() => { setShowIntel(false); router.push('/dashboard/shortcuts'); }} className="w-full px-3 py-2.5 text-sm font-semibold bg-amber-600 text-white">Open Shortcuts</button>
+              <button onClick={() => { setShowIntel(false); router.push('/dashboard/tools'); }} className="w-full px-3 py-2.5 text-sm font-semibold bg-amber-600 text-white">Open Tools</button>
             </div>
           </div>
           <button className="absolute inset-0 -z-10" aria-label="Close" onClick={() => setShowIntel(false)} />

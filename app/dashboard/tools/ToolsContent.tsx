@@ -43,7 +43,7 @@ function getToolCtx(label: string | null) {
   }
 }
 
-export default function ShortcutsContent() {
+export default function ToolsContent() {
   const { setHeaderConfig, clearHeaderConfig } = useDashboardHeader();
   const [activeToolId, setActiveToolId] = useState<ToolId | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'tabs'>('list');
@@ -51,7 +51,7 @@ export default function ShortcutsContent() {
 
   useEffect(() => {
     setHeaderConfig({
-      title: 'Shortcuts',
+      title: 'Tools',
       subtitle: 'Open a tool and trigger fast actions from one workspace.',
       showSearch: false,
       actions: (
@@ -64,7 +64,7 @@ export default function ShortcutsContent() {
           }}
           className="h-10 border border-[#FB5801] bg-[#FB5801] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#e24d00]"
         >
-          + Create Shortcut
+          + Create Tool
         </button>
       ),
     });

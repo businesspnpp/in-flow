@@ -8,13 +8,13 @@ import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContex
 import {
   BarChart3,
   Calendar,
-  LayoutDashboard,
+  House,
   LogOut,
   Menu,
   MessageCircleMore,
   Plug,
   Settings,
-  Zap,
+  Wrench,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -26,9 +26,9 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { path: '/dashboard', label: 'Home', title: 'Home', Icon: LayoutDashboard },
+  { path: '/dashboard', label: 'Home', title: 'Home', Icon: House },
   { path: '/dashboard/chats', label: 'Chats', title: 'Chats', Icon: MessageCircleMore },
-  { path: '/dashboard/shortcuts', label: 'Shortcuts', title: 'Shortcuts', Icon: Zap },
+  { path: '/dashboard/tools', label: 'Tools', title: 'Tools', Icon: Wrench },
   { path: '/dashboard/bookings-orders', label: 'Bookings & Orders', title: 'Bookings & Orders', Icon: Calendar },
   { path: '/dashboard/link-apps', label: 'Link Apps', title: 'Link Apps', Icon: Plug },
   { path: '/dashboard/reports', label: 'Reports', title: 'Reports', Icon: BarChart3 },
@@ -85,10 +85,10 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
         showSearch: true,
         searchPlaceholder: 'Search chats or customers',
       },
-      '/dashboard/shortcuts': {
+      '/dashboard/tools': {
         subtitle: 'Launch tools and automations directly into conversations.',
         showSearch: false,
-        searchPlaceholder: 'Search shortcuts',
+        searchPlaceholder: 'Search tools',
       },
       '/dashboard/bookings-orders': {
         subtitle: 'Track appointments, orders, and scheduling status.',
