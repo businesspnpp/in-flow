@@ -234,22 +234,18 @@ export default function PremiumPricingPage() {
         </button>
       </div>
 
-      {/* Left Side Column */}
-<div className="lg:col-span-7 text-left space-y-6">
-  {/* Stark, minimalist layout line replacing the AI-style badge */}
-  <div className="flex items-center gap-3">
-    <div className="w-1.5 h-1.5 bg-zinc-900 rounded-none animate-pulse" />
-    <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-zinc-400">
-      Infrastructure / Regional Billing Indices
-    </span>
-  </div>
-
-  <h1 className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[0.92]">
-    Pricing matched to your scale.
-  </h1>
-  <p className="text-lg md:text-xl text-zinc-500 max-w-xl font-medium leading-relaxed">
-    Eliminate restrictive licensing. Deploy a permanent free foundation, adjust seasonal workflows with usage-based flexibility, or drop overhead with community pricing loops.
-  </p>
+      {/* Intercom-Style Asymmetric Split Hero Section */}
+      <section className="w-full max-w-7xl mx-auto px-6 pt-10 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="lg:col-span-7 text-left space-y-6">
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase bg-amber-100/70 border border-amber-200 text-amber-900 px-3 py-1.5">
+            <Sparkles size={12} className="fill-amber-600 text-amber-600" /> Optimized for the African Tech Ecosystem
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[0.95]">
+            Pricing matched to your scale.
+          </h1>
+          <p className="text-lg md:text-xl text-zinc-500 max-w-xl font-medium leading-relaxed">
+            Eliminate restrictive licensing. Deploy a permanent free foundation, adjust seasonal workflows with usage-based flexibility, or drop overhead with community pricing loops.
+          </p>
 
           {/* Centered Segmented Controller */}
           <div className="inline-flex items-center p-1.5 bg-zinc-200/60 rounded-none border border-zinc-200 mt-4">
