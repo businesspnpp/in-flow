@@ -668,7 +668,7 @@ export default function ChatsContent() {
           {renderInboxList()}
         </CollapsiblePanel>
 
-        <CollapsiblePanel title="Customers" icon={Users} expanded={panels.directory} onToggle={() => togglePanel('directory')} widthClass="w-[440px]">
+        <CollapsiblePanel title="Customers" icon={Users} expanded={panels.directory} onToggle={() => togglePanel('directory')} widthClass="flex-1 min-w-[360px]">
           {renderDirectory()}
         </CollapsiblePanel>
 
