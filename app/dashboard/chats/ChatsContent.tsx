@@ -7,7 +7,7 @@ import { isMissingTableError } from '@/lib/inflow-client';
 import {
   ArrowRight, ArrowUpRight, CalendarCheck, CheckCheck, ChevronDown, ChevronLeft, ChevronRight,
   Download, FileText, Filter, Hash, Inbox, Info, MessageSquare, MoreHorizontal, Paperclip, Phone,
-  Search, Smile, Sparkles, Star, Tag, UserPlus, Users, UtensilsCrossed, Wrench,
+  Plus, Search, Smile, Sparkles, Star, StickyNote, Tag, UserPlus, Users, UtensilsCrossed, Wrench,
 } from 'lucide-react';
 
 /* ================================================================== */
@@ -24,6 +24,8 @@ type DirChannel = 'whatsapp' | 'instagram' | 'tiktok';
 type DirCustomer = { id: string; name: string; avatarColor: string; initials: string; contact: string; channels: DirChannel[]; online: boolean; lastInteractionDays: number; };
 type MobileScreen = 'list' | 'thread' | 'profile';
 type MobileListTab = 'inbox' | 'directory';
+type ActivityType = 'note' | 'booking' | 'payment' | 'tag';
+type ActivityItem = { id: string; type: ActivityType; label: string; time: string; };
 
 /* ================================================================== */
 /* Brand glyphs (lucide has no brand icons)                            */
@@ -118,12 +120,52 @@ const DIR_CUSTOMERS: DirCustomer[] = [
 
 // Links a directory row to its real conversation in the Inbox panel
 const CUSTOMER_TO_CHAT: Record<string, string> = { c1: 'chat_5', c2: 'chat_2', c3: 'chat_6', c4: 'chat_9' };
+// Reverse lookup: given an Inbox chat id, find the matching Customers profile (if any)
+const CHAT_TO_CUSTOMER: Record<string, string> = Object.fromEntries(
+  Object.entries(CUSTOMER_TO_CHAT).map(([customerId, chatId]) => [chatId, customerId])
+);
 
-const RECENT_INQUIRIES = [
-  { name: 'Lindiwe', avatarColor: 'bg-amber-700', initials: 'LD', channel: 'whatsapp' as DirChannel, message: "You're worn out — sent the rebooking link." },
-  { name: 'Thabo', avatarColor: 'bg-zinc-800', initials: 'TN', channel: 'instagram' as DirChannel, message: 'We restocked the listing you asked about.' },
-  { name: 'Sipho', avatarColor: 'bg-orange-700', initials: 'SM', channel: 'tiktok' as DirChannel, message: 'Hn... yeah Saturday afternoon works for t...' },
+// Internal CRM activity per customer — tags, payments, bookings, private notes.
+// This is business-side record-keeping, separate from the live chat thread in the Inbox.
+const CUSTOMER_ACTIVITY: Record<string, ActivityItem[]> = {
+  c1: [
+    { id: 'c1-1', type: 'tag', label: 'Tagged as Silver Tier', time: '2w ago' },
+    { id: 'c1-2', type: 'payment', label: 'Invoice #INV-2025-088 paid — R 2,100.00', time: '9d ago' },
+    { id: 'c1-3', type: 'note', label: 'Prefers size 8, always asks about new drops first.', time: '3d ago' },
+  ],
+  c2: [
+    { id: 'c2-1', type: 'tag', label: 'Tagged as New Lead', time: '13d ago' },
+    { id: 'c2-2', type: 'booking', label: 'Requested a property walkthrough for Thursday', time: '2m ago' },
+  ],
+  c3: [
+    { id: 'c3-1', type: 'tag', label: 'Tagged as Gold VIP', time: '1mo ago' },
+    { id: 'c3-2', type: 'booking', label: 'Completed 8 bookings this year', time: '5d ago' },
+    { id: 'c3-3', type: 'note', label: 'Always books the master barber, not a junior.', time: '2d ago' },
+  ],
+  c4: [
+    { id: 'c4-1', type: 'tag', label: 'Tagged as Gold VIP', time: '31d ago' },
+    { id: 'c4-2', type: 'payment', label: 'Payment pending — custom jewelry piece, R 12,500.00', time: '3h ago' },
+  ],
+};
+
+// Cross-customer feed shown in the Customers panel — internal events, not message previews.
+const ACTIVITY_FEED: { customerId: string; name: string; avatarColor: string; initials: string; item: ActivityItem }[] = [
+  { customerId: 'c4', name: 'Zanele', avatarColor: 'bg-rose-700', initials: 'ZK', item: CUSTOMER_ACTIVITY.c4[1] },
+  { customerId: 'c2', name: 'Thabo', avatarColor: 'bg-zinc-800', initials: 'TN', item: CUSTOMER_ACTIVITY.c2[1] },
+  { customerId: 'c1', name: 'Lindiwe', avatarColor: 'bg-amber-700', initials: 'LD', item: CUSTOMER_ACTIVITY.c1[2] },
 ];
+const ACTIVITY_ICON: Record<ActivityType, (p?: { size?: number; className?: string }) => JSX.Element> = {
+  tag: (p) => <Tag {...p} />,
+  booking: (p) => <CalendarCheck {...p} />,
+  payment: (p) => <FileText {...p} />,
+  note: (p) => <StickyNote {...p} />,
+};
+const ACTIVITY_COLOR: Record<ActivityType, string> = {
+  tag: 'bg-purple-50 text-purple-600',
+  booking: 'bg-blue-50 text-blue-600',
+  payment: 'bg-emerald-50 text-emerald-600',
+  note: 'bg-amber-50 text-amber-600',
+};
 const SEGMENTS = ['VIP Customers', 'New This Month', 'Needs Follow-Up'];
 const TOP_BOOKING_CLIENTS = [
   { name: 'Lindiwe', count: 16 },
@@ -224,6 +266,10 @@ export default function ChatsContent() {
   const [directorySearch, setDirectorySearch] = useState('');
   const [activeDirTab, setActiveDirTab] = useState(DIR_TABS[0]);
 
+  // customer notes (internal record-keeping, separate from the live chat thread)
+  const [customNotes, setCustomNotes] = useState<Record<string, ActivityItem[]>>({});
+  const [noteDraft, setNoteDraft] = useState('');
+
   const selected = MOCK_CONVERSATIONS.find(c => c.id === activeContact);
   const curMsgs = useMemo(() => activeContact ? (msgsByContact[activeContact] ?? []) : [], [activeContact, msgsByContact]);
   const aiIntent = useMemo<'booking' | 'invoice' | 'quote' | 'promo' | 'none'>(() => {
@@ -275,6 +321,14 @@ export default function ChatsContent() {
   function selectCustomerRow(customerId: string) {
     const chatId = CUSTOMER_TO_CHAT[customerId];
     if (chatId) selectChat(chatId);
+  }
+  function addNote() {
+    if (!activeContact) return;
+    const text = noteDraft.trim();
+    if (!text) return;
+    const entry: ActivityItem = { id: `note-${Date.now()}`, type: 'note', label: text, time: 'Just now' };
+    setCustomNotes(prev => ({ ...prev, [activeContact]: [entry, ...(prev[activeContact] ?? [])] }));
+    setNoteDraft('');
   }
 
   function scrollBottom() { window.setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50); }
@@ -449,18 +503,18 @@ export default function ChatsContent() {
 
         {/* insight cards (stacked) */}
         <div className="rounded-xl border border-zinc-200 bg-white p-3">
-          <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Recent DM Inquiries</h4>
-          <p className="text-[10px] text-zinc-400 mb-2">Last Message</p>
+          <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Recent Activity</h4>
+          <p className="text-[10px] text-zinc-400 mb-2">Tags, payments, bookings & notes — not chat messages</p>
           <div className="space-y-2">
-            {RECENT_INQUIRIES.map(item => (
-              <div key={item.name} className="flex items-center gap-2">
+            {ACTIVITY_FEED.map(entry => (
+              <div key={entry.customerId} className="flex items-center gap-2">
                 <div className="relative flex-shrink-0">
-                  <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[9px] font-semibold text-white ${item.avatarColor}`}>{item.initials}</div>
-                  <span className="absolute -bottom-1 -right-1">{DIR_CHANNEL_ICON[item.channel]({ size: 12 })}</span>
+                  <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[9px] font-semibold text-white ${entry.avatarColor}`}>{entry.initials}</div>
+                  <span className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center ${ACTIVITY_COLOR[entry.item.type]}`}>{ACTIVITY_ICON[entry.item.type]({ size: 9 })}</span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-semibold text-zinc-900">{item.name}</p>
-                  <p className="text-[9px] text-zinc-500 truncate">{item.message}</p>
+                  <p className="text-[10px] font-semibold text-zinc-900">{entry.name}</p>
+                  <p className="text-[9px] text-zinc-500 truncate">{entry.item.label}</p>
                 </div>
               </div>
             ))}
@@ -634,6 +688,40 @@ export default function ChatsContent() {
                   return <button key={tool} onClick={() => router.push('/dashboard/tools')} className={`w-full px-3 py-2 text-left rounded-lg border transition-colors ${isMatch ? 'border-blue-300 bg-blue-50' : 'border-zinc-200 bg-zinc-50 hover:border-zinc-300'}`}><p className="text-[12px] text-zinc-900 font-medium">{tool === 'booked' ? 'Open BookedIt' : 'Open FastInvoice'}</p><p className="text-[10px] text-zinc-500 mt-0.5">{tool === 'booked' ? 'Suggested when booking intent is dominant.' : 'Suggested when invoice intent is dominant.'}</p></button>;
                 })}
               </div>
+            </div>
+          </section>
+          <section className="rounded-xl border border-zinc-200 bg-white shadow-sm p-4">
+            <div className="flex items-center justify-between mb-2.5">
+              <h4 className="text-xs font-semibold text-zinc-800">Notes & activity</h4>
+              <span className="text-[9px] text-zinc-400">Internal — the customer never sees this</span>
+            </div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <input
+                value={noteDraft}
+                onChange={e => setNoteDraft(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') addNote(); }}
+                placeholder="Add a private note about this customer…"
+                className="flex-1 h-8 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 focus:bg-white transition"
+              />
+              <button onClick={addNote} disabled={!noteDraft.trim()} className="h-8 w-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed transition"><Plus size={14} /></button>
+            </div>
+            <div className="space-y-2.5">
+              {(() => {
+                const customerId = activeContact ? CHAT_TO_CUSTOMER[activeContact] : undefined;
+                const log: ActivityItem[] = [...(activeContact ? customNotes[activeContact] ?? [] : []), ...(customerId ? CUSTOMER_ACTIVITY[customerId] ?? [] : [])];
+                if (log.length === 0) {
+                  return <p className="text-[11px] text-zinc-500">No notes or activity yet — add a note above, or tag this person as a customer to start tracking bookings and payments.</p>;
+                }
+                return log.map(entry => (
+                  <div key={entry.id} className="flex items-start gap-2.5">
+                    <div className={`h-6 w-6 flex-shrink-0 rounded-full flex items-center justify-center ${ACTIVITY_COLOR[entry.type]}`}>{ACTIVITY_ICON[entry.type]({ size: 12 })}</div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] text-zinc-800 leading-snug">{entry.label}</p>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">{entry.time}</p>
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
           </section>
         </div>
