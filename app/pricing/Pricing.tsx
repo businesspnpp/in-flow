@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,8 +10,10 @@ interface Tier {
   name: string;
   monthly: number;
   channels: string;
+  tagline: string;
   description: string;
   features: string[];
+  footnote: string;
   highlighted?: boolean;
   cta: string;
 }
@@ -20,24 +23,51 @@ const tiers: Tier[] = [
     name: 'Free',
     monthly: 0,
     channels: '1 channel',
-    description: 'Testing the water — first-time software users',
-    features: ['1 channel connected', '1 tool of your choice', '40 conversations / month'],
+    tagline: 'Start automating, no card needed',
+    description: 'For first-time software buyers who want to feel the value before paying anything.',
+    features: [
+      '1 channel connected (WhatsApp, Instagram, or Facebook)',
+      '1 tool of your choice',
+      '40 conversations / month',
+      'Tagged, context-aware inbox',
+      'Mobile money & EFT billing',
+      'Community support',
+    ],
+    footnote: 'Free forever — not a time-boxed trial.',
     cta: 'Start for free',
   },
   {
     name: 'Starter',
     monthly: 149,
     channels: '2 channels',
-    description: 'Solo operators — barbers, single-chair salons',
-    features: ['2 channels connected', 'All 4 built-in tools', '1 calendar sync'],
+    tagline: 'Built for solo operators',
+    description: 'Run a single-chair salon, barbershop, or one-person service business end to end.',
+    features: [
+      '2 channels connected',
+      'All 4 built-in tools (Booking, Orders, FAQ, Reminders)',
+      'Unlimited conversations',
+      '1 calendar sync (Google or Apple)',
+      'Mobile money & EFT billing',
+      'Email support',
+    ],
+    footnote: 'Most solo operators pay this off in 2-3 bookings.',
     cta: 'Choose Starter',
   },
   {
     name: 'Growth',
     monthly: 349,
     channels: 'All channels',
-    description: 'Growing teams — multi-stylist salons, busy kitchens',
-    features: ['All channels connected', 'All 4 built-in tools', 'Unlimited calendar sync', '3 team users'],
+    tagline: 'For teams that are scaling up',
+    description: 'Multiple stylists, a busy kitchen, or a team handling volume across every channel.',
+    features: [
+      'All channels connected (WhatsApp, IG, FB, TikTok, email)',
+      'All 4 built-in tools',
+      'Unlimited conversations',
+      'Unlimited calendar sync',
+      '3 team users included',
+      'Priority email support',
+    ],
+    footnote: 'The plan most growing teams land on.',
     highlighted: true,
     cta: 'Choose Growth',
   },
@@ -45,8 +75,17 @@ const tiers: Tier[] = [
     name: 'Pro',
     monthly: 699,
     channels: 'All channels',
-    description: 'Multi-location or franchise-style operators',
-    features: ['Everything in Growth', 'Multi-location support', 'Team roles & permissions', 'Analytics'],
+    tagline: 'Multi-location & franchise-ready',
+    description: 'Run several branches or a franchise-style operation from a single workspace.',
+    features: [
+      'Everything in Growth',
+      'Multi-location support',
+      'Team roles & permissions',
+      'Unlimited team users',
+      'Analytics dashboard',
+      'Priority support',
+    ],
+    footnote: 'Built for operators managing more than one site.',
     cta: 'Choose Pro',
   },
 ];
@@ -213,56 +252,72 @@ export default function PricingPage() {
 
       {/* Tiers */}
       <section className="w-full px-6 md:px-10 pb-16">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
           {tiers.map((tier) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col p-6 border ${
-                  tier.highlighted ? 'border-amber-600 bg-amber-50/40 relative' : 'border-zinc-200 bg-white'
+                className={`flex flex-col p-8 md:p-10 border relative ${
+                  tier.highlighted ? 'border-amber-600 bg-amber-50/40' : 'border-zinc-200 bg-white'
                 }`}
               >
                 {tier.highlighted && (
-                  <span className="absolute -top-3 left-6 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 tracking-wide">
+                  <span className="absolute -top-3 left-9 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 tracking-wide">
                     MOST POPULAR
                   </span>
                 )}
-                <p className="text-sm font-semibold text-zinc-900">{tier.name}</p>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-semibold text-zinc-900 tracking-tight">
+
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xl font-semibold text-zinc-900">{tier.name}</p>
+                    <p className="text-sm text-zinc-500 mt-1">{tier.tagline}</p>
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-amber-700 bg-amber-100 px-2.5 py-1">
+                    {tier.channels}
+                  </span>
+                </div>
+
+                <div className="mt-6 flex items-baseline gap-1.5">
+                  <span className="text-5xl font-semibold text-zinc-900 tracking-tight">
                     {price === 0 ? 'R0' : `R${price}`}
                   </span>
-                  <span className="text-sm text-zinc-500">{price === 0 ? 'forever' : '/mo'}</span>
+                  <span className="text-base text-zinc-500">{price === 0 ? 'forever' : '/ month'}</span>
                 </div>
                 {annual && price !== 0 && <p className="text-xs text-zinc-400 mt-1">billed annually</p>}
-                <p className="text-xs font-medium text-amber-700 mt-1.5">{tier.channels}</p>
-                <p className="text-sm text-zinc-500 mt-3 leading-relaxed min-h-[40px]">{tier.description}</p>
 
-                <ul className="mt-5 space-y-2.5 flex-1">
+                <p className="text-sm text-zinc-600 mt-4 leading-relaxed">{tier.description}</p>
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <Link
+                    href="/auth?mode=signup"
+                    className={`text-center px-5 py-3 text-sm font-semibold transition-colors ${
+                      tier.highlighted
+                        ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                        : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                    }`}
+                  >
+                    {tier.cta}
+                  </Link>
+                  <span className="text-xs text-zinc-400 self-center">{tier.footnote}</span>
+                </div>
+
+                <div className="h-px bg-zinc-200 my-7" />
+
+                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-4">What's included</p>
+                <ul className="space-y-3">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-zinc-700">
-                      <Check size={15} className="text-amber-600 mt-0.5 shrink-0" />
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-700">
+                      <Check size={16} className="text-amber-600 mt-0.5 shrink-0" />
                       <span>{f}</span>
                     </li>
                   ))}
                 </ul>
-
-                <Link
-                  href="/auth?mode=signup"
-                  className={`mt-6 w-full text-center py-2.5 text-sm font-semibold transition-colors ${
-                    tier.highlighted
-                      ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                      : 'border border-zinc-300 text-zinc-700 hover:bg-zinc-50'
-                  }`}
-                >
-                  {tier.cta}
-                </Link>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-zinc-400 text-center mt-6 max-w-md mx-auto">
+        <p className="text-xs text-zinc-400 text-center mt-8 max-w-md mx-auto">
           Prices shown are starting points for the South African market and may be refined with
           pilot businesses before final launch pricing.
         </p>
@@ -355,10 +410,17 @@ export default function PricingPage() {
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse">
+            <table className="w-full min-w-[720px] border-collapse table-fixed">
+              <colgroup>
+                <col className="w-[34%]" />
+                <col className="w-[16.5%]" />
+                <col className="w-[16.5%]" />
+                <col className="w-[16.5%]" />
+                <col className="w-[16.5%]" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th className="text-left text-sm font-medium text-zinc-500 pb-4 pl-2 w-1/3">Feature</th>
+                  <th className="text-left text-sm font-medium text-zinc-500 pb-4 pl-2">Feature</th>
                   {tiers.map((tier) => (
                     <th key={tier.name} className="text-center pb-4 px-2">
                       <span className={`text-sm font-semibold ${tier.highlighted ? 'text-amber-700' : 'text-zinc-900'}`}>
@@ -370,7 +432,7 @@ export default function PricingPage() {
               </thead>
               <tbody>
                 {comparisonGroups.map((group) => (
-                  <tbody key={group.group}>
+                  <Fragment key={group.group}>
                     <tr className="bg-zinc-50">
                       <td colSpan={5} className="text-xs font-semibold text-zinc-500 uppercase tracking-wide py-2 pl-2">
                         {group.group}
@@ -386,7 +448,7 @@ export default function PricingPage() {
                         ))}
                       </tr>
                     ))}
-                  </tbody>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
