@@ -74,7 +74,7 @@ type ChannelStatus = {
   facebook: boolean;
 };
 
-export default function BusinessSettings({ business, onUpdated }: Props) {
+export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

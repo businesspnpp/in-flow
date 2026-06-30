@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Business } from '@/lib/supabase';
-import BusinessSettings from '@/components/BusinessSettings';
+import LinkAppsTool from '@/components/LinkAppsTool';
 
 export default function LinkAppsPage() {
   const [business, setBusiness] = useState<Business | null>(null);
@@ -47,7 +47,7 @@ export default function LinkAppsPage() {
           </aside>
           <section className="flex-1 bg-white border border-zinc-200 p-4 md:p-8 min-w-0">
             {business ? (
-              <BusinessSettings business={business} onUpdated={updated => setBusiness(updated)} />
+              <LinkAppsTool business={business} onUpdated={updated => setBusiness(updated)} />
             ) : (
               <p className="text-sm text-zinc-500">No business profile found. Complete onboarding to connect your channels.</p>
             )}

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Business } from '@/lib/supabase';
-import BusinessSettings from '@/components/BusinessSettings';
+import LinkAppsTool from '@/components/LinkAppsTool';
 import FastInvoice from '@/components/plugins/FastInvoice';
 import BookedIt from '@/components/plugins/BookedIt';
 import QuoteCraft from '@/components/plugins/QuoteCraft';
@@ -66,7 +66,7 @@ export default function ShortcutsPage() {
       case 'paynow':   return <PayNow activeChat={mockChat} />;
       case 'review':   return <ReviewLink activeChat={mockChat} />;
       case 'promo':    return <PromoBlast activeChat={mockChat} />;
-      case 'settings': return business ? <BusinessSettings business={business} onUpdated={b => setBusiness(b)} /> : <p className="text-sm text-zinc-500">No business profile found.</p>;
+      case 'settings': return business ? <LinkAppsTool business={business} onUpdated={b => setBusiness(b)} /> : <p className="text-sm text-zinc-500">No business profile found.</p>;
       default: return null;
     }
   }
