@@ -26,8 +26,8 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [user, setUser] = useState<any>(null);
   
-  // Clean channels array for the text transition slider
-  const channels = ['#fromWhatsApp', '#fromInstagram', '#fromTikTok', '#fromEmail', '#fromFacebook'];
+  // Clean channel names without the hash prefix for independent 3D rotation
+  const channels = ['WhatsApp', 'Instagram', 'TikTok', 'Email', 'Facebook'];
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
     return () => subscription?.subscription.unsubscribe();
   }, [onSignedIn, onSignedOut]);
 
-  // Rotates channels smoothly every 2.5 seconds
+  // Rotates the channel index every 2.5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentChannelIndex((prevIndex) => (prevIndex + 1) % channels.length);
@@ -218,7 +218,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       {/* Body */}
       <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2">
         
-        {/* Left panel WITH dynamic channel text slider */}
+        {/* Left panel WITH isolated 3D box text rotation slider */}
         <aside className="hidden md:flex relative flex-col justify-between p-14 md:pl-32 lg:p-20 lg:pl-44 overflow-hidden bg-zinc-50">
           {/* Faded grid overlay */}
           <div
@@ -255,25 +255,33 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
               <span className="text-lg font-semibold text-zinc-900 tracking-tight">inFlow</span>
             </div>
 
-            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.1]">
+            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.15]">
               Run your business
               <br />
-              <span className="relative inline-block h-[1.2em] overflow-hidden w-full">
-                {channels.map((channel, index) => {
-                  const isActive = index === currentChannelIndex;
-                  return (
-                    <span
-                      key={channel}
-                      className={`absolute left-0 top-0 text-amber-600 transition-all duration-500 ease-in-out transform ${
-                        isActive 
-                          ? 'opacity-100 translate-y-0 scale-100' 
-                          : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
-                      }`}
-                    >
-                      {channel}
-                    </span>
-                  );
-                })}
+              <span className="inline-flex flex-wrap items-center">
+                <span className="text-zinc-900 mr-2">#from</span>
+                {/* 3D Perspective Box Frame */}
+                <span className="relative inline-block h-[1.2em] w-[260px] overflow-hidden [perspective:1000px]">
+                  {channels.map((channel, index) => {
+                    const isActive = index === currentChannelIndex;
+                    const isPast = index === (currentChannelIndex - 1 + channels.length) % channels.length;
+
+                    return (
+                      <span
+                        key={channel}
+                        className={`absolute left-0 top-0 text-amber-600 font-bold transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-bottom [backface-visibility:hidden] ${
+                          isActive
+                            ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
+                            : isPast
+                            ? 'opacity-0 [transform:rotateX(90deg)_translateY(-100%)]'
+                            : 'opacity-0 [transform:rotateX(-90deg)_translateY(100%)]'
+                        }`}
+                      >
+                        {channel}
+                      </span>
+                    );
+                  })}
+                </span>
               </span>
             </h1>
             <p className="text-base text-zinc-500 mt-5 max-w-md leading-relaxed">
