@@ -44,40 +44,6 @@ function FacebookIcon({ size = 22 }: { size?: number }) {
   );
 }
 
-function HubSpotIcon({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="#FF7A59"/>
-      <circle cx="9" cy="15" r="3" fill="white"/>
-      <circle cx="15" cy="8" r="2.2" fill="white"/>
-      <path d="M10.8 13.5L13.5 9.8" stroke="white" strokeWidth="1.6"/>
-    </svg>
-  );
-}
-
-function SlackIcon({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="white"/>
-      <rect x="7" y="3" width="3.2" height="9" rx="1.6" fill="#36C5F0"/>
-      <rect x="12" y="3" width="3.2" height="9" rx="1.6" fill="#2EB67D" transform="rotate(90 12 3)" />
-      <circle cx="8.6" cy="7.5" r="1.6" fill="#36C5F0"/>
-      <circle cx="16.5" cy="15.4" r="1.6" fill="#ECB22E"/>
-      <rect x="13.8" y="12" width="3.2" height="9" rx="1.6" fill="#ECB22E"/>
-      <rect x="8" y="12" width="3.2" height="9" rx="1.6" fill="#E01E5A" transform="rotate(90 8 12)"/>
-    </svg>
-  );
-}
-
-function WebflowIcon({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="#4353FF"/>
-      <path d="M5 8l3 8 2.5-5.5L13 16l3-8h-2l-1.7 4.6L10.7 8H9l-1.6 4.6L5.8 8H5z" fill="white"/>
-    </svg>
-  );
-}
-
 function GmailIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -90,14 +56,24 @@ function GmailIcon({ size = 22 }: { size?: number }) {
   );
 }
 
-function NewAppIcon({ size = 22 }: { size?: number }) {
+function TikTokIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="#F4F4F5"/>
-      <rect x="5" y="5" width="6" height="6" rx="1.4" fill="#A1A1AA"/>
-      <rect x="13" y="5" width="6" height="6" rx="1.4" fill="#D4D4D8"/>
-      <rect x="5" y="13" width="6" height="6" rx="1.4" fill="#D4D4D8"/>
-      <rect x="13" y="13" width="6" height="6" rx="1.4" fill="#A1A1AA"/>
+      <rect width="24" height="24" rx="5" fill="#000000"/>
+      <path d="M15.5 4.5c.4 1.6 1.5 2.7 3 3v2.3c-1.2 0-2.3-.4-3.2-1.1v5.3a4.7 4.7 0 11-4-4.6v2.4a2.3 2.3 0 102 2.3V4.5h2.2z" fill="white"/>
+      <path d="M15.5 4.5c.4 1.6 1.5 2.7 3 3v2.3c-1.2 0-2.3-.4-3.2-1.1" stroke="#25F4EE" strokeWidth="0.4"/>
+    </svg>
+  );
+}
+
+function SmsIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#71717a"/>
+      <path d="M4 6h16v10a2 2 0 01-2 2H6l-3 2V8a2 2 0 012-2z" fill="white" fillOpacity="0.95"/>
+      <circle cx="8" cy="11" r="1.3" fill="#71717a"/>
+      <circle cx="12" cy="11" r="1.3" fill="#71717a"/>
+      <circle cx="16" cy="11" r="1.3" fill="#71717a"/>
     </svg>
   );
 }
@@ -323,15 +299,27 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     window.location.href = url;
   };
 
-  /* ---------------- CONNECTED GRID (matches screenshot: HubSpot, Slack, Webflow, WhatsApp, Instagram, Gmail) ---------------- */
-  // Mock cards (HubSpot, Slack, Webflow, Gmail) are display-only — they are not wired to any backend.
-  // Real cards (WhatsApp, Instagram) use the actual Meta OAuth handlers above.
+  /* ---------------- CONNECTED GRID ----------------
+     Real channels (Facebook, WhatsApp, Instagram) use the actual Meta OAuth handlers above,
+     same as the original implementation. TikTok and Gmail remain display-only mock cards
+     since there's no backend for them yet. SMS Gateway stays in "Coming Soon" state. */
   const connectedCards: IntegrationCard[] = [
     {
-      id: 'hubspot',
-      name: 'HubSpot',
-      Icon: HubSpotIcon,
-      description: 'Create and revers for HubSpot sebids.',
+      id: 'facebook',
+      name: 'Facebook Pages',
+      Icon: FacebookIcon,
+      description: 'Sync comprehensive message channels, wall threads, and active community feedback lines.',
+      isConnected: channelStatus.facebook,
+      mappedFields: 45,
+      syncFrequency: '20m',
+      onConnect: handleFacebookConnect,
+      isReal: true,
+    },
+    {
+      id: 'tiktok',
+      name: 'TikTok',
+      Icon: TikTokIcon,
+      description: 'Manage TikTok messages and engagement from your unified inbox.',
       isConnected: true,
       mappedFields: 45,
       syncFrequency: '20m',
@@ -339,23 +327,11 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       isReal: false,
     },
     {
-      id: 'slack',
-      name: 'Slack',
-      Icon: SlackIcon,
-      description: 'New automation side in Slack.',
-      isConnected: true,
-      mappedFields: 45,
-      syncFrequency: '20m',
-      onConnect: null,
-      isReal: false,
-    },
-    {
-      id: 'webflow',
-      name: 'Webflow',
-      Icon: WebflowIcon,
-      description: 'Your automation in Webflow.',
-      isConnected: true,
-      hasIssue: true,
+      id: 'sms',
+      name: 'SMS Gateway Core',
+      Icon: SmsIcon,
+      description: 'Establish local direct telecom integrations for secure, prioritized outbound and native workflows.',
+      isConnected: false,
       onConnect: null,
       isReal: false,
     },
@@ -394,26 +370,17 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     },
   ];
 
-  const availableCards = [
-    {
-      id: 'newapp',
-      name: 'New App',
-      Icon: NewAppIcon,
-      description: 'New automation side Slack.',
-      mappedFields: 45,
-      syncFrequency: '20m',
-    },
-  ];
-
   const workflowItems = [
-    { id: 'wf1', Icon: WebflowIcon, name: 'Webflow to HubSpot Sync', sub: 'Webflow to HubSpot Sync' },
-    { id: 'wf2', Icon: SlackIcon, name: 'Slack to HubSpot Sync', sub: 'Webflow to HubSpot Sync' },
-    { id: 'wf3', Icon: GmailIcon, name: 'Gmail to Gmarl Sync', sub: 'Webflow to Instagram Sync' },
+    { id: 'wf1', Icon: FacebookIcon, name: 'Facebook to WhatsApp Sync', sub: 'Facebook to WhatsApp Sync' },
+    { id: 'wf2', Icon: TikTokIcon, name: 'TikTok to Gmail Sync', sub: 'TikTok to Gmail Sync' },
+    { id: 'wf3', Icon: GmailIcon, name: 'Gmail to Instagram Sync', sub: 'Gmail to Instagram Sync' },
   ];
 
   const filteredConnected = connectedCards.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const issueCard = connectedCards.find(c => c.hasIssue);
 
   return (
     <div className="w-full min-w-0 h-full overflow-y-auto bg-zinc-50">
@@ -451,7 +418,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
             <div className="md:flex-1">
               <p className="text-sm text-zinc-500 mb-2">Integrations with Issues:</p>
               <p className="text-3xl font-bold text-red-600">
-                1 ({connectedCards.find(c => c.hasIssue)?.name})
+                {issueCard ? `1 (${issueCard.name})` : '0'}
               </p>
             </div>
             <div className="hidden md:block h-9 w-px bg-zinc-200/70 mx-8 shrink-0" aria-hidden="true" />
@@ -490,6 +457,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {filteredConnected.map((card) => {
               const isLoading = loading === card.id;
+              const isSms = card.id === 'sms';
               return (
                 <div
                   key={card.id}
@@ -517,7 +485,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                       </p>
                     )}
 
-                    {card.id !== 'webflow' && (
+                    {!isSms && (
                       <div className="border-t border-zinc-200 mt-3 mb-4">
                         <div className="grid grid-cols-2 divide-x divide-zinc-200">
                           <div className="pt-3 pr-4">
@@ -531,9 +499,21 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                         </div>
                       </div>
                     )}
+
+                    {isSms && (
+                      <p className="text-sm text-zinc-400 italic mt-3 mb-4">Provisioning core pipeline...</p>
+                    )}
                   </div>
 
-                  {card.hasIssue ? (
+                  {isSms ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="text-sm font-semibold text-zinc-400 bg-zinc-100 rounded-lg px-3 py-3.5 cursor-not-allowed"
+                    >
+                      Coming Soon
+                    </button>
+                  ) : card.hasIssue ? (
                     <div className="flex flex-col gap-2">
                       <button
                         type="button"
@@ -590,68 +570,18 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* AVAILABLE FOR CONNECTION */}
-            <div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-4">Available for Connection</h3>
-              <div className="space-y-3">
-                {availableCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="border border-zinc-200 rounded-xl p-5"
-                  >
-                    <div className="flex items-center gap-3.5 mb-4">
-                      <div className="w-14 h-14 flex items-center justify-center shrink-0 rounded-xl overflow-hidden border border-zinc-200">
-                        <card.Icon size={56} />
-                      </div>
-                      <div>
-                        <p className="text-base font-bold text-zinc-400">{card.name}</p>
-                        <p className="text-sm text-zinc-400 max-w-[180px]">{card.description}</p>
-                      </div>
-                    </div>
-                    <div className="border-t border-zinc-200 mb-4">
-                      <div className="grid grid-cols-2 divide-x divide-zinc-200">
-                        <div className="pt-3 pr-4">
-                          <p className="text-xl font-bold text-zinc-300">{card.mappedFields}</p>
-                          <p className="text-sm text-zinc-400">Mapped fields</p>
-                        </div>
-                        <div className="pt-3 pl-4">
-                          <p className="text-xl font-bold text-zinc-300">{card.syncFrequency}</p>
-                          <p className="text-sm text-zinc-400">Sync Frequency</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-3.5 hover:bg-zinc-200 transition-colors"
-                      >
-                        Connect
-                      </button>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-white bg-zinc-400 rounded-lg px-3 py-3.5 cursor-not-allowed"
-                        disabled
-                      >
-                        Connect
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* INTEGRATION LOG */}
             <div>
               <h3 className="text-lg font-bold text-zinc-900 mb-4">Integration Log</h3>
               <div className="border border-zinc-200 rounded-xl p-5 h-full">
                 <p className="text-sm text-zinc-500 mb-4">Recent Last API events</p>
-                <p className="text-base text-red-600 font-semibold">Issues: 1</p>
+                <p className="text-base text-red-600 font-semibold">Issues: {issueCard ? 1 : 0}</p>
                 <p className="text-sm text-zinc-400 mt-1">events ali event sent ago</p>
               </div>
             </div>
 
             {/* WORKFLOW-ACTIVATED */}
-            <div>
+            <div className="md:col-span-2">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-zinc-900">Workflow-Activated</h3>
                 <button type="button" className="text-sm font-semibold text-blue-600 hover:underline">
