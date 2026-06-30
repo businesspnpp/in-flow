@@ -71,6 +71,7 @@ const conversations = [
     name: 'Braina Name',
     channel: 'whatsapp',
     avatarType: 'image',
+    Icon: null,
     preview: 'Hello, first you rewnered your messages?',
   },
   {
@@ -239,68 +240,68 @@ export default function DashboardHomeContent() {
           <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-4">Omnichannel Conversations (Unified Inbox)</h3>
             <div className="divide-y divide-slate-100">
-              {conversations.map((c) => (
-                <div key={c.id} className="py-4 first:pt-0 last:pb-0">
-                  <div className="flex items-start gap-3">
-                    {/* Dynamic Avatar Setup matching image */}
-                    <div className="relative shrink-0">
-                      {c.avatarType === 'image' ? (
-                        <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden relative">
-                          <svg viewBox="0 0 32 32" className="w-full h-full object-cover">
-                            <circle cx="16" cy="16" r="16" fill="#cbd5e1" />
-                            <circle cx="16" cy="12" r="6" fill="#475569" />
-                            <path d="M4 28c0-6 5-10 12-10s12 4 12 10H4z" fill="#475569" />
-                          </svg>
-                        </div>
-                      ) : (
-                        <c.Icon />
-                      )}
-                      
-                      {c.avatarType === 'image' && (
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-sm">
-                          <WhatsAppIcon size={12} />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-4">
-                        <p className="text-sm font-bold text-slate-900">{c.name}</p>
-                        {/* Status Row Legend duplicated precisely */}
-                        <div className="flex items-center gap-2 text-[11px] font-bold">
-                          <span className="flex items-center gap-0.5 text-slate-700">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> New
-                          </span>
-                          <span className="flex items-center gap-0.5 text-slate-700">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Pending
-                          </span>
-                          <span className="flex items-center gap-0.5 text-slate-700">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Resolved
-                          </span>
-                        </div>
+              {conversations.map((c) => {
+                const ComponentIcon = c.Icon;
+                return (
+                  <div key={c.id} className="py-4 first:pt-0 last:pb-0">
+                    <div className="flex items-start gap-3">
+                      <div className="relative shrink-0">
+                        {c.avatarType === 'image' ? (
+                          <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden relative">
+                            <svg viewBox="0 0 32 32" className="w-full h-full object-cover">
+                              <circle cx="16" cy="16" r="16" fill="#cbd5e1" />
+                              <circle cx="16" cy="12" r="6" fill="#475569" />
+                              <path d="M4 28c0-6 5-10 12-10s12 4 12 10H4z" fill="#475569" />
+                            </svg>
+                          </div>
+                        ) : (
+                          ComponentIcon ? <ComponentIcon /> : null
+                        )}
+                        
+                        {c.avatarType === 'image' && (
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <WhatsAppIcon size={12} />
+                          </div>
+                        )}
                       </div>
-                      
-                      <p className="text-sm font-medium text-slate-900 mt-0.5">{c.preview}</p>
-                      
-                      {/* Interactive Buttons with Internal Alignment Icons */}
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                          <Tag size={12} className="text-slate-500" /> Smart-Tagging
-                        </button>
-                        <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-300 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200 shadow-xs">
-                          <CalendarDays size={12} className="text-slate-500" /> Suggest Booking Slot
-                        </button>
-                        <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                          <FileText size={12} className="text-slate-500" /> Create Order
-                        </button>
-                        <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
-                          <Flag size={12} className="text-slate-500" /> Flag &amp; Tag
-                        </button>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-4">
+                          <p className="text-sm font-bold text-slate-900">{c.name}</p>
+                          <div className="flex items-center gap-2 text-[11px] font-bold">
+                            <span className="flex items-center gap-0.5 text-slate-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> New
+                            </span>
+                            <span className="flex items-center gap-0.5 text-slate-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Pending
+                            </span>
+                            <span className="flex items-center gap-0.5 text-slate-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Resolved
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm font-medium text-slate-900 mt-0.5">{c.preview}</p>
+                        
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
+                            <Tag size={12} className="text-slate-500" /> Smart-Tagging
+                          </button>
+                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-300 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200 shadow-xs">
+                            <CalendarDays size={12} className="text-slate-500" /> Suggest Booking Slot
+                          </button>
+                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
+                            <FileText size={12} className="text-slate-500" /> Create Order
+                          </button>
+                          <button type="button" className="text-xs font-bold bg-slate-100 border border-slate-200 text-slate-700 rounded-md px-2.5 py-1 flex items-center gap-1 hover:bg-slate-200">
+                            <Flag size={12} className="text-slate-500" /> Flag &amp; Tag
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -313,7 +314,6 @@ export default function DashboardHomeContent() {
                 <h4 className="text-sm font-bold text-slate-900 mb-3">Today&apos;s Schedule</h4>
                 
                 <div className="grid grid-cols-12 gap-2 relative">
-                  {/* Timeline hours */}
                   <div className="col-span-3 space-y-6">
                     {scheduleHours.map((hour, idx) => (
                       <div key={idx} className="text-xs font-bold text-slate-400 h-5 flex items-center">
@@ -322,12 +322,9 @@ export default function DashboardHomeContent() {
                     ))}
                   </div>
 
-                  {/* Shaded blocks and nested Action panel to mirror the layout perfectly */}
                   <div className="col-span-9 relative border-l border-slate-100 pl-2">
-                    {/* Blue Highlighted Block at top */}
                     <div className="absolute top-0 left-2 right-0 h-10 bg-blue-50 border-b-2 border-dashed border-blue-200 rounded-xs opacity-70" />
                     
-                    {/* Embedded Action list overlaying the timetable grid space */}
                     <div className="mt-8 space-y-3 relative z-10">
                       <p className="text-xs font-bold text-slate-900">Customer Actions Needed</p>
                       <div className="space-y-2">
