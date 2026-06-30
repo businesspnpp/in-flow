@@ -24,7 +24,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { path: '/dashboard/home', label: 'Home', title: 'Home', Icon: LayoutDashboard },
+  { path: '/dashboard', label: 'Home', title: 'Home', Icon: LayoutDashboard },
   { path: '/dashboard/chats', label: 'Chats', title: 'Chats', Icon: MessageCircleMore },
   { path: '/dashboard/shortcuts', label: 'Shortcuts', title: 'Shortcuts', Icon: Zap },
   { path: '/dashboard/bookings-orders', label: 'Bookings & Orders', title: 'Bookings & Orders', Icon: Calendar },
@@ -59,7 +59,14 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
   }, [router]);
 
   const activeItem = useMemo(() => {
-    return NAV_ITEMS.find((item) => pathname === item.path) ?? NAV_ITEMS[0];
+    return (
+      NAV_ITEMS.find((item) => {
+        if (item.path === '/dashboard') {
+          return pathname === '/dashboard' || pathname === '/dashboard/home';
+        }
+        return pathname === item.path || pathname.startsWith(`${item.path}/`);
+      }) ?? NAV_ITEMS[0]
+    );
   }, [pathname]);
 
   async function handleSignOut() {
@@ -110,7 +117,10 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
           {NAV_ITEMS.map(({ path, label, Icon }) => {
-            const isActive = pathname === path;
+            const isActive =
+              path === '/dashboard'
+                ? pathname === '/dashboard' || pathname === '/dashboard/home'
+                : pathname === path || pathname.startsWith(`${path}/`);
 
             return (
               <button
@@ -158,7 +168,10 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white">
         <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide">
           {NAV_ITEMS.map(({ path, label, Icon }) => {
-            const isActive = pathname === path;
+            const isActive =
+              path === '/dashboard'
+                ? pathname === '/dashboard' || pathname === '/dashboard/home'
+                : pathname === path || pathname.startsWith(`${path}/`);
 
             return (
               <button
