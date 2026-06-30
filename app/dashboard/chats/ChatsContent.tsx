@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { isMissingTableError } from '@/lib/inflow-client';
 import {
   ArrowRight, ArrowUpRight, CalendarCheck, CheckCheck, ChevronDown, ChevronLeft, ChevronRight,
-  Download, FileText, Filter, Hash, Inbox, Info, MessageSquare, MoreHorizontal, Paperclip, Phone,
+  Download, FileText, Filter, Hash, Inbox, Info, Mail, MessageSquare, MoreHorizontal, Paperclip, Phone,
   Plus, Search, Smile, Sparkles, Star, StickyNote, Tag, UserPlus, Users, UtensilsCrossed, Wrench,
 } from 'lucide-react';
 
@@ -70,6 +70,17 @@ const DIR_CHANNEL_ICON: Record<DirChannel, (p?: { size?: number }) => JSX.Elemen
   instagram: (p) => <InstagramIcon {...p} />,
   tiktok: (p) => <TikTokIcon {...p} />,
 };
+
+function InboxChannelIcon({ channel }: { channel: string }) {
+  if (channel === 'WhatsApp') return <WhatsAppIcon size={14} />;
+  if (channel === 'Instagram') return <InstagramIcon size={14} />;
+  if (channel === 'Email') return <Mail size={12} className="text-blue-600" />;
+  if (channel === 'SMS') return <MessageSquare size={12} className="text-slate-600" />;
+  if (channel === 'Facebook Business') {
+    return <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">f</span>;
+  }
+  return <MessageSquare size={12} className="text-zinc-500" />;
+}
 
 /* ================================================================== */
 /* Mock data — Inbox (chat list + thread)                              */
@@ -436,7 +447,10 @@ export default function ChatsContent() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className="text-[12px] font-semibold text-zinc-900 truncate">{contact.customerName}</span>
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <span className="flex-shrink-0"><InboxChannelIcon channel={contact.channel} /></span>
+                    <span className="text-[12px] font-semibold text-zinc-900 truncate">{contact.customerName}</span>
+                  </div>
                   <span className="text-[10px] text-zinc-400 flex-shrink-0">{contact.lastMessageTime}</span>
                 </div>
                 <p className="text-[11px] text-zinc-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
