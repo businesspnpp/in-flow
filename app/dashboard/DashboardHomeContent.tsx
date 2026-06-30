@@ -274,7 +274,8 @@ export default function DashboardHomeContent() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '44px 1fr',
-                  gridTemplateRows: 'repeat(7, 36px)',
+                  gridTemplateRows: 'repeat(7, 48px)',
+                  rowGap: '6px',
                 }}
               >
                 {/* Horizontal divider lines (rows 1-6) */}
