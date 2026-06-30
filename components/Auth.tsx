@@ -26,8 +26,14 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [user, setUser] = useState<any>(null);
   
-  // Clean channel names without the hash prefix for independent 3D rotation
-  const channels = ['WhatsApp', 'Instagram', 'TikTok', 'Email', 'Facebook'];
+  // Channel brand configuration mapping
+  const channelsConfig = [
+    { name: 'WhatsApp', color: 'text-[#25D366]' },
+    { name: 'Instagram', color: 'text-[#E1306C]' },
+    { name: 'TikTok', color: 'text-[#000000]' },
+    { name: 'Email', color: 'text-amber-600' },
+    { name: 'Facebook', color: 'text-[#1877F2]' }
+  ];
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
 
   useEffect(() => {
@@ -51,10 +57,10 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
   // Rotates the channel index every 2.5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentChannelIndex((prevIndex) => (prevIndex + 1) % channels.length);
+      setCurrentChannelIndex((prevIndex) => (prevIndex + 1) % channelsConfig.length);
     }, 2500);
     return () => clearInterval(interval);
-  }, [channels.length]);
+  }, [channelsConfig.length]);
 
   async function handleSignUp() {
     setLoading(true);
@@ -256,44 +262,42 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-zinc-900 leading-[1.2]">
-  Run your business
-  <br />
-  {/* Added items-center to force strict cross-axis alignment */}
-  <span className="inline-flex items-center whitespace-nowrap">
-    <span className="text-zinc-900 mr-3 select-none">#from</span>
-    
-    {/* 3D Perspective Box Frame with Explicit Centering */}
-    <span className="relative inline-flex items-center h-[1.2em] [perspective:1000px]">
-      
-      {/* Invisible ghost element layout structure */}
-      <span className="invisible block font-bold text-amber-600 select-none pointer-events-none">
-        {channels[currentChannelIndex]}
-      </span>
+              Run your business
+              <br />
+              <span className="inline-flex items-center whitespace-nowrap">
+                <span className="text-zinc-900 mr-3 select-none">#from</span>
+                
+                {/* 3D Perspective Box Frame with Explicit Centering */}
+                <span className="relative inline-flex items-center h-[1.2em] [perspective:1000px]">
+                  
+                  {/* Invisible ghost element to maintain container dimensions */}
+                  <span className={`invisible block font-bold select-none pointer-events-none transition-colors duration-500 ${channelsConfig[currentChannelIndex].color}`}>
+                    {channelsConfig[currentChannelIndex].name}
+                  </span>
 
-      {channels.map((channel, index) => {
-        const isActive = index === currentChannelIndex;
-        const isPast = index === (currentChannelIndex - 1 + channels.length) % channels.length;
+                  {channelsConfig.map((channel, index) => {
+                    const isActive = index === currentChannelIndex;
+                    const isPast = index === (currentChannelIndex - 1 + channelsConfig.length) % channelsConfig.length;
 
-        return (
-          <span
-            key={channel}
-            className={`absolute left-0 text-amber-600 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] [backface-visibility:hidden] ${
-              isActive
-                ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
-                : isPast
-                ? 'opacity-0 [transform:rotateX(90deg)_translateY(-60%)]'
-                : 'opacity-0 [transform:rotateX(-90deg)_translateY(60%)]'
-            }`}
-            /* origin-bottom can drag baseline-calculated elements out of alignment, so we use center origins instead */
-            style={{ transformOrigin: 'center center' }}
-          >
-            {channel}
-          </span>
-        );
-      })}
-    </span>
-  </span>
-</h1>
+                    return (
+                      <span
+                        key={channel.name}
+                        className={`absolute left-0 font-bold whitespace-nowrap transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] [backface-visibility:hidden] ${channel.color} ${
+                          isActive
+                            ? 'opacity-100 [transform:rotateX(0deg)_translateY(0)]'
+                            : isPast
+                            ? 'opacity-0 [transform:rotateX(90deg)_translateY(-60%)]'
+                            : 'opacity-0 [transform:rotateX(-90deg)_translateY(60%)]'
+                        }`}
+                        style={{ transformOrigin: 'center center' }}
+                      >
+                        {channel.name}
+                      </span>
+                    );
+                  })}
+                </span>
+              </span>
+            </h1>
             
             <p className="text-base text-zinc-500 mt-5 max-w-md leading-relaxed">
               Manage conversations, send invoices, schedule bookings, and more — all from one workspace.
