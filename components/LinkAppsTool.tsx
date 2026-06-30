@@ -78,6 +78,18 @@ function SmsIcon({ size = 22 }: { size?: number }) {
   );
 }
 
+function GoogleBusinessProfileIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#ffffff"/>
+      <path d="M11.9 12.5h4.7c-.1 1.2-.5 2.1-1.1 2.7-.7.7-1.7 1-3.1 1-2.7 0-4.8-2.2-4.8-4.9s2.1-4.9 4.8-4.9c1.5 0 2.6.6 3.4 1.4l1.8-1.8C16 4.9 14.2 4 11.9 4 8 4 5 7 5 11s3 7 6.9 7c2.1 0 3.7-.7 4.9-1.9 1.3-1.3 1.7-3.2 1.7-5.1 0-.4 0-.8-.1-1.2h-6.5v2.7z" fill="#4285F4"/>
+      <path d="M18.9 9.1h-1.8V7.3h-1.6v1.8h-1.8v1.6h1.8v1.8h1.6v-1.8h1.8V9.1z" fill="#34A853"/>
+      <circle cx="7" cy="8" r="1" fill="#EA4335"/>
+      <circle cx="7" cy="16" r="1" fill="#FBBC05"/>
+    </svg>
+  );
+}
+
 /* ---------------- TYPES ---------------- */
 
 interface Props {
@@ -299,10 +311,10 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     window.location.href = url;
   };
 
-  /* ---------------- CONNECTED GRID ----------------
-     Real channels (Facebook, WhatsApp, Instagram) use the actual Meta OAuth handlers above,
-     same as the original implementation. TikTok and Gmail remain display-only mock cards
-     since there's no backend for them yet. SMS Gateway stays in "Coming Soon" state. */
+    /* ---------------- CONNECTED GRID ----------------
+      Real channels (Facebook, WhatsApp, Instagram) use the actual Meta OAuth handlers above,
+      same as the original implementation. TikTok and Gmail remain display-only mock cards
+      since there's no backend for them yet. Google Business Profile is also display-only for now. */
   const connectedCards: IntegrationCard[] = [
     {
       id: 'facebook',
@@ -327,10 +339,10 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       isReal: false,
     },
     {
-      id: 'sms',
-      name: 'SMS Gateway Core',
-      Icon: SmsIcon,
-      description: 'Establish local direct telecom integrations for secure, prioritized outbound and native workflows.',
+      id: 'google-business-profile',
+      name: 'Google Business Profile',
+      Icon: GoogleBusinessProfileIcon,
+      description: 'Manage your Google Business Profile updates, visibility, and customer engagement from one place.',
       isConnected: false,
       onConnect: null,
       isReal: false,
@@ -457,7 +469,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {filteredConnected.map((card) => {
               const isLoading = loading === card.id;
-              const isSms = card.id === 'sms';
+              const isGoogleBusinessProfile = card.id === 'google-business-profile';
               return (
                 <div
                   key={card.id}
@@ -485,7 +497,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                       </p>
                     )}
 
-                    {!isSms && (
+                    {!isGoogleBusinessProfile && (
                       <div className="border-t border-zinc-200 mt-3 mb-4">
                         <div className="grid grid-cols-2 divide-x divide-zinc-200">
                           <div className="pt-3 pr-4">
@@ -500,12 +512,12 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                       </div>
                     )}
 
-                    {isSms && (
-                      <p className="text-sm text-zinc-400 italic mt-3 mb-4">Provisioning core pipeline...</p>
+                    {isGoogleBusinessProfile && (
+                      <p className="text-sm text-zinc-400 italic mt-3 mb-4">Connect your Google Business Profile to manage listings and messages.</p>
                     )}
                   </div>
 
-                  {isSms ? (
+                  {isGoogleBusinessProfile ? (
                     <button
                       type="button"
                       disabled
