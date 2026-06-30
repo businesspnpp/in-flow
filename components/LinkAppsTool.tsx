@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, CheckCircle2, AlertCircle, Search, ChevronDown } from 'lucide-react';
+import { X, CheckCircle2, AlertCircle, Search, ChevronDown, AlertTriangle } from 'lucide-react';
 import { supabase, Business } from '@/lib/supabase';
 
-function WhatsAppIcon({ size = 20 }: { size?: number }) {
+/* ---------------- ICONS ---------------- */
+
+function WhatsAppIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.406A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="#25D366"/>
@@ -13,7 +15,7 @@ function WhatsAppIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-function InstagramIcon({ size = 20 }: { size?: number }) {
+function InstagramIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -25,34 +27,82 @@ function InstagramIcon({ size = 20 }: { size?: number }) {
           <stop offset="90%" stopColor="#285AEB"/>
         </radialGradient>
       </defs>
-      <rect width="24" height="24" rx="4" fill="url(#ig-grad)"/>
+      <rect width="24" height="24" rx="5" fill="url(#ig-grad)"/>
       <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
       <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
-      <rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="1.8" fill="none"/>
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="white" strokeWidth="1.8" fill="none"/>
     </svg>
   );
 }
 
-function FacebookIcon({ size = 20 }: { size?: number }) {
+function FacebookIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="4" fill="#1877F2"/>
+      <rect width="24" height="24" rx="5" fill="#1877F2"/>
       <path d="M16 8h-2a1 1 0 00-1 1v2h3l-.5 3H13v7h-3v-7H8v-3h2V9a4 4 0 014-4h2v3z" fill="white"/>
     </svg>
   );
 }
 
-function SmsIcon({ size = 20 }: { size?: number }) {
+function HubSpotIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="4" fill="#71717a"/>
-      <path d="M4 6h16v10a2 2 0 01-2 2H6l-3 2V8a2 2 0 012-2z" fill="white" fillOpacity="0.9"/>
-      <circle cx="8" cy="11" r="1.2" fill="#71717a"/>
-      <circle cx="12" cy="11" r="1.2" fill="#71717a"/>
-      <circle cx="16" cy="11" r="1.2" fill="#71717a"/>
+      <rect width="24" height="24" rx="5" fill="#FF7A59"/>
+      <circle cx="9" cy="15" r="3" fill="white"/>
+      <circle cx="15" cy="8" r="2.2" fill="white"/>
+      <path d="M10.8 13.5L13.5 9.8" stroke="white" strokeWidth="1.6"/>
     </svg>
   );
 }
+
+function SlackIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="white"/>
+      <rect x="7" y="3" width="3.2" height="9" rx="1.6" fill="#36C5F0"/>
+      <rect x="12" y="3" width="3.2" height="9" rx="1.6" fill="#2EB67D" transform="rotate(90 12 3)" />
+      <circle cx="8.6" cy="7.5" r="1.6" fill="#36C5F0"/>
+      <circle cx="16.5" cy="15.4" r="1.6" fill="#ECB22E"/>
+      <rect x="13.8" y="12" width="3.2" height="9" rx="1.6" fill="#ECB22E"/>
+      <rect x="8" y="12" width="3.2" height="9" rx="1.6" fill="#E01E5A" transform="rotate(90 8 12)"/>
+    </svg>
+  );
+}
+
+function WebflowIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#4353FF"/>
+      <path d="M5 8l3 8 2.5-5.5L13 16l3-8h-2l-1.7 4.6L10.7 8H9l-1.6 4.6L5.8 8H5z" fill="white"/>
+    </svg>
+  );
+}
+
+function GmailIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="white"/>
+      <path d="M4 7.5v9A1.5 1.5 0 005.5 18H7V9.2l5 3.8 5-3.8V18h1.5A1.5 1.5 0 0020 16.5v-9A1.5 1.5 0 0018.5 6h-.3L12 10.8 5.8 6H5.5A1.5 1.5 0 004 7.5z" fill="#EA4335"/>
+      <path d="M7 9.2V18H5.5A1.5 1.5 0 014 16.5v-9c0-.4.1-.7.3-1L7 9.2z" fill="#34A853"/>
+      <path d="M17 9.2V18h1.5a1.5 1.5 0 001.5-1.5v-9c0-.4-.1-.7-.3-1L17 9.2z" fill="#4285F4"/>
+      <path d="M5.8 6h.2L12 10.8 17.5 6h.2c.5 0 .9.1 1.3.4L12 12.3 4.5 6.4c.4-.3.8-.4 1.3-.4z" fill="#FBBC05"/>
+    </svg>
+  );
+}
+
+function NewAppIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#F4F4F5"/>
+      <rect x="5" y="5" width="6" height="6" rx="1.4" fill="#A1A1AA"/>
+      <rect x="13" y="5" width="6" height="6" rx="1.4" fill="#D4D4D8"/>
+      <rect x="5" y="13" width="6" height="6" rx="1.4" fill="#D4D4D8"/>
+      <rect x="13" y="13" width="6" height="6" rx="1.4" fill="#A1A1AA"/>
+    </svg>
+  );
+}
+
+/* ---------------- TYPES ---------------- */
 
 interface Props {
   business: Business;
@@ -74,12 +124,17 @@ type ChannelStatus = {
   facebook: boolean;
 };
 
-// Placeholder display stats only — not backed by real sync data.
-// TODO: replace with real mapped-field / sync-frequency tracking once that exists.
-const DISPLAY_STATS: Record<string, { mappedFields: number; syncFrequency: string }> = {
-  whatsapp: { mappedFields: 318, syncFrequency: '20m' },
-  instagram: { mappedFields: 45, syncFrequency: '20m' },
-  facebook: { mappedFields: 45, syncFrequency: '20m' },
+type IntegrationCard = {
+  id: string;
+  name: string;
+  Icon: (props: { size?: number }) => JSX.Element;
+  description: string;
+  isConnected: boolean;
+  hasIssue?: boolean;
+  mappedFields: number;
+  syncFrequency: string;
+  onConnect?: (() => void) | null;
+  isReal?: boolean; // backed by actual OAuth logic, vs. mock display-only card
 };
 
 export default function LinkAppsTool({ business, onUpdated }: Props) {
@@ -268,81 +323,105 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     window.location.href = url;
   };
 
-  const CHANNELS = [
+  /* ---------------- CONNECTED GRID (matches screenshot: HubSpot, Slack, Webflow, WhatsApp, Instagram, Gmail) ---------------- */
+  // Mock cards (HubSpot, Slack, Webflow, Gmail) are display-only — they are not wired to any backend.
+  // Real cards (WhatsApp, Instagram) use the actual Meta OAuth handlers above.
+  const connectedCards: IntegrationCard[] = [
+    {
+      id: 'hubspot',
+      name: 'HubSpot',
+      Icon: HubSpotIcon,
+      description: 'Create and revers for HubSpot sebids.',
+      isConnected: true,
+      mappedFields: 45,
+      syncFrequency: '20m',
+      onConnect: null,
+      isReal: false,
+    },
+    {
+      id: 'slack',
+      name: 'Slack',
+      Icon: SlackIcon,
+      description: 'New automation side in Slack.',
+      isConnected: true,
+      mappedFields: 45,
+      syncFrequency: '20m',
+      onConnect: null,
+      isReal: false,
+    },
+    {
+      id: 'webflow',
+      name: 'Webflow',
+      Icon: WebflowIcon,
+      description: 'Your automation in Webflow.',
+      isConnected: true,
+      hasIssue: true,
+      mappedFields: 45,
+      syncFrequency: '20m',
+      onConnect: null,
+      isReal: false,
+    },
     {
       id: 'whatsapp',
-      name: 'WhatsApp Business',
+      name: 'WhatsApp',
       Icon: WhatsAppIcon,
-      description: 'Link your official WhatsApp Business profile via Meta Secure OAuth sync.',
+      description: 'I fellow a your message in WhatsApp.',
       isConnected: channelStatus.whatsapp,
+      mappedFields: 318,
+      syncFrequency: '20m',
       onConnect: handleWhatsAppConnect,
-      connectLabel: channelStatus.whatsapp ? 'Reconnect Channel' : 'Connect Account',
-      showRetry: true,
-      howItWorks: [
-        "Authenticate your official business account via Meta's dialogue tier.",
-        'Select the exact WhatsApp phone number you want to synchronize.',
-        'Inbound messages will automatically stream into your uniform inbox canvas.',
-      ],
+      isReal: true,
     },
     {
       id: 'instagram',
-      name: 'Instagram Professional',
+      name: 'Instagram',
       Icon: InstagramIcon,
-      description: 'Manage premium Instagram direct messages, active story mentions, and reply strings.',
+      description: 'New automation side in Instagram.',
       isConnected: channelStatus.instagram,
+      mappedFields: 45,
+      syncFrequency: '20m',
       onConnect: handleInstagramConnect,
-      connectLabel: channelStatus.instagram ? 'Reconnect Account' : 'Connect Account',
-      showRetry: false,
-      howItWorks: [
-        'You will be redirected safely to Facebook to assign Instagram mapping streams.',
-        'Your targeted Instagram Professional portfolio will tie seamlessly into the framework.',
-        'Active threads and contextual direct messages map instantly here.',
-      ],
+      isReal: true,
     },
     {
-      id: 'facebook',
-      name: 'Facebook Pages',
-      Icon: FacebookIcon,
-      description: 'Sync comprehensive message channels, wall threads, and active community feedback lines.',
-      isConnected: channelStatus.facebook,
-      onConnect: handleFacebookConnect,
-      connectLabel: channelStatus.facebook ? 'Reconnect Account' : 'Connect Account',
-      showRetry: false,
-      howItWorks: [
-        'Redirect dynamically to authenticate and identify specified client Pages.',
-        'Authorize messaging tracking scopes for your target business portal.',
-        'Native profile messages route automatically to the central ecosystem view.',
-      ],
-    },
-    {
-      id: 'sms',
-      name: 'SMS Gateway Core',
-      Icon: SmsIcon,
-      description: 'Establish local direct telecom integrations for secure, prioritized outbound and native workflows.',
-      isConnected: false,
+      id: 'gmail',
+      name: 'Gmail',
+      Icon: GmailIcon,
+      description: 'Gmail is operated to gmail and gmail.',
+      isConnected: true,
+      mappedFields: 45,
+      syncFrequency: '20m',
       onConnect: null,
-      connectLabel: 'Coming Soon',
-      showRetry: false,
-      howItWorks: [],
+      isReal: false,
     },
   ];
 
-  const connectedChannels = CHANNELS.filter(c => c.isConnected);
-  const availableChannels = CHANNELS.filter(c => !c.isConnected);
-  const issueChannel = CHANNELS.find(c => c.id === 'whatsapp' && !c.isConnected); // example "issue" indicator
+  const availableCards = [
+    {
+      id: 'newapp',
+      name: 'New App',
+      Icon: NewAppIcon,
+      description: 'New automation side Slack.',
+      mappedFields: 45,
+      syncFrequency: '20m',
+    },
+  ];
 
-  const filteredConnected = connectedChannels.filter(c =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  const filteredAvailable = availableChannels.filter(c =>
+  const workflowItems = [
+    { id: 'wf1', Icon: WebflowIcon, name: 'Webflow to HubSpot Sync', sub: 'Webflow to HubSpot Sync' },
+    { id: 'wf2', Icon: SlackIcon, name: 'Slack to HubSpot Sync', sub: 'Webflow to HubSpot Sync' },
+    { id: 'wf3', Icon: GmailIcon, name: 'Gmail to Gmarl Sync', sub: 'Webflow to Instagram Sync' },
+  ];
+
+  const filteredConnected = connectedCards.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="w-full min-w-0">
+    <div className="w-full min-w-0 min-h-screen bg-zinc-50">
       <div id="fb-root" />
 
-      <div className="p-6 max-w-6xl w-full mx-auto space-y-6">
+      <div className="w-full p-6 space-y-6">
 
         {/* GLOBAL MESSAGES ALERT CONTAINER */}
         {(success || error) && (
@@ -364,20 +443,20 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
 
         {/* OVERVIEW BAR */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold text-zinc-900 mb-4">Integrations Overview</h2>
-          <div className="flex flex-wrap gap-10">
+          <h2 className="text-base font-bold text-zinc-900 mb-4">Integrations Overview</h2>
+          <div className="flex flex-wrap gap-16">
             <div>
-              <p className="text-xs text-zinc-500 mb-1">Active Connections:</p>
-              <p className="text-2xl font-bold text-zinc-900">{connectedChannels.length}</p>
+              <p className="text-sm text-zinc-500 mb-1">Active Connections:</p>
+              <p className="text-2xl font-bold text-zinc-900">{connectedCards.filter(c => c.isConnected).length}</p>
             </div>
             <div>
-              <p className="text-xs text-zinc-500 mb-1">Integrations with Issues:</p>
+              <p className="text-sm text-zinc-500 mb-1">Integrations with Issues:</p>
               <p className="text-2xl font-bold text-red-600">
-                {issueChannel ? `1 (${issueChannel.name})` : '0'}
+                1 ({connectedCards.find(c => c.hasIssue)?.name})
               </p>
             </div>
             <div>
-              <p className="text-xs text-zinc-500 mb-1">New suggested integrations</p>
+              <p className="text-sm text-zinc-500 mb-1">New suggested integrations</p>
               <p className="text-2xl font-bold text-zinc-300">-</p>
             </div>
           </div>
@@ -386,7 +465,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
         {/* ALL INTEGRATIONS PANEL */}
         <div className="bg-white border border-zinc-200 rounded-2xl p-6">
           <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
-            <h2 className="text-lg font-bold text-zinc-900">All Integrations</h2>
+            <h2 className="text-base font-bold text-zinc-900">All Integrations</h2>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -395,7 +474,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+                  className="pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
                 />
               </div>
               <button
@@ -407,72 +486,63 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
             </div>
           </div>
 
-          <h3 className="text-sm font-bold text-zinc-900 mb-3">Connected</h3>
+          <h3 className="text-base font-bold text-zinc-900 mb-3">Connected</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {filteredConnected.map(({ id, name, Icon, description, isConnected, onConnect, showRetry }) => {
-              const isLoading = loading === id;
-              const hasIssue = id === issueChannel?.id;
-              const stats = DISPLAY_STATS[id];
+            {filteredConnected.map((card) => {
+              const isLoading = loading === card.id;
               return (
                 <div
-                  key={id}
+                  key={card.id}
                   className={`border rounded-xl p-4 flex flex-col justify-between ${
-                    hasIssue ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200'
+                    card.hasIssue ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200'
                   }`}
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200">
-                          <Icon size={20} />
+                        <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-lg overflow-hidden border border-zinc-200">
+                          <card.Icon size={22} />
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-zinc-900 leading-tight">{name}</h4>
-                          <p className="text-xs text-zinc-500 leading-tight mt-0.5 max-w-[180px]">{description}</p>
+                          <h4 className="text-sm font-bold text-zinc-900 leading-tight">{card.name}</h4>
+                          <p className="text-xs text-zinc-500 leading-tight mt-0.5 max-w-[180px]">{card.description}</p>
                         </div>
                       </div>
-                      {hasIssue && <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />}
+                      {card.hasIssue && <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0" />}
                     </div>
 
-                    {hasIssue && (
-                      <p className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Issue Detected
+                    {card.hasIssue && (
+                      <p className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1.5">
+                        <AlertCircle className="w-3.5 h-3.5" /> Issue Detected
                       </p>
                     )}
 
-                    {stats && (
-                      <div className="flex gap-6 mt-3 mb-4">
-                        <div>
-                          <p className="text-base font-bold text-zinc-900">{stats.mappedFields}</p>
-                          <p className="text-[11px] text-zinc-500">Mapped fields</p>
-                        </div>
-                        <div>
-                          <p className="text-base font-bold text-zinc-900">{stats.syncFrequency}</p>
-                          <p className="text-[11px] text-zinc-500">Sync Frequency</p>
-                        </div>
+                    <div className="flex gap-8 mt-3 mb-4">
+                      <div>
+                        <p className="text-base font-bold text-zinc-900">{card.mappedFields}</p>
+                        <p className="text-xs text-zinc-500">Mapped fields</p>
                       </div>
-                    )}
+                      <div>
+                        <p className="text-base font-bold text-zinc-900">{card.syncFrequency}</p>
+                        <p className="text-xs text-zinc-500">Sync Frequency</p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-2">
-                    {hasIssue && (
+                  {card.hasIssue ? (
+                    <div className="flex flex-col gap-2">
                       <button
                         type="button"
-                        onClick={onConnect || undefined}
-                        className="flex-1 text-xs font-semibold text-zinc-700 bg-zinc-100 rounded-lg px-3 py-2 hover:bg-zinc-200 transition-colors"
+                        className="text-xs font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-2.5 hover:bg-zinc-200 transition-colors"
                       >
                         Re-authorize
                       </button>
-                    )}
-                    {!hasIssue && (
-                      <>
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={onConnect || undefined}
-                          disabled={isLoading}
-                          className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 disabled:opacity-40 transition-colors"
+                          className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 transition-colors"
                         >
-                          {isLoading ? 'Connecting…' : 'Manage'}
+                          Manage
                         </button>
                         <button
                           type="button"
@@ -480,11 +550,28 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                         >
                           Disconnect
                         </button>
-                      </>
-                    )}
-                  </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={card.onConnect || undefined}
+                        disabled={isLoading || !card.isReal}
+                        className="flex-1 text-xs font-semibold text-white bg-zinc-900 rounded-lg px-3 py-2 hover:bg-zinc-800 disabled:opacity-100 transition-colors"
+                      >
+                        {isLoading ? 'Connecting…' : 'Manage'}
+                      </button>
+                      <button
+                        type="button"
+                        className="text-xs font-semibold text-zinc-500 px-3 py-2 hover:text-zinc-800 transition-colors"
+                      >
+                        Disconnect
+                      </button>
+                    </div>
+                  )}
 
-                  {id === 'whatsapp' && (
+                  {card.id === 'whatsapp' && (
                     <button
                       type="button"
                       onClick={() => setShowTroubleshoot(true)}
@@ -498,83 +585,94 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
             })}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* AVAILABLE FOR CONNECTION */}
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 mb-3">Available for Connection</h3>
+              <h3 className="text-base font-bold text-zinc-900 mb-3">Available for Connection</h3>
               <div className="space-y-3">
-                {filteredAvailable.map(({ id, name, Icon, description, onConnect, connectLabel }) => {
-                  const isLoading = loading === id;
-                  const isSms = id === 'sms';
-                  return (
-                    <div
-                      key={id}
-                      className="border border-zinc-200 rounded-xl p-4 flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200 opacity-70">
-                          <Icon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-zinc-700">{name}</p>
-                          <p className="text-xs text-zinc-400 max-w-[200px]">{description}</p>
-                        </div>
+                {availableCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="border border-zinc-200 rounded-xl p-4"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-lg border border-zinc-200">
+                        <card.Icon size={22} />
                       </div>
+                      <div>
+                        <p className="text-sm font-bold text-zinc-400">{card.name}</p>
+                        <p className="text-xs text-zinc-400 max-w-[160px]">{card.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-8 mb-3">
+                      <div>
+                        <p className="text-base font-bold text-zinc-300">{card.mappedFields}</p>
+                        <p className="text-xs text-zinc-400">Mapped fields</p>
+                      </div>
+                      <div>
+                        <p className="text-base font-bold text-zinc-300">{card.syncFrequency}</p>
+                        <p className="text-xs text-zinc-400">Sync Frequency</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={onConnect || undefined}
-                        disabled={isSms || isLoading}
-                        className="text-xs font-semibold text-zinc-700 bg-zinc-100 rounded-lg px-4 py-2 hover:bg-zinc-200 disabled:opacity-50 transition-colors whitespace-nowrap"
+                        className="flex-1 text-xs font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-2 hover:bg-zinc-200 transition-colors"
                       >
-                        {isLoading ? 'Connecting…' : connectLabel}
+                        Connect
+                      </button>
+                      <button
+                        type="button"
+                        className="flex-1 text-xs font-semibold text-white bg-zinc-400 rounded-lg px-3 py-2 cursor-not-allowed"
+                        disabled
+                      >
+                        Connect
                       </button>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* INTEGRATION LOG */}
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 mb-3">Integration Log</h3>
+              <h3 className="text-base font-bold text-zinc-900 mb-3">Integration Log</h3>
               <div className="border border-zinc-200 rounded-xl p-4 h-full">
-                <p className="text-xs text-zinc-500 mb-1">Recent Last API events</p>
-                <p className="text-xs text-red-600 font-semibold mt-3">
-                  Issues: {issueChannel ? 1 : 0}
-                </p>
-                <p className="text-xs text-zinc-400 mt-1">events all event sent ago</p>
+                <p className="text-sm text-zinc-500 mb-3">Recent Last API events</p>
+                <p className="text-sm text-red-600 font-semibold">Issues: 1</p>
+                <p className="text-xs text-zinc-400 mt-1">events ali event sent ago</p>
               </div>
             </div>
-          </div>
 
-          {/* WORKFLOW-ACTIVATED */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-zinc-900">Workflow-Activated</h3>
-              <button type="button" className="text-xs font-semibold text-blue-600 hover:underline">
-                View All
-              </button>
-            </div>
-            <div className="space-y-2">
-              {connectedChannels.slice(0, 3).map(({ id, name, Icon }) => (
-                <div
-                  key={id}
-                  className="flex items-center justify-between border border-zinc-200 rounded-xl p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-zinc-50 border border-zinc-200">
-                      <Icon size={16} />
+            {/* WORKFLOW-ACTIVATED */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-bold text-zinc-900">Workflow-Activated</h3>
+                <button type="button" className="text-xs font-semibold text-blue-600 hover:underline">
+                  View All
+                </button>
+              </div>
+              <div className="space-y-2">
+                {workflowItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between border border-zinc-200 rounded-xl p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 flex items-center justify-center shrink-0 rounded-lg border border-zinc-200 overflow-hidden">
+                        <item.Icon size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-zinc-900">{item.name}</p>
+                        <p className="text-[11px] text-zinc-400">{item.sub}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-zinc-900">{name} Sync</p>
-                      <p className="text-[11px] text-zinc-400">{name} workflow</p>
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 whitespace-nowrap">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Sync Status
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-zinc-500">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Sync Status
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
