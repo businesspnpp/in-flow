@@ -418,7 +418,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   );
 
   return (
-    <div className="w-full min-w-0 min-h-screen bg-zinc-50">
+    <div className="w-full min-w-0 bg-zinc-50">
       <div id="fb-root" />
 
       <div className="w-full p-6 space-y-6">
