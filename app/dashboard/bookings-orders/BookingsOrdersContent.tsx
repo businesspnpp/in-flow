@@ -109,13 +109,13 @@ export default function BookingsOrdersContent() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   const filteredRecords = useMemo(() => {
-    if (activeTab === 'bookings') return workspaceRecords.filter((record) => record.type === 'booking');
-    if (activeTab === 'orders') return workspaceRecords.filter((record) => record.type === 'order');
+    if (activeTab === 'bookings') return workspaceRecords.filter((r) => r.type === 'booking');
+    if (activeTab === 'orders') return workspaceRecords.filter((r) => r.type === 'order');
     return workspaceRecords;
   }, [activeTab]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-zinc-50 px-4 py-6 md:px-6">
+    <div className="flex-1 overflow-y-auto bg-zinc-50 px-4 py-6 font-sans md:px-6">
       <div className="mx-auto w-full max-w-7xl space-y-6">
         <header className="flex flex-col gap-4 border-b border-zinc-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -131,8 +131,8 @@ export default function BookingsOrdersContent() {
           </div>
         </header>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-1 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-          <div className="flex flex-wrap items-center gap-1.5 p-1">
+        <section className="rounded-xl border border-zinc-200 bg-white p-2 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <div className="flex flex-wrap items-center gap-2 p-1">
             {[
               { key: 'overview', label: 'All Operations' },
               { key: 'bookings', label: 'Bookings Only' },
@@ -145,7 +145,7 @@ export default function BookingsOrdersContent() {
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveTab(tab.key as TabKey)}
-                  className={`rounded-md px-3 py-1 text-[11px] font-semibold transition-colors ${
+                  className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors ${
                     active ? 'bg-indigo-600 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
                   }`}
                 >
@@ -220,10 +220,10 @@ export default function BookingsOrdersContent() {
 
                   <td className="whitespace-nowrap px-5 py-4 text-right">
                     {record.actions.length > 0 ? (
-                      <div className="inline-flex w-24 flex-col gap-1">
-                        {record.actions.map((action) => (
+                      <div className="inline-flex w-28 flex-col gap-1">
+                        {record.actions.map((action, actionIdx) => (
                           <button
-                            key={`${record.id}-${action}`}
+                            key={actionIdx}
                             type="button"
                             className="rounded border border-zinc-200 bg-white px-2 py-1 text-center text-[11px] font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50"
                           >
@@ -232,7 +232,7 @@ export default function BookingsOrdersContent() {
                         ))}
                       </div>
                     ) : (
-                      <span className="pr-4 text-xs italic text-zinc-300">-</span>
+                      <span className="pr-4 text-xs italic text-zinc-300">—</span>
                     )}
                   </td>
                 </tr>
@@ -242,8 +242,8 @@ export default function BookingsOrdersContent() {
         </main>
 
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {bottomWidgets.map((widget) => (
-            <article key={widget.label} className="rounded-xl border border-zinc-200 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          {bottomWidgets.map((widget, i) => (
+            <article key={i} className="rounded-xl border border-zinc-200 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <p className="text-[11px] font-medium text-zinc-500">{widget.label}</p>
               <p className="mt-1.5 text-xl font-bold tracking-tight text-zinc-900">{widget.value}</p>
             </article>
