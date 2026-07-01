@@ -10,17 +10,18 @@ import { LogOut, Mail, Lock, HelpCircle, ArrowRight } from 'lucide-react';
 interface AuthProps {
   onSignedIn: () => void;
   onSignedOut?: () => void;
+  initialMode?: 'signin' | 'signup';
 }
 
 interface ValidationErrors {
   [key: string]: string;
 }
 
-export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
+export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }: AuthProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -89,6 +90,10 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
 
     return () => subscription?.subscription.unsubscribe();
   }, [onSignedIn, onSignedOut]);
+
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
 
   // Rotates the channel index every 2.5 seconds
   useEffect(() => {

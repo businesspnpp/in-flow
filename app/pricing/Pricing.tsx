@@ -208,10 +208,10 @@ export default function PremiumPricingPage() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link href="/auth" className="text-sm font-bold px-4 py-2.5 text-zinc-600 hover:text-zinc-900 transition-colors">
+            <Link href="/login" className="text-sm font-bold px-4 py-2.5 text-zinc-600 hover:text-zinc-900 transition-colors">
               Sign in
             </Link>
-            <Link href="/auth?mode=signup" className="text-sm font-bold px-5 py-2.5 bg-[#795bf4] text-white hover:bg-[#6847ef] transition-all shadow-sm hover:shadow-md">
+            <Link href="/login?mode=signup" className="text-sm font-bold px-5 py-2.5 bg-[#795bf4] text-white hover:bg-[#6847ef] transition-all shadow-sm hover:shadow-md">
               Get Started Free
             </Link>
           </div>
@@ -362,7 +362,7 @@ export default function PremiumPricingPage() {
 
                 <div className="mt-8">
                   <Link
-                    href="/auth?mode=signup"
+                    href="/login?mode=signup"
                     className={`w-full block text-center px-5 py-3.5 text-sm font-bold tracking-tight transform active:scale-[0.99] transition-all rounded-none ${
                       tier.highlighted
                         ? 'bg-[#795bf4] hover:bg-[#6847ef] text-white shadow-sm'
@@ -636,7 +636,7 @@ export default function PremiumPricingPage() {
           
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
-              href="/auth?mode=signup"
+              href="/login?mode=signup"
               className="w-full sm:w-auto px-8 py-4 bg-[#795bf4] text-white text-sm font-black tracking-tight hover:bg-[#6847ef] transition-colors flex items-center justify-center gap-2"
             >
               Deploy Free Architecture <ArrowRight size={16} strokeWidth={2.5} />

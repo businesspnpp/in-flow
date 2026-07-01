@@ -2,12 +2,15 @@
 
 import Auth from '@/components/Auth';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [checking, setChecking] = useState(true);
+  const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : 'signin';
 
   // If a session already exists cleanly, push to dashboard once and don't render Auth form
   useEffect(() => {
@@ -31,6 +34,7 @@ export default function LoginPage() {
   return (
     <div>
       <Auth
+        initialMode={initialMode}
         onSignedIn={() => router.push('/dashboard')}
         onSignedOut={() => router.push('/login')}
       />
