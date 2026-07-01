@@ -35,9 +35,13 @@ export type Message = {
 export type Business = {
   id: string;
   business_name: string;
+  owner_name?: string | null;
   categories: string[];
   address: string;
   email: string;
+  timezone?: string | null;
+  currency?: string | null;
+  booking_buffer_minutes?: number | null;
   whatsapp_number?: string | null;
   whatsapp_verified?: boolean;
   whatsapp_waba_id?: string | null;
