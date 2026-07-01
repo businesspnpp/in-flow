@@ -131,16 +131,19 @@ type ChannelConfigDetails = {
   metadata?: Record<string, unknown> | null;
 };
 
+type ZernioPlatform = 'facebook' | 'instagram' | 'whatsapp' | 'tiktok';
+
 export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
   const [activeChannel, setActiveChannel] = useState<string | null>(null);
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [channelDetails, setChannelDetails] = useState<Record<string, ChannelConfigDetails>>({});
   const [channelStatus, setChannelStatus] = useState<ChannelStatus>({
-    whatsapp: Boolean(business.whatsapp_phone_number_id),
+    whatsapp: false,
     instagram: false,
     facebook: false,
     tiktok: false,
@@ -157,6 +160,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
         const updated: Partial<ChannelStatus> = {};
         const details: Record<string, ChannelConfigDetails> = {};
         data.forEach((row: { channel: string; status: string; metadata?: Record<string, unknown> | null }) => {
+          if (row.channel === 'whatsapp') updated.whatsapp = row.status === 'connected';
           if (row.channel === 'instagram') updated.instagram = row.status === 'connected';
           if (row.channel === 'facebook') updated.facebook = row.status === 'connected';
           if (row.channel === 'tiktok') updated.tiktok = row.status === 'connected';
@@ -173,9 +177,10 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   }, [business.id]);
 
   const tiktokMetadata = channelDetails.tiktok?.metadata ?? null;
-  const tiktokCreator = typeof tiktokMetadata?.creator === 'object' && tiktokMetadata.creator !== null
-    ? (tiktokMetadata.creator as Record<string, unknown>)
-    : null;
+  const tiktokCreator =
+    typeof tiktokMetadata?.creator === 'object' && tiktokMetadata.creator !== null
+      ? (tiktokMetadata.creator as Record<string, unknown>)
+      : null;
   const tiktokDisplayName =
     (typeof tiktokMetadata?.display_name === 'string' && tiktokMetadata.display_name) ||
     (typeof tiktokCreator?.nickname === 'string' && tiktokCreator.nickname) ||
@@ -183,159 +188,42 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   const tiktokUsername = typeof tiktokMetadata?.username === 'string' ? tiktokMetadata.username.replace(/^@/, '') : '';
   const tiktokVerified = tiktokCreator?.isVerified === true;
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const oauthStatus = params.get('oauth');
-    const channel = params.get('channel');
-    const oauthError = params.get('error');
-
-    if (oauthStatus === 'success' && channel) {
-      setSuccess(`${channel.charAt(0).toUpperCase() + channel.slice(1)} connected to Dock.`);
-      setActiveChannel(channel);
-      setChannelStatus(prev => ({ ...prev, [channel]: true }));
-      window.history.replaceState({}, '', window.location.pathname);
-    } else if (oauthStatus === 'error' && oauthError) {
-      setError(decodeURIComponent(oauthError));
-      if (channel) setActiveChannel(channel);
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: process.env.NEXT_PUBLIC_META_APP_ID,
-        cookie: true,
-        xfbml: true,
-        version: 'v20.0',
-      });
-    };
-    if (!document.getElementById('facebook-jssdk')) {
-      const js = document.createElement('script');
-      js.id = 'facebook-jssdk';
-      js.src = 'https://connect.facebook.net/en_US/sdk.js';
-      document.body.appendChild(js);
-    }
-
-    const handleMessage = (event: MessageEvent) => {
-      if (!event.origin.endsWith('facebook.com')) return;
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type !== 'WA_EMBEDDED_SIGNUP') return;
-        if (data.event === 'FINISH') {
-          const { phone_number_id, waba_id } = data.data || {};
-          if (phone_number_id && waba_id) {
-            window.sessionStorage.setItem('wa_embedded_signup', JSON.stringify({ phone_number_id, waba_id }));
-          }
-        }
-      } catch (e) {}
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, []);
-
-  const handleWhatsAppConnect = () => {
+  const startZernioConnect = (platform: ZernioPlatform) => {
     setError('');
     setSuccess('');
-    setLoading('whatsapp');
+    setLoading(platform);
+    window.location.href = `/api/zernio/connect?business_id=${encodeURIComponent(business.id)}&platform=${encodeURIComponent(platform)}`;
+  };
 
-    if (!window.FB) {
-      setError('Facebook SDK failed to load. Please refresh the page.');
-      setLoading(null);
-      return;
-    }
-
-    let timedOut = false;
-    const timer = setTimeout(() => {
-      timedOut = true;
-      setLoading(null);
-      setError('Login timed out — popups may be blocked. Allow popups and try again.');
-    }, 30000);
+  const handleZernioDisconnect = async (platform: ZernioPlatform) => {
+    setError('');
+    setSuccess('');
+    setLoading(platform);
 
     try {
-      window.FB.login(
-        (response: any) => {
-          clearTimeout(timer);
-          if (timedOut) return;
-
-          if (response?.authResponse?.code) {
-            const authCode = response.authResponse.code;
-            let signupMeta: { phone_number_id?: string; waba_id?: string } = {};
-            try {
-              const raw = window.sessionStorage.getItem('wa_embedded_signup');
-              if (raw) signupMeta = JSON.parse(raw);
-            } catch (e) {}
-
-            fetch('/api/whatsapp/connect', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                business_id: business.id,
-                code: authCode,
-                waba_id: signupMeta.waba_id,
-                phone_number_id: signupMeta.phone_number_id,
-              }),
-            })
-              .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw new Error(data?.error || `Error ${res.status}`);
-                setSuccess('WhatsApp Business connected to Dock.');
-                if (data.business) onUpdated(data.business);
-                setChannelStatus(prev => ({ ...prev, whatsapp: true }));
-                window.sessionStorage.removeItem('wa_embedded_signup');
-              })
-              .catch((err: any) => setError(err?.message || 'Error during onboarding.'))
-              .finally(() => setLoading(null));
-          } else {
-            setError('Onboarding cancelled or permissions not granted.');
-            setLoading(null);
-          }
-        },
-        {
-          config_id: META_CONFIG_ID,
-          response_type: 'code',
-          override_default_response_type: true,
-          extras: { setup: {}, featureType: '', sessionInfoVersion: '3' },
-        }
+      const res = await fetch(
+        `/api/zernio/disconnect?business_id=${encodeURIComponent(business.id)}&platform=${encodeURIComponent(platform)}`,
+        { method: 'POST' }
       );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Disconnect failed with status ${res.status}`);
+
+      if (data.business) {
+        onUpdated(data.business);
+      }
+
+      setChannelStatus(prev => ({ ...prev, [platform]: false }));
+      setSuccess(`${platform.charAt(0).toUpperCase() + platform.slice(1)} disconnected.`);
     } catch (err: any) {
-      clearTimeout(timer);
+      setError(err?.message || 'Failed to disconnect channel.');
+    } finally {
       setLoading(null);
-      setError(err?.message || 'Facebook login failed to start.');
     }
   };
 
-  const handleInstagramConnect = () => {
-    setError('');
-    setSuccess('');
-    const redirectUri = `${window.location.origin}/api/instagram/callback`;
-    const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'instagram' }));
-    const url =
-      `https://www.facebook.com/v20.0/dialog/oauth` +
-      `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&config_id=${META_CONFIG_ID}` +
-      `&state=${state}` +
-      `&response_type=code` +
-      `&override_default_response_type=true`;
-    window.location.href = url;
-  };
-
-  const handleFacebookConnect = () => {
-    setError('');
-    setSuccess('');
-    const redirectUri = `${window.location.origin}/api/facebook/callback`;
-    const state = encodeURIComponent(JSON.stringify({ business_id: business.id, channel: 'facebook' }));
-    const url =
-      `https://www.facebook.com/v20.0/dialog/oauth` +
-      `?client_id=${process.env.NEXT_PUBLIC_META_APP_ID}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&config_id=${META_CONFIG_ID}` +
-      `&state=${state}` +
-      `&response_type=code` +
-      `&override_default_response_type=true`;
-    window.location.href = url;
-  };
+  const handleFacebookConnect = () => startZernioConnect('facebook');
+  const handleInstagramConnect = () => startZernioConnect('instagram');
+  const handleWhatsAppConnect = () => startZernioConnect('whatsapp');
 
   const handleTikTokConnect = () => {
     setError('');
@@ -344,9 +232,9 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     window.location.href = `/api/tiktok/connect?business_id=${encodeURIComponent(business.id)}`;
   };
 
-    /* ---------------- CONNECTED GRID ----------------
-      Real channels (Facebook, WhatsApp, Instagram, TikTok) use the actual connection handlers above.
-      Gmail remains display-only and Google Business Profile is still display-only for now. */
+  /* ---------------- CONNECTED GRID ----------------
+    Real channels (Facebook, WhatsApp, Instagram, TikTok) use the actual connection handlers above.
+    Gmail remains display-only and Google Business Profile is still display-only for now. */
   const connectedCards: IntegrationCard[] = [
     {
       id: 'facebook',
@@ -426,6 +314,49 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
 
   const issueCard = connectedCards.find(c => c.hasIssue);
 
+  const getManageHighlights = (card: IntegrationCard) => {
+    switch (card.id) {
+      case 'facebook':
+        return [
+          'Zernio holds the connected Facebook account details and auth state.',
+          'Use this panel to reconnect, review health, or disconnect the channel.',
+          'Facebook supports page selection, inbox, comments, and review workflows.',
+        ];
+      case 'instagram':
+        return [
+          'Zernio manages the Instagram connection and profile identity.',
+          'Reconnect here if permissions change or the token needs refreshing.',
+          'Instagram supports inbox, comments, ice breakers, and profile actions.',
+        ];
+      case 'whatsapp':
+        return [
+          'This connection is now Zernio-backed instead of the old Meta SDK flow.',
+          'Use this panel to reconnect or disconnect the business number binding.',
+          'WhatsApp keeps inbox and automation workflows under one business profile.',
+        ];
+      case 'tiktok':
+        return [
+          'TikTok is connected through Zernio and stores creator metadata here.',
+          'Reconnect from this panel if the account changes or permissions expire.',
+          'TikTok inbox sync is not exposed by the provider, so this is identity-only.',
+        ];
+      case 'gmail':
+        return [
+          'This is currently display-only and does not run through Zernio.',
+          'Use it as a placeholder for future mailbox automation and routing.',
+          'No direct connection or disconnect action is available yet.',
+        ];
+      case 'google-business-profile':
+        return [
+          'Google Business Profile support is still coming soon.',
+          'The future manage view will cover locations, reviews, and messaging.',
+          'Connect is disabled until the provider flow is built out.',
+        ];
+      default:
+        return ['Use this panel to review the channel connection and available options.'];
+    }
+  };
+
   return (
     <div className="w-full min-w-0 h-full overflow-y-auto bg-zinc-50">
       <div id="fb-root" />
@@ -501,7 +432,10 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {filteredConnected.map((card) => {
               const isLoading = loading === card.id;
+              const isExpanded = expandedCardId === card.id;
               const isGoogleBusinessProfile = card.id === 'google-business-profile';
+              const canDisconnect = card.isReal && card.id !== 'google-business-profile' && card.id !== 'gmail';
+
               return (
                 <div
                   key={card.id}
@@ -567,45 +501,87 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                     >
                       Coming Soon
                     </button>
-                  ) : card.hasIssue ? (
-                    <div className="flex flex-col gap-2">
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-zinc-500 bg-zinc-100 rounded-lg px-3 py-3.5 hover:bg-zinc-200 transition-colors"
-                      >
-                        Re-authorize
-                      </button>
+                  ) : (
+                    <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
+                          onClick={() => setExpandedCardId(prev => (prev === card.id ? null : card.id))}
                           className="text-sm font-semibold text-white bg-zinc-900 rounded-lg px-3 py-3.5 hover:bg-zinc-800 transition-colors"
                         >
-                          Manage
+                          {isExpanded ? 'Hide details' : 'Manage'}
                         </button>
                         <button
                           type="button"
-                          className="text-sm font-semibold text-zinc-500 border border-zinc-200 rounded-lg px-3 py-3.5 hover:text-zinc-800 hover:bg-zinc-50 transition-colors"
+                          onClick={() => canDisconnect ? handleZernioDisconnect(card.id as ZernioPlatform) : undefined}
+                          disabled={!canDisconnect || !card.isConnected || isLoading}
+                          className="text-sm font-semibold text-zinc-500 border border-zinc-200 rounded-lg px-3 py-3.5 hover:text-zinc-800 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
                         >
-                          Disconnect
+                          {isLoading ? 'Working…' : card.isConnected ? 'Disconnect' : 'Disconnected'}
                         </button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={card.onConnect || undefined}
-                        disabled={isLoading || !card.isReal}
-                        className="text-sm font-semibold text-white bg-zinc-900 rounded-lg px-3 py-3.5 hover:bg-zinc-800 disabled:opacity-100 transition-colors"
-                      >
-                        {isLoading ? 'Connecting…' : 'Manage'}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-zinc-500 border border-zinc-200 rounded-lg px-3 py-3.5 hover:text-zinc-800 hover:bg-zinc-50 transition-colors"
-                      >
-                        Disconnect
-                      </button>
+
+                      {isExpanded && (
+                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Manage connection</p>
+                              <p className="text-sm font-semibold text-zinc-900 mt-1">
+                                {card.isReal ? 'Connect and manage this channel through Zernio.' : 'This card is informational only for now.'}
+                              </p>
+                            </div>
+                            <span
+                              className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${
+                                card.isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-200 text-zinc-600'
+                              }`}
+                            >
+                              {card.isConnected ? 'Connected' : 'Disconnected'}
+                            </span>
+                          </div>
+
+                          <div className="mt-3 space-y-2">
+                            {getManageHighlights(card).map((item) => (
+                              <div key={item} className="flex items-start gap-2 text-xs text-zinc-600 leading-5">
+                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-zinc-400 shrink-0" />
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {card.id === 'tiktok' && tiktokDisplayName && (
+                            <div className="mt-3 rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-xs text-zinc-500">
+                              <p className="font-semibold text-zinc-900">
+                                {tiktokDisplayName}
+                                {tiktokVerified ? ' • Verified' : ''}
+                              </p>
+                              {tiktokUsername && <p>@{tiktokUsername}</p>}
+                            </div>
+                          )}
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {card.isReal && card.onConnect && (
+                              <button
+                                type="button"
+                                onClick={card.onConnect}
+                                disabled={isLoading}
+                                className="text-sm font-semibold text-white bg-[#795bf4] rounded-lg px-3 py-2.5 hover:bg-[#6a4de0] disabled:opacity-80 transition-colors"
+                              >
+                                {isLoading ? 'Connecting…' : card.isConnected ? 'Reconnect' : 'Connect'}
+                              </button>
+                            )}
+                            {canDisconnect && (
+                              <button
+                                type="button"
+                                onClick={() => handleZernioDisconnect(card.id as ZernioPlatform)}
+                                disabled={!card.isConnected || isLoading}
+                                className="text-sm font-semibold text-zinc-600 border border-zinc-200 rounded-lg px-3 py-2.5 hover:text-zinc-900 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
+                              >
+                                {isLoading ? 'Working…' : 'Disconnect'}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 

@@ -1,7 +1,7 @@
 const ZERNIO_API_BASE_URL = process.env.ZERNIO_API_BASE_URL ?? 'https://zernio.com/api/v1';
 
 type ZernioRequestOptions = {
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'DELETE';
   body?: Record<string, unknown>;
   searchParams?: Record<string, string | number | boolean | undefined | null>;
 };
@@ -124,4 +124,10 @@ export async function listZernioAccounts(profileId: string, platform?: string) {
 
 export async function getZernioTikTokCreatorInfo(accountId: string) {
   return zernioRequest<ZernioTikTokCreatorInfo>(`accounts/${accountId}/tiktok/creator-info`);
+}
+
+export async function deleteZernioAccount(accountId: string) {
+  return zernioRequest<void>(`accounts/${accountId}`, {
+    method: 'DELETE',
+  });
 }
