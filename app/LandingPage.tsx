@@ -70,7 +70,7 @@ export default function LandingPage() {
               </span>
               <h1 className="text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">Run your customer operations from one dock.</h1>
               <p className="max-w-xl text-lg font-medium leading-relaxed text-purple-100/90 md:text-xl">
-                Unify chat, bookings, quotes, invoices, promotions, and follow-ups in one place your team can use from day one.
+                Unify Dock-Streams, bookings, quotes, invoices, promotions, and follow-ups in one place your team can use from day one.
               </p>
 
               <div className="pt-4">
@@ -235,7 +235,7 @@ export default function LandingPage() {
             <div className="relative z-10 max-w-xl space-y-4">
               <span className="text-xs font-bold uppercase tracking-widest text-[#66dba3]">dock spotlight 2026</span>
               <h3 className="text-3xl font-black leading-tight tracking-tight md:text-4xl">
-                Watch how real teams run inbox, bookings, and payments from one workspace.
+                Watch how real teams run Dock-Streams, bookings, and payments from one workspace.
               </h3>
               <p className="text-sm leading-relaxed text-zinc-400">
                 Get practical workflows from operators using Dock daily, from first reply to paid confirmation.
@@ -255,10 +255,10 @@ export default function LandingPage() {
         <section className="mx-auto max-w-7xl space-y-12 px-6 py-16 lg:py-24">
           <div className="max-w-3xl space-y-4">
             <h2 className="text-3xl font-black leading-[1.1] tracking-tight text-zinc-950 md:text-5xl">
-              Self-improving operations across every customer channel
+              Self-improving operations across Dock-Streams and every customer channel
             </h2>
             <p className="text-lg font-medium text-zinc-500">
-              Dock helps teams reason, act, and close loops faster across WhatsApp, Instagram, Facebook, email, and web chat.
+              Dock helps teams reason, act, and close loops faster with Streams across WhatsApp, Instagram, Facebook, email, and web.
             </p>
           </div>
 
@@ -268,14 +268,14 @@ export default function LandingPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-[#795bf4]">
                   <MessageSquare size={22} />
                 </div>
-                <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Build chat-first workflows</h3>
+                <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Build Dock-Streams workflows</h3>
                 <p className="text-sm leading-relaxed text-zinc-500">
-                  Automate repeatable responses, route urgent messages, and keep every customer thread moving with clear next actions.
+                  Automate repeatable responses, route urgent messages, and keep every customer stream moving with clear next actions.
                 </p>
               </div>
               <div className="pt-6">
                 <Link href="/dashboard/chats" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#795bf4] hover:underline">
-                  Explore chats <ArrowRight size={14} />
+                  Explore Streams <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function LandingPage() {
                 Dock recognized by operators for practical, high-velocity customer operations.
               </h3>
               <p className="max-w-xl text-sm text-zinc-400">
-                Teams choose Dock for clarity, speed, and the ability to run chat, bookings, and payments without jumping between tools.
+                Teams choose Dock for clarity, speed, and the ability to run Dock-Streams, bookings, and payments without jumping between tools.
               </p>
               <div className="pt-2">
                 <Link href="/pricing" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#66dba3] hover:underline">
@@ -513,7 +513,7 @@ export default function LandingPage() {
             <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300">
               <div className="space-y-2">
                 <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#795bf4]">REPORT</span>
-                <h4 className="text-lg font-bold leading-snug text-zinc-950">Customer Ops Trends 2026: Faster paths from chat to payment</h4>
+                <h4 className="text-lg font-bold leading-snug text-zinc-950">Customer Ops Trends 2026: Faster paths from Streams to payment</h4>
               </div>
               <Link href="/pricing" className="mt-6 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
                 Learn more <ArrowRight size={12} />
@@ -575,7 +575,7 @@ export default function LandingPage() {
 
         <section className="relative overflow-hidden bg-zinc-900 py-24 text-center text-white">
           <div className="relative z-10 mx-auto max-w-4xl space-y-6 px-6">
-            <h2 className="text-4xl font-black tracking-tight md:text-6xl">Launch your first Dock workflow today</h2>
+            <h2 className="text-4xl font-black tracking-tight md:text-6xl">Launch your first Dock stream today</h2>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
               <Link href="/login?mode=signup" className="rounded-xl bg-[#66dba3] px-8 py-4 text-sm font-bold text-zinc-950 shadow-lg transition-colors hover:bg-[#55c490]">
                 Try for free
@@ -615,7 +615,7 @@ export default function LandingPage() {
               <li><Link href="/dashboard/chats" className="transition-colors hover:text-white">AI suggestions</Link></li>
               <li><Link href="/dashboard/tools" className="transition-colors hover:text-white">Copilot actions</Link></li>
               <li><Link href="/dashboard" className="transition-colors hover:text-white">Customer timelines</Link></li>
-              <li><Link href="/dashboard/chats" className="transition-colors hover:text-white">Messaging and chat</Link></li>
+              <li><Link href="/dashboard/chats" className="transition-colors hover:text-white">Dock-Streams messaging</Link></li>
               <li><Link href="/privacy" className="transition-colors hover:text-white">Advanced privacy</Link></li>
               <li><Link href="/dashboard/tools" className="transition-colors hover:text-white">Knowledge workflows</Link></li>
               <li><Link href="/dashboard" className="transition-colors hover:text-white">Analytics</Link></li>
