@@ -1,4 +1,8 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Calendar, Mail, RotateCcw } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 type IconProps = { size?: number };
 type Channel = 'whatsapp' | 'instagram' | 'tiktok' | 'email';
@@ -104,6 +108,62 @@ const toneClasses: Record<Tone, string> = {
 };
 
 export default function DashboardHomeContent() {
+  const [ownerName, setOwnerName] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    const loadOwnerName = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        let resolvedName = '';
+
+        const { data: byId } = await supabase
+          .from('businesses')
+          .select('owner_name')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (byId?.owner_name?.trim()) {
+          resolvedName = byId.owner_name.trim();
+        }
+
+        if (!resolvedName && user.email) {
+          const { data: byEmail } = await supabase
+            .from('businesses')
+            .select('owner_name')
+            .eq('email', user.email)
+            .order('created_at', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+          if (byEmail?.owner_name?.trim()) {
+            resolvedName = byEmail.owner_name.trim();
+          }
+        }
+
+        if (!resolvedName && user.email) {
+          resolvedName = user.email.split('@')[0];
+        }
+
+        if (active) setOwnerName(resolvedName);
+      } catch {
+        if (active) setOwnerName('');
+      }
+    };
+
+    loadOwnerName();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div className="flex-1 overflow-y-auto bg-zinc-50 px-4 py-6 md:px-6">
       <div className="w-full space-y-4">
@@ -126,7 +186,7 @@ export default function DashboardHomeContent() {
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-zinc-900">Welcome Back, &lsquo;Lindiwe&rsquo;.</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Welcome Back, &lsquo;{ownerName || 'there'}&rsquo;.</h2>
             <p className="mt-0.5 text-sm text-zinc-600">Your business is looking good today.</p>
           </div>
         </div>
