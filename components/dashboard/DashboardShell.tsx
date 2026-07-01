@@ -11,8 +11,8 @@ import {
   House,
   LogOut,
   MessageCircleMore,
-  PanelLeftClose,
-  PanelLeftOpen,
+  ChevronLeft,
+  ChevronRight,
   Plug,
   Settings,
   Wrench,
@@ -67,7 +67,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
     return (
       NAV_ITEMS.find((item) => {
         if (item.path === '/dashboard') {
-          return pathname === '/dashboard' || pathname === '/dashboard/home';
+          return pathname === '/dashboard' || pathname === '/dashboard/home'
         }
         return pathname === item.path || pathname.startsWith(`${item.path}/`);
       }) ?? NAV_ITEMS[0]
@@ -155,20 +155,27 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
           sidebarExpanded ? 'w-60' : 'w-16'
         }`}
       >
-        <div className="flex items-center justify-between gap-3 px-3 py-4 border-b border-[#16233f]">
+        {/* Toggle Island Tab - Perfectly straddles the sidebar border */}
+        <button
+          type="button"
+          onClick={() => setSidebarExpanded((prev) => !prev)}
+          className="absolute top-6 -right-[12px] z-50 h-6 w-6 flex items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50 hover:text-zinc-900 transition-all duration-150 group"
+          aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
           {sidebarExpanded ? (
-            <img src="/dock-logo-2.png" alt="Dock logo" className="h-7 w-auto" />
+            <ChevronLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
           ) : (
-            <img src="/dock-icon-2.png" alt="Dock icon" className="h-7 w-7 mx-auto" />
+            <ChevronRight size={14} className="transition-transform group-hover:translate-x-0.5" />
           )}
-          <button
-            type="button"
-            onClick={() => setSidebarExpanded((prev) => !prev)}
-            className="h-10 w-10 flex items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/85 hover:bg-white/10 hover:text-white transition-colors"
-            aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-          >
-            {sidebarExpanded ? <PanelLeftClose size={16} strokeWidth={1.9} /> : <PanelLeftOpen size={16} strokeWidth={1.9} />}
-          </button>
+        </button>
+
+        {/* Clean Header Area without layout shifting button containers */}
+        <div className="flex items-center h-[68px] px-3 border-b border-[#16233f] overflow-hidden flex-shrink-0">
+          {sidebarExpanded ? (
+            <img src="/dock-logo-2.png" alt="Dock logo" className="h-7 w-auto pl-1 transition-opacity duration-200" />
+          ) : (
+            <img src="/dock-icon-2.png" alt="Dock icon" className="h-7 w-7 mx-auto transition-opacity duration-200" />
+          )}
         </div>
 
         <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
@@ -198,7 +205,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="absolute left-0 right-0 bottom-0 px-2 pb-3">
+        <div className="absolute left-0 right-0 bottom-0 px-2 pb-3 bg-[#0B1528]">
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
