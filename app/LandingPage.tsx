@@ -1,441 +1,478 @@
+import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, MessageSquareMore, Sparkles, CalendarCheck2, CreditCard, Star, ShieldCheck, Cpu } from 'lucide-react';
+import { ArrowRight, ChevronDown, Check, Star, Globe, Shield, Lock, Cpu, Menu, X } from 'lucide-react';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-sans antialiased selection:bg-[#795bf4]/20">
       
-      {/* =========================================================================
-          1. STICKY TOP GLOBAL NAVIGATION HEADER
-         ========================================================================= */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 lg:px-10">
-          
-          {/* Logo Section */}
+      {/* SECTION 1: TOP NOTIFICATION BANNER */}
+      <div className="w-full bg-[#1b0d45] text-white py-2.5 px-4 text-center text-xs font-medium relative z-50">
+        <div className="mx-auto max-w-7xl flex items-center justify-center gap-2 pr-8">
+          <span>Make Waves '26 tickets are live. Join us in Prague, Oct 19-20, for two days of AI, automation, and what's next.</span>
+          <Link href="/pricing" className="text-[#66dba3] hover:underline font-semibold whitespace-nowrap">
+            Save with early-bird pricing!
+          </Link>
+        </div>
+        <button className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-sm">×</button>
+      </div>
+
+      {/* SECTION 2: NAVIGATION HEADER */}
+      <header className="sticky top-0 z-40 w-full bg-[#0f0826] text-white border-b border-white/[0.08]">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/dock-icon-2.png" alt="dock logo" className="h-8 w-8 object-contain" />
-              <span className="text-xl font-bold tracking-tight text-zinc-900">dock</span>
+              <img src="/dock-icon-2.png" alt="dock logo" className="h-8 w-8" />
+              <span className="text-2xl font-black tracking-tight text-white">dock</span>
             </Link>
-
-            {/* Main Nav Links */}
-            <nav className="hidden items-center gap-6 lg:flex">
-              <Link href="/products" className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900">Products</Link>
-              <Link href="/customers" className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900">Customers</Link>
-              <Link href="/partners" className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900">Partners</Link>
-              <Link href="/resources" className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900">Resources</Link>
+            
+            <nav className="hidden items-center gap-6 xl:flex text-sm font-medium text-zinc-300">
+              <button className="flex items-center gap-1 hover:text-white transition-colors">What is Dock <ChevronDown size={14} className="text-zinc-500" /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Dock + AI <ChevronDown size={14} className="text-zinc-500" /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Solutions <ChevronDown size={14} className="text-zinc-500" /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Resources <ChevronDown size={14} className="text-zinc-500" /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Partners <ChevronDown size={14} className="text-zinc-500" /></button>
+              <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
             </nav>
           </div>
 
-          {/* Right Action Framework */}
-          <div className="flex items-center gap-5">
-            <Link href="/login" className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900">Sign In</Link>
+          <div className="flex items-center gap-4">
+            <button className="hidden md:inline-block text-sm font-semibold text-zinc-300 hover:text-white transition-colors">Talk to sales</button>
+            <Link href="/login" className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors">Sign in</Link>
             <Link
               href="/login?mode=signup"
-              className="rounded bg-[#ef4444] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all hover:bg-[#dc2626]"
+              className="rounded-full bg-[#795bf4] px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#6847ef]"
             >
-              Sign Up
+              Get started free
             </Link>
           </div>
         </div>
       </header>
 
-      <main>
-        
-        {/* =========================================================================
-            2. HERO CHAMBER (Centered Headline, Copy, & Primary Action Button)
-           ========================================================================= */}
-        <section className="mx-auto max-w-7xl px-6 pt-16 pb-12 text-center lg:px-10 lg:pt-20">
-          <h1 className="mx-auto max-w-4xl text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-[52px] lg:leading-[1.15]">
-            Your life's work,<br />powered by our life's work
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base font-normal leading-relaxed text-zinc-500 sm:text-lg">
-            A unique and powerful software suite to transform the way you work. Designed for businesses of all sizes, built by a company that values your privacy.
+      {/* SECTION 3: DARK HERO BLOCK */}
+      <section className="bg-[#0f0826] text-white pt-20 pb-24 relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-6 grid gap-12 lg:grid-cols-12 lg:items-center relative z-10">
+          
+          <div className="lg:col-span-7">
+            <h1 className="text-5xl font-black tracking-tight leading-[1.05] sm:text-6xl xl:text-7xl">
+              The visual AI automation <br />platform
+            </h1>
+            <p className="mt-6 max-w-xl text-base md:text-lg text-zinc-400 font-medium leading-relaxed">
+              Connect any app, data source, or AI model. Build and manage automations and AI agents—visually, in code, or with a prompt.
+            </p>
+
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Link
+                href="/login?mode=signup"
+                className="rounded-full bg-[#795bf4] px-8 py-4 text-base font-bold text-white transition-colors hover:bg-[#6847ef]"
+              >
+                Get started free
+              </Link>
+              <button className="rounded-full border border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white transition-colors hover:bg-white/10">
+                Talk to sales
+              </button>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-6 text-xs text-zinc-500 font-medium">
+              <span className="flex items-center gap-1.5"><Check size={14} className="text-[#66dba3]" /> No credit card required</span>
+              <span className="flex items-center gap-1.5"><Check size={14} className="text-[#66dba3]" /> No time limit on Free plan</span>
+            </div>
+          </div>
+
+          {/* Isometric Flow Chart Rendering Mockup */}
+          <div className="lg:col-span-5 flex justify-center relative">
+            <div className="w-72 h-72 rounded-3xl bg-gradient-to-tr from-[#795bf4]/20 to-[#66dba3]/20 border border-white/10 rotate-[15deg] transform skew-x-[-10deg] p-6 relative shadow-2xl flex flex-col justify-between">
+              <div className="flex gap-2">
+                <div className="h-6 w-6 rounded-full bg-[#795bf4]" />
+                <div className="h-6 w-6 rounded-full bg-[#66dba3]" />
+              </div>
+              <div className="h-32 w-full rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center animate-pulse">🤖</div>
+              </div>
+              <div className="w-full h-4 bg-white/10 rounded-full" />
+            </div>
+          </div>
+
+        </div>
+
+        {/* Brand Logos Row Block */}
+        <div className="mx-auto max-w-7xl px-6 mt-24">
+          <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-8 opacity-40 grayscale contrast-200 text-sm font-black tracking-widest text-zinc-500">
+            <span>BAMBOO</span>
+            <span>&gt; BNY</span>
+            <span>BOLT</span>
+            <span>FINN</span>
+            <span>PERK</span>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: RATINGS BLOCK */}
+      <section className="bg-white border-b border-zinc-200 py-12">
+        <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { name: 'Capterra', score: '4.8' },
+            { name: 'G2', score: '4.7' },
+            { name: 'Getapp', score: '4.8' },
+            { name: 'Gartner', score: '4.6' }
+          ].map((item, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <span className="text-xs font-black uppercase tracking-wider text-zinc-400 mb-1">{item.name}</span>
+              <div className="flex items-center gap-1 text-zinc-900 font-bold text-base">
+                <Star size={16} className="fill-[#795bf4] text-[#795bf4]" />
+                <span>{item.score}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 5: GRID CAPABILITIES */}
+      <section className="mx-auto max-w-7xl px-6 py-24 text-center bg-white">
+        <h2 className="text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
+          The platform to build and manage all <br />your AI agents and automations
+        </h2>
+
+        <div className="mt-16 grid gap-8 md:grid-cols-3 text-left">
+          
+          <div className="rounded-3xl bg-zinc-50 border border-zinc-200 p-8 shadow-sm">
+            <div className="h-10 w-10 rounded-xl bg-[#795bf4] flex items-center justify-center text-white font-bold text-sm">
+              AI
+            </div>
+            <h3 className="mt-6 text-xl font-bold tracking-tight text-zinc-900">Adopt AI across your business.</h3>
+            <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
+              Deploy AI agents and workflows using 3,000+ integrations to completely automate operational task pipelines.
+            </p>
+          </div>
+
+          <div className="rounded-3xl bg-zinc-50 border border-zinc-200 p-8 shadow-sm">
+            <div className="h-10 w-10 rounded-xl bg-[#66dba3] flex items-center justify-center text-zinc-900 font-bold text-sm">
+              ✦
+            </div>
+            <h3 className="mt-6 text-xl font-bold tracking-tight text-zinc-900">From idea to live automation. Fast.</h3>
+            <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
+              Build by prompt, drag-and-drop workflow visual interfaces or via direct customized MCP development hooks.
+            </p>
+          </div>
+
+          <div className="rounded-3xl bg-zinc-50 border border-zinc-200 p-8 shadow-sm">
+            <div className="h-10 w-10 rounded-xl bg-zinc-900 flex items-center justify-center text-white font-bold text-sm">
+              ■
+            </div>
+            <h3 className="mt-6 text-xl font-bold tracking-tight text-zinc-900">Scale without losing visibility.</h3>
+            <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
+              See everything in one single visual landscape. Fully robust, enterprise ready, and traceable line-by-line.
+            </p>
+          </div>
+
+        </div>
+
+        <button className="mt-12 rounded-full bg-[#795bf4] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+          Explore more
+        </button>
+      </section>
+
+      {/* SECTION 6: SOLUTIONS TAB LAYOUT */}
+      <section className="bg-zinc-50 border-t border-b border-zinc-200 py-24">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#795bf4]">Solutions</span>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+            Adapt at speed with visual-first <br />automation and AI
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm md:text-base text-zinc-500 font-medium">
+            Dock drives efficiencies, solves performance friction, and speeds systematic innovation by breaking down data silos across your business units.
           </p>
-          <div className="mt-8">
-            <Link
-              href="/login?mode=signup"
-              className="inline-flex items-center justify-center rounded bg-[#ef4444] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-[#dc2626]"
-            >
-              Get Started for Free &gt;
-            </Link>
-          </div>
-        </section>
 
-        {/* =========================================================================
-            3. SPLIT APPS INTERACTION GRID (Left AI Promo Box + Right Multi-App Panel)
-           ========================================================================= */}
-        <section className="mx-auto max-w-7xl px-6 py-4 lg:px-10">
-          <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] items-stretch">
-            
-            {/* Left AI Side-Chamber (Zia Agent Studio Replica) */}
-            <div className="flex flex-col justify-between rounded-md bg-gradient-to-br from-[#795bf4] to-[#4c31bd] p-8 text-white shadow-sm">
-              <div>
-                <span className="inline-block text-xs font-medium uppercase tracking-wider text-[#66dba3]/90">Introducing</span>
-                <h3 className="mt-4 text-2xl font-bold tracking-tight">dock Agent Studio</h3>
-                <p className="mt-3 text-xs leading-relaxed text-zinc-200/90">
-                  Build autonomous workspace streams that can qualify inbound leads, auto-resolve tickets, draft contextual emails, and process heavy workflows instantly.
-                </p>
+          {/* HORIZONTAL TAB WRAPPER */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-2 border-b border-zinc-200 pb-4">
+            {['IT', 'Operations', 'Marketing', 'Sales', 'Finance', 'CX', 'People'].map((tab, idx) => (
+              <button 
+                key={tab} 
+                className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all ${idx === 0 ? 'bg-white text-[#795bf4] border border-[#795bf4]' : 'text-zinc-500 hover:text-zinc-900'}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* TWO-COLUMN TAB CONTENT PANEL */}
+          <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:items-center text-left">
+            <div className="lg:col-span-5 bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm">
+              <div className="w-full h-48 bg-zinc-100 rounded-2xl overflow-hidden mb-6 flex items-center justify-center relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#795bf4]/10 to-transparent" />
+                <span className="text-4xl">💻</span>
               </div>
-              <div className="mt-12 border-t border-white/10 pt-4">
-                <Link href="/agents" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white hover:underline">
-                  Explore dock Agents <span className="ml-1">&gt;</span>
-                </Link>
+              <div className="flex items-center gap-4 justify-center">
+                <div className="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center font-bold text-zinc-600">G</div>
+                <div className="h-2 w-12 bg-zinc-200 rounded" />
+                <div className="h-10 w-10 rounded-full bg-[#795bf4]/20 flex items-center justify-center text-sm">🔄</div>
               </div>
             </div>
 
-            {/* Right Interactive Apps Matrix Block */}
-            <div className="rounded-md border border-zinc-200 bg-white p-8 shadow-sm">
-              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Featured Apps</span>
-                <Link href="/products" className="text-xs font-bold uppercase tracking-wider text-[#795bf4] hover:underline">Explore All Products</Link>
-              </div>
-              
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                
-                {/* App Box 1 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#795bf4]/10 text-[#795bf4]"><MessageSquareMore size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">Unified Inbox</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Handle WhatsApp, Instagram, Facebook, and email channels natively.</p>
-                  </div>
-                </div>
-
-                {/* App Box 2 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#66dba3]/10 text-[#66dba3]"><Sparkles size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">In-Chat Tools</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Generate invoices, quotes, bookings, and custom smart dynamic parameters.</p>
-                  </div>
-                </div>
-
-                {/* App Box 3 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#795bf4]/10 text-[#795bf4]"><CalendarCheck2 size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">Bookings</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Lock in direct appointments, schedule automatic triggers, and coordinate times.</p>
-                  </div>
-                </div>
-
-                {/* App Box 4 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#66dba3]/10 text-[#66dba3]"><CreditCard size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">PayNow Docs</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Drop ultra-secure billing requests directly inside ongoing text contexts cleanly.</p>
-                  </div>
-                </div>
-
-                {/* App Box 5 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#795bf4]/10 text-[#795bf4]"><Star size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">Review Growth</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Track user follow-ups and construct retention logic easily.</p>
-                  </div>
-                </div>
-
-                {/* App Box 6 */}
-                <div className="flex gap-4 rounded-lg p-2 transition-all hover:bg-zinc-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#66dba3]/10 text-[#66dba3]"><Cpu size={20} /></div>
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-950">Integrations</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">Link third party tooling databases with single-click API systems.</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* =========================================================================
-            4. BRIGHT ALL-IN-ONE SUITE STRIP (Zoho One Yellow Section Replica)
-           ========================================================================= */}
-        <section className="mt-12 bg-[#795bf4] text-white">
-          <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 lg:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            
-            {/* Left Strategic Segment */}
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-zinc-200">All-In-One Suite</span>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">dock One</h2>
-              <p className="mt-1 text-base font-semibold text-zinc-100">The operating system for business</p>
-              <p className="mt-4 max-w-lg text-xs leading-relaxed text-zinc-100/90">
-                Run your entire business on dock—our fully unified operating platform architecture packed with more than 50 integrated platform applications matching every transactional workflow need.
+            <div className="lg:col-span-7 pl-0 lg:pl-8">
+              <h3 className="text-2xl font-black tracking-tight text-zinc-900">IT automation</h3>
+              <p className="mt-4 text-sm md:text-base font-medium leading-relaxed text-zinc-500">
+                Cut complexity and move faster by automating everything from system resource monitoring down to active event incident response. Connect internal legacy tooling, integrate active AI models, cut deep manual tasks, and free your engineering team to focus entirely on product innovation.
               </p>
-              <div className="mt-6">
-                <Link href="/dock-one" className="inline-flex items-center justify-center rounded bg-zinc-950 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-zinc-900">
-                  Try dock One &gt;
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Institutional Quote Block */}
-            <div className="border-t border-white/20 pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
-              <p className="text-base font-medium italic leading-relaxed text-zinc-100">
-                "Dock continues to modify, adapt, grow, and add things to the platform that our business sees value in."
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-white/20" />
-                <div>
-                  <p className="text-xs font-bold">Paul Grimes</p>
-                  <p className="text-[11px] text-zinc-200">Chief Operating Officer, Lubrication Engineers</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* =========================================================================
-            5. CORPORATE BRAND TICKER STRIP
-           ========================================================================= */}
-        <section className="bg-white py-10 text-center border-b border-zinc-100">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Brands That Trust Us</p>
-          <div className="mx-auto mt-6 flex max-w-4xl flex-wrap items-center justify-center gap-10 px-6 font-extrabold tracking-widest text-zinc-300 sm:gap-14">
-            <span className="text-lg uppercase">amazon</span>
-            <span className="text-lg uppercase">kpmg</span>
-            <span className="text-lg uppercase">netflix</span>
-            <span className="text-lg uppercase">shopify</span>
-            <span className="text-lg uppercase">stripe</span>
-          </div>
-          <div className="mt-5">
-            <Link href="/case-studies" className="text-xs font-bold uppercase tracking-wider text-[#795bf4] hover:underline">
-              Customer Stories &gt;
-            </Link>
-          </div>
-        </section>
-
-        {/* =========================================================================
-            6. TWIN COLUMN ECOSYSTEM MODULE (Enterprise Segment)
-           ========================================================================= */}
-        <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            
-            {/* Left Enterprise Copy */}
-            <div>
-              <h3 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">dock for Enterprise</h3>
-              <p className="mt-3 text-xs leading-relaxed text-zinc-500">
-                Discover the ecosystem we've built for large-scale transformation operations. Explore dock's structural platform capabilities, specialized developer tools, enterprise architecture security matrix, and global network deployment channels.
-              </p>
-              <div className="mt-4">
-                <Link href="/enterprise" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-[#795bf4] hover:underline">
-                  Learn More &gt;
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Enterprise Validation Box */}
-            <div className="rounded border border-zinc-200 bg-zinc-50 p-6">
-              <p className="text-sm font-medium italic leading-relaxed text-zinc-600">
-                "Dock's operating system is very robust and contains the collective memory of Selectra's entire business."
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-zinc-300" />
-                <div>
-                  <p className="text-xs font-bold text-zinc-900">Aurian De Maupeou</p>
-                  <p className="text-[11px] text-zinc-400">Co-Founder, Selectra</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* =========================================================================
-            7. FULL WIDTH VISUAL DISPLAY SEPARATOR BLOCK (The Event/Summit Banner)
-           ========================================================================= */}
-        <section className="relative flex h-64 items-center justify-center bg-zinc-900 text-white">
-          <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80')" }} />
-          <div className="relative z-10 px-6 text-center">
-            <h2 className="text-3xl font-extrabold tracking-wider sm:text-4xl">DOCKOLICS</h2>
-            <div className="mt-4">
-              <button className="rounded bg-[#ef4444] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#dc2626]">
-                Watch Video &gt;
+              <button className="mt-6 rounded-full bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+                Automate IT
               </button>
             </div>
           </div>
-        </section>
 
-        {/* =========================================================================
-            8. THE 4-COLUMN BRAND PILLARS MATRIX
-           ========================================================================= */}
-        <section className="bg-white py-16 border-b border-zinc-200">
-          <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <h2 className="text-center text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">The core values and principles that drive us</h2>
-            
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              
-              {/* Pillar 1 */}
-              <div className="flex flex-col gap-3">
-                <div className="text-[#795bf4]"><MessageSquareMore size={24} /></div>
-                <h4 className="text-base font-bold text-zinc-900">Long-term commitment</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">
-                  30+ years of running a profitable organization gives us a good sense of challenges that a growing business faces. We take pride in running a sustainable business that's powered by you, our customer.
-                </p>
-              </div>
+        </div>
+      </section>
 
-              {/* Pillar 2 */}
-              <div className="flex flex-col gap-3">
-                <div className="text-[#66dba3]"><Star size={24} /></div>
-                <h4 className="text-base font-bold text-zinc-900">Customer-first philosophy</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">
-                  In all these years, it's our customers' trust and goodwill that has helped us establish a strong position in the market. No matter the size of your business, we're here to help you grow.
-                </p>
-              </div>
+      {/* SECTION 7: APPLICATIONS SLIDER SIMULATOR */}
+      <section className="mx-auto max-w-7xl px-6 py-24 text-center bg-white">
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#795bf4]">Applications</span>
+        <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+          3,000+ pre-built apps. Limitless integration.
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-sm text-zinc-500 font-medium">
+          Quickly adapt to new market demands by connecting your entire tech stack. Use our massive library of pre-built apps for instant workflows, and our flexible platform to integrate any custom system.
+        </p>
 
-              {/* Pillar 3 */}
-              <div className="flex flex-col gap-3">
-                <div className="text-[#795bf4]"><ShieldCheck size={24} /></div>
-                <h4 className="text-base font-bold text-zinc-900">Privacy and security as a priority</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">
-                  We do not own or sell your data, and we most certainly do not bank on advertising-based business models. The only way we make money is from the software license fees you pay us.
-                </p>
-              </div>
-
-              {/* Pillar 4 */}
-              <div className="flex flex-col gap-3">
-                <div className="text-[#66dba3]"><Sparkles size={24} /></div>
-                <h4 className="text-base font-bold text-zinc-900">Focus on research and development</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">
-                  Software is our craft and we back it up with our relentless investments in R&D. So much so that we prefer to own the entire technology stack, including running our data centers globally.
-                </p>
-              </div>
-
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-4 max-w-3xl mx-auto">
+          {['OpenAI (ChatGPT)', 'HubSpot CRM', 'monday.com', 'NetSuite', 'Salesforce', 'Slack'].map((app) => (
+            <div key={app} className="rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-3 text-sm font-bold text-zinc-700 flex items-center gap-2">
+              <div className="h-3 w-3 rounded-full bg-[#795bf4]" />
+              {app}
             </div>
+          ))}
+        </div>
 
-            <div className="mt-10 text-center">
-              <Link href="/story" className="text-xs font-bold uppercase tracking-wider text-[#795bf4] hover:underline">
-                Read Our Story
-              </Link>
-            </div>
+        <button className="mt-10 rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-bold text-zinc-800 hover:bg-zinc-50">
+          Browse apps
+        </button>
+      </section>
+
+      {/* SECTION 8: TRUST PILLARS */}
+      <section className="bg-zinc-50 border-t border-b border-zinc-200 py-20">
+        <div className="mx-auto max-w-7xl px-6 grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#795bf4]">Security</span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900">Built on strong foundations</h2>
+            <p className="mt-4 text-sm md:text-base font-medium text-zinc-500 leading-relaxed">
+              Dock helps you to keep your infrastructure data secure with native, built-in GDPR compliance parameters, SOC 3 assertions, SOC 2 Type II strict alignments, advanced rest encryption protocols, and Enterprise Single Sign-On (SSO).
+            </p>
+            <button className="mt-6 rounded-full bg-zinc-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
+              Security details
+            </button>
           </div>
-        </section>
 
-        {/* =========================================================================
-            9. CORPORATE SCALE MATRIX METRICS (Solid Blue Strip Clone)
-           ========================================================================= */}
-        <section className="bg-zinc-900 text-white py-12">
-          <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <div className="text-center mb-8">
-              <h3 className="text-lg font-bold text-zinc-300">Business Software. Our Craft. Our Passion.</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-6 text-center sm:grid-cols-3 lg:grid-cols-5">
-              <div>
-                <p className="text-3xl font-extrabold tracking-tight md:text-4xl">150M+</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-zinc-400">Users Globally</p>
+          <div className="grid grid-cols-2 gap-4">
+            {['SOC 2 Type II', 'GDPR Compliant', 'SSO Vault Access', 'Data Encryption'].map((badge) => (
+              <div key={badge} className="bg-white border border-zinc-200 rounded-2xl p-5 text-center font-bold text-zinc-800 text-sm shadow-sm flex flex-col items-center justify-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-[#66dba3]/20 text-zinc-900 flex items-center justify-center">✓</div>
+                {badge}
               </div>
-              <div>
-                <p className="text-3xl font-extrabold tracking-tight md:text-4xl">150+</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-zinc-400">Countries Served</p>
-              </div>
-              <div>
-                <p className="text-3xl font-extrabold tracking-tight md:text-4xl">60+</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-zinc-400">Products</p>
-              </div>
-              <div>
-                <p className="text-3xl font-extrabold tracking-tight md:text-4xl">30+</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-zinc-400">Years in Business</p>
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <p className="text-3xl font-extrabold tracking-tight md:text-4xl">19K+</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-zinc-400">Employees Worldwide</p>
-              </div>
-            </div>
-            <div className="mt-8 text-center">
-              <Link href="/about" className="text-xs font-bold uppercase tracking-widest text-[#66dba3] hover:underline">
-                More About dock &gt;
-              </Link>
-            </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* =========================================================================
-            10. BOTTOM ACTIONS CALL TO ACTION BANNER
-           ========================================================================= */}
-        <section className="bg-zinc-50 py-16 text-center">
-          <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">Ready to do your best work?</h2>
-          <p className="mt-2 text-xs text-zinc-500">Let's get you started.</p>
-          <div className="mt-6">
+      {/* SECTION 9: MISSION BLOCK */}
+      <section className="mx-auto max-w-4xl px-6 py-24 text-center bg-white">
+        <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400">About Us</h2>
+        <p className="mt-6 text-xl md:text-2xl font-bold tracking-tight text-zinc-900 leading-relaxed">
+          Dock is the leading operational automation architecture, trusted by over <span className="text-[#795bf4]">400,000 organizations</span> across 200+ countries. Founded with vision and backed globally, we represent an expert software group helping businesses from startups to enterprises map scaling flows natively.
+        </p>
+        <button className="mt-8 rounded-full bg-zinc-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
+          Learn about Dock
+        </button>
+      </section>
+
+      {/* SECTION 10: SUCCESS STORIES BLOCK (DARK DEEP PURPLE PANEL) */}
+      <section className="bg-[#0f0826] text-white py-24 border-b border-white/5">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#66dba3]">Success Stories</span>
+          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl text-white">
+            Automation success stories
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-zinc-400 font-medium">
+            Go beyond the system hype and see how leading companies are achieving real production results with automated agents. Discover practical engineering insights.
+          </p>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-3 text-left">
+            {[
+              { title: 'How Dock helps Perk unlock deep internal production efficiencies.', date: 'Mar 12, 2026' },
+              { title: 'How Dock Agents help Celonis lower recurring operational audit overhead.', date: 'Nov 25, 2025' },
+              { title: 'How Dock helps FranklinCovey save $100,000s and free up hundreds of internal hours.', date: 'Oct 30, 2025' }
+            ].map((story, idx) => (
+              <div key={idx} className="bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col justify-between min-h-[280px]">
+                <div>
+                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">{story.date}</span>
+                  <h3 className="mt-4 text-lg font-bold text-white leading-snug">{story.title}</h3>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-[#66dba3] font-bold">
+                  <span>Case Study</span>
+                  <span>→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button className="mt-12 rounded-full bg-[#795bf4] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+            Explore success stories
+          </button>
+        </div>
+      </section>
+
+      {/* SECTION 11: TWO-COLUMN SYSTEM STACK DETAIL BLOCK */}
+      <section className="mx-auto max-w-7xl px-6 py-24 grid gap-16 lg:grid-cols-2 lg:items-center bg-white">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#795bf4]">AI and Automation</span>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+            Scale and orchestrate your AI automations
+          </h2>
+          <p className="mt-4 text-sm md:text-base font-medium text-zinc-500 leading-relaxed">
+            Build faster, more adaptable production lines with agentic tracking frameworks you can map visually and optimize. Scale with deep workspace processing units functioning seamlessly alongside human personnel streams. Maximize reliability with over 400 specialized system logic integrations.
+          </p>
+          <button className="mt-6 rounded-full bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+            Explore AI automation
+          </button>
+        </div>
+        
+        {/* Abstract System Web Mockup */}
+        <div className="border border-zinc-200 bg-zinc-50 rounded-3xl p-8 flex items-center justify-center min-h-[300px] shadow-inner relative">
+          <div className="h-16 w-16 rounded-full bg-[#795bf4] flex items-center justify-center font-black text-white shadow-xl">d</div>
+          <div className="absolute top-12 left-12 h-10 w-10 rounded-full bg-zinc-200 border border-zinc-300" />
+          <div className="absolute bottom-12 right-12 h-12 w-12 rounded-full bg-zinc-200 border border-zinc-300" />
+        </div>
+      </section>
+
+      {/* SECTION 12: SECOND TWO-COLUMN DETAIL BLOCK */}
+      <section className="border-t border-zinc-200 bg-zinc-50 py-24">
+        <div className="mx-auto max-w-7xl px-6 grid gap-16 lg:grid-cols-2 lg:items-center">
+          
+          {/* Layout Audit Logger UI Rendering Screen */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 font-mono text-xs text-zinc-600 shadow-sm space-y-3">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+              <span className="font-bold text-zinc-900">WORKSPACE_HISTORY</span>
+              <span className="text-xs text-zinc-400">v2.4.1</span>
+            </div>
+            <p className="text-zinc-500">• Scenario sequence compilation verified by root</p>
+            <p className="text-zinc-500">• Variable parsing completed: 0 warning faults</p>
+          </div>
+
+          <div>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#795bf4]">Enterprise</span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+              Automation and AI impact for enterprise
+            </h2>
+            <p className="mt-4 text-sm md:text-base font-medium text-zinc-500 leading-relaxed">
+              Empower enterprise cross-functional teams to securely build, deploy, verify, and scale data rules. Retain architectural ownership with structured flow monitoring dashboards, strict corporate isolation mechanics, audit compliance standards, and continuous technical support loops.
+            </p>
+            <button className="mt-6 rounded-full bg-zinc-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
+              Explore enterprise solutions
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      {/* SECTION 13: BOTTOM ACTION CONVERSION BLOCK (DARK DEEP PURPLE BACKGROUND) */}
+      <section className="bg-[#0f0826] text-white py-20 border-b border-white/5 text-center">
+        <div className="mx-auto max-w-4xl px-6">
+          <h2 className="text-3xl font-black tracking-tight sm:text-5xl">
+            Realize your business's full potential
+          </h2>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <button className="rounded-full border border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white transition-colors hover:bg-white/10">
+              Talk to sales
+            </button>
             <Link
               href="/login?mode=signup"
-              className="rounded bg-[#ef4444] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-[#dc2626]"
+              className="rounded-full bg-[#795bf4] px-8 py-4 text-base font-bold text-white transition-colors hover:bg-[#6847ef]"
             >
-              Sign Up Now
+              Get started free
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </main>
-
-      {/* =========================================================================
-          11. FOUR-COLUMN SYSTEM INDEX FOOTER DIRECTORY
-         ========================================================================= */}
-      <footer className="bg-white px-6 pt-12 pb-8 border-t border-zinc-200 text-[11px] text-zinc-500 lg:px-10">
-        <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {/* SECTION 14: FULL EXPANDED INDEX FOOTER BLOCK */}
+      <footer className="bg-[#0f0826] text-white pt-20 pb-12 text-xs font-medium border-t border-white/5">
+        <div className="mx-auto max-w-7xl px-6 grid gap-12 sm:grid-cols-2 md:grid-cols-6">
           
+          <div className="md:col-span-2 space-y-4">
+            <div className="flex items-center gap-2">
+              <img src="/dock-icon-2.png" alt="dock logo" className="h-6 w-6" />
+              <span className="text-xl font-black tracking-tight text-white">dock</span>
+            </div>
+            <p className="text-zinc-400 font-normal leading-relaxed">
+              Subscribe to news updates. Keep up with custom integration releases.
+            </p>
+            <div className="flex gap-2 max-w-sm">
+              <input 
+                type="email" 
+                placeholder="Work email" 
+                className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-[#795bf4]" 
+              />
+              <button className="bg-[#795bf4] text-white rounded-full px-4 py-2 font-bold hover:bg-[#6847ef]">
+                SUBSCRIBE
+              </button>
+            </div>
+          </div>
+
           <div>
-            <h5 className="font-bold text-zinc-950 uppercase tracking-wider">Apps</h5>
-            <ul className="mt-3 space-y-2">
-              <li><Link href="/mobile" className="hover:text-zinc-900">Mobile Apps</Link></li>
-              <li><Link href="/desktop" className="hover:text-zinc-900">Desktop Apps</Link></li>
-              <li><Link href="/developer" className="hover:text-zinc-900">Developer Center</Link></li>
-              <li><Link href="/workspace" className="hover:text-zinc-900">Google Workspace Integration</Link></li>
-              <li><Link href="/extensions" className="hover:text-zinc-900">Browser Extensions</Link></li>
+            <h4 className="font-bold text-zinc-400 mb-4 uppercase tracking-wider text-[10px]">Product</h4>
+            <ul className="space-y-2 text-zinc-300">
+              <li><button className="hover:text-white transition-colors">Dock AI</button></li>
+              <li><button className="hover:text-white transition-colors">Dock AI Agents</button></li>
+              <li><button className="hover:text-white transition-colors">Apps Ecosystem</button></li>
+              <li><button className="hover:text-white transition-colors">Dock Grid</button></li>
+              <li><button className="hover:text-white transition-colors">Pricing Layout</button></li>
+              <li><button className="hover:text-white transition-colors">Get Demo</button></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-zinc-950 uppercase tracking-wider">Learn</h5>
-            <ul className="mt-3 space-y-2">
-              <li><Link href="/announcements" className="hover:text-zinc-900">Announcements Hub</Link></li>
-              <li><Link href="/academy" className="hover:text-zinc-900">Training and Certification</Link></li>
-              <li><Link href="/blog" className="hover:text-zinc-900">Blog</Link></li>
-              <li><Link href="/knowledge" className="hover:text-zinc-900">Knowledge Base</Link></li>
+            <h4 className="font-bold text-zinc-400 mb-4 uppercase tracking-wider text-[10px]">Solutions</h4>
+            <ul className="space-y-2 text-zinc-300">
+              <li><button className="hover:text-white transition-colors">How-to Guides</button></li>
+              <li><button className="hover:text-white transition-colors">Success Stories</button></li>
+              <li><button className="hover:text-white transition-colors">Flow Templates</button></li>
+              <li><button className="hover:text-white transition-colors">Partner Directory</button></li>
+              <li><button className="hover:text-white transition-colors">Idea Exchange</button></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-zinc-950 uppercase tracking-wider">Community</h5>
-            <ul className="mt-3 space-y-2">
-              <li><Link href="/community" className="hover:text-zinc-900">User Community</Link></li>
-              <li><Link href="/stories" className="hover:text-zinc-900">Customer Stories</Link></li>
-              <li><Link href="/partners" className="hover:text-zinc-900">Work With a Partner</Link></li>
-              <li><Link href="/startups" className="hover:text-zinc-900">dock for Startups</Link></li>
+            <h4 className="font-bold text-zinc-400 mb-4 uppercase tracking-wider text-[10px]">Resources</h4>
+            <ul className="space-y-2 text-zinc-300">
+              <li><button className="hover:text-white transition-colors">Dock Academy</button></li>
+              <li><button className="hover:text-white transition-colors">Dock Community</button></li>
+              <li><button className="hover:text-white transition-colors">Help Center</button></li>
+              <li><button className="hover:text-white transition-colors">Developers Hub</button></li>
+              <li><button className="hover:text-white transition-colors">System Blog</button></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-zinc-950 uppercase tracking-wider">Company</h5>
-            <ul className="mt-3 space-y-2">
-              <li><Link href="/about" className="hover:text-zinc-900">About Us</Link></li>
-              <li><Link href="/story" className="hover:text-zinc-900">Our Story</Link></li>
-              <li><Link href="/press" className="hover:text-zinc-900">Press</Link></li>
-              <li><Link href="/status" className="hover:text-zinc-900">Service Status</Link></li>
-              <li><Link href="/careers" className="hover:text-zinc-900">Careers</Link></li>
+            <h4 className="font-bold text-zinc-400 mb-4 uppercase tracking-wider text-[10px]">Company</h4>
+            <ul className="space-y-2 text-zinc-300">
+              <li><button className="hover:text-white transition-colors">About Team</button></li>
+              <li><button className="hover:text-white transition-colors">Active Careers</button></li>
+              <li><button className="hover:text-white transition-colors">Contact US</button></li>
+              <li><button className="hover:text-white transition-colors">Press Modules</button></li>
+              <li><button className="hover:text-white transition-colors">Security Bounds</button></li>
             </ul>
           </div>
 
         </div>
 
-        {/* Regulatory Strip */}
-        <div className="mx-auto mt-12 max-w-7xl border-t border-zinc-100 pt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-zinc-400">
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            <Link href="/security" className="hover:text-zinc-600">Security Compliance</Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-zinc-600">Terms of Service</Link>
-            <span>•</span>
-            <Link href="/privacy" className="hover:text-zinc-600">Privacy Policy</Link>
-            <span>•</span>
-            <Link href="/gdpr" className="hover:text-zinc-600">GDPR Compliance</Link>
+        <div className="mx-auto max-w-7xl px-6 mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500">
+          <p>© 2026 Celonis, Inc. All rights reserved to Dock Operational Systems.</p>
+          <div className="flex gap-6 font-normal">
+            <button className="hover:text-zinc-300">Terms & conditions</button>
+            <button className="hover:text-zinc-300">Privacy and GDPR</button>
+            <button className="hover:text-zinc-300">Disclaimer</button>
           </div>
-          <p>© 2026 dock Corporation Pvt. Ltd. All Rights Reserved.</p>
         </div>
       </footer>
+
     </div>
   );
 }
