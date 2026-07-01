@@ -44,17 +44,17 @@ function TikTokIcon({ size = 16 }: IconProps) {
 
 function MailIconBox({ size = 16 }: IconProps) {
   return (
-    <div className="flex items-center justify-center rounded-md bg-[#64d9a2]" style={{ width: size, height: size }}>
+    <div className="flex items-center justify-center rounded-md bg-[#66dba3]" style={{ width: size, height: size }}>
       <Mail size={size * 0.62} className="text-white" />
     </div>
   );
 }
 
 const channelSync: Array<{ id: string; label: string; status: string; Icon: (props: IconProps) => JSX.Element; dot: string }> = [
-  { id: 'whatsapp', label: 'WhatsApp Business', status: 'Syncing', Icon: WhatsAppIcon, dot: 'bg-[#64d9a2]' },
-  { id: 'instagram', label: 'Instagram DMs', status: 'Connected', Icon: InstagramIcon, dot: 'bg-[#64d9a2]' },
-  { id: 'tiktok', label: 'TikTok', status: 'Connected', Icon: TikTokIcon, dot: 'bg-[#64d9a2]' },
-  { id: 'email', label: 'Email', status: 'Connected', Icon: MailIconBox, dot: 'bg-[#64d9a2]' },
+  { id: 'whatsapp', label: 'WhatsApp Business', status: 'Syncing', Icon: WhatsAppIcon, dot: 'bg-[#66dba3]' },
+  { id: 'instagram', label: 'Instagram DMs', status: 'Connected', Icon: InstagramIcon, dot: 'bg-[#66dba3]' },
+  { id: 'tiktok', label: 'TikTok', status: 'Connected', Icon: TikTokIcon, dot: 'bg-[#66dba3]' },
+  { id: 'email', label: 'Email', status: 'Connected', Icon: MailIconBox, dot: 'bg-[#66dba3]' },
 ];
 
 const activeAutomations = ['WhatsApp Auto-Reply', 'Booking Reminder'];
@@ -160,7 +160,7 @@ export default function DashboardHomeContent() {
             <p className="mb-2 mt-3 text-xs font-semibold text-zinc-400">Bookings Today</p>
             <div className="space-y-2.5">
               <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#66dba3]" />
                 <span className="text-2xl font-bold text-zinc-900">12</span>
                 <span className="text-sm text-zinc-600">Confirmed</span>
               </div>
@@ -188,14 +188,14 @@ export default function DashboardHomeContent() {
             <h3 className="text-base font-bold text-zinc-900">Active Workflows</h3>
             <p className="mb-2 mt-3 text-xs font-semibold text-zinc-400">Operational Automations</p>
             <div className="mb-2 flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#66dba3]" />
               <span className="text-2xl font-bold text-zinc-900">3</span>
               <span className="text-sm text-zinc-600">Live</span>
             </div>
             <div className="mb-4 space-y-1.5">
               {activeAutomations.map((name) => (
                 <div key={name} className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#66dba3]" />
                   <span className="text-sm text-zinc-700">{name}</span>
                 </div>
               ))}
@@ -231,11 +231,11 @@ export default function DashboardHomeContent() {
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <p className="text-sm font-bold text-zinc-900">{c.name}</p>
                         <div className="flex items-center gap-3 text-xs">
-                          <span className="flex items-center gap-1 font-medium text-emerald-600">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> New
+                          <span className="flex items-center gap-1 font-medium text-[#66dba3]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#66dba3]" /> New
                           </span>
-                          <span className="flex items-center gap-1 font-medium text-[#1b8f61]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#64d9a2]" /> Pending
+                          <span className="flex items-center gap-1 font-medium text-[#66dba3]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#66dba3]" /> Pending
                           </span>
                           <span className="flex items-center gap-1 font-medium text-zinc-400">
                             <span className="h-1.5 w-1.5 rounded-full bg-zinc-300" /> Resolved

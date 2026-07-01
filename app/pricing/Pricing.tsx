@@ -167,7 +167,7 @@ const faqs = [
 ];
 
 function FeatureCell({ value }: { value: FeatureValue }) {
-  if (value === true) return <Check size={18} className="text-[#1b8f61] mx-auto" strokeWidth={3} />;
+  if (value === true) return <Check size={18} className="text-[#66dba3] mx-auto" strokeWidth={3} />;
   if (value === false) return <Minus size={14} className="text-zinc-200 mx-auto" strokeWidth={2.5} />;
   return <span className="text-sm font-medium text-zinc-800">{value}</span>;
 }
@@ -269,7 +269,7 @@ export default function PremiumPricingPage() {
         <div className="lg:col-span-5 bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-8 space-y-6">
           <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
             <h3 className="font-bold text-base tracking-tight text-zinc-900 flex items-center gap-2">
-              <TrendingUp size={18} className="text-[#1b8f61]" /> Plan Matcher Estimate
+              <TrendingUp size={18} className="text-[#66dba3]" /> Plan Matcher Estimate
             </h3>
             <span className="text-xs font-bold text-zinc-400 uppercase">Interactive</span>
           </div>
@@ -277,7 +277,7 @@ export default function PremiumPricingPage() {
           <div className="space-y-2">
             <div className="flex justify-between text-sm font-bold">
               <span className="text-zinc-600">Expected monthly conversations:</span>
-              <span className="text-[#1b8f61] text-base font-black">{estimatedConversations === 1500 ? '1,500+' : estimatedConversations}</span>
+              <span className="text-[#66dba3] text-base font-black">{estimatedConversations === 1500 ? '1,500+' : estimatedConversations}</span>
             </div>
             <input 
               type="range" 
@@ -300,7 +300,7 @@ export default function PremiumPricingPage() {
               <p className="text-lg font-black text-zinc-900 mt-0.5">Dock {suggestedPlan.name} Plan</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-black text-[#1b8f61]">{suggestedPlan.cost}</p>
+              <p className="text-2xl font-black text-[#66dba3]">{suggestedPlan.cost}</p>
               <p className="text-[10px] font-bold text-zinc-400">estimated base / mo</p>
             </div>
           </div>
@@ -353,7 +353,7 @@ export default function PremiumPricingPage() {
                   </span>
                 </div>
                 {annual && price !== 0 && (
-                  <p className="text-[11px] font-bold text-[#1b8f61] mt-1 uppercase tracking-wider">Billed annually upfront</p>
+                  <p className="text-[11px] font-bold text-[#66dba3] mt-1 uppercase tracking-wider">Billed annually upfront</p>
                 )}
 
                 <p className={`text-sm mt-5 leading-relaxed font-medium ${tier.darkVariant ? 'text-zinc-300' : 'text-zinc-600'}`}>
@@ -383,7 +383,7 @@ export default function PremiumPricingPage() {
                 <ul className="space-y-3.5 flex-1">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3 text-sm font-medium">
-                      <Check size={16} className="text-[#1b8f61] shrink-0 mt-0.5" strokeWidth={3} />
+                      <Check size={16} className="text-[#66dba3] shrink-0 mt-0.5" strokeWidth={3} />
                       <span className={tier.darkVariant ? 'text-zinc-300' : 'text-zinc-700'}>{feature}</span>
                     </li>
                   ))}
@@ -432,7 +432,7 @@ export default function PremiumPricingPage() {
               'Standard email developer support channels',
             ].map((item) => (
               <div key={item} className="flex items-start gap-3">
-                <Check size={16} className="text-[#64d9a2] shrink-0 mt-0.5" strokeWidth={3} />
+                <Check size={16} className="text-[#66dba3] shrink-0 mt-0.5" strokeWidth={3} />
                 <span className="text-sm text-zinc-300 font-medium leading-tight">{item}</span>
               </div>
             ))}

@@ -58,7 +58,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
     },
     { 
       name: 'Email', 
-      color: 'text-[#64d9a2]',
+      color: 'text-[#66dba3]',
       icon: <Mail className="w-[1.1em] h-[1.1em]" strokeWidth={2.5} />
     },
     { 

@@ -141,7 +141,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
     return (
       <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 border-2 border-[#64d9a2] border-t-transparent animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#66dba3] border-t-transparent animate-spin" />
           <p className="text-xs text-zinc-500">Loading Dock...</p>
         </div>
       </div>
