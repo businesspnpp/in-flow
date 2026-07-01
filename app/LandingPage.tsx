@@ -1,293 +1,344 @@
 import Link from 'next/link';
-import { ArrowRight, Calendar, CreditCard, MessageSquare, Shield, Sparkles, Star, Zap, BarChart3, Users2 } from 'lucide-react';
+import { Archivo, Inter, IBM_Plex_Mono } from 'next/font/google';
+import { ArrowRight } from 'lucide-react';
 
-const brands = ['WhatsApp', 'Instagram', 'Messenger', 'TikTok', 'Google', 'Shopify'];
+const display = Archivo({
+  subsets: ['latin'],
+  weight: ['700', '800', '900'],
+  variable: '--font-display',
+});
 
-const metricStats = [
-  { value: '99.9%', label: 'Uptime SLA promised' },
-  { value: '5+', label: 'Native channels sync' },
-  { value: '14m', label: 'Average onboarding' },
+const body = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-body',
+});
+
+const mono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--font-mono',
+});
+
+const manifestRows = [
+  { code: '01', channel: 'WhatsApp', note: '42 open threads', status: 'CLEARED' },
+  { code: '02', channel: 'Instagram', note: '11 new DMs', status: 'CLEARED' },
+  { code: '03', channel: 'Facebook', note: '3 awaiting reply', status: 'IN TRANSIT' },
+  { code: '04', channel: 'Email', note: '9 quotes sent', status: 'CLEARED' },
 ];
 
-const features = [
+const channels = ['WhatsApp', 'Instagram', 'Facebook', 'TikTok', 'Email', 'SMS'];
+
+const manifestItems = [
   {
-    tag: 'Omnichannel',
-    title: 'Unified Customer Workspace',
-    description: 'Consolidate distributed messages across WhatsApp, Instagram, and SMS into a single high-throughput desktop queue built for speed.',
-    Icon: MessageSquare,
+    code: '01',
+    title: 'Unified inbox',
+    body: 'WhatsApp, Instagram, Facebook, TikTok, and email arrive on one thread instead of six separate tabs.',
   },
   {
-    tag: 'Automation',
-    title: 'Contextual In-Chat Actions',
-    description: 'Generate itemized quotes, push secure payment triggers, and update service parameters directly inside the active chat timeline.',
-    Icon: Sparkles,
+    code: '02',
+    title: 'In-chat tools',
+    body: 'Raise an invoice, quote a job, or send a payment link without ever leaving the conversation.',
   },
   {
-    tag: 'Transactions',
-    title: 'Automated Deposits & Ledgers',
-    description: 'Lock down physical calendar appointments and secure upfront billing simultaneously. Zero application hopping for your operators.',
-    Icon: CreditCard,
+    code: '03',
+    title: 'Bookings & payments',
+    body: 'Hold the slot, send the reminder, take the deposit. Three steps your team already does, now in one place.',
   },
   {
-    tag: 'Reputation',
-    title: 'Closed-Loop Feedback Cycles',
-    description: 'Trigger targeted Google and Trustpilot review requests instantly upon successful transactional thresholds to scale social proof.',
-    Icon: Star,
+    code: '04',
+    title: 'Review growth',
+    body: 'Every closed job rolls into a review follow-up, so good work keeps compounding into new leads.',
   },
+];
+
+const ledgerStats = [
+  { value: '5+', label: 'channels on one thread' },
+  { value: '8', label: 'tools without leaving chat' },
+  { value: '<15', label: 'minutes to set up' },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#fff] font-sans antialiased text-zinc-900 selection:bg-indigo-500 selection:text-white">
-      
-      {/* Global Banner Announcement */}
-      <div className="bg-zinc-950 px-4 py-2 text-center text-xs font-medium tracking-wide text-zinc-300 border-b border-zinc-800">
-        Introducing Dock Enterprise Sync — Multi-location routing for distributed operations. <span className="text-white underline ml-1 cursor-pointer hover:text-indigo-400 transition-colors">Read announcement</span>
-      </div>
-
-      {/* Premium Sticky Navigation */}
-      <header className="sticky top-0 z-50 border-b border-zinc-100 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-950 shadow-sm">
-              <span className="text-sm font-black text-white tracking-tighter">D</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight text-zinc-950">dock</span>
+    <div
+      className={`${display.variable} ${body.variable} ${mono.variable} min-h-screen bg-[#F7F7F4] text-[#14171B]`}
+      style={{ fontFamily: 'var(--font-body)' }}
+    >
+      {/* ───────────────────────── Header ───────────────────────── */}
+      <header className="sticky top-0 z-40 border-b border-[#E2E1DB] bg-[#F7F7F4]/95 backdrop-blur">
+        <div className="mx-auto flex h-18 w-full max-w-6xl items-center justify-between px-6 py-4">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="relative flex h-6 w-6 items-center justify-center">
+              <span className="absolute inset-0 bg-[#14171B]" />
+              <span className="absolute right-0 top-0 h-3.5 w-3.5 bg-[#FF5B1F]" />
+            </span>
+            <span
+              className="text-xl font-[800] tracking-tight"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              dock
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/features" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Features</Link>
-            <Link href="/solutions" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Solutions</Link>
-            <Link href="/pricing" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Pricing</Link>
-            <span className="h-4 w-px bg-zinc-200" />
-            <Link href="/login" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Sign in</Link>
+            <Link href="/pricing" className="text-sm font-medium text-[#4B4E54] hover:text-[#14171B]">
+              Pricing
+            </Link>
+            <Link href="/login" className="text-sm font-medium text-[#4B4E54] hover:text-[#14171B]">
+              Sign in
+            </Link>
             <Link
               href="/login?mode=signup"
-              className="inline-flex h-9 items-center justify-center rounded-lg bg-zinc-950 px-4 text-[13px] font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.98] shadow-sm"
+              className="rounded-[3px] bg-[#14171B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#FF5B1F]"
             >
-              Get Started Free
+              Start free
             </Link>
           </nav>
         </div>
       </header>
 
       <main>
-        {/* Premium Enterprise Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-zinc-50/50 via-white to-white py-20 lg:py-32 border-b border-zinc-100">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
-              
-              {/* Left Column Text Block */}
-              <div className="lg:col-span-7 space-y-8">
-                <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold tracking-wide text-zinc-700 shadow-sm">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Operations Control Suite
-                </div>
-                
-                <h1 className="text-4xl font-bold tracking-tight text-zinc-950 sm:text-6xl lg:leading-[1.08]">
-                  The operational layer for high-velocity customer teams.
-                </h1>
-                
-                <p className="max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
-                  Consolidate real-time communications, programmatic workflows, payments, and client bookings into a secure, single-pane infrastructure framework built for scale.
-                </p>
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    href="/login?mode=signup"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-6 text-sm font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.98] shadow-md shadow-zinc-950/10"
-                  >
-                    Deploy Workspace Free
-                    <ArrowRight size={15} />
-                  </Link>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex h-12 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-50 hover:text-zinc-950"
-                  >
-                    Request Demo Stack
-                  </Link>
-                </div>
-
-                {/* Micro Brand Validation */}
-                <div className="pt-6 border-t border-zinc-100">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Native Platform Syncing</p>
-                  <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-zinc-500">
-                    {brands.map((brand) => (
-                      <span key={brand} className="hover:text-zinc-950 transition-colors cursor-default">{brand}</span>
-                    ))}
-                  </div>
-                </div>
+        {/* ───────────────────────── Hero ───────────────────────── */}
+        <section className="mx-auto w-full max-w-6xl px-6 pt-16 pb-10 lg:pt-24">
+          <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+            <div>
+              <div
+                className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4B4E54]"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                <span className="h-2 w-2 bg-[#FF5B1F]" />
+                Berth 04 &mdash; Customer operations
               </div>
 
-              {/* Right Column App Display Block (Zendesk & Intercom Aesthetic) */}
-              <div className="lg:col-span-5 relative">
-                <div className="absolute inset-0 -m-4 rounded-[40px] bg-gradient-to-tr from-zinc-200/40 via-indigo-50/10 to-zinc-100/40 blur-xl" />
-                <div className="relative rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl shadow-zinc-200/80">
-                  
-                  {/* Console Interface Mirror */}
-                  <div className="rounded-[10px] border border-zinc-100 bg-zinc-950 p-5 text-white">
-                    <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-zinc-700" />
-                        <span className="text-[11px] font-mono tracking-wider text-zinc-400 uppercase">Live Queue Overview</span>
-                      </div>
-                      <span className="rounded bg-indigo-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-indigo-400 uppercase border border-indigo-500/20">Active Node</span>
-                    </div>
+              <h1
+                className="mt-6 max-w-xl text-[3.1rem] font-[900] leading-[0.98] tracking-tight text-[#14171B] sm:text-[3.8rem]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Run your customer operations from one <span className="text-[#FF5B1F]">dock</span>.
+              </h1>
 
-                    <div className="mt-5 space-y-3">
-                      <div className="rounded-lg bg-zinc-900 p-3.5 border border-zinc-800">
-                        <p className="text-[11px] font-bold text-zinc-400">INBOUND EVENT — WHATSAPP BUSINESS API</p>
-                        <p className="mt-1 text-sm font-medium text-white">Confirm availability window: July 2nd, AM slot</p>
-                        <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
-                          <span>User ID: usr_9084x</span>
-                          <span className="text-emerald-400 font-semibold">Matched Intent</span>
-                        </div>
-                      </div>
-
-                      <div className="grid gap-3 grid-cols-2">
-                        <div className="rounded-lg bg-zinc-900 p-3 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer">
-                          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
-                            <Calendar size={13} />
-                            <span>Dispatch Ledger</span>
-                          </div>
-                          <p className="mt-1.5 text-[11px] text-zinc-400 leading-normal">Commit calendar allocations directly into message buffer.</p>
-                        </div>
-                        <div className="rounded-lg bg-zinc-900 p-3 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer">
-                          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
-                            <CreditCard size={13} />
-                            <span>Secure Checkout</span>
-                          </div>
-                          <p className="mt-1.5 text-[11px] text-zinc-400 leading-normal">Generate contextual tokenized Stripe routing hooks.</p>
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg bg-zinc-900/40 p-3 border border-dashed border-zinc-800 text-center">
-                        <span className="text-[11px] text-zinc-500">Operator metrics: 4.8m resolution mean runtime</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* Dynamic Metric Counter Section */}
-        <section className="bg-zinc-50/50 border-b border-zinc-100 py-10">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="grid gap-8 sm:grid-cols-3">
-              {metricStats.map((stat) => (
-                <div key={stat.label} className="flex flex-col sm:items-center sm:text-center">
-                  <span className="text-3xl font-bold tracking-tight text-zinc-950">{stat.value}</span>
-                  <span className="mt-1 text-xs font-medium text-zinc-500 uppercase tracking-wider">{stat.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Feature Matrix Grid Section */}
-        <section className="py-24 lg:py-32 bg-white">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="max-w-2xl space-y-4 mb-20">
-              <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase">Core Capabilities</span>
-              <h2 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">Engineered for high volume. Configured for efficiency.</h2>
-              <p className="text-zinc-600 leading-relaxed">
-                Stop wiring disparate notification webhooks together. Dock encapsulates your primary customer actions into native systems architecture.
+              <p className="mt-6 max-w-md text-[17px] leading-relaxed text-[#4B4E54]">
+                Every WhatsApp message, DM, booking, and invoice lands on one manifest &mdash;
+                logged, actioned, and cleared without switching tabs.
               </p>
-            </div>
 
-            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map(({ tag, title, description, Icon }) => (
-                <div key={title} className="group relative flex flex-col justify-between space-y-4 rounded-xl transition-all">
-                  <div className="space-y-4">
-                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-50 text-zinc-900 border border-zinc-100 shadow-sm group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
-                      <Icon size={16} strokeWidth={2} />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-indigo-600 block mb-1">{tag}</span>
-                      <h3 className="text-base font-bold tracking-tight text-zinc-950">{title}</h3>
-                    </div>
-                    <p className="text-sm leading-relaxed text-zinc-500 font-normal">{description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Enterprise Security / Infrastructure Section */}
-        <section className="bg-zinc-50 py-20 border-t border-b border-zinc-200/60">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="grid gap-12 lg:grid-cols-3">
-              <div className="space-y-3">
-                <div className="text-zinc-950"><Shield size={20} className="text-zinc-900" /></div>
-                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">Bank-Grade Compliance</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">Full end-to-end payload encryption across all messaging endpoints matching standard SOC2 protocol structures.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="text-zinc-950"><Zap size={20} className="text-zinc-900" /></div>
-                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">High-Throughput Engines</h4>
-                <p className="text-xs leading-relaxed text-zinc-500"> sub-100ms pipeline execution ensures instant syncing between incoming communication nodes and web view interfaces.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="text-zinc-950"><Users2 size={20} className="text-zinc-900" /></div>
-                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">Granular Team Control</h4>
-                <p className="text-xs leading-relaxed text-zinc-500">Control system states with fine-grained agent parameter provisioning, advanced audit logging, and automated routing rules.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Sophisticated Corporate Closing Call To Action */}
-        <section className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
-          <div className="relative overflow-hidden rounded-2xl bg-zinc-950 px-8 py-16 text-white shadow-xl md:px-16 md:py-24">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(55,48,163,0.15),transparent_45%)]" />
-            
-            <div className="relative max-w-2xl space-y-6">
-              <span className="text-xs font-bold tracking-widest text-indigo-400 uppercase">Onboarding Architecture</span>
-              <h2 className="text-3xl font-bold tracking-tight md:text-5xl lg:leading-[1.1]">
-                Scale operations without expanding overhead.
-              </h2>
-              <p className="max-w-xl text-sm md:text-base leading-relaxed text-zinc-400">
-                Instantiate a single sandbox test block, match it against your actual chat flows, evaluate conversion matrices, and launch to your team when completely satisfied.
-              </p>
-              
-              <div className="pt-4 flex flex-wrap gap-4">
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/login?mode=signup"
-                  className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-5 text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-100 active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 rounded-[3px] bg-[#14171B] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#FF5B1F]"
                 >
-                  Create Production Account
+                  Start free
+                  <ArrowRight size={16} strokeWidth={2.5} />
                 </Link>
                 <Link
                   href="/pricing"
-                  className="inline-flex h-11 items-center justify-center rounded-lg border border-zinc-800 bg-transparent px-5 text-sm font-semibold text-zinc-300 transition-all hover:bg-zinc-900 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-[3px] border border-[#14171B]/20 px-6 py-3.5 text-sm font-bold text-[#14171B] transition-colors hover:border-[#14171B]"
                 >
-                  View Corporate Tier Structure
+                  View pricing
                 </Link>
               </div>
+
+              <div
+                className="mt-12 flex divide-x divide-[#E2E1DB] border-t border-[#E2E1DB] pt-6"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                {ledgerStats.map((stat) => (
+                  <div key={stat.label} className="flex-1 pr-6 first:pl-0 [&:not(:first-child)]:pl-6">
+                    <p className="text-2xl font-semibold text-[#14171B]">{stat.value}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.1em] text-[#4B4E54]">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Manifest ticket */}
+            <div className="relative rounded-[6px] border border-[#14171B]/15 bg-white shadow-[0_1px_0_rgba(20,23,27,0.04)]">
+              <div className="h-1.5 w-full rounded-t-[5px] bg-[#FF5B1F]" />
+              <div className="p-6">
+                <div className="flex items-center justify-between border-b border-dashed border-[#E2E1DB] pb-4">
+                  <div>
+                    <p
+                      className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8A8D93]"
+                      style={{ fontFamily: 'var(--font-mono)' }}
+                    >
+                      Manifest No. 0417
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-[#14171B]">Today&rsquo;s workspace</p>
+                  </div>
+                  <span
+                    className="rounded-[3px] border border-[#14171B]/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#14171B]"
+                    style={{ fontFamily: 'var(--font-mono)' }}
+                  >
+                    Dock
+                  </span>
+                </div>
+
+                <div className="mt-4 space-y-0">
+                  {manifestRows.map((row, i) => (
+                    <div
+                      key={row.channel}
+                      className={`flex items-center justify-between gap-3 py-3 ${
+                        i !== manifestRows.length - 1 ? 'border-b border-[#EFEEE9]' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="text-xs text-[#8A8D93]"
+                          style={{ fontFamily: 'var(--font-mono)' }}
+                        >
+                          {row.code}
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-[#14171B]">{row.channel}</p>
+                          <p className="text-xs text-[#8A8D93]">{row.note}</p>
+                        </div>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-[3px] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${
+                          row.status === 'CLEARED'
+                            ? 'bg-[#1F8A5F]/10 text-[#1F8A5F]'
+                            : 'bg-[#FF5B1F]/10 text-[#FF5B1F]'
+                        }`}
+                        style={{ fontFamily: 'var(--font-mono)' }}
+                      >
+                        {row.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 flex items-center justify-between border-t border-[#E2E1DB] pt-4">
+                  <p className="text-xs text-[#8A8D93]">128 conversations cleared today</p>
+                  <span
+                    className="flex -rotate-6 items-center gap-1 rounded-full border border-dashed border-[#1F8A5F] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1F8A5F]"
+                    style={{ fontFamily: 'var(--font-mono)' }}
+                  >
+                    &#10003; Cleared
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Channel ticker */}
+          <div
+            className="mt-16 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-[#E2E1DB] py-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8A8D93]"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            <span className="text-[#14171B]">On the manifest:</span>
+            {channels.map((c) => (
+              <span key={c}>{c}</span>
+            ))}
+          </div>
+        </section>
+
+        {/* ───────────────────────── Feature manifest ───────────────────────── */}
+        <section className="mx-auto w-full max-w-6xl px-6 py-20">
+          <div className="mb-10 flex items-end justify-between gap-6">
+            <h2
+              className="text-3xl font-[800] tracking-tight text-[#14171B] sm:text-4xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              What&rsquo;s on the manifest
+            </h2>
+            <p
+              className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#8A8D93] sm:block"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            >
+              4 items &middot; ready to load
+            </p>
+          </div>
+
+          <div className="grid gap-x-10 gap-y-0 sm:grid-cols-2">
+            {manifestItems.map((item) => (
+              <div key={item.code} className="border-t border-[#E2E1DB] py-8">
+                <span
+                  className="text-xs font-semibold text-[#8A8D93]"
+                  style={{ fontFamily: 'var(--font-mono)' }}
+                >
+                  {item.code}
+                </span>
+                <h3
+                  className="mt-3 text-xl font-[800] tracking-tight text-[#14171B]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  {item.title}
+                </h3>
+                <p className="mt-2 max-w-md text-[15px] leading-relaxed text-[#4B4E54]">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ───────────────────────── Dark ledger band ───────────────────────── */}
+        <section className="bg-[#0D1420] py-20 text-white">
+          <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF8A5C]"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                Log entry
+              </p>
+              <h2
+                className="mt-4 text-3xl font-[800] leading-tight tracking-tight sm:text-4xl"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Why teams move their operations onto one dock.
+              </h2>
+            </div>
+            <p className="text-lg font-medium leading-relaxed text-[#B9BDC6]">
+              One inbox instead of six. Fewer leads lost between apps. Replies that go out in
+              minutes instead of hours. Bookings that hold, invoices that get paid, and a team
+              that can actually keep up &mdash; from the first week onward.
+            </p>
+          </div>
+        </section>
+
+        {/* ───────────────────────── Final CTA ───────────────────────── */}
+        <section className="mx-auto w-full max-w-6xl px-6 py-20">
+          <div className="flex flex-col gap-8 rounded-[6px] border border-[#14171B] bg-[#14171B] px-8 py-12 text-white sm:flex-row sm:items-end sm:justify-between md:px-12">
+            <div className="max-w-xl">
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF8A5C]"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                Departure
+              </p>
+              <h2
+                className="mt-3 text-3xl font-[800] tracking-tight sm:text-4xl"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Clear your inbox. Keep the conversation.
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-[#B9BDC6]">
+                Start free today, check pricing when you&rsquo;re ready to grow, or sign back in
+                to pick up where your team left off.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-[3px] border border-white/25 px-6 py-3 text-sm font-bold text-white transition-colors hover:border-white"
+              >
+                View pricing
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                className="inline-flex items-center justify-center gap-2 rounded-[3px] bg-[#FF5B1F] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#FF7A45]"
+              >
+                Start free
+                <ArrowRight size={16} strokeWidth={2.5} />
+              </Link>
             </div>
           </div>
         </section>
       </main>
-
-      {/* Clean Premium Minimalist Footer */}
-      <footer className="border-t border-zinc-100 bg-white py-12 text-xs text-zinc-500">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-bold tracking-tight text-zinc-950">dock</span>
-            <span>© 2026 Dock Systems Inc. All rights reserved.</span>
-          </div>
-          <div className="flex gap-6 font-medium text-zinc-600">
-            <Link href="/privacy" className="hover:text-zinc-950 transition-colors">Privacy Architecture</Link>
-            <Link href="/terms" className="hover:text-zinc-950 transition-colors">Terms of Protocol</Link>
-            <Link href="/security" className="hover:text-zinc-950 transition-colors">Security Audit Logs</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
