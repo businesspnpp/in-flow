@@ -301,7 +301,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-lg border border-zinc-200 bg-[#66dba3] py-28 text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <section className="relative mx-4 overflow-hidden rounded-lg border border-zinc-200 bg-[#66dba3] py-28 text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.08)] md:mx-8 lg:mx-12">
           <div className="relative z-10 mx-auto max-w-7xl px-10 py-4 md:px-14 lg:px-20">
             <div className="max-w-3xl space-y-7">
               <span className="rounded-lg border border-zinc-900/20 bg-white/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-zinc-900">
