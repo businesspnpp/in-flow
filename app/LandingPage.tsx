@@ -1,557 +1,525 @@
-import React from 'react';
 import Link from 'next/link';
-import { 
-  ArrowRight, 
-  MessageSquareMore, 
-  Sparkles, 
-  CalendarCheck2, 
-  Star, 
-  Check, 
-  Shield, 
-  Zap, 
-  Layers, 
-  FileText,
-  HelpCircle,
-  TrendingUp,
-  Inbox
-} from 'lucide-react';
+import { ArrowRight, Star, ChevronDown } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#fafafa] text-zinc-900 antialiased font-sans">
-      {/* 1. STICKY TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/dock-icon-2.png" alt="dock logo" className="h-11 w-11" />
-            <span className="text-3xl font-semibold leading-none tracking-tight text-zinc-900">dock</span>
-          </Link>
+    <div className="min-h-screen bg-[#0f0826] text-white font-sans antialiased selection:bg-[#66dba3]/30">
+      
+      {/* 1. TOP BANNER */}
+      <div className="w-full bg-[#1b0d45] border-b border-white/5 py-3 px-4 text-center text-xs md:text-sm font-medium tracking-wide">
+        <span>Dock Waves '26 tickets are live. Join us in Prague, Oct 19-20, for two days of operations, automation, and what's next. </span>
+        <Link href="/pricing" className="text-[#66dba3] hover:underline ml-1 font-semibold">
+          Save with early-bird pricing →
+        </Link>
+      </div>
 
-          <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/products" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">Products</Link>
-            <Link href="/solutions" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">Solutions</Link>
-            <Link href="/resources" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">Resources</Link>
-            <Link href="/pricing" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">Pricing</Link>
-            <Link href="/login" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">Log in</Link>
+      {/* 2. NAVIGATION HEADER */}
+      <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0f0826]/80 backdrop-blur-md">
+        <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
+          <div className="flex items-center gap-10">
+            <Link href="/" className="flex items-center gap-2.5">
+              <img src="/dock-icon-2.png" alt="dock icon" className="h-9 w-9" />
+              <span className="text-2xl font-bold tracking-tight text-white">dock</span>
+            </Link>
+
+            <nav className="hidden items-center gap-6 lg:flex text-sm font-medium text-zinc-400">
+              <button className="flex items-center gap-1 hover:text-white transition-colors">What is Dock <ChevronDown size={14} /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Dock AI <ChevronDown size={14} /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Solutions <ChevronDown size={14} /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Resources <ChevronDown size={14} /></button>
+              <button className="flex items-center gap-1 hover:text-white transition-colors">Partners <ChevronDown size={14} /></button>
+              <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="hidden sm:block text-sm font-semibold text-zinc-300 hover:text-white transition-colors">Talk to sales</button>
+            <Link href="/login" className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors px-3 py-2">Sign in</Link>
             <Link
               href="/login?mode=signup"
-              className="rounded-lg bg-[#795bf4] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#6847ef]"
+              className="rounded-xl bg-[#795bf4] px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#6847ef] hover:scale-[1.02] active:scale-[0.98]"
             >
-              Sign up
+              Get started free
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
       <main>
-        {/* 2. HERO HEADER SECTION */}
-        <section className="mx-auto max-w-4xl px-6 pt-16 pb-12 text-center md:pt-24">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#795bf4]/30 bg-[#795bf4]/10 px-4 py-1 text-xs font-semibold uppercase tracking-wider text-[#795bf4]">
-            Customer Operations Governed
-          </div>
-          <h1 className="mt-6 text-4xl font-black tracking-tight text-zinc-950 sm:text-6xl md:text-7xl leading-[1.05]">
-            Your tools. Your rules. <br />One unified dock.
+        {/* 3. HERO SECTION */}
+        <section className="mx-auto max-w-7xl px-6 pt-16 pb-24 text-center md:pt-24 md:pb-32 relative">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#795bf4]/10 blur-[120px] rounded-full pointer-events-none" />
+          
+          <h1 className="mx-auto max-w-4xl text-5xl font-black tracking-tight leading-[1.05] sm:text-7xl bg-gradient-to-b from-white to-zinc-300 bg-clip-text text-transparent">
+            The visual workspace <br />automation platform
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-zinc-600 md:text-xl">
-            dock gives teams one singular place to set operation guardrails, manage channels, and see every customer interaction—so everyone can automate with confidence without waiting for technical permissions.
+          <p className="mx-auto mt-6 max-w-xl text-base md:text-lg text-zinc-400 font-medium leading-relaxed">
+            Connect any app, data source, or tool. Build and manage automations and internal customer agents—visually, in code, or with a prompt.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/login?mode=signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#795bf4] px-8 py-4 text-base font-bold text-white transition-colors hover:bg-[#6847ef] shadow-lg shadow-[#795bf4]/20"
+              className="w-full sm:w-auto rounded-xl bg-[#795bf4] px-8 py-4 text-base font-bold text-white transition-all hover:bg-[#6847ef] shadow-lg shadow-[#795bf4]/20 hover:scale-[1.02]"
             >
-              Start free with email
+              Get started free
             </Link>
-            <Link
-              href="/login?mode=signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-8 py-4 text-base font-semibold text-zinc-900 transition-colors hover:bg-zinc-50 shadow-sm"
-            >
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-5 w-5" alt="Google icon" />
-              Start free with Google
-            </Link>
+            <button className="w-full sm:w-auto rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-bold text-white transition-colors hover:bg-white/10">
+              Talk to sales
+            </button>
           </div>
 
-          {/* Core Stat Badges */}
-          <div className="mt-12 grid grid-cols-3 gap-4 border-t border-zinc-200 pt-8 max-w-2xl mx-auto text-left">
-            <div>
-              <p className="text-2xl font-black text-zinc-950 md:text-3xl">450K+</p>
-              <p className="text-xs font-medium text-zinc-500">Automations built</p>
-            </div>
-            <div>
-              <p className="text-2xl font-black text-zinc-950 md:text-3xl">9,000+</p>
-              <p className="text-xs font-medium text-zinc-500">App integrations enabled</p>
-            </div>
-            <div>
-              <p className="text-2xl font-black text-zinc-950 md:text-3xl">3.39M+</p>
-              <p className="text-xs font-medium text-zinc-500">Actions processed daily</p>
-            </div>
-          </div>
-          <div className="mt-6 flex justify-center text-xs font-semibold tracking-wider text-zinc-400 uppercase gap-6">
-            <span>✓ SOC 2 Type II Compliant</span>
-            <span>✓ GDPR & CCPA Compliant</span>
-          </div>
-        </section>
-
-        {/* 3. INTEGRATIONS & BUILDER QUICK-START */}
-        <section className="mx-auto max-w-7xl px-6 py-12">
-          <div className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
-            <p className="text-center text-xs font-bold uppercase tracking-widest text-zinc-400">For Modern Builders</p>
-            <h3 className="text-center text-xl font-bold text-zinc-950 mt-2">Get started in seconds</h3>
-            
-            <div className="mt-4 flex justify-center gap-2">
-              <span className="bg-zinc-100 text-zinc-800 text-xs font-bold px-3 py-1 rounded">Unified API</span>
-              <span className="bg-zinc-100 text-zinc-800 text-xs font-bold px-3 py-1 rounded">SDK</span>
-              <span className="bg-zinc-100 text-zinc-800 text-xs font-bold px-3 py-1 rounded">CLI</span>
-            </div>
-
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5 text-center items-center justify-center">
-              <div className="flex flex-col items-center p-4 rounded-xl hover:bg-zinc-50 border border-transparent hover:border-zinc-100">
-                <MessageSquareMore className="h-8 w-8 text-[#795bf4]" />
-                <span className="text-sm font-semibold mt-2 text-zinc-700">WhatsApp</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-xl hover:bg-zinc-50 border border-transparent hover:border-zinc-100">
-                <Sparkles className="h-8 w-8 text-[#66dba3]" />
-                <span className="text-sm font-semibold mt-2 text-zinc-700">Instagram</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-xl hover:bg-zinc-50 border border-transparent hover:border-zinc-100">
-                <CalendarCheck2 className="h-8 w-8 text-[#795bf4]" />
-                <span className="text-sm font-semibold mt-2 text-zinc-700">BookedIt</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-xl hover:bg-zinc-50 border border-transparent hover:border-zinc-100">
-                <Star className="h-8 w-8 text-[#66dba3]" />
-                <span className="text-sm font-semibold mt-2 text-zinc-700">Reviews</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-xl hover:bg-zinc-50 border border-transparent hover:border-zinc-100">
-                <Inbox className="h-8 w-8 text-zinc-800" />
-                <span className="text-sm font-semibold mt-2 text-zinc-700">OmniInbox</span>
-              </div>
-            </div>
+          <div className="mt-4 flex items-center justify-center gap-6 text-xs text-zinc-500 font-medium">
+            <span className="flex items-center gap-1.5">✓ No credit card required</span>
+            <span className="flex items-center gap-1.5">✓ No time limit on Free plan</span>
           </div>
 
-          {/* Social Proof Bar */}
-          <div className="mt-12 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Trusted by fast-growing operations globally</p>
-            <div className="mt-6 flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale contrast-200">
-              <span className="text-xl font-black tracking-tight">NVIDIA</span>
-              <span className="text-xl font-black tracking-tight">Airbnb</span>
-              <span className="text-xl font-black tracking-tight">Meta</span>
-              <span className="text-xl font-black tracking-tight">Samsung</span>
-              <span className="text-xl font-black tracking-tight">Mastercard</span>
+          {/* CUSTOMER LOGOS ROW */}
+          <div className="mt-20 border-t border-b border-white/[0.04] py-8">
+            <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-6">Trusted by scaling operators everywhere</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-30 grayscale contrast-200">
+              <span className="text-xl font-black tracking-tighter">Bamboo</span>
+              <span className="text-xl font-black tracking-tighter">&gt; BNY</span>
+              <span className="text-xl font-black tracking-tighter">Bolt</span>
+              <span className="text-xl font-black tracking-tighter">FINN</span>
+              <span className="text-xl font-black tracking-tighter">Perk</span>
             </div>
           </div>
         </section>
 
-        {/* 4. VALUE PROPOSITION SECTIONS GRID */}
-        <section className="mx-auto max-w-7xl px-6 py-16 border-t border-zinc-200/60">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">Every team has apps. Now they need a platform.</h2>
-            <p className="mt-4 text-base font-medium leading-relaxed text-zinc-500">
-              Your squads are linking independent channels straight to your business core. Every tool performs alone. The bottleneck is whether they coordinate safely, visibly, and cleanly without collision loops.
+        {/* 4. SOCIAL PROOF RATINGS GRID */}
+        <section className="bg-white/[0.01] border-b border-white/[0.04] py-10">
+          <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { provider: 'Capterra', score: '4.8' },
+              { provider: 'G2', score: '4.7' },
+              { provider: 'Getapp', score: '4.8' },
+              { provider: 'Gartner', score: '4.6' }
+            ].map((rating, idx) => (
+              <div key={idx} className="flex flex-col items-center justify-center gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">{rating.provider}</span>
+                <div className="flex items-center gap-1">
+                  <Star size={14} className="fill-[#66dba3] text-[#66dba3]" />
+                  <span className="text-sm font-bold text-zinc-200">{rating.score}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 5. CORE CAPABILITIES (3-COLUMN BOXES) */}
+        <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl text-white">
+            The platform to build and manage all <br />your operational flows and agents
+          </h2>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-3 text-left">
+            {/* Box 1 */}
+            <div className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] p-8 hover:border-[#795bf4]/40 transition-all">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#795bf4]/10 text-[#795bf4] group-hover:bg-[#795bf4]/20 transition-colors">
+                <span className="text-lg font-bold">01</span>
+              </div>
+              <h3 className="mt-6 text-xl font-bold tracking-tight text-white">Adopt workflows across your business.</h3>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-400">
+                Deploy customized operations and automated sequences instantly using over 3,000 deep network integrations.
+              </p>
+            </div>
+
+            {/* Box 2 */}
+            <div className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] p-8 hover:border-[#795bf4]/40 transition-all">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#66dba3]/10 text-[#66dba3] group-hover:bg-[#66dba3]/20 transition-colors">
+                <span className="text-lg font-bold">02</span>
+              </div>
+              <h3 className="mt-6 text-xl font-bold tracking-tight text-white">From idea to live execution. Fast.</h3>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-400">
+                Build workspaces by standard natural language prompt, drag-and-drop structural design, or deep custom protocol integration.
+              </p>
+            </div>
+
+            {/* Box 3 */}
+            <div className="group rounded-3xl border border-white/[0.06] bg-white/[0.02] p-8 hover:border-[#795bf4]/40 transition-all">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#795bf4]/10 text-[#795bf4] group-hover:bg-[#795bf4]/20 transition-colors">
+                <span className="text-lg font-bold">03</span>
+              </div>
+              <h3 className="mt-6 text-xl font-bold tracking-tight text-white">Scale without losing critical visibility.</h3>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-400">
+                Monitor every moving transaction, interaction state, and edge connector within one infinite visual dashboard environment.
+              </p>
+            </div>
+          </div>
+
+          <button className="mt-12 rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+            Explore core features
+          </button>
+        </section>
+
+        {/* 6. TABBED SOLUTION PREVIEW SECTION */}
+        <section className="border-t border-white/[0.04] bg-gradient-to-b from-white/[0.01] to-transparent py-24">
+          <div className="mx-auto max-w-7xl px-6 text-center">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#66dba3]">Solutions</span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl text-white">
+              Adapt at speed with visual-first orchestration
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm md:text-base text-zinc-400 font-medium">
+              Dock drives organization efficiencies, addresses scaling limits, and fuels rapid tool deployment by unifying cross-department workflows.
             </p>
-          </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            {/* Feature 1 */}
-            <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 flex flex-col justify-between shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-zinc-950">Connect any operations tool to 9,000+ apps</h3>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
-                  Deploy secure webhooks for platforms like WhatsApp and Facebook. Utilize the dock SDK for highly custom business flows. Achieve one managed highway to all corporate structures.
-                </p>
-              </div>
-              <div className="mt-8 bg-zinc-50 rounded-2xl p-4 border border-zinc-100 space-y-2">
-                <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-zinc-200/80 shadow-sm text-xs font-semibold">
-                  <span>Active Workspaces</span>
-                  <span className="text-[#795bf4] font-bold">5 Active Channels</span>
-                </div>
-                <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-zinc-200/80 shadow-sm text-xs font-semibold">
-                  <span>Global Secure Bridge</span>
-                  <span className="text-[#66dba3] font-bold">Connected</span>
-                </div>
-              </div>
+            {/* Tab Links */}
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-2 border-b border-white/[0.06] pb-4">
+              {['IT System', 'Operations', 'Marketing', 'Sales', 'Finance', 'Customer Support', 'HR Teams'].map((tab, idx) => (
+                <button 
+                  key={tab} 
+                  className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${idx === 0 ? 'bg-[#795bf4]/20 text-[#66dba3] border border-[#795bf4]/30' : 'text-zinc-400 hover:text-white'}`}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
 
-            {/* Feature 2 */}
-            <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 flex flex-col justify-between shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-zinc-950">Agents that trigger instantly across channels</h3>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
-                  Automate custom logic that handles incoming queries, routes complex support requests, generates booking invites, and dispatches invoice receipts autonomously, 24/7.
-                </p>
-              </div>
-              <div className="mt-8 bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                <div className="h-3 w-2/3 bg-zinc-200 rounded mb-2"></div>
-                <div className="h-3 w-1/2 bg-zinc-200 rounded mb-4"></div>
-                <div className="bg-[#795bf4]/10 border border-[#795bf4]/30 text-[#795bf4] text-xs font-bold p-3 rounded-xl">
-                  → System Routing: "If booking received send WhatsApp payment string"
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 flex flex-col justify-between shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-zinc-950">Every department managed under one roof</h3>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
-                  Equip every division with explicit tools, correct channel models, and precise security policies. Operations builds lines safely while IT defines clear global boundaries.
-                </p>
-              </div>
-              <div className="mt-8 grid grid-cols-2 gap-3 text-xs font-bold text-zinc-700">
-                <div className="bg-white border border-zinc-200 p-3 rounded-xl flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#66dba3]"></div> RevOps Environment
-                </div>
-                <div className="bg-white border border-zinc-200 p-3 rounded-xl flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#795bf4]"></div> Support Sandbox
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 flex flex-col justify-between shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-zinc-950">Complete auditable compliance visibility</h3>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-zinc-500">
-                  Every structural action logged. Every app interaction recorded instantly. When risk managers verify software states, answer immediately in under a minute.
-                </p>
-              </div>
-              <div className="mt-8 bg-zinc-950 text-zinc-400 p-4 rounded-2xl font-mono text-[11px] space-y-1">
-                <p className="text-emerald-400">[OK] 200 - WHATSAPP_INBOUND_HOOK received</p>
-                <p className="text-[#795bf4]">[OP] ROUTE - Sent to PayNow validation core</p>
-                <p className="text-zinc-500">[LOG] Audit pipeline state committed</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 flex justify-center gap-4">
-            <Link href="/governance" className="text-sm font-bold text-[#795bf4] hover:underline flex items-center gap-1">
-              Learn more about governance <ArrowRight size={14} />
-            </Link>
-            <span className="text-zinc-300">|</span>
-            <Link href="/enterprise" className="text-sm font-bold text-zinc-900 hover:underline">
-              Explore dock for Enterprise
-            </Link>
-          </div>
-        </section>
-
-        {/* 5. THE UNIFIED FRAMEWORK PROTOCOL LAYER */}
-        <section className="bg-zinc-950 text-white py-20 px-6">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid gap-12 lg:grid-cols-2 items-center">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-[#66dba3]">dock Engine + SDK Architecture</span>
-                <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">One secure pipeline. <br />For every operational surface.</h2>
-                <p className="mt-6 text-base text-zinc-400 leading-relaxed">
-                  Frontline staff and communication applications link smoothly through native interfaces. Technical developers and engineering teams write directly using the high-performance dock SDK. 
-                </p>
-                <p className="mt-4 text-base text-zinc-400 leading-relaxed">
-                  Different portals, identical building parameters. IT retains absolute oversight, encryption states remain locked, and dock's real-time framework runs the heavy structural loads.
-                </p>
-
-                <div className="mt-10 grid gap-6 sm:grid-cols-2">
-                  <div className="border-l-2 border-[#795bf4] pl-4">
-                    <h4 className="font-bold text-white text-sm">One auth gateway</h4>
-                    <p className="text-xs text-zinc-400 mt-1">Zero raw API strings. No broken access states. Every single authorization step is centralized via secure proxy controls.</p>
+            {/* Dynamic Layout Splitting Preview */}
+            <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:items-center text-left">
+              <div className="rounded-2xl border border-white/[0.08] bg-zinc-900/50 p-6 shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#795bf4]/10 to-transparent pointer-events-none" />
+                <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-3 w-3 rounded-full bg-red-500" />
+                    <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                    <div className="h-3 w-3 rounded-full bg-green-500" />
                   </div>
-                  <div className="border-l-2 border-[#66dba3] pl-4">
-                    <h4 className="font-bold text-white text-sm">One operational run-state</h4>
-                    <p className="text-xs text-zinc-400 mt-1">Automatic fallback steps, smart token recovery, absolute data persistence. Guarded entirely by enterprise execution blocks.</p>
-                  </div>
+                  <span className="text-xs font-mono text-zinc-500">live_workspace_flow.json</span>
                 </div>
-              </div>
-
-              {/* Graphical Workflow Visualizer Block */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-                <div className="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
-                    <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <span className="text-xs font-mono text-zinc-500">dock-flow-visualizer.config</span>
-                </div>
-                
-                {/* Visual Pipeline Representation */}
                 <div className="space-y-4">
-                  <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[#795bf4]/20 text-[#795bf4] rounded-lg"><MessageSquareMore size={18} /></div>
-                      <div>
-                        <p className="text-xs font-bold text-white">Inbound Lead Webhook</p>
-                        <p className="text-[10px] text-zinc-500">WhatsApp / Instagram Broadcast API</p>
-                      </div>
+                  <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                    <div className="h-10 w-10 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-xl text-blue-400">G</div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-400">TRIGGER EVENT DETECTED</p>
+                      <p className="text-sm font-semibold text-white">Incoming unstructured database inquiry</p>
                     </div>
-                    <Check size={14} className="text-[#66dba3]" />
                   </div>
-
-                  <div className="flex justify-center"><ArrowRight size={16} className="rotate-90 text-zinc-700" /></div>
-
-                  <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[#66dba3]/20 text-[#66dba3] rounded-lg"><Sparkles size={18} /></div>
-                      <div>
-                        <p className="text-xs font-bold text-white">Validation Router & Script</p>
-                        <p className="text-[10px] text-zinc-500">dock Core Logic Pipeline Parsing</p>
-                      </div>
-                    </div>
-                    <div className="animate-pulse h-2 w-2 rounded-full bg-[#66dba3]"></div>
-                  </div>
-
-                  <div className="flex justify-center"><ArrowRight size={16} className="rotate-90 text-zinc-700" /></div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-center">
-                      <p className="text-[11px] font-bold text-white">Dispatch Payments</p>
-                      <p className="text-[9px] text-zinc-500 mt-1">PayNow Integration</p>
-                    </div>
-                    <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-center">
-                      <p className="text-[11px] font-bold text-white">Log Calendar Slot</p>
-                      <p className="text-[9px] text-zinc-500 mt-1">BookedIt API Engine</p>
+                  <div className="h-8 w-px bg-gradient-to-b from-[#795bf4] to-transparent ml-9" />
+                  <div className="flex items-center gap-4 rounded-xl border border-[#66dba3]/20 bg-[#66dba3]/5 p-4 ml-6">
+                    <div className="h-10 w-10 rounded-lg bg-[#66dba3]/20 flex items-center justify-center text-xl">⚡</div>
+                    <div>
+                      <p className="text-xs font-bold text-[#66dba3]">AUTOMATED RESOLUTION ACTION</p>
+                      <p className="text-sm font-semibold text-white">Generate smart workspace record payload</p>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* 6. DETAILED ENTERPRISE CUSTOMER SUCCESS FOCUS */}
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <div className="grid gap-12 lg:grid-cols-3 items-center">
-            <div className="lg:col-span-1">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#795bf4]">Proven Bottom Line Metric ROI</span>
-              <h3 className="text-3xl font-black tracking-tight text-zinc-950 mt-2">Zero operational noise. Straight forward outcomes.</h3>
-              <p className="mt-4 text-sm font-medium text-zinc-500 leading-relaxed">
-                Fast scaling companies map core communication logic pipelines into dock to protect data systems while accelerating frontline service execution times.
-              </p>
-              <div className="mt-8 space-y-4">
-                <div className="bg-white p-4 rounded-xl border border-zinc-200/80 shadow-sm">
-                  <span className="text-3xl font-black text-[#795bf4]">42+ Hours</span>
-                  <p className="text-xs font-semibold text-zinc-500 mt-1">Saved weekly per customer service pod</p>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-zinc-200/80 shadow-sm">
-                  <span className="text-3xl font-black text-[#66dba3]">87% Dropped</span>
-                  <p className="text-xs font-semibold text-zinc-500 mt-1">Reduction in workflow routing conflicts</p>
-                </div>
-              </div>
-            </div>
-
-            {/* In-depth Testimonial Card */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-zinc-900 to-zinc-950 text-white rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden flex flex-col justify-between shadow-xl">
-              <div className="absolute top-0 right-0 p-8 text-zinc-800 font-serif text-9xl leading-none pointer-events-none select-none">“</div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-[#66dba3] bg-[#66dba3]/10 px-3 py-1 rounded-full border border-[#66dba3]/20">Enterprise Profile Case Study</span>
-                <p className="mt-8 text-lg md:text-xl font-medium leading-relaxed text-zinc-200">
-                  "dock has quickly solidified into the central backbone of our business operations architecture. Because we can deploy verified conversational paths safely from one dashboard, our customer teams resolve critical structural requests immediately without pulling technical engineers from deep sprint milestones."
+                <h3 className="text-2xl font-bold tracking-tight text-white">Core System Automation</h3>
+                <p className="mt-4 text-base font-medium leading-relaxed text-zinc-400">
+                  Cut complex operational overhead and execute faster by automating tasks from server monitoring down to instant manual escalation response routing.
                 </p>
-              </div>
-              <div className="mt-12 flex items-center gap-4 border-t border-zinc-800 pt-6">
-                <div className="h-12 w-12 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-[#795bf4] border border-zinc-700">NM</div>
-                <div>
-                  <h5 className="font-bold text-white text-sm">Nina Mirabella</h5>
-                  <p className="text-xs text-zinc-400">Senior Director, Marketing Operations at Superhuman</p>
-                </div>
+                <p className="mt-3 text-base font-medium leading-relaxed text-zinc-400">
+                  Securely link internal applications, integrate contextual intelligence engine rules, map custom field triggers, and set teams free to design solutions.
+                </p>
+                <button className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#795bf4] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+                  Automate custom systems <ArrowRight size={16} />
+                </button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 7. LIVE CONVERSATION & TASK METRIC COUNTER */}
-        <section className="bg-zinc-50 border-y border-zinc-200 py-16 text-center px-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Continuous Processing Metric State</p>
-          <p className="mt-4 text-5xl font-black tracking-tight text-zinc-950 md:text-7xl">593,138,975</p>
-          <p className="mt-2 text-sm font-semibold text-zinc-500">Global Customer Automations Securely Executed (and counting)</p>
-          <div className="mt-8 flex justify-center">
-            <Link
-              href="/login?mode=signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]"
-            >
-              Put your operations strategy to work
-              <ArrowRight size={16} />
-            </Link>
+        {/* 7. PRE-BUILT APPS OVERVIEW SECTION */}
+        <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#66dba3]">Integrations</span>
+          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl text-white">
+            3,000+ pre-built connectors. Limitless scaling.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm md:text-base text-zinc-400 font-medium">
+            Quickly adjust actions to marketplace movements by instantly syncing your software configuration stack. Use our out-of-the-box templates or plug into open custom endpoints seamlessly.
+          </p>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-4 max-w-4xl mx-auto">
+            {['OpenAI', 'HubSpot', 'Monday.com', 'NetSuite', 'Salesforce', 'Slack', 'Asana', 'Jira', 'Notion'].map((app) => (
+              <div key={app} className="rounded-2xl border border-white/[0.05] bg-white/[0.02] px-6 py-4 flex items-center gap-3 font-semibold text-sm text-zinc-200">
+                <div className="h-6 w-6 rounded bg-[#795bf4]/20 flex items-center justify-center text-xs font-black">d</div>
+                {app}
+              </div>
+            ))}
           </div>
+
+          <button className="mt-10 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">
+            Browse all app layers
+          </button>
         </section>
 
-        {/* 8. PRE-BUILT CONFIGURATION MATRIX TEMPLATES */}
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+        {/* 8. COMPLIANCE & TRUST PILLARS */}
+        <section className="border-t border-white/[0.04] bg-white/[0.01] py-20">
+          <div className="mx-auto max-w-7xl px-6 grid gap-12 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#795bf4]">Instant Integration Recipes</span>
-              <h3 className="text-3xl font-black tracking-tight text-zinc-950 mt-2">Operational setups driving true outcomes</h3>
-            </div>
-            <Link href="/templates" className="mt-4 md:mt-0 text-sm font-bold text-[#795bf4] hover:underline flex items-center gap-1">
-              See all deployment templates <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Template Card 1 */}
-            <div className="bg-white border border-zinc-200 p-6 rounded-2xl shadow-sm hover:border-zinc-300 transition-all flex flex-col justify-between">
-              <div>
-                <div className="h-10 w-10 bg-[#795bf4]/10 text-[#795bf4] rounded-xl flex items-center justify-center mb-4"><MessageSquareMore size={20} /></div>
-                <h4 className="font-bold text-zinc-950 text-base">Omni-Channel Lead Routing</h4>
-                <p className="text-xs font-medium text-zinc-500 mt-2 leading-relaxed">Categorize and distribute inbound incoming inquiries across disparate target groups automatically based on pipeline priority tags.</p>
-              </div>
-              <button className="mt-6 w-full text-xs font-bold py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50 text-zinc-800">Deploy Template</button>
-            </div>
-
-            {/* Template Card 2 */}
-            <div className="bg-white border border-zinc-200 p-6 rounded-2xl shadow-sm hover:border-zinc-300 transition-all flex flex-col justify-between">
-              <div>
-                <div className="h-10 w-10 bg-[#66dba3]/10 text-[#66dba3] rounded-xl flex items-center justify-center mb-4"><CalendarCheck2 size={20} /></div>
-                <h4 className="font-bold text-zinc-950 text-base">Booking & Calendar Sync</h4>
-                <p className="text-xs font-medium text-zinc-500 mt-2 leading-relaxed">Detect booking slot choices instantly from chat interfaces and execute immediate calendar reservations for review pipelines.</p>
-              </div>
-              <button className="mt-6 w-full text-xs font-bold py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50 text-zinc-800">Deploy Template</button>
-            </div>
-
-            {/* Template Card 3 */}
-            <div className="bg-white border border-zinc-200 p-6 rounded-2xl shadow-sm hover:border-zinc-300 transition-all flex flex-col justify-between">
-              <div>
-                <div className="h-10 w-10 bg-zinc-100 text-zinc-900 rounded-xl flex items-center justify-center mb-4"><Sparkles size={20} /></div>
-                <h4 className="font-bold text-zinc-950 text-base">Immediate Invoice Dispatch</h4>
-                <p className="text-xs font-medium text-zinc-500 mt-2 leading-relaxed">Link validated conversion checkpoints to active transactional links via localized platform webhooks securely.</p>
-              </div>
-              <button className="mt-6 w-full text-xs font-bold py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50 text-zinc-800">Deploy Template</button>
-            </div>
-          </div>
-        </section>
-
-        {/* 9. THE GOVERNANCE & SECURITY MATRIX CONTAINER */}
-        <section className="bg-zinc-100 py-20 px-6 border-t border-zinc-200">
-          <div className="mx-auto max-w-7xl">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#795bf4]">Enterprise System Controls</span>
-              <h2 className="text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl mt-2">Enterprise-grade infrastructure that scales safely</h2>
-              <p className="mt-3 text-sm font-medium text-zinc-500">Restrict endpoints, validate authentication layers, and monitor every running pipeline asset in real time.</p>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
-                <Shield className="h-8 w-8 text-[#795bf4] mb-4" />
-                <h4 className="font-bold text-zinc-950 text-base">Granular Action Restrictions</h4>
-                <p className="text-xs text-zinc-500 mt-2 leading-relaxed">Avoid basic binary block rules. dock allows endpoint-level permissions configuration across specific custom workspace groups cleanly.</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
-                <Layers className="h-8 w-8 text-[#66dba3] mb-4" />
-                <h4 className="font-bold text-zinc-950 text-base">Isolated Shared Workspaces</h4>
-                <p className="text-xs text-zinc-500 mt-2 leading-relaxed">Safely delegate system permissions to specific external operations groups without compromising cross-department analytical tracking.</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
-                <Zap className="h-8 w-8 text-zinc-900 mb-4" />
-                <h4 className="font-bold text-zinc-950 text-base">Continuous Asset History</h4>
-                <p className="text-xs text-zinc-500 mt-2 leading-relaxed">Every operational execution loop is structurally documented, recorded, and encrypted to prevent configuration drifts.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 10. FINAL STRATEGIC CALL-TO-ACTION BANNER */}
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <div className="rounded-[3rem] bg-zinc-950 text-white p-8 md:p-16 text-center relative overflow-hidden shadow-xl">
-            <div className="relative z-10 max-w-2xl mx-auto">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#66dba3]">Transition from Experiments to Scale</span>
-              <h2 className="text-3xl font-black tracking-tight sm:text-5xl mt-4">Move your operations to real business results.</h2>
-              <p className="mt-4 text-base text-zinc-400 leading-relaxed">
-                Connect your customer endpoints. Establish explicit guardrails. Log structural workflows. Minutes to map out, completely eliminating system chaos.
+              <h2 className="text-3xl font-black tracking-tight text-white">Built on secure enterprise foundations</h2>
+              <p className="mt-4 text-base font-medium text-zinc-400 max-w-2xl leading-relaxed">
+                Dock ensures internal operational visibility is preserved while safeguarding high-volume transaction points with strict adherence to built-in GDPR compliance, SOC 2 Type II controls, absolute end-to-end encryption, and robust Single Sign-On (SSO) configurations.
               </p>
-              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link
-                  href="/login?mode=signup"
-                  className="rounded-xl bg-[#795bf4] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#6847ef] shadow-lg shadow-[#795bf4]/20"
-                >
-                  Start free installation
-                </Link>
-                <Link
-                  href="/sales"
-                  className="rounded-xl border border-zinc-800 bg-zinc-900 px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-zinc-800"
-                >
-                  Talk to sales engineers
-                </Link>
+              <button className="mt-6 text-sm font-bold text-[#66dba3] hover:underline flex items-center gap-1">
+                View platform trust parameters →
+              </button>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 items-center justify-start lg:justify-end max-w-md">
+              {['AICPA SOC', 'SOC2 Type II', 'GDPR Ready', 'SSO Vault', 'AES Encryption'].map((badge) => (
+                <div key={badge} className="rounded-xl border border-[#66dba3]/20 bg-[#66dba3]/5 px-5 py-3 text-xs font-bold tracking-wide text-[#66dba3]">
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 9. STATS & INFRASTRUCTURE ABSTRACT */}
+        <section className="border-t border-b border-white/[0.04] py-20 text-center">
+          <div className="mx-auto max-w-5xl px-6">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Global Infrastructure Scale</span>
+            <p className="mt-4 text-xl md:text-2xl font-medium tracking-tight text-zinc-300 leading-relaxed">
+              Dock represents the standard configuration system trusted by over <strong className="text-white font-bold">400,000 businesses</strong> spanning across <strong className="text-white font-bold">200+ global operating regions</strong>. Formed by engineers to help ventures scale workflows safely.
+            </p>
+            <button className="mt-8 rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+              Learn about our ecosystem
+            </button>
+          </div>
+        </section>
+
+        {/* 10. CUSTOMER SUCCESS CARDS */}
+        <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#66dba3]">Success Stories</span>
+          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl text-white">
+            Proven engineering impact in the wild
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm md:text-base text-zinc-400 font-medium">
+            Cut past market hype and see exactly how leading software teams unlock raw velocity, drop operational overhead, and extract absolute clarity.
+          </p>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-3 text-left">
+            {[
+              {
+                title: 'How Dock allows Perk to unlock core internal engineering efficiencies.',
+                tag: 'Operations'
+              },
+              {
+                title: 'How Dock automation helped Celonis lower recurring expense parsing overhead.',
+                tag: 'Finance Layer'
+              },
+              {
+                title: 'How Dock saves FranklinCovey $100,000+ while preserving product focus hours.',
+                tag: 'Enterprise Scaled'
+              }
+            ].map((story, idx) => (
+              <div key={idx} className="rounded-3xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent p-8 flex flex-col justify-between min-h-[260px] hover:border-white/10 transition-colors">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#66dba3] bg-[#66dba3]/10 px-2.5 py-1 rounded-full">
+                    {story.tag}
+                  </span>
+                  <h3 className="mt-6 text-lg font-bold leading-snug text-white">
+                    {story.title}
+                  </h3>
+                </div>
+                <button className="mt-6 text-xs font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
+                  Read complete analysis →
+                </button>
               </div>
+            ))}
+          </div>
+
+          <button className="mt-12 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">
+            Explore all customer metrics
+          </button>
+        </section>
+
+        {/* 11. ORCHESTRATION & AGENT BLUEPRINTS */}
+        <section className="border-t border-white/[0.04] bg-gradient-to-b from-transparent to-white/[0.01] py-24">
+          <div className="mx-auto max-w-7xl px-6 grid gap-16 lg:grid-cols-2 lg:items-center">
+            
+            {/* Visual Agent Mesh Graphic */}
+            <div className="rounded-2xl border border-white/[0.08] bg-zinc-950 p-8 flex items-center justify-center relative min-h-[340px] overflow-hidden">
+              <div className="absolute inset-0 bg-[#795bf4]/5 blur-3xl rounded-full" />
+              <div className="relative flex items-center justify-center">
+                {/* Center node */}
+                <div className="h-16 w-16 rounded-full bg-[#795bf4] flex items-center justify-center font-black shadow-xl shadow-[#795bf4]/40 z-10">
+                  <img src="/dock-icon-2.png" alt="dock logo" className="h-8 w-8 invert" />
+                </div>
+                {/* Orbital nodes loop */}
+                {[...Array(6)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="absolute h-10 w-10 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center font-bold text-xs"
+                    style={{
+                      transform: `rotate(${i * 60}deg) translate(100px) rotate(-${i * 60}deg)`
+                    }}
+                  >
+                    ✦
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#66dba3]">Agent Ecosystem</span>
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                Scale and orchestrate your autonomous engine layers
+              </h2>
+              <p className="mt-4 text-base font-medium text-zinc-400 leading-relaxed">
+                Build fast, adaptable workspaces with stateful automated actions that your management can actually track, verify, and modify at point-of-sale. Scale operations safely by deploying specialized agents alongside existing human engineering streams.
+              </p>
+              <button className="mt-6 rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+                Explore automation parameters
+              </button>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 12. ENTERPRISE ORCHESTRATION PROFILE */}
+        <section className="border-t border-white/[0.04] py-24">
+          <div className="mx-auto max-w-7xl px-6 grid gap-16 lg:grid-cols-2 lg:items-center">
+            
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Enterprise Ready</span>
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                Realize your organization's ultimate transactional velocity
+              </h2>
+              <p className="mt-4 text-base font-medium text-zinc-400 leading-relaxed">
+                Empower distributed departments to safely collaborate, draft complex cross-app logic sequences, and adjust structures at scale. Keep absolute control over compliance boundaries through visual logs, enterprise encryption configurations, and reliable system monitoring.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button className="rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+                  Explore corporate solutions
+                </button>
+                <button className="rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">
+                  Speak with accounts division
+                </button>
+              </div>
+            </div>
+
+            {/* Visual Profile History Log */}
+            <div className="rounded-2xl border border-white/[0.08] bg-zinc-900/40 p-6 font-mono text-xs text-zinc-400 space-y-4">
+              <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                <span className="font-bold text-zinc-200">SYSTEM AUDIT LOG</span>
+                <span className="text-[#66dba3] animate-pulse">● Active Connection</span>
+              </div>
+              <div className="p-3 rounded-lg bg-white/[0.02] border-l-2 border-[#795bf4]">
+                <p className="text-white font-semibold">[Scenario Modified Succesfully]</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Author identification: Operator ID #4920</p>
+              </div>
+              <div className="p-3 rounded-lg bg-white/[0.02] border-l-2 border-zinc-700">
+                <p className="font-semibold">[Network Token Exchanged Key]</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Payload route sync matched 48 apps</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 13. BOTTOM TRANSITIONAL INTAKE ACTION */}
+        <section className="mx-auto max-w-7xl px-6 pb-24 text-center">
+          <div className="rounded-[32px] bg-gradient-to-br from-[#1b0d45] to-[#0f0826] border border-[#795bf4]/30 px-8 py-16 text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-[#66dba3]/5 blur-[100px] rounded-full pointer-events-none" />
+            
+            <h2 className="text-3xl font-black tracking-tight sm:text-5xl text-white">
+              Realize your company's full potential
+            </h2>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+              <Link 
+                href="/login?mode=signup"
+                className="w-full sm:w-auto rounded-xl bg-[#795bf4] px-8 py-4 text-base font-bold text-white transition-all hover:bg-[#6847ef] shadow-lg shadow-[#795bf4]/20"
+              >
+                Get started free
+              </Link>
+              <button className="w-full sm:w-auto rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-bold text-white transition-colors hover:bg-white/10">
+                Talk to sales
+              </button>
             </div>
           </div>
         </section>
       </main>
 
-      {/* 11. DEEP MODULAR SITE DIRECTORY FOOTER */}
-      <footer className="bg-white border-t border-zinc-200 pt-16 pb-12 px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5 text-sm">
-            
-            {/* Column 1 - Global Index Links */}
-            <div>
-              <h6 className="font-bold text-zinc-950 text-xs uppercase tracking-wider mb-4">Integrations Directory</h6>
-              <ul className="space-y-2 text-xs font-semibold text-zinc-500">
-                <li><Link href="/apps/a" className="hover:text-zinc-900">Apps Alpha Index</Link></li>
-                <li><Link href="/apps/popular" className="hover:text-zinc-900">Popular Connections</Link></li>
-                <li><Link href="/apps/trending" className="hover:text-zinc-900">Trending Integrations</Link></li>
-                <li><Link href="/apps/categories" className="hover:text-zinc-900">Category Layouts</Link></li>
-              </ul>
+      {/* 14. FOOTER GRID PATTERN */}
+      <footer className="border-t border-white/[0.06] bg-zinc-950 text-xs text-zinc-400 py-16">
+        <div className="mx-auto max-w-7xl px-6 grid gap-10 sm:grid-cols-2 md:grid-cols-5">
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <img src="/dock-icon-2.png" alt="dock logo" className="h-7 w-7" />
+              <span className="text-lg font-bold tracking-tight text-white">dock</span>
             </div>
-
-            {/* Column 2 - High Volume Apps */}
-            <div>
-              <h6 className="font-bold text-zinc-950 text-xs uppercase tracking-wider mb-4">Core Core Connections</h6>
-              <ul className="space-y-2 text-xs font-semibold text-zinc-500">
-                <li><Link href="/apps/whatsapp" className="hover:text-zinc-900">WhatsApp Pipeline</Link></li>
-                <li><Link href="/apps/instagram" className="hover:text-zinc-900">Instagram Webhooks</Link></li>
-                <li><Link href="/apps/bookedit" className="hover:text-zinc-900">BookedIt API Bridge</Link></li>
-                <li><Link href="/apps/paynow" className="hover:text-zinc-900">PayNow Gateway</Link></li>
-              </ul>
+            <p className="leading-relaxed text-zinc-500">
+              Subscribe to operational updates.
+            </p>
+            <div className="flex gap-2 max-w-xs">
+              <input 
+                type="email" 
+                placeholder="Work email" 
+                className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-[#795bf4]" 
+              />
+              <button className="bg-[#795bf4] text-white px-3 py-2 rounded-lg font-bold hover:bg-[#6847ef]">
+                Join
+              </button>
             </div>
-
-            {/* Column 3 - Strategic Categories */}
-            <div>
-              <h6 className="font-bold text-zinc-950 text-xs uppercase tracking-wider mb-4">Top Operational Spaces</h6>
-              <ul className="space-y-2 text-xs font-semibold text-zinc-500">
-                <li><Link href="/categories/crm" className="hover:text-zinc-900">Customer Management</Link></li>
-                <li><Link href="/categories/marketing" className="hover:text-zinc-900">Marketing Triggers</Link></li>
-                <li><Link href="/categories/helpdesk" className="hover:text-zinc-900">Support Routing Pods</Link></li>
-                <li><Link href="/categories/payments" className="hover:text-zinc-900">Transactional Logic</Link></li>
-              </ul>
-            </div>
-
-            {/* Column 4 - Educational Content */}
-            <div>
-              <h6 className="font-bold text-zinc-950 text-xs uppercase tracking-wider mb-4">Verified Curations</h6>
-              <ul className="space-y-2 text-xs font-semibold text-zinc-500">
-                <li><Link href="/blog/best-crm" className="hover:text-zinc-900">Best CRM Infrastructure</Link></li>
-                <li><Link href="/blog/best-chat" className="hover:text-zinc-900">Best Omni-Inbox Tools</Link></li>
-                <li><Link href="/blog/security-audit" className="hover:text-zinc-900">System Security Guidelines</Link></li>
-                <li><Link href="/blog/roi-metrics" className="hover:text-zinc-900">Operational ROI Playbooks</Link></li>
-              </ul>
-            </div>
-
-            {/* Column 5 - Corporate Navigation */}
-            <div>
-              <h6 className="font-bold text-zinc-950 text-xs uppercase tracking-wider mb-4">Platform Architecture</h6>
-              <ul className="space-y-2 text-xs font-semibold text-zinc-500">
-                <li><Link href="/pricing" className="hover:text-zinc-900">Pricing Matrices</Link></li>
-                <li><Link href="/developer" className="hover:text-zinc-900">Developer SDK Docs</Link></li>
-                <li><Link href="/enterprise" className="hover:text-zinc-900">Enterprise Solutions</Link></li>
-                <li><Link href="/careers" className="hover:text-zinc-900">Engineering Careers</Link></li>
-              </ul>
-            </div>
-
+            <p className="text-[10px] text-zinc-600 leading-tight">
+              By submitting, you agree to storage processing parameters detailed inside our privacy protocols.
+            </p>
           </div>
 
-          {/* Sub-Footer Legal Block */}
-          <div className="mt-16 pt-8 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-zinc-400">
-            <div className="flex items-center gap-2">
-              <span className="text-zinc-900 font-bold tracking-tight text-sm">dock</span>
-              <span>© 2026 dock Inc. All rights reserved global code pipelines.</span>
-            </div>
-            <div className="flex gap-6">
-              <Link href="/cookies" className="hover:text-zinc-600">Manage Cookies</Link>
-              <Link href="/legal" className="hover:text-zinc-600">Legal Clauses</Link>
-              <Link href="/privacy" className="hover:text-zinc-600">Privacy Safeguards</Link>
-            </div>
+          <div>
+            <h4 className="font-bold text-zinc-200 uppercase tracking-wider mb-4">Product Ecosystem</h4>
+            <ul className="space-y-2.5 font-medium">
+              <li><button className="hover:text-white transition-colors">Dock Core Flow</button></li>
+              <li><button className="hover:text-white transition-colors">Dock Intelligence</button></li>
+              <li><button className="hover:text-white transition-colors">Connected Apps Layers</button></li>
+              <li><button className="hover:text-white transition-colors">Pricing Profiles</button></li>
+              <li><button className="hover:text-white transition-colors">Enterprise Grade</button></li>
+              <li><button className="hover:text-white transition-colors">System Operational Status</button></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-zinc-200 uppercase tracking-wider mb-4">Solutions Layout</h4>
+            <ul className="space-y-2.5 font-medium">
+              <li><button className="hover:text-white transition-colors">System Infrastructure</button></li>
+              <li><button className="hover:text-white transition-colors">Marketing Operations</button></li>
+              <li><button className="hover:text-white transition-colors">Sales Sequences</button></li>
+              <li><button className="hover:text-white transition-colors">Financial Parsing</button></li>
+              <li><button className="hover:text-white transition-colors">Human Resource Sync</button></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-zinc-200 uppercase tracking-wider mb-4">Resources Matrix</h4>
+            <ul className="space-y-2.5 font-medium">
+              <li><button className="hover:text-white transition-colors">Dock Academy Module</button></li>
+              <li><button className="hover:text-white transition-colors">Community Knowledge</button></li>
+              <li><button className="hover:text-white transition-colors">System Help Center</button></li>
+              <li><button className="hover:text-white transition-colors">Developer Engine Hub</button></li>
+              <li><button className="hover:text-white transition-colors">Operational Weblog</button></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-zinc-200 uppercase tracking-wider mb-4">Corporate Pillar</h4>
+            <ul className="space-y-2.5 font-medium">
+              <li><button className="hover:text-white transition-colors">About Team Blueprint</button></li>
+              <li><button className="hover:text-white transition-colors">Active Engineering Careers</button></li>
+              <li><button className="hover:text-white transition-colors">Media Press Center</button></li>
+              <li><button className="hover:text-white transition-colors">Security Boundaries</button></li>
+              <li><button className="hover:text-white transition-colors">Ethics & Compliance Protocol</button></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 mt-16 pt-8 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 font-medium">
+          <p>© 2026 dock Operational Systems, Inc. All rights reserved.</p>
+          <div className="flex gap-6 text-[11px]">
+            <button className="hover:text-zinc-400">Terms & Conditions</button>
+            <button className="hover:text-zinc-400">Privacy & GDPR Mesh</button>
+            <button className="hover:text-zinc-400">System Disclaimers</button>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
