@@ -222,7 +222,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
   return (
     <div className="min-h-screen w-full flex flex-col bg-white">
       {/* Top nav */}
-      <header className="w-full border-b border-zinc-200 bg-white">
+      <header className="w-full border-b border-zinc-200 bg-zinc-50/80 backdrop-blur">
         <div className="w-full px-6 md:px-10 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/dock-icon-2.png" alt="Dock icon" className="w-12 h-12" />
@@ -251,7 +251,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                   setError('');
                   setValidationErrors({});
                 }}
-                className="text-xs font-mono font-bold tracking-wider uppercase bg-zinc-100 border border-zinc-200 px-4 py-2.5 hover:bg-zinc-200/70 transition-colors text-zinc-700"
+                className="text-xs font-mono font-bold tracking-wider uppercase rounded-lg bg-white border border-zinc-200 px-4 py-2.5 hover:bg-zinc-100 transition-colors text-zinc-700 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
               >
                 {mode === 'signin' ? 'Create Account' : 'Sign In'}
               </button>
@@ -341,11 +341,11 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
           </div>
 
           <div className="relative space-y-3 max-w-md">
-            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
+            <div className="rounded-xl border border-zinc-200 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <p className="text-sm font-semibold text-zinc-900 mb-1">Unified inbox</p>
               <p className="text-sm text-zinc-500">All your consumer chat ecosystems managed inside one unified environment.</p>
             </div>
-            <div className="border border-zinc-200 bg-white/70 backdrop-blur-sm p-5">
+            <div className="rounded-xl border border-zinc-200 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <p className="text-sm font-semibold text-zinc-900 mb-1">Instant tools</p>
               <p className="text-sm text-zinc-500">Send invoices, quotes, and bookings directly into chat.</p>
             </div>
@@ -357,7 +357,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
         {/* Right panel (Responsive Card Container Layout) */}
         <section className="flex flex-col justify-center items-stretch px-4 py-10 sm:px-8 md:px-16 lg:px-24 bg-white">
           {user ? (
-            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
+            <div className="bg-white rounded-xl border border-zinc-200 shadow-[0_1px_3px_rgba(0,0,0,0.08)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
               <div>
                 <span className="text-[10px] font-mono font-bold tracking-widest text-[#5a3fe0] bg-[#795bf4]/12 border border-[#795bf4]/20 px-2 py-0.5 uppercase">
                   Logged In
@@ -370,14 +370,14 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
               <button
                 onClick={handleSignOut}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-zinc-950 text-white py-3.5 text-sm font-bold hover:bg-zinc-800 disabled:opacity-50 transition-all active:scale-[0.99]"
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#795bf4] text-white py-3.5 text-sm font-bold hover:bg-[#6847ef] disabled:opacity-50 transition-all active:scale-[0.99]"
               >
-                <LogOut size={16} />
+                <LogOut size={16} strokeWidth={1.5} />
                 {loading ? 'Logging out...' : 'Sign Out'}
               </button>
             </div>
           ) : (
-            <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
+            <div className="bg-white rounded-xl border border-zinc-200 shadow-[0_1px_3px_rgba(0,0,0,0.08)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
 
               {/* Mobile Adaptive Header featuring brand identity vectors */}
               <div className="block md:hidden mb-2">
@@ -442,7 +442,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                         if (validationErrors.email) setValidationErrors({ ...validationErrors, email: '' });
                       }}
                       placeholder="you@company.co.za"
-                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
+                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-lg bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-[#795bf4] focus:ring-2 focus:ring-[#795bf4]/15 transition-colors"
                     />
                   </div>
                   {validationErrors.email && (
@@ -463,7 +463,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                         if (validationErrors.password) setValidationErrors({ ...validationErrors, password: '' });
                       }}
                       placeholder="••••••••••••"
-                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
+                      className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-lg bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-[#795bf4] focus:ring-2 focus:ring-[#795bf4]/15 transition-colors"
                     />
                   </div>
                   {validationErrors.password && (
@@ -485,7 +485,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                           if (validationErrors.confirmPassword) setValidationErrors({ ...validationErrors, confirmPassword: '' });
                         }}
                         placeholder="Repeat your password"
-                        className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-none bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-zinc-900 transition-colors"
+                        className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-zinc-300 rounded-lg bg-white text-zinc-900 placeholder-zinc-300 outline-none focus:border-[#795bf4] focus:ring-2 focus:ring-[#795bf4]/15 transition-colors"
                       />
                     </div>
                     {validationErrors.confirmPassword && (
@@ -512,10 +512,10 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                 <button
                   onClick={mode === 'signin' ? handleSignIn : handleSignUp}
                   disabled={loading}
-                  className="w-full bg-[#795bf4] hover:bg-[#6847ef] text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
+                  className="w-full rounded-lg bg-[#795bf4] hover:bg-[#6847ef] text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
                 >
                   {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In to Account' : 'Create My Account'}
-                  <ArrowRight size={14} strokeWidth={2.5} />
+                  <ArrowRight size={14} strokeWidth={1.5} />
                 </button>
 
                 {/* Navigation Switching Utilities */}
@@ -545,7 +545,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                       type="button"
                       onClick={handleAppleSignIn}
                       disabled={loading}
-                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-none"
+                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-lg"
                     >
                       <svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor">
                         <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26-2 49.7-13.4 69.5-34.3z" />
@@ -556,7 +556,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
                       type="button"
                       onClick={handleGoogleSignIn}
                       disabled={loading}
-                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-none"
+                      className="flex items-center justify-center gap-2 border border-zinc-200 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors rounded-lg"
                     >
                       <svg width="12" height="12" viewBox="0 0 48 48">
                         <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
