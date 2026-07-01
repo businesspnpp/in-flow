@@ -10,8 +10,9 @@ import {
   Calendar,
   House,
   LogOut,
-  Menu,
   MessageCircleMore,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plug,
   Settings,
   Wrench,
@@ -156,17 +157,17 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
       >
         <div className="flex items-center justify-between px-3 py-3 border-b border-[#16233f]">
           {sidebarExpanded ? (
-            <img src="/dock-logo.svg" alt="Dock logo" className="h-8 w-auto" />
+            <img src="/dock-logo-2.png" alt="Dock logo" className="h-8 w-auto" />
           ) : (
-            <img src="/dock-icon.svg" alt="Dock icon" className="h-8 w-8 mx-auto" />
+            <img src="/dock-icon-2.png" alt="Dock icon" className="h-8 w-8 mx-auto" />
           )}
           <button
             type="button"
             onClick={() => setSidebarExpanded((prev) => !prev)}
             className="h-9 w-9 flex items-center justify-center rounded-md text-white/90 hover:bg-white/10 hover:text-white transition-colors"
-            aria-label="Toggle sidebar"
+            aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            <Menu size={18} strokeWidth={2.5} />
+            {sidebarExpanded ? <PanelLeftClose size={18} strokeWidth={2.5} /> : <PanelLeftOpen size={18} strokeWidth={2.5} />}
           </button>
         </div>
 
