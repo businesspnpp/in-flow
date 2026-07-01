@@ -36,6 +36,7 @@ export type Business = {
   id: string;
   business_name: string;
   owner_name?: string | null;
+  logo_url?: string | null;
   categories: string[];
   address: string;
   email: string;

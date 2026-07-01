@@ -109,6 +109,7 @@ const toneClasses: Record<Tone, string> = {
 
 export default function DashboardHomeContent() {
   const [ownerName, setOwnerName] = useState('');
+  const [logoUrl, setLogoUrl] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -125,18 +126,22 @@ export default function DashboardHomeContent() {
 
         const { data: byId } = await supabase
           .from('businesses')
-          .select('owner_name')
+          .select('owner_name, logo_url')
           .eq('id', user.id)
           .maybeSingle();
 
         if (byId?.owner_name?.trim()) {
           resolvedName = byId.owner_name.trim();
         }
+        const resolvedLogoById = typeof byId?.logo_url === 'string' ? byId.logo_url.trim() : '';
+        if (active && resolvedLogoById) {
+          setLogoUrl(resolvedLogoById);
+        }
 
         if (!resolvedName && user.email) {
           const { data: byEmail } = await supabase
             .from('businesses')
-            .select('owner_name')
+            .select('owner_name, logo_url')
             .eq('email', user.email)
             .order('created_at', { ascending: true })
             .limit(1)
@@ -144,6 +149,11 @@ export default function DashboardHomeContent() {
 
           if (byEmail?.owner_name?.trim()) {
             resolvedName = byEmail.owner_name.trim();
+          }
+
+          const resolvedLogoByEmail = typeof byEmail?.logo_url === 'string' ? byEmail.logo_url.trim() : '';
+          if (active && !resolvedLogoById && resolvedLogoByEmail) {
+            setLogoUrl(resolvedLogoByEmail);
           }
         }
 
@@ -169,21 +179,25 @@ export default function DashboardHomeContent() {
       <div className="w-full space-y-4">
         <div className="flex items-center gap-4 rounded-2xl border border-[#795bf4]/20 bg-[#795bf4]/8 p-5">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#795bf4]/12">
-            <svg viewBox="0 0 64 64" width="68" height="68">
-              <circle cx="32" cy="32" r="32" fill="#DBEAFE" />
-              <path d="M6 64c0-14 11-23 26-23s26 9 26 23H6z" fill="#C2410C" />
-              <path d="M21 64c0-10 5-16 11-16s11 6 11 16H21z" fill="#FAFAF9" />
-              <rect x="27" y="33" width="10" height="10" rx="3" fill="#6B4226" />
-              <circle cx="32" cy="24" r="11" fill="#8B5A3C" />
-              <path d="M21 24a11 11 0 0122 0v2H21v-2z" fill="#1C1410" />
-              <path d="M41 15c2 4 1 8-1 11c-3-3-7-4-11-3c3-4 7-7 12-8z" fill="#1C1410" />
-              <circle cx="40" cy="16" r="5" fill="#1C1410" />
-              <path d="M29 52c5-4 10-6 15-7l2 5c-6 1.5-10 4-14 7z" fill="#7C4A2D" />
-              <g transform="rotate(-8 44.5 46)">
-                <rect x="37" y="40" width="15" height="12" rx="2" fill="#0F172A" />
-                <rect x="38.5" y="41.5" width="12" height="9" rx="1" fill="#60A5FA" />
-              </g>
-            </svg>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Business logo" className="h-full w-full object-cover" />
+            ) : (
+              <svg viewBox="0 0 64 64" width="68" height="68">
+                <circle cx="32" cy="32" r="32" fill="#DBEAFE" />
+                <path d="M6 64c0-14 11-23 26-23s26 9 26 23H6z" fill="#C2410C" />
+                <path d="M21 64c0-10 5-16 11-16s11 6 11 16H21z" fill="#FAFAF9" />
+                <rect x="27" y="33" width="10" height="10" rx="3" fill="#6B4226" />
+                <circle cx="32" cy="24" r="11" fill="#8B5A3C" />
+                <path d="M21 24a11 11 0 0122 0v2H21v-2z" fill="#1C1410" />
+                <path d="M41 15c2 4 1 8-1 11c-3-3-7-4-11-3c3-4 7-7 12-8z" fill="#1C1410" />
+                <circle cx="40" cy="16" r="5" fill="#1C1410" />
+                <path d="M29 52c5-4 10-6 15-7l2 5c-6 1.5-10 4-14 7z" fill="#7C4A2D" />
+                <g transform="rotate(-8 44.5 46)">
+                  <rect x="37" y="40" width="15" height="12" rx="2" fill="#0F172A" />
+                  <rect x="38.5" y="41.5" width="12" height="9" rx="1" fill="#60A5FA" />
+                </g>
+              </svg>
+            )}
           </div>
           <div>
             <h2 className="text-xl font-bold text-zinc-900">Welcome Back, &lsquo;{ownerName || 'there'}&rsquo;.</h2>

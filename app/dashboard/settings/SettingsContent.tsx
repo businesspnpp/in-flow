@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContext';
 import { supabase } from '@/lib/supabase';
 
 type SettingsProfile = {
   business_name: string;
   owner_name: string;
+  logo_url: string;
   email: string;
   address: string;
   whatsapp_number: string;
@@ -38,6 +39,7 @@ type TeamAccessSettings = {
 const initialProfile: SettingsProfile = {
   business_name: '',
   owner_name: '',
+  logo_url: '',
   email: '',
   address: '',
   whatsapp_number: '',
@@ -74,6 +76,7 @@ export default function SettingsContent() {
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [error, setError] = useState('');
   const [notifications, setNotifications] = useState<NotificationSettings>(initialNotifications);
@@ -175,6 +178,7 @@ export default function SettingsContent() {
       const mapped: SettingsProfile = {
         business_name: businessRow.business_name ?? '',
         owner_name: businessRow.owner_name ?? '',
+        logo_url: businessRow.logo_url ?? '',
         email: businessRow.email ?? '',
         address: businessRow.address ?? '',
         whatsapp_number: businessRow.whatsapp_number ?? '',
@@ -276,6 +280,7 @@ export default function SettingsContent() {
     const payload = {
       business_name: profile.business_name.trim(),
       owner_name: profile.owner_name.trim() || null,
+      logo_url: profile.logo_url.trim() || null,
       email: profile.email.trim(),
       address: profile.address.trim(),
       whatsapp_number: profile.whatsapp_number.trim(),
@@ -361,6 +366,60 @@ export default function SettingsContent() {
     }
   }, [businessId, notifications, profile, security, teamAccess]);
 
+  const handleLogoUpload = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file || !businessId) return;
+
+      setLogoUploading(true);
+      setError('');
+      setStatusMessage('');
+
+      try {
+        const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+        const normalizedExt = ext === 'jpeg' ? 'jpg' : ext;
+        const filePath = `${businessId}/logo.${normalizedExt}`;
+
+        const { error: uploadError } = await supabase
+          .storage
+          .from('businesses')
+          .upload(filePath, file, {
+            upsert: true,
+            contentType: file.type || 'image/png',
+            cacheControl: '3600',
+          });
+
+        if (uploadError) {
+          setError(`Unable to upload logo: ${uploadError.message}`);
+          return;
+        }
+
+        const { data: publicData } = supabase.storage.from('businesses').getPublicUrl(filePath);
+        const logoUrl = `${publicData.publicUrl}?v=${Date.now()}`;
+
+        const { error: updateError } = await supabase
+          .from('businesses')
+          .update({ logo_url: logoUrl, updated_at: new Date().toISOString() })
+          .eq('id', businessId);
+
+        if (updateError) {
+          setError(`Logo uploaded but could not save URL: ${updateError.message}`);
+          return;
+        }
+
+        setProfile((prev) => ({ ...prev, logo_url: logoUrl }));
+        setOriginalProfile((prev) => ({ ...prev, logo_url: logoUrl }));
+        setStatusMessage('Logo updated successfully.');
+      } catch {
+        setError('Unexpected error while uploading logo.');
+      } finally {
+        setLogoUploading(false);
+        event.target.value = '';
+      }
+    },
+    [businessId]
+  );
+
   useEffect(() => {
     loadBusinessProfile();
   }, [loadBusinessProfile]);
@@ -395,6 +454,40 @@ export default function SettingsContent() {
           <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-500">Loading business settings...</div>
         ) : (
           <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Profile logo</span>
+              <div className="flex items-center gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                <div className="h-16 w-16 overflow-hidden rounded-full border border-zinc-200 bg-white">
+                  {profile.logo_url ? (
+                    <img src={profile.logo_url} alt="Business logo" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs font-bold text-zinc-400">No logo</div>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="cursor-pointer rounded-lg bg-[#795bf4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#6847ef]">
+                    {logoUploading ? 'Uploading...' : 'Upload logo'}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/jpg"
+                      className="hidden"
+                      onChange={handleLogoUpload}
+                      disabled={logoUploading}
+                    />
+                  </label>
+                  {profile.logo_url && (
+                    <button
+                      type="button"
+                      onClick={() => setProfile((prev) => ({ ...prev, logo_url: '' }))}
+                      className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+                    >
+                      Remove (save to apply)
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <label className="space-y-1.5">
               <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Business name</span>
               <input
