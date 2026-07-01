@@ -97,12 +97,12 @@ const orders = [
   },
 ];
 
-const timelineBlocks = [
-  { time: '09:00', label: 'Prep window', detail: 'Quick service setup and reminders' },
-  { time: '10:30', label: 'Booked session', detail: 'Thabo Nkosi - confirmed' },
-  { time: '11:15', label: 'Pending call', detail: 'Amina Diop - awaiting approval' },
-  { time: '13:00', label: 'Midday booking', detail: 'Sipho Mthembu - confirmed' },
-  { time: '15:45', label: 'Pickup / handoff', detail: 'Lindiwe Dlamini - reschedule needed' },
+const calendarDays = ['Mon 24', 'Tue 25', 'Wed 26', 'Thu 27', 'Fri 28'];
+const calendarSlots = [
+  { time: '10:00 am', label: 'Prep window' },
+  { time: '12:00 pm', label: 'Midday' },
+  { time: '14:00 pm', label: 'Afternoon' },
+  { time: '16:00 pm', label: 'Late slot' },
 ];
 
 function statusClass(status: string) {
@@ -218,44 +218,48 @@ export default function BookingsOrdersContent() {
             <article className="xl:col-span-2 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between gap-3 border-b border-zinc-100 pb-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900">Today&apos;s booking flow</h2>
-                  <p className="text-xs text-zinc-500">Track the day from prep through completion.</p>
+                  <h2 className="text-base font-bold text-zinc-900">Lindiwe&apos;s Salon Schedule</h2>
+                  <p className="text-xs text-zinc-500">Weekly allocation blocks & active bookings</p>
                 </div>
-                <span className="rounded-full border border-[#795bf4]/20 bg-[#795bf4]/10 px-3 py-1 text-[11px] font-semibold text-[#5a3fe0]">
-                  {visibleBookings.length} visible bookings
-                </span>
+                <button className="rounded-md border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                  &lt; Calendar
+                </button>
               </div>
 
-              <div className="mt-4 space-y-3">
-                {timelineBlocks.map((block, index) => {
-                  const bookingMatch = bookings[index];
-                  return (
-                    <div key={block.time} className="flex items-start gap-4 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-                      <div className="min-w-[64px] rounded-lg bg-white px-3 py-2 text-center shadow-sm">
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">Time</p>
-                        <p className="text-sm font-black text-zinc-900">{block.time}</p>
+              <div className="mt-4 overflow-x-auto">
+                <div className="min-w-[760px] overflow-hidden rounded-xl border border-zinc-200">
+                  <div className="grid grid-cols-6 text-center text-xs">
+                    <div className="border-b border-r border-zinc-200 bg-zinc-50 py-2.5 font-semibold text-zinc-500">Time</div>
+                    {calendarDays.map((day) => (
+                      <div key={day} className="border-b border-r border-zinc-200 bg-zinc-50 py-2.5 font-semibold text-zinc-900 last:border-r-0">
+                        {day}
                       </div>
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="text-sm font-semibold text-zinc-900">{block.label}</p>
-                          {bookingMatch && (
-                            <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(bookingMatch.status)}`}>
-                              {bookingMatch.status}
-                            </span>
-                          )}
+                    ))}
+
+                    {calendarSlots.map((slot, idx) => (
+                      <>
+                        <div key={slot.time} className="flex items-center justify-center border-b border-r border-zinc-200 bg-zinc-50/50 p-3 text-center font-medium text-zinc-500">
+                          {slot.time}
                         </div>
-                        <p className="mt-1 text-sm text-zinc-500">{block.detail}</p>
-                        {bookingMatch && (
-                          <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-500">
-                            <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 font-medium text-zinc-700">{bookingMatch.customer}</span>
-                            <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 font-medium text-zinc-700">{bookingMatch.service}</span>
-                            <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 font-medium text-zinc-700">{bookingMatch.channel}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                        <div className="relative min-h-[64px] border-b border-r border-zinc-200 bg-white p-2">
+                          {idx === 1 && <div className="absolute inset-1 flex items-center justify-center rounded-md border border-blue-200 bg-blue-50 p-1 text-[10px] font-semibold text-blue-700">10:30 Booked</div>}
+                        </div>
+                        <div className="relative min-h-[64px] border-b border-r border-zinc-200 bg-white p-2">
+                          {idx === 0 && <div className="absolute inset-1 flex items-center justify-center rounded-md border border-emerald-200 bg-emerald-50 p-1 text-[10px] font-semibold text-emerald-700">Active Block</div>}
+                        </div>
+                        <div className="relative min-h-[64px] border-b border-r border-zinc-200 bg-white p-2">
+                          {idx === 1 && <div className="absolute inset-1 flex items-center justify-center rounded-md border border-blue-200 bg-blue-50 p-1 text-[10px] font-semibold text-blue-700">11:15 Pending</div>}
+                        </div>
+                        <div className="relative min-h-[64px] border-b border-r border-zinc-200 bg-white p-2">
+                          {idx === 2 && <div className="absolute inset-1 flex items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 p-1 text-[10px] font-semibold text-zinc-700">15:45 Hold</div>}
+                        </div>
+                        <div className="relative min-h-[64px] border-b border-zinc-200 bg-white p-2">
+                          {idx === 3 && <div className="absolute inset-1 flex items-center justify-center rounded-md border border-[#795bf4]/20 bg-[#795bf4]/10 p-1 text-[10px] font-semibold text-[#5a3fe0]">16:30 Confirmed</div>}
+                        </div>
+                      </>
+                    ))}
+                  </div>
+                </div>
               </div>
             </article>
 
