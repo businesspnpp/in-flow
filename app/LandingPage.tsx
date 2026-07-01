@@ -65,9 +65,11 @@ export default function LandingPage() {
         <section className="relative overflow-hidden bg-[#795bf4] text-white">
           <div className="mx-auto grid max-w-7xl gap-8 px-6 py-24 lg:grid-cols-12 lg:items-center lg:py-28">
             <div className="space-y-5 lg:col-span-7">
-              <span className="rounded-lg border border-[#66dba3]/30 bg-[#66dba3]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#66dba3]">
-                AI-POWERED CUSTOMER OPS PLATFORM
-              </span>
+              <div className="flex flex-wrap gap-2 text-xs font-semibold text-white/95">
+                <span className="rounded-2xl border border-white/25 bg-white/10 px-3 py-1.5">Customer conversations</span>
+                <span className="rounded-2xl border border-white/25 bg-white/10 px-3 py-1.5">bookings</span>
+                <span className="rounded-2xl border border-white/25 bg-white/10 px-3 py-1.5">payments</span>
+              </div>
               <h1 className="text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">Run your customer operations from one dock.</h1>
               <p className="max-w-xl text-lg font-medium leading-relaxed text-purple-100/90 md:text-xl">
                 Unify Dock-Streams, bookings, quotes, invoices, promotions, and follow-ups in one place your team can use from day one.
