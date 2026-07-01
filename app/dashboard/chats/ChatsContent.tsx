@@ -363,6 +363,7 @@ export default function ChatsContent() {
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
   const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
   const [activeLiveChat, setActiveLiveChat] = useState<SupabaseChat | null>(null);
+  const [businessId, setBusinessId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -462,6 +463,66 @@ export default function ChatsContent() {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadBusinessId() {
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user;
+      if (!user) return;
+
+      const { data: byId } = await supabase
+        .from('businesses')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (byId?.id && active) {
+        setBusinessId(byId.id);
+        return;
+      }
+
+      if (!user.email) return;
+
+      const { data: byEmail } = await supabase
+        .from('businesses')
+        .select('id')
+        .eq('email', user.email)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (byEmail?.id && active) {
+        setBusinessId(byEmail.id);
+      }
+    }
+
+    loadBusinessId();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!businessId) return;
+
+    let active = true;
+
+    async function syncInbox() {
+      const response = await fetch('/api/zernio/sync', { method: 'POST' });
+      if (!response.ok && active) {
+        console.error('Failed to sync Zernio inbox');
+      }
+    }
+
+    syncInbox();
+
+    return () => {
+      active = false;
+    };
+  }, [businessId]);
 
   useEffect(() => {
     if (!activeLiveChat) return;
@@ -1017,6 +1078,7 @@ export default function ChatsContent() {
       return (
         <ChatWindow
           activeChat={selectedLiveChat}
+          businessId={businessId}
           canSend={canSendLiveChat}
           readOnlyReason={
             canSendLiveChat

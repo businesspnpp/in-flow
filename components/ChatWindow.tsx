@@ -8,6 +8,7 @@ import { Send, MessageSquare, AlertCircle } from "lucide-react";
 
 interface ChatWindowProps {
   activeChat: Chat | null;
+  businessId?: string | null;
   canSend?: boolean;
   readOnlyReason?: string;
 }
@@ -31,6 +32,7 @@ function getChatChannel(id: string) {
 
 export default function ChatWindow({
   activeChat,
+  businessId = null,
   canSend = true,
   readOnlyReason = "Replying is unavailable for this live conversation.",
 }: ChatWindowProps) {
@@ -87,41 +89,43 @@ export default function ChatWindow({
       }
 
       const { body, chat_id } = validationResult.data;
-      const recipientId = getRecipientId(chat_id);
       const channel = getChatChannel(chat_id);
 
-      if (channel && channel !== 'whatsapp') {
-        setError('Outgoing replies are only supported for WhatsApp live conversations in this demo.');
+      if (!businessId) {
+        setError('Missing business context for live reply.');
+        return;
+      }
+
+      if (!channel) {
+        setError('Missing live channel context.');
         return;
       }
 
       setInput("");
       setSending(true);
 
-      const metaResponse = await fetch(
-        `https://graph.facebook.com/v20.0/${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER_ID}/messages`,
+      const liveResponse = await fetch('/api/zernio/send',
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_WHATSAPP_ACCESS_TOKEN}`,
           },
           body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: recipientId,
-            type: "text",
-            text: { body },
+            business_id: businessId,
+            chat_id,
+            message: body,
           }),
         },
       );
 
-      if (!metaResponse.ok) {
-        setError("Failed to send message via WhatsApp");
+      if (!liveResponse.ok) {
+        const payload = await liveResponse.json().catch(() => ({}));
+        setError(payload?.error || "Failed to send message via inbox provider");
         setSending(false);
         return;
       }
 
-      const { error: insertError } = await supabase.from("messages").insert({ chat_id, sender: "business", body });
+      const { error: insertError } = await supabase.from("messages").insert({ chat_id, channel, sender: "business", body });
       if (insertError) {
         setError("Failed to save message");
         setSending(false);

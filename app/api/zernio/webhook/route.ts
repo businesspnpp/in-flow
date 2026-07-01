@@ -56,6 +56,15 @@ function resolveChannel(event: ZernioWebhookEvent) {
   );
 }
 
+function resolveConversationId(event: ZernioWebhookEvent, fallbackChannel: string, fallbackSenderId: string) {
+  return firstString(
+    event.conversation?.id,
+    event.conversation?.conversationId,
+    event.message?.conversationId,
+    fallbackChannel && fallbackSenderId ? `${fallbackChannel}:${fallbackSenderId}` : ''
+  );
+}
+
 function resolveSenderId(event: ZernioWebhookEvent) {
   const messageSender = asObject(event.message?.sender);
   const conversationSender = asObject(event.conversation?.sender);
@@ -109,13 +118,15 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
   const channel = resolveChannel(event);
   const senderId = resolveSenderId(event);
   const messageText = resolveMessageText(event);
+  const conversationId = resolveConversationId(event, channel, senderId);
+  const accountId = firstString(event.account?.id, event.account?.accountId);
 
   if (!businessId || !channel || !senderId || !messageText) {
     return;
   }
 
   const supabase = getSupabaseAdmin();
-  const chatId = `${channel}:${senderId}`;
+  const chatId = conversationId || `${channel}:${senderId}`;
   const senderName = resolveSenderName(event);
   const body = `[${channel.toUpperCase()}] ${sanitizeText(messageText)}`;
   const name = senderName ? sanitizeText(senderName) : senderId;
@@ -125,6 +136,8 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
       id: chatId,
       name,
       channel,
+      provider_conversation_id: conversationId || null,
+      provider_account_id: accountId || null,
       last_message: body,
       updated_at: new Date().toISOString(),
     },
@@ -134,6 +147,7 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
   await supabase.from('messages').insert({
     chat_id: chatId,
     channel,
+    provider_message_id: firstString(event.message?.id, event.id),
     sender: 'customer',
     body,
   });

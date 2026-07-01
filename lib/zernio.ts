@@ -20,6 +20,59 @@ type ZernioAccount = {
   isActive?: boolean;
 };
 
+type ZernioInboxConversation = {
+  id: string;
+  platform?: string;
+  accountId?: string;
+  accountUsername?: string;
+  participantId?: string;
+  participantName?: string;
+  participantPicture?: string;
+  participantVerifiedType?: string;
+  lastMessage?: string;
+  updatedTime?: string;
+  status?: string;
+  unreadCount?: number;
+  url?: string;
+};
+
+type ZernioInboxConversationMessagesResponse = {
+  messages?: Array<{
+    id: string;
+    conversationId?: string;
+    accountId?: string;
+    platform?: string;
+    message?: string;
+    senderId?: string;
+    senderName?: string;
+    direction?: 'incoming' | 'outgoing';
+    createdAt?: string;
+    attachments?: Array<{
+      id?: string;
+      type?: string;
+      url?: string;
+      filename?: string;
+      previewUrl?: string;
+    }>;
+    metadata?: Record<string, unknown>;
+    sentAt?: string;
+  }>;
+  pagination?: {
+    hasMore?: boolean;
+    nextCursor?: string | null;
+  };
+  sortOrderApplied?: string;
+};
+
+type ZernioSendInboxMessageResponse = {
+  data?: {
+    messageId?: string;
+    conversationId?: string;
+    sentAt?: string;
+    message?: string;
+  };
+};
+
 type ZernioConnectUrlResponse = {
   authUrl: string;
   state?: string;
@@ -206,4 +259,66 @@ export async function ensureZernioInboxWebhook(options: { name: string; url: str
     secret: options.secret,
     isActive: true,
   });
+}
+
+export async function listZernioInboxConversations(options: {
+  accountId?: string;
+  profileId?: string;
+  platform?: string;
+  limit?: number;
+  cursor?: string;
+}) {
+  const response = await zernioRequest<{ data?: ZernioInboxConversation[]; pagination?: { hasMore?: boolean; nextCursor?: string | null } }>('inbox/conversations', {
+    searchParams: {
+      accountId: options.accountId,
+      profileId: options.profileId,
+      platform: options.platform,
+      limit: options.limit ?? 100,
+      cursor: options.cursor,
+    },
+  });
+
+  return {
+    data: response.data ?? [],
+    pagination: response.pagination ?? { hasMore: false, nextCursor: null },
+  };
+}
+
+export async function getZernioInboxConversationMessages(options: {
+  conversationId: string;
+  accountId: string;
+  limit?: number;
+  cursor?: string;
+  sortOrder?: 'asc' | 'desc';
+}) {
+  const response = await zernioRequest<ZernioInboxConversationMessagesResponse>(`inbox/conversations/${options.conversationId}/messages`, {
+    searchParams: {
+      accountId: options.accountId,
+      limit: options.limit ?? 100,
+      cursor: options.cursor,
+      sortOrder: options.sortOrder ?? 'asc',
+    },
+  });
+
+  return {
+    messages: response.messages ?? [],
+    pagination: response.pagination ?? { hasMore: false, nextCursor: null },
+    sortOrderApplied: response.sortOrderApplied ?? 'asc',
+  };
+}
+
+export async function sendZernioInboxMessage(options: {
+  conversationId: string;
+  accountId: string;
+  message: string;
+}) {
+  const response = await zernioRequest<ZernioSendInboxMessageResponse>(`inbox/conversations/${options.conversationId}/messages`, {
+    method: 'POST',
+    body: {
+      accountId: options.accountId,
+      message: options.message,
+    },
+  });
+
+  return response.data ?? null;
 }

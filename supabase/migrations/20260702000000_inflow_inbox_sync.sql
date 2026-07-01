@@ -3,14 +3,26 @@
 alter table public.chats
   add column if not exists channel text;
 
+alter table public.chats
+  add column if not exists provider_conversation_id text;
+
 alter table public.messages
   add column if not exists channel text;
+
+alter table public.messages
+  add column if not exists provider_message_id text;
 
 create index if not exists chats_channel_idx
   on public.chats using btree (channel);
 
+create index if not exists chats_provider_conversation_id_idx
+  on public.chats using btree (provider_conversation_id);
+
 create index if not exists messages_channel_idx
   on public.messages using btree (channel);
+
+create index if not exists messages_provider_message_id_idx
+  on public.messages using btree (provider_message_id);
 
 alter table public.chats
   drop constraint if exists chats_channel_check;
