@@ -25,6 +25,8 @@ body {
   --if-muted: #71717a;
   --if-accent: #795bf4;
   --if-accent-hover: #6847ef;
+  --if-positive: #64d9a2;
+  --if-positive-ink: #1b8f61;
 }
 
 .if-card {

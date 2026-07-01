@@ -60,7 +60,7 @@ export default function LandingPage() {
       <main>
         <section className="mx-auto grid w-full max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-24">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#795bf4]/20 bg-[#795bf4]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5a3fe0]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#64d9a2]/30 bg-[#64d9a2]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1b8f61]">
               Customer conversations, bookings, payments
             </div>
             <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.92] tracking-tight text-zinc-950 md:text-7xl">
@@ -103,7 +103,7 @@ export default function LandingPage() {
                   <p className="text-sm font-bold text-zinc-950">Live customer workspace</p>
                   <p className="mt-1 text-xs text-zinc-500">Chats, tools, and payments in one place.</p>
                 </div>
-                <div className="rounded-full bg-[#795bf4]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#795bf4]">
+                <div className="rounded-full bg-[#64d9a2]/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#1b8f61]">
                   dock
                 </div>
               </div>
@@ -115,7 +115,7 @@ export default function LandingPage() {
                       <p className="text-sm font-semibold text-zinc-950">Customer wants a booking tomorrow</p>
                       <p className="mt-1 text-xs text-zinc-500">WhatsApp lead detected. Suggested response ready.</p>
                     </div>
-                    <div className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
+                    <div className="rounded-full bg-[#64d9a2]/14 px-2.5 py-1 text-[10px] font-semibold text-[#1b8f61]">
                       New lead
                     </div>
                   </div>
@@ -123,14 +123,14 @@ export default function LandingPage() {
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-                    <div className="flex items-center gap-2 text-[#795bf4]">
+                    <div className="flex items-center gap-2 text-[#1b8f61]">
                       <CalendarCheck2 size={16} />
                       <span className="text-sm font-semibold">BookedIt</span>
                     </div>
                     <p className="mt-3 text-xs leading-relaxed text-zinc-500">Confirm appointment slots and send them into the conversation instantly.</p>
                   </div>
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-                    <div className="flex items-center gap-2 text-[#795bf4]">
+                    <div className="flex items-center gap-2 text-[#1b8f61]">
                       <CreditCard size={16} />
                       <span className="text-sm font-semibold">PayNow</span>
                     </div>
@@ -138,8 +138,8 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-[#795bf4]/20 bg-[#795bf4]/10 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5a3fe0]">Why teams switch</p>
+                <div className="rounded-2xl border border-[#64d9a2]/25 bg-[#64d9a2]/10 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#1b8f61]">Why teams switch</p>
                   <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-700">
                     One inbox, fewer missed leads, faster replies, cleaner bookings, and direct payment actions your team can use from day one.
                   </p>
@@ -153,7 +153,7 @@ export default function LandingPage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {featureCards.map(({ title, body, Icon }) => (
               <div key={title} className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#795bf4]/10 text-[#795bf4]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#64d9a2]/12 text-[#1b8f61]">
                   <Icon size={20} strokeWidth={2.25} />
                 </div>
                 <h2 className="mt-4 text-lg font-bold tracking-tight text-zinc-950">{title}</h2>

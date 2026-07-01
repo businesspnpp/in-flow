@@ -87,7 +87,7 @@ function InboxChannelIcon({ channel }: { channel: string }) {
 /* ================================================================== */
 
 const CHANNEL_COLORS: Record<string, string> = { WhatsApp: 'bg-emerald-600', Instagram: 'bg-zinc-700', Email: 'bg-blue-600', SMS: 'bg-slate-600', 'Facebook Business': 'bg-blue-700' };
-const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-emerald-500', Instagram: 'bg-zinc-500', Email: 'bg-blue-500', SMS: 'bg-slate-500', 'Facebook Business': 'bg-blue-400' };
+const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-[#64d9a2]', Instagram: 'bg-[#64d9a2]', Email: 'bg-[#64d9a2]', SMS: 'bg-[#64d9a2]', 'Facebook Business': 'bg-[#64d9a2]' };
 const TOOL_ACTIONS = [
   { label: 'Invoice',  Icon: FileText,        text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
   { label: 'BookedIt', Icon: CalendarCheck,   text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
@@ -175,8 +175,8 @@ const ACTIVITY_ICON: Record<ActivityType, (p?: { size?: number; className?: stri
 const ACTIVITY_COLOR: Record<ActivityType, string> = {
   tag: 'bg-purple-50 text-purple-600',
   booking: 'bg-blue-50 text-blue-600',
-  payment: 'bg-emerald-50 text-emerald-600',
-  note: 'bg-amber-50 text-amber-600',
+  payment: 'bg-[#64d9a2]/12 text-[#1b8f61]',
+  note: 'bg-[#64d9a2]/12 text-[#1b8f61]',
 };
 const CHANNEL_FILTERS: { id: DirChannelFilter; label: string }[] = [
   { id: 'all', label: 'All Channels' },
@@ -543,7 +543,7 @@ export default function ChatsContent() {
                       <td className="py-2 pl-3 pr-2"><div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div></td>
                       <td className="py-2 px-2 font-medium text-zinc-900">{c.name}</td>
                       <td className="py-2 px-2 text-zinc-500 max-w-[120px] truncate">{c.contact}</td>
-                      <td className="py-2 px-2"><div className="flex items-center gap-1">{c.channels.map(ch => <span key={ch}>{DIR_CHANNEL_ICON[ch]({ size: 15 })}</span>)}{c.online && <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />}</div></td>
+                      <td className="py-2 px-2"><div className="flex items-center gap-1">{c.channels.map(ch => <span key={ch}>{DIR_CHANNEL_ICON[ch]({ size: 15 })}</span>)}{c.online && <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-[#64d9a2]" />}</div></td>
                       <td className="py-2 px-2 pr-3 text-zinc-500">{c.lastInteractionDays}d ago</td>
                     </tr>
                   ))}
@@ -650,7 +650,7 @@ export default function ChatsContent() {
             <div className="rounded-xl border border-zinc-200 bg-white p-3">
               <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Channel Snapshot</h4>
               <div className="grid grid-cols-3 gap-2 mt-2">
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-2.5"><p className="text-[10px] text-emerald-700">WhatsApp</p><p className="text-lg font-bold text-emerald-900">9</p></div>
+                <div className="rounded-lg border border-[#64d9a2]/30 bg-[#64d9a2]/12 p-2.5"><p className="text-[10px] text-[#1b8f61]">WhatsApp</p><p className="text-lg font-bold text-[#145d42]">9</p></div>
                 <div className="rounded-lg border border-fuchsia-200 bg-fuchsia-50 p-2.5"><p className="text-[10px] text-fuchsia-700">Instagram</p><p className="text-lg font-bold text-fuchsia-900">6</p></div>
                 <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-2.5"><p className="text-[10px] text-zinc-700">TikTok</p><p className="text-lg font-bold text-zinc-900">2</p></div>
               </div>
@@ -661,7 +661,7 @@ export default function ChatsContent() {
         {activeDirTab === 'Google Reviews' && (
           <>
             <div className="flex gap-1.5 -mt-2">
-              <button className="h-7 rounded-lg bg-emerald-100 px-2.5 text-[10px] font-semibold text-emerald-800">Reviewed</button>
+              <button className="h-7 rounded-lg bg-[#64d9a2]/15 px-2.5 text-[10px] font-semibold text-[#1b8f61]">Reviewed</button>
               <button className="h-7 rounded-lg bg-amber-100 px-2.5 text-[10px] font-semibold text-amber-800">Needs Link</button>
               <button className="h-7 rounded-lg bg-rose-100 px-2.5 text-[10px] font-semibold text-rose-800">Needs Follow-up</button>
             </div>
@@ -683,7 +683,7 @@ export default function ChatsContent() {
                       <td className="py-2 pl-3 pr-2 font-medium text-zinc-900">{lead.name}</td>
                       <td className="py-2 px-2 text-zinc-700">{lead.rating === 0 ? 'Pending' : `${lead.rating} / 5`}</td>
                       <td className="py-2 px-2">
-                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${lead.status === 'Reviewed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : lead.status === 'Needs Link' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-rose-200 bg-rose-50 text-rose-700'}`}>
+                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${lead.status === 'Reviewed' ? 'border-[#64d9a2]/30 bg-[#64d9a2]/12 text-[#1b8f61]' : lead.status === 'Needs Link' ? 'border-[#795bf4]/20 bg-[#795bf4]/10 text-[#5a3fe0]' : 'border-rose-200 bg-rose-50 text-rose-700'}`}>
                           {lead.status}
                         </span>
                       </td>
@@ -844,7 +844,7 @@ export default function ChatsContent() {
           <section className="rounded-xl border border-zinc-200 bg-white shadow-sm p-4">
             <div className="flex items-center justify-between mb-4">
               <div><p className="text-xs text-zinc-500 font-medium">{selected.customerName}</p><p className="text-[11px] text-zinc-500 mt-0.5">{selected.channel}</p></div>
-              <span className={`text-[10px] font-medium px-2 py-1 rounded-full border ${orderVol === 0 ? 'border-zinc-200 text-zinc-500 bg-zinc-100' : orderVol === 1 ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'}`}>{statusLabel}</span>
+              <span className={`text-[10px] font-medium px-2 py-1 rounded-full border ${orderVol === 0 ? 'border-zinc-200 text-zinc-500 bg-zinc-100' : orderVol === 1 ? 'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10' : 'border-[#64d9a2]/30 text-[#1b8f61] bg-[#64d9a2]/12'}`}>{statusLabel}</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3"><p className="text-[10px] uppercase tracking-wide text-zinc-500">Total spent</p><p className="text-lg font-bold text-zinc-900 mt-1">{new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 2 }).format(ltv)}</p></div>
@@ -862,7 +862,7 @@ export default function ChatsContent() {
               {!txLoading && txns.length === 0 && <p className="text-[11px] text-zinc-500">No invoices or quotes for this customer yet.</p>}
               {txns.map(txn => {
                 const s = String(txn.status || '').toLowerCase();
-                const sc = s === 'paid' ? 'border-emerald-200 text-emerald-700 bg-emerald-50' : (s === 'pending' || s === 'sent' || s === 'draft') ? 'border-amber-200 text-amber-700 bg-amber-50' : 'border-rose-200 text-rose-700 bg-rose-50';
+                const sc = s === 'paid' ? 'border-[#64d9a2]/30 text-[#1b8f61] bg-[#64d9a2]/12' : (s === 'pending' || s === 'sent' || s === 'draft') ? 'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10' : 'border-rose-200 text-rose-700 bg-rose-50';
                 return <div key={txn.id} className="grid grid-cols-[58px_1fr_auto] items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2"><span className="text-[11px] text-zinc-500 font-medium">{new Date(txn.created_at).toLocaleDateString('en-ZA', { day: '2-digit', month: 'short' })}</span><div className="min-w-0 flex items-center gap-2"><span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${sc}`}>{s.charAt(0).toUpperCase() + s.slice(1)}</span><span className="text-[10px] text-zinc-500 truncate">{txn.reference || txn.type}</span></div><span className="text-[12px] text-zinc-900 font-semibold">{new Intl.NumberFormat('en-ZA', { style: 'currency', currency: txn.currency || 'ZAR', maximumFractionDigits: 2 }).format(Number(txn.total || 0))}</span></div>;
               })}
             </div>
