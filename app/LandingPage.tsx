@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import { 
   ArrowRight, 
@@ -51,7 +53,7 @@ const statCards = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans antialiased text-zinc-900 selection:bg-[#795bf4]/10 selection:text-[#795bf4]">
-      {/* 1. Global Announcement Banner (Inspired by Zendesk Masterclass Bar) */}
+      {/* 1. Global Announcement Banner */}
       <div className="bg-zinc-950 px-4 py-2.5 text-center text-xs font-medium text-zinc-300 transition-colors duration-150 hover:text-white">
         <span className="inline-flex items-center gap-2">
           <span className="inline-block rounded bg-[#66dba3]/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#66dba3]">
@@ -111,7 +113,7 @@ export default function LandingPage() {
                 Dock gives small businesses one beautifully unified place to manage chats, automate replies, send invoices, confirm bookings, and keep customers moving.
               </p>
 
-              {/* Conversion Input Field Group (Zendesk-Inspired High-Converting Input Structure) */}
+              {/* Conversion Input Field Group */}
               <div className="pt-4">
                 <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3 sm:flex-row sm:max-w-xl">
                   <div className="relative flex-1">
@@ -135,7 +137,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column: Custom Built High-Fidelity App UI Mockup (Replaces Basic AI Grid Layouts) */}
+            {/* Right Column: Custom Built High-Fidelity App UI Mockup */}
             <div className="relative">
               <div className="absolute -inset-2 rounded-[36px] bg-gradient-to-tr from-[#66dba3]/20 to-[#795bf4]/10 blur-xl opacity-70"></div>
               
@@ -205,7 +207,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 4. Elegant Minimal Customer Logo Cloud (Inspired by Zendesk Trust Bar) */}
+        {/* 4. Elegant Minimal Customer Logo Cloud */}
         <section className="border-t border-b border-zinc-200/50 bg-white py-10">
           <div className="mx-auto max-w-7xl px-6 text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
@@ -222,7 +224,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 5. Minimalist Statistics Matrix / Value Proof Section */}
+        {/* 5. Minimalist Statistics Matrix */}
         <section className="mx-auto w-full max-w-7xl px-6 py-16 md:py-24">
           <div className="rounded-3xl border border-zinc-200/60 bg-white p-8 shadow-sm md:p-12">
             <div className="max-w-2xl">
@@ -258,7 +260,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Alternating Layout - Component 1: Visual Left, Content Right */}
+            {/* Alternating Layout */}
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               
               {/* Product Visual Mock */}
@@ -377,7 +379,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* 9. Comprehensive Corporate Footer Architecture (Structured similarly to Zendesk System Footer) */}
+      {/* 9. Comprehensive Corporate Footer Architecture */}
       <footer className="bg-zinc-950 border-t border-zinc-900 text-zinc-400 text-xs py-16">
         <div className="mx-auto max-w-7xl px-6 grid gap-10 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="col-span-2 lg:col-span-1 space-y-4">
