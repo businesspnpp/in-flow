@@ -299,9 +299,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-xl border border-zinc-200 bg-[#66dba3] py-24 text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-          <div className="relative z-10 mx-auto max-w-7xl px-6">
-            <div className="max-w-3xl space-y-6">
+        <section className="relative overflow-hidden rounded-lg border border-zinc-200 bg-[#66dba3] py-28 text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+          <div className="relative z-10 mx-auto max-w-7xl px-6 py-4">
+            <div className="max-w-3xl space-y-7">
               <span className="rounded-lg border border-zinc-900/20 bg-white/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-zinc-900">
                 dock workflows
               </span>
@@ -319,7 +319,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="mt-20 grid gap-6 border-t border-zinc-900/20 pt-12 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-24 grid gap-6 border-t border-zinc-900/20 pt-16 sm:grid-cols-2 lg:grid-cols-5">
               <div className="space-y-2">
                 <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
                   01
