@@ -102,7 +102,7 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
           <button
             key={chat.id}
             onClick={() => onSelectChat(chat)}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100 hover:bg-zinc-50 transition-colors text-left ${activeChat?.id === chat.id ? "bg-amber-50/40 border-l-2 border-l-amber-600" : ""}`}
+            className={`w-full flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100 hover:bg-zinc-50 transition-colors text-left ${activeChat?.id === chat.id ? "bg-[#795bf4]/8 border-l-2 border-l-[#795bf4]" : ""}`}
           >
             {" "}
             {/* Avatar — solid color, no gradient */}{" "}

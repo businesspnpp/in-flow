@@ -236,7 +236,7 @@ export default function Dashboard() {
                     {" "}
                     <div className="flex items-center gap-3">
                       {" "}
-                      <div className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-bold text-white">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#8d73f6] to-[#6847ef] text-sm font-bold text-white">
                         {" "}
                         C1{" "}
                       </div>{" "}
@@ -284,12 +284,12 @@ export default function Dashboard() {
                     >
                       {" "}
                       <div
-                        className={`max-w-[80%] px-4 py-3.5 text-sm leading-relaxed ${message.sender === "business" ? " bg-amber-600 text-white" : " border border-zinc-200 bg-white text-zinc-900"}`}
+                        className={`max-w-[80%] rounded-2xl px-4 py-3.5 text-sm leading-relaxed ${message.sender === "business" ? " bg-[#795bf4] text-white" : " border border-zinc-200 bg-white text-zinc-900"}`}
                       >
                         {" "}
                         <p>{message.body}</p>{" "}
                         <p
-                          className={`mt-2 text-[10px] text-right ${message.sender === "business" ? "text-amber-100" : "text-zinc-500"}`}
+                          className={`mt-2 text-[10px] text-right ${message.sender === "business" ? "text-[#ddd5ff]" : "text-zinc-500"}`}
                         >
                           {" "}
                           {new Date(message.created_at).toLocaleTimeString([], {
@@ -321,7 +321,7 @@ export default function Dashboard() {
                     <button
                       onClick={handleSend}
                       disabled={!input.trim()}
-                      className="flex h-9 w-9 items-center justify-center flex-shrink-0 bg-amber-600 text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="flex h-9 w-9 items-center justify-center flex-shrink-0 rounded-lg bg-[#795bf4] text-white transition hover:bg-[#6847ef] disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {" "}
                       <ArrowRight size={18} strokeWidth={2.25} />{" "}
@@ -349,10 +349,10 @@ export default function Dashboard() {
                   <button
                     key={tool.label}
                     onClick={() => handleToolAction(tool.text)}
-                    className=" border border-zinc-200 bg-white px-6 py-4 text-left transition hover:border-amber-300 hover:bg-amber-50"
+                    className=" border border-zinc-200 bg-white px-6 py-4 text-left transition hover:border-[#795bf4]/30 hover:bg-[#795bf4]/8"
                   >
                     {" "}
-                    <div className="flex h-10 w-10 items-center justify-center bg-zinc-100 text-amber-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#795bf4]/10 text-[#795bf4]">
                       {" "}
                       <Zap size={18} strokeWidth={2.25} />{" "}
                     </div>{" "}
@@ -390,7 +390,7 @@ export default function Dashboard() {
                     <div className="flex items-start gap-4">
                       {" "}
                       <div
-                        className={`flex h-11 w-11 items-center justify-center flex-shrink-0 ${channel.isActive ? "bg-amber-50 text-amber-600" : "bg-zinc-100 text-zinc-500"}`}
+                        className={`flex h-11 w-11 items-center justify-center rounded-lg flex-shrink-0 ${channel.isActive ? "bg-[#795bf4]/10 text-[#795bf4]" : "bg-zinc-100 text-zinc-500"}`}
                       >
                         {" "}
                         <channel.Icon size={20} />{" "}
@@ -406,12 +406,12 @@ export default function Dashboard() {
                         <div className="mt-3">
                           {" "}
                           {channel.isActive ? (
-                            <span className="inline-flex bg-emerald-50 px-4 py-1 text-xs font-semibold text-emerald-700">
+                            <span className="inline-flex rounded-full bg-[#66dba3]/15 px-4 py-1 text-xs font-semibold text-[#2ea66f]">
                               {" "}
                               Connected{" "}
                             </span>
                           ) : (
-                            <span className="inline-flex bg-zinc-100 px-4 py-1 text-xs font-semibold text-zinc-500">
+                            <span className="inline-flex rounded-full bg-zinc-100 px-4 py-1 text-xs font-semibold text-zinc-500">
                               {" "}
                               Coming Soon{" "}
                             </span>
@@ -436,7 +436,7 @@ export default function Dashboard() {
               setGlobalTab("chats");
               setShowThread(false);
             }}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition ${globalTab === "chats" ? "bg-amber-100 text-amber-900" : "text-zinc-600 hover:bg-zinc-100"}`}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${globalTab === "chats" ? "bg-[#795bf4]/12 text-[#5a3fe0]" : "text-zinc-600 hover:bg-zinc-100"}`}
           >
             {" "}
             <MessageSquare size={18} strokeWidth={2.25} />{" "}
@@ -444,7 +444,7 @@ export default function Dashboard() {
           </button>{" "}
           <button
             onClick={() => setGlobalTab("tools")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition ${globalTab === "tools" ? "bg-amber-100 text-amber-900" : "text-zinc-600 hover:bg-zinc-100"}`}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${globalTab === "tools" ? "bg-[#795bf4]/12 text-[#5a3fe0]" : "text-zinc-600 hover:bg-zinc-100"}`}
           >
             {" "}
             <Zap size={18} strokeWidth={2.25} />{" "}
@@ -452,7 +452,7 @@ export default function Dashboard() {
           </button>{" "}
           <button
             onClick={() => setGlobalTab("settings")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition ${globalTab === "settings" ? "bg-amber-100 text-amber-900" : "text-zinc-600 hover:bg-zinc-100"}`}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition ${globalTab === "settings" ? "bg-[#795bf4]/12 text-[#5a3fe0]" : "text-zinc-600 hover:bg-zinc-100"}`}
           >
             {" "}
             <Settings size={18} strokeWidth={2.25} />{" "}

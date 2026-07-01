@@ -41,7 +41,7 @@ export default function SettingsContent() {
           type="checkbox"
           checked={hasUnsavedChanges}
           onChange={(event) => setHasUnsavedChanges(event.target.checked)}
-          className="h-4 w-4 border-zinc-300 text-[#FB5801] focus:ring-[#FB5801]"
+          className="h-4 w-4 border-zinc-300 text-[#795bf4] focus:ring-[#795bf4]"
         />
         <label htmlFor="settings-notification-toggle" className="text-sm text-zinc-700">
           Mark notification preference as changed (demo for global Save Changes action)

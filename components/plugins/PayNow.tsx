@@ -35,7 +35,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
   return (
     <div className="if-card-soft flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
-        <CreditCard size={15} className="text-blue-600" />
+        <CreditCard size={15} className="text-[#795bf4]" />
         <h3 className="text-sm font-semibold text-zinc-800">Pay Now</h3>
       </div>
 
@@ -47,7 +47,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4]"
           />
         </div>
         <div>
@@ -56,7 +56,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Payment for services"
-            className="w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4]"
           />
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
       <button
         onClick={sendPaymentLink}
         disabled={!activeChat || !amount || sending}
-        className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
+        className="flex items-center justify-center gap-2 rounded-lg bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
         <Send size={13} />
         Send Payment Request

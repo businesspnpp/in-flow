@@ -67,7 +67,7 @@ const conversations: Array<{
   initials: string;
   preview: string;
 }> = [
-  { id: 'c1', name: 'Braina Name', channel: 'whatsapp', avatarColor: 'bg-amber-200', initials: 'BN', preview: 'Hello, first you renewed your messages?' },
+  { id: 'c1', name: 'Braina Name', channel: 'whatsapp', avatarColor: 'bg-[#795bf4]/20', initials: 'BN', preview: 'Hello, first you renewed your messages?' },
   { id: 'c2', name: 'Instagram Smith', channel: 'instagram', avatarColor: 'bg-zinc-100', initials: 'IS', preview: 'Message is helov on your needs.' },
   { id: 'c3', name: 'Tiktok Soner', channel: 'tiktok', avatarColor: 'bg-zinc-100', initials: 'TS', preview: 'What you can rarely to your message.' },
   { id: 'c4', name: 'Email Amiltin', channel: 'email', avatarColor: 'bg-zinc-100', initials: 'EA', preview: "Chek a'anting to ileave about!" },
@@ -107,8 +107,8 @@ export default function DashboardHomeContent() {
   return (
     <div className="flex-1 overflow-y-auto bg-zinc-50 px-4 py-6 md:px-6">
       <div className="w-full space-y-4">
-        <div className="flex items-center gap-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100">
+        <div className="flex items-center gap-4 rounded-2xl border border-[#795bf4]/20 bg-[#795bf4]/8 p-5">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#795bf4]/12">
             <svg viewBox="0 0 64 64" width="68" height="68">
               <circle cx="32" cy="32" r="32" fill="#DBEAFE" />
               <path d="M6 64c0-14 11-23 26-23s26 9 26 23H6z" fill="#C2410C" />
@@ -165,14 +165,14 @@ export default function DashboardHomeContent() {
                 <span className="text-sm text-zinc-600">Confirmed</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#795bf4]" />
                 <span className="text-2xl font-bold text-zinc-900">2</span>
                 <span className="text-sm text-zinc-600">New</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-orange-500" />
-                <span className="leading-none text-2xl font-bold text-orange-600">1</span>
-                <span className="text-sm leading-snug text-orange-600">Issue (Conflict detected with Google Calendar)</span>
+                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#795bf4]" />
+                <span className="leading-none text-2xl font-bold text-[#5a3fe0]">1</span>
+                <span className="text-sm leading-snug text-[#5a3fe0]">Issue (Conflict detected with Google Calendar)</span>
               </div>
             </div>
             <button type="button" className="mt-3 text-sm font-semibold text-[#795bf4] hover:underline">
@@ -290,7 +290,7 @@ export default function DashboardHomeContent() {
 
                 {/* Blue busy bar spanning rows 1–2 */}
                 <div
-                  className="self-center h-[22px] rounded-lg bg-blue-100"
+                  className="self-center h-[22px] rounded-lg bg-[#795bf4]/15"
                   style={{ gridColumn: 2, gridRow: '1 / 3' }}
                 />
 

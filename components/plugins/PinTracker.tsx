@@ -28,7 +28,7 @@ export default function PinTracker({ activeChat, aiPrefill }: PinTrackerProps) {
       {" "}
       <div className="flex items-center gap-2">
         {" "}
-        <MapPin size={15} className="text-sky-600" strokeWidth={2.25} />{" "}
+        <MapPin size={15} className="text-[#795bf4]" strokeWidth={2.25} />{" "}
         <h3 className="text-sm font-semibold text-zinc-900">
           Pin Tracker
         </h3>{" "}
@@ -37,12 +37,12 @@ export default function PinTracker({ activeChat, aiPrefill }: PinTrackerProps) {
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder="Enter address"
-        className="w-full border border-zinc-300 bg-white px-4 py-2.5.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500"
+        className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2.5.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4]"
       />{" "}
       <button
         onClick={sendPin}
         disabled={!activeChat || !address || sending}
-        className="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
+        className="flex items-center justify-center gap-2 rounded-lg bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
       >
         {" "}
         <Send size={13} strokeWidth={2.25} /> Send Location{" "}

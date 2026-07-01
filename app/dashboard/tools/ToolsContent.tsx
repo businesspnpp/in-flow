@@ -25,7 +25,7 @@ const ALL_TOOLS: { id: ToolId; label: string; Icon: LucideIcon; color: string; d
   { id: 'booked',   label: 'Booked',   Icon: CalendarCheck, color: 'bg-emerald-600', desc: 'Schedule an appointment' },
   { id: 'quote',    label: 'Quote',    Icon: Calculator,    color: 'bg-[#795bf4]',  desc: 'Send a price estimate' },
   { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,   color: 'bg-rose-600',   desc: 'Share your product menu' },
-  { id: 'pin',      label: 'Pin',      Icon: MapPin,        color: 'bg-sky-600',    desc: 'Send a location pin' },
+  { id: 'pin',      label: 'Pin',      Icon: MapPin,        color: 'bg-[#795bf4]',    desc: 'Send a location pin' },
   { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,    color: 'bg-[#795bf4]',   desc: 'Send a secure payment link' },
   { id: 'review',   label: 'Review',   Icon: Star,          color: 'bg-yellow-600', desc: 'Request a Google review' },
   { id: 'promo',    label: 'Promo',    Icon: Megaphone,     color: 'bg-pink-600',   desc: 'Send a promo or voucher' },

@@ -596,7 +596,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
             <div className="md:col-span-2">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-zinc-900">Workflow-Activated</h3>
-                <button type="button" className="text-sm font-semibold text-blue-600 hover:underline">
+                <button type="button" className="text-sm font-semibold text-[#795bf4] hover:underline">
                   View All
                 </button>
               </div>

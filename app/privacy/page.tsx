@@ -319,7 +319,7 @@ export default function PrivacyPage() {
                 Privacy inquiries and data subject requests:{" "}
                 <a
                   href="mailto:privacy@dock.app"
-                  className="text-amber-700 font-semibold underline"
+                  className="text-[#795bf4] font-semibold underline"
                 >
                   {" "}
                   privacy@dock.app{" "}
@@ -330,7 +330,7 @@ export default function PrivacyPage() {
                 General support:{" "}
                 <a
                   href="mailto:support@dock.app"
-                  className="text-amber-700 font-semibold underline"
+                  className="text-[#795bf4] font-semibold underline"
                 >
                   {" "}
                   support@dock.app{" "}

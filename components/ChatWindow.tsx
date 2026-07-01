@@ -170,12 +170,12 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
           >
             {" "}
             <div
-              className={`max-w-[85%] sm:max-w-[70%] px-4 py-2.5 text-sm leading-relaxed ${msg.sender === "business" ? "bg-amber-600 text-white" : "if-card-soft text-zinc-900"}`}
+              className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${msg.sender === "business" ? "bg-[#795bf4] text-white" : "if-card-soft text-zinc-900"}`}
             >
               {" "}
               <p>{msg.body}</p>{" "}
               <p
-                className={`text-[10px] mt-1 text-right ${msg.sender === "business" ? "text-amber-100" : "text-zinc-500"}`}
+                className={`text-[10px] mt-1 text-right ${msg.sender === "business" ? "text-[#ddd5ff]" : "text-zinc-500"}`}
               >
                 {" "}
                 {formatTime(msg.created_at)}{" "}

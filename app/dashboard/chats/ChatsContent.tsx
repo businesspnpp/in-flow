@@ -74,7 +74,7 @@ const DIR_CHANNEL_ICON: Record<DirChannel, (p?: { size?: number }) => JSX.Elemen
 function InboxChannelIcon({ channel }: { channel: string }) {
   if (channel === 'WhatsApp') return <WhatsAppIcon size={14} />;
   if (channel === 'Instagram') return <InstagramIcon size={14} />;
-  if (channel === 'Email') return <Mail size={12} className="text-blue-600" />;
+  if (channel === 'Email') return <Mail size={12} className="text-[#795bf4]" />;
   if (channel === 'SMS') return <MessageSquare size={12} className="text-slate-600" />;
   if (channel === 'Facebook Business') {
     return <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">f</span>;
@@ -99,17 +99,17 @@ const MOCK_CONVERSATIONS: MockConversation[] = [
   { id:'chat_2',customerName:'Thabo Nkosi',channel:'Instagram',avatarColor:'TN',lastMessageTime:'2m',unreadCount:3,statusTag:'Urgent',statusColor:'border-rose-200 text-rose-700 bg-rose-50',messages:[{sender:'customer',time:'06:21 PM',text:'Interested in the property you advertised on your stories, can we arrange a walkthrough schedule for Thursday afternoon?'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'BookedIt Action Controller'}},
   { id:'chat_3',customerName:'Priya Maharaj',channel:'Email',avatarColor:'PM',lastMessageTime:'14m',unreadCount:0,statusTag:'Sales',statusColor:'border-purple-200 text-purple-700 bg-purple-50',messages:[{sender:'customer',time:'06:09 PM',text:'My fixed term mortgage is up for renewal soon. Can you send over a formal quotation matching the rates we discussed?'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'QuoteCraft Action Controller'}},
   { id:'chat_4',customerName:'James Okafor',channel:'SMS',avatarColor:'JO',lastMessageTime:'1h',unreadCount:0,statusTag:'General',statusColor:'border-zinc-300 text-zinc-500 bg-zinc-100',messages:[{sender:'customer',time:'05:15 PM',text:'Thanks for the quick response! Let me know when the payment link is generated so I can wrap this up.'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'FastInvoice Action Controller'}},
-  { id:'chat_5',customerName:'Lindiwe Dlamini',channel:'WhatsApp',avatarColor:'LD',lastMessageTime:'15m',unreadCount:2,statusTag:'Retail Sale',statusColor:'border-amber-200 text-amber-700 bg-amber-50',messages:[{sender:'customer',time:'06:28 PM',text:'Hi, do you have 5 boxes of the high-top leather sneakers left in size 8? If yes, please send me an invoice directly so I can secure them right now.'}],context:{totalSpent:'R 4,200.00',orderVolume:2,loyalty:'Silver Tier',intent:'FastInvoice Action Controller'}},
-  { id:'chat_6',customerName:'Sipho Mthembu',channel:'WhatsApp',avatarColor:'SM',lastMessageTime:'32m',unreadCount:0,statusTag:'Barber / Fade',statusColor:'border-blue-200 text-blue-700 bg-blue-50',messages:[{sender:'customer',time:'06:11 PM',text:'Yo! Need a sharp Taper Fade with dye before my weekend event. What slots does the master barber have open tomorrow afternoon?'}],context:{totalSpent:'R 1,850.00',orderVolume:8,loyalty:'Gold VIP',intent:'BookedIt Action Controller'}},
+  { id:'chat_5',customerName:'Lindiwe Dlamini',channel:'WhatsApp',avatarColor:'LD',lastMessageTime:'15m',unreadCount:2,statusTag:'Retail Sale',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'06:28 PM',text:'Hi, do you have 5 boxes of the high-top leather sneakers left in size 8? If yes, please send me an invoice directly so I can secure them right now.'}],context:{totalSpent:'R 4,200.00',orderVolume:2,loyalty:'Silver Tier',intent:'FastInvoice Action Controller'}},
+  { id:'chat_6',customerName:'Sipho Mthembu',channel:'WhatsApp',avatarColor:'SM',lastMessageTime:'32m',unreadCount:0,statusTag:'Barber / Fade',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'06:11 PM',text:'Yo! Need a sharp Taper Fade with dye before my weekend event. What slots does the master barber have open tomorrow afternoon?'}],context:{totalSpent:'R 1,850.00',orderVolume:8,loyalty:'Gold VIP',intent:'BookedIt Action Controller'}},
   { id:'chat_7',customerName:'Elena Rostova',channel:'Instagram',avatarColor:'ER',lastMessageTime:'45m',unreadCount:1,statusTag:'Quote Request',statusColor:'border-purple-200 text-purple-700 bg-purple-50',messages:[{sender:'customer',time:'05:58 PM',text:'Hello, I am interested in your custom catering menu for a corporate group of 45 people. Can you generate a custom price estimate for me?'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'QuoteCraft Action Controller'}},
   { id:'chat_8',customerName:'Brandon Stark',channel:'Facebook Business',avatarColor:'BS',lastMessageTime:'2h',unreadCount:0,statusTag:'Inventory Menu',statusColor:'border-teal-200 text-teal-700 bg-teal-50',messages:[{sender:'customer',time:'04:43 PM',text:'Hey, could you send over your latest product catalog or digital price menu? I want to see what shades you have available in stock.'}],context:{totalSpent:'R 850.00',orderVolume:1,loyalty:'Starter',intent:'MenuDrop Action Controller'}},
   { id:'chat_9',customerName:'Zanele Khumalo',channel:'WhatsApp',avatarColor:'ZK',lastMessageTime:'3h',unreadCount:0,statusTag:'Payment Pending',statusColor:'border-rose-200 text-rose-700 bg-rose-50',messages:[{sender:'customer',time:'03:12 PM',text:"I'm ready to checkout for the custom jewelry piece. Can you drop a secure PayNow link here so I can process the transaction via EFT?"}],context:{totalSpent:'R 12,500.00',orderVolume:3,loyalty:'Gold VIP',intent:'FastInvoice Action Controller'}},
-  { id:'chat_10',customerName:'Marcus Vance',channel:'SMS',avatarColor:'MV',lastMessageTime:'4h',unreadCount:0,statusTag:'Wholesale Buyer',statusColor:'border-amber-200 text-amber-700 bg-amber-50',messages:[{sender:'customer',time:'02:05 PM',text:'We need to restock 50 units of the industrial valves for our site. Please issue a comprehensive itemized quote with bulk tier discounts.'}],context:{totalSpent:'R 45,000.00',orderVolume:5,loyalty:'Enterprise Platinum',intent:'QuoteCraft Action Controller'}},
+  { id:'chat_10',customerName:'Marcus Vance',channel:'SMS',avatarColor:'MV',lastMessageTime:'4h',unreadCount:0,statusTag:'Wholesale Buyer',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'02:05 PM',text:'We need to restock 50 units of the industrial valves for our site. Please issue a comprehensive itemized quote with bulk tier discounts.'}],context:{totalSpent:'R 45,000.00',orderVolume:5,loyalty:'Enterprise Platinum',intent:'QuoteCraft Action Controller'}},
   { id:'chat_11',customerName:'Amina Diop',channel:'Instagram',avatarColor:'AD',lastMessageTime:'5h',unreadCount:0,statusTag:'New Lead',statusColor:'border-emerald-200 text-emerald-700 bg-emerald-50',messages:[{sender:'customer',time:'01:15 PM',text:'Stumbled onto your design profile! Do you have a list of service pack rates or a menu of options for brand consulting?'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'MenuDrop Action Controller'}},
-  { id:'chat_12',customerName:'Tariq Mahmood',channel:'WhatsApp',avatarColor:'TM',lastMessageTime:'1d',unreadCount:0,statusTag:'Service Delivery',statusColor:'border-blue-200 text-blue-700 bg-blue-50',messages:[{sender:'customer',time:'Yesterday',text:'The delivery arrived safely. Please send the final invoice statement so our accounting department can close out the ledger point.'}],context:{totalSpent:'R 3,100.00',orderVolume:1,loyalty:'Silver Tier',intent:'FastInvoice Action Controller'}},
+  { id:'chat_12',customerName:'Tariq Mahmood',channel:'WhatsApp',avatarColor:'TM',lastMessageTime:'1d',unreadCount:0,statusTag:'Service Delivery',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'Yesterday',text:'The delivery arrived safely. Please send the final invoice statement so our accounting department can close out the ledger point.'}],context:{totalSpent:'R 3,100.00',orderVolume:1,loyalty:'Silver Tier',intent:'FastInvoice Action Controller'}},
   { id:'chat_13',customerName:'Chloe Jenkins',channel:'Facebook Business',avatarColor:'CJ',lastMessageTime:'1d',unreadCount:0,statusTag:'General',statusColor:'border-zinc-300 text-zinc-500 bg-zinc-100',messages:[{sender:'customer',time:'Yesterday',text:'What are your operational hours over the coming public holiday? Just want to know if I can still come by for collections.'}],context:{totalSpent:'R 450.00',orderVolume:1,loyalty:'Starter',intent:'No dominant intent'}},
-  { id:'chat_14',customerName:'Dumi Ndlovu',channel:'WhatsApp',avatarColor:'DN',lastMessageTime:'2d',unreadCount:0,statusTag:'Barber / Cut',statusColor:'border-blue-200 text-blue-700 bg-blue-50',messages:[{sender:'customer',time:'2 days ago',text:'Hey check, can I change my appointment time from 10:00 AM to 02:30 PM this Saturday? Let me know if that spot is open on your book.'}],context:{totalSpent:'R 900.00',orderVolume:4,loyalty:'Silver Tier',intent:'BookedIt Action Controller'}},
-  { id:'chat_15',customerName:'Sophia Martinez',channel:'Instagram',avatarColor:'SM',lastMessageTime:'3d',unreadCount:0,statusTag:'Bulk Order',statusColor:'border-amber-200 text-amber-700 bg-amber-50',messages:[{sender:'customer',time:'3 days ago',text:'We need an explicit cost estimation matrix for 100 customized hoodies with embroidered emblems. Please create a draft quote record.'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'QuoteCraft Action Controller'}},
+  { id:'chat_14',customerName:'Dumi Ndlovu',channel:'WhatsApp',avatarColor:'DN',lastMessageTime:'2d',unreadCount:0,statusTag:'Barber / Cut',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'2 days ago',text:'Hey check, can I change my appointment time from 10:00 AM to 02:30 PM this Saturday? Let me know if that spot is open on your book.'}],context:{totalSpent:'R 900.00',orderVolume:4,loyalty:'Silver Tier',intent:'BookedIt Action Controller'}},
+  { id:'chat_15',customerName:'Sophia Martinez',channel:'Instagram',avatarColor:'SM',lastMessageTime:'3d',unreadCount:0,statusTag:'Bulk Order',statusColor:'border-[#795bf4]/20 text-[#5a3fe0] bg-[#795bf4]/10',messages:[{sender:'customer',time:'3 days ago',text:'We need an explicit cost estimation matrix for 100 customized hoodies with embroidered emblems. Please create a draft quote record.'}],context:{totalSpent:'R 0,00',orderVolume:0,loyalty:'Starter',intent:'QuoteCraft Action Controller'}},
 ];
 
 const INIT_MSGS: Record<string, Message[]> = MOCK_CONVERSATIONS.reduce((acc, conv) => {
@@ -124,7 +124,7 @@ const INIT_MSGS: Record<string, Message[]> = MOCK_CONVERSATIONS.reduce((acc, con
 const DIR_TABS = ['All Customers', 'Channels & DMs', 'Google Reviews', 'VIP / Segments'];
 
 const DIR_CUSTOMERS: DirCustomer[] = [
-  { id: 'c1', name: 'Lindiwe', avatarColor: 'bg-amber-700', initials: 'LD', contact: '+27 82 386 0192 / lindiwe@gmail.com', channels: ['whatsapp', 'instagram'], online: true, lastInteractionDays: 13 },
+  { id: 'c1', name: 'Lindiwe', avatarColor: 'bg-[#795bf4]', initials: 'LD', contact: '+27 82 386 0192 / lindiwe@gmail.com', channels: ['whatsapp', 'instagram'], online: true, lastInteractionDays: 13 },
   { id: 'c2', name: 'Thabo', avatarColor: 'bg-zinc-800', initials: 'TN', contact: '+27 71 940 2218 / thabo.nkosi@gmail.com', channels: ['whatsapp', 'instagram', 'tiktok'], online: true, lastInteractionDays: 13 },
   { id: 'c3', name: 'Sipho', avatarColor: 'bg-orange-700', initials: 'SM', contact: '+27 84 552 7710 / sipho.m@gmail.com', channels: ['whatsapp', 'instagram'], online: true, lastInteractionDays: 29 },
   { id: 'c4', name: 'Zanele', avatarColor: 'bg-rose-700', initials: 'ZK', contact: '+27 76 213 4490 / zanele.k@gmail.com', channels: ['whatsapp', 'instagram'], online: true, lastInteractionDays: 31 },
@@ -164,7 +164,7 @@ const CUSTOMER_ACTIVITY: Record<string, ActivityItem[]> = {
 const ACTIVITY_FEED: { customerId: string; name: string; avatarColor: string; initials: string; item: ActivityItem }[] = [
   { customerId: 'c4', name: 'Zanele', avatarColor: 'bg-rose-700', initials: 'ZK', item: CUSTOMER_ACTIVITY.c4[1] },
   { customerId: 'c2', name: 'Thabo', avatarColor: 'bg-zinc-800', initials: 'TN', item: CUSTOMER_ACTIVITY.c2[1] },
-  { customerId: 'c1', name: 'Lindiwe', avatarColor: 'bg-amber-700', initials: 'LD', item: CUSTOMER_ACTIVITY.c1[2] },
+  { customerId: 'c1', name: 'Lindiwe', avatarColor: 'bg-[#795bf4]', initials: 'LD', item: CUSTOMER_ACTIVITY.c1[2] },
 ];
 const ACTIVITY_ICON: Record<ActivityType, (p?: { size?: number; className?: string }) => JSX.Element> = {
   tag: (p) => <Tag {...p} />,
@@ -174,7 +174,7 @@ const ACTIVITY_ICON: Record<ActivityType, (p?: { size?: number; className?: stri
 };
 const ACTIVITY_COLOR: Record<ActivityType, string> = {
   tag: 'bg-purple-50 text-purple-600',
-  booking: 'bg-blue-50 text-blue-600',
+  booking: 'bg-[#795bf4]/10 text-[#795bf4]',
   payment: 'bg-[#66dba3]/12 text-[#66dba3]',
   note: 'bg-[#66dba3]/12 text-[#66dba3]',
 };
@@ -221,7 +221,7 @@ function CollapsiblePanel({
   if (!expanded) {
     return (
       <div className={`flex-shrink-0 w-11 flex flex-col items-center bg-white ${borderClass} border-zinc-200 py-4 gap-3`}>
-        <button onClick={onToggle} title={`Expand ${title}`} className="h-8 w-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition">
+        <button onClick={onToggle} title={`Expand ${title}`} className="h-8 w-8 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-[#795bf4]/10 hover:text-[#795bf4] transition">
           <Icon size={16} />
         </button>
         <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide [writing-mode:vertical-rl] rotate-180">{title}</span>
@@ -475,11 +475,11 @@ export default function ChatsContent() {
     return (
       <div className="p-4 space-y-4">
         {/* mini banner */}
-        <div className="rounded-xl border border-sky-100 bg-gradient-to-r from-sky-50 to-blue-50 px-4 py-3">
+        <div className="rounded-xl border border-[#795bf4]/20 bg-gradient-to-r from-[#f3efff] to-[#ede7ff] px-4 py-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2.5">
               <div className="h-9 w-9 flex-shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center">
-                <div className="h-6 w-6 rounded-full bg-sky-100 flex items-center justify-center"><ArrowUpRight size={13} className="text-sky-600" strokeWidth={2.5} /></div>
+                <div className="h-6 w-6 rounded-full bg-[#795bf4]/15 flex items-center justify-center"><ArrowUpRight size={13} className="text-[#795bf4]" strokeWidth={2.5} /></div>
               </div>
               <div>
                 <h3 className="text-[13px] font-bold text-zinc-900 leading-snug">Manage and Segment Your &lsquo;dock&rsquo; Customer Base.</h3>
@@ -662,7 +662,7 @@ export default function ChatsContent() {
           <>
             <div className="flex gap-1.5 -mt-2">
               <button className="h-7 rounded-lg bg-[#66dba3]/12 px-2.5 text-[10px] font-semibold text-[#66dba3]">Reviewed</button>
-              <button className="h-7 rounded-lg bg-amber-100 px-2.5 text-[10px] font-semibold text-amber-800">Needs Link</button>
+              <button className="h-7 rounded-lg bg-[#795bf4]/12 px-2.5 text-[10px] font-semibold text-[#5a3fe0]">Needs Link</button>
               <button className="h-7 rounded-lg bg-rose-100 px-2.5 text-[10px] font-semibold text-rose-800">Needs Follow-up</button>
             </div>
 
@@ -752,7 +752,7 @@ export default function ChatsContent() {
     if (!activeContact) {
       return (
         <div className="h-full flex flex-col items-center justify-center gap-4">
-          <div className="h-16 w-16 rounded-full bg-blue-50 flex items-center justify-center"><MessageSquare size={28} className="text-blue-400" /></div>
+          <div className="h-16 w-16 rounded-full bg-[#795bf4]/10 flex items-center justify-center"><MessageSquare size={28} className="text-[#795bf4]" /></div>
           <div className="text-center"><p className="text-sm font-medium text-zinc-500">Select a conversation</p><p className="text-xs text-zinc-400 mt-1">Choose from the Inbox or Customers panel</p></div>
         </div>
       );

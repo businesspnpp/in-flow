@@ -446,7 +446,7 @@ export default function PremiumPricingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Flex Addon Callout */}
-          <div className="lg:col-span-6 bg-white border-2 border-zinc-900 p-8 md:p-10 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="lg:col-span-6 rounded-xl bg-white border border-zinc-200 p-8 md:p-10 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-[#4c35bc] bg-[#795bf4]/12 px-2.5 py-1 uppercase border border-[#795bf4]/20">
                 VARIABLE METRICS
@@ -476,7 +476,7 @@ export default function PremiumPricingPage() {
           </div>
 
           {/* Circles Callout */}
-          <div className="lg:col-span-6 bg-white border-2 border-zinc-900 p-8 md:p-10 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="lg:col-span-6 rounded-xl bg-white border border-zinc-200 p-8 md:p-10 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-[#4c35bc] bg-[#795bf4]/12 px-2.5 py-1 uppercase border border-[#795bf4]/20">
                 COMMUNITY NETWORKS

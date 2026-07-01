@@ -114,9 +114,9 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                 <button
                   key={p.code}
                   onClick={() => applyPreset(p)}
-                  className={`py-2 px-3 text-xs font-medium border text-left transition-colors ${
+                  className={`rounded-lg py-2 px-3 text-xs font-medium border text-left transition-colors ${
                     voucherCode === p.code
-                      ? 'bg-amber-600 border-amber-600 text-white'
+                      ? 'bg-[#795bf4] border-[#795bf4] text-white'
                       : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400'
                   }`}
                 >
@@ -137,11 +137,11 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                 type="text"
                 value={voucherCode}
                 onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                className="flex-1 bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors font-mono tracking-wider"
+                className="flex-1 rounded-lg bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4] transition-colors font-mono tracking-wider"
               />
               <button
                 onClick={() => setVoucherCode(generateCode())}
-                className="p-2.5 border border-zinc-300 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 transition-colors"
+                className="rounded-lg p-2.5 border border-zinc-300 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 transition-colors"
                 title="Generate random code"
               >
                 <RefreshCw size={14} />
@@ -159,7 +159,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               placeholder="e.g. 10% off your next booking"
               value={discountText}
               onChange={(e) => setDiscountText(e.target.value)}
-              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors"
+              className="rounded-lg bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4] transition-colors"
             />
           </div>
 
@@ -172,7 +172,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               type="text"
               value={bookingLink}
               onChange={(e) => setBookingLink(e.target.value)}
-              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors font-mono text-xs"
+              className="rounded-lg bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4] transition-colors font-mono text-xs"
             />
           </div>
 
@@ -186,9 +186,9 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
                 <button
                   key={opt}
                   onClick={() => setExpiry(opt)}
-                  className={`px-3 py-1.5 text-xs font-medium border transition-colors ${
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium border transition-colors ${
                     expiry === opt
-                      ? 'bg-amber-600 border-amber-600 text-white'
+                      ? 'bg-[#795bf4] border-[#795bf4] text-white'
                       : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400'
                   }`}
                 >
@@ -208,7 +208,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
               placeholder="Leave blank to use auto-generated message…"
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
-              className="bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 transition-colors resize-none"
+              className="rounded-lg bg-white border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-[#795bf4] transition-colors resize-none"
             />
           </div>
 
@@ -218,9 +218,9 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
           </div>
 
           {/* Failsafe note */}
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 px-3 py-2">
+          <div className="flex items-start gap-2 rounded-lg bg-[#795bf4]/10 border border-[#795bf4]/20 px-3 py-2">
             <span className="text-[#795bf4] text-xs mt-0.5 flex-shrink-0">✓</span>
-            <p className="text-xs text-amber-800">
+            <p className="text-xs text-[#5a3fe0]">
               This text sends immediately — the voucher code stays visible even if an image fails to load on a slow connection.
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
           <button
             onClick={handleSend}
             disabled={sending || sent}
-            className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-lg bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
           >
             {sent ? (
               <><CheckCircle size={14} /> Sent</>
