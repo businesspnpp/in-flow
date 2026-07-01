@@ -16,6 +16,25 @@ type SettingsProfile = {
   booking_buffer_minutes: number;
 };
 
+type NotificationSettings = {
+  booking_reminders: boolean;
+  payment_alerts: boolean;
+  weekly_digest: boolean;
+  outage_alerts: boolean;
+};
+
+type SecuritySettings = {
+  two_factor_enabled: boolean;
+  active_sessions: number;
+  password_changed_at: string;
+};
+
+type TeamAccessSettings = {
+  admins_count: number;
+  operators_count: number;
+  pending_invites_count: number;
+};
+
 const initialProfile: SettingsProfile = {
   business_name: '',
   owner_name: '',
@@ -28,6 +47,25 @@ const initialProfile: SettingsProfile = {
   booking_buffer_minutes: 15,
 };
 
+const initialNotifications: NotificationSettings = {
+  booking_reminders: true,
+  payment_alerts: true,
+  weekly_digest: false,
+  outage_alerts: true,
+};
+
+const initialSecurity: SecuritySettings = {
+  two_factor_enabled: true,
+  active_sessions: 1,
+  password_changed_at: new Date().toISOString().slice(0, 10),
+};
+
+const initialTeamAccess: TeamAccessSettings = {
+  admins_count: 1,
+  operators_count: 0,
+  pending_invites_count: 0,
+};
+
 export default function SettingsContent() {
   const { setHeaderConfig, clearHeaderConfig } = useDashboardHeader();
 
@@ -38,10 +76,29 @@ export default function SettingsContent() {
   const [saving, setSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [error, setError] = useState('');
+  const [notifications, setNotifications] = useState<NotificationSettings>(initialNotifications);
+  const [originalNotifications, setOriginalNotifications] = useState<NotificationSettings>(initialNotifications);
+  const [security, setSecurity] = useState<SecuritySettings>(initialSecurity);
+  const [originalSecurity, setOriginalSecurity] = useState<SecuritySettings>(initialSecurity);
+  const [teamAccess, setTeamAccess] = useState<TeamAccessSettings>(initialTeamAccess);
+  const [originalTeamAccess, setOriginalTeamAccess] = useState<TeamAccessSettings>(initialTeamAccess);
 
   const hasUnsavedChanges = useMemo(
-    () => JSON.stringify(profile) !== JSON.stringify(originalProfile),
-    [originalProfile, profile]
+    () =>
+      JSON.stringify(profile) !== JSON.stringify(originalProfile) ||
+      JSON.stringify(notifications) !== JSON.stringify(originalNotifications) ||
+      JSON.stringify(security) !== JSON.stringify(originalSecurity) ||
+      JSON.stringify(teamAccess) !== JSON.stringify(originalTeamAccess),
+    [
+      notifications,
+      originalNotifications,
+      originalProfile,
+      originalSecurity,
+      originalTeamAccess,
+      profile,
+      security,
+      teamAccess,
+    ]
   );
 
   const loadBusinessProfile = useCallback(async () => {
@@ -130,6 +187,52 @@ export default function SettingsContent() {
       setBusinessId(businessRow.id);
       setProfile(mapped);
       setOriginalProfile(mapped);
+
+      const [{ data: notificationRow }, { data: securityRow }, { data: teamRow }] = await Promise.all([
+        supabase
+          .from('business_notification_settings')
+          .select('*')
+          .eq('business_id', businessRow.id)
+          .maybeSingle(),
+        supabase
+          .from('business_security_settings')
+          .select('*')
+          .eq('business_id', businessRow.id)
+          .maybeSingle(),
+        supabase
+          .from('business_team_access_settings')
+          .select('*')
+          .eq('business_id', businessRow.id)
+          .maybeSingle(),
+      ]);
+
+      const loadedNotifications: NotificationSettings = {
+        booking_reminders: notificationRow?.booking_reminders ?? initialNotifications.booking_reminders,
+        payment_alerts: notificationRow?.payment_alerts ?? initialNotifications.payment_alerts,
+        weekly_digest: notificationRow?.weekly_digest ?? initialNotifications.weekly_digest,
+        outage_alerts: notificationRow?.outage_alerts ?? initialNotifications.outage_alerts,
+      };
+      setNotifications(loadedNotifications);
+      setOriginalNotifications(loadedNotifications);
+
+      const loadedSecurity: SecuritySettings = {
+        two_factor_enabled: securityRow?.two_factor_enabled ?? initialSecurity.two_factor_enabled,
+        active_sessions: Number(securityRow?.active_sessions ?? initialSecurity.active_sessions),
+        password_changed_at:
+          typeof securityRow?.password_changed_at === 'string'
+            ? securityRow.password_changed_at.slice(0, 10)
+            : initialSecurity.password_changed_at,
+      };
+      setSecurity(loadedSecurity);
+      setOriginalSecurity(loadedSecurity);
+
+      const loadedTeam: TeamAccessSettings = {
+        admins_count: Number(teamRow?.admins_count ?? initialTeamAccess.admins_count),
+        operators_count: Number(teamRow?.operators_count ?? initialTeamAccess.operators_count),
+        pending_invites_count: Number(teamRow?.pending_invites_count ?? initialTeamAccess.pending_invites_count),
+      };
+      setTeamAccess(loadedTeam);
+      setOriginalTeamAccess(loadedTeam);
     } catch {
       setError('Unexpected error while loading business settings.');
     } finally {
@@ -194,19 +297,69 @@ export default function SettingsContent() {
         return;
       }
 
+      const [notificationWrite, securityWrite, teamWrite] = await Promise.all([
+        supabase.from('business_notification_settings').upsert(
+          {
+            business_id: businessId,
+            booking_reminders: notifications.booking_reminders,
+            payment_alerts: notifications.payment_alerts,
+            weekly_digest: notifications.weekly_digest,
+            outage_alerts: notifications.outage_alerts,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'business_id' }
+        ),
+        supabase.from('business_security_settings').upsert(
+          {
+            business_id: businessId,
+            two_factor_enabled: security.two_factor_enabled,
+            active_sessions: Number(security.active_sessions || 0),
+            password_changed_at: security.password_changed_at,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'business_id' }
+        ),
+        supabase.from('business_team_access_settings').upsert(
+          {
+            business_id: businessId,
+            admins_count: Number(teamAccess.admins_count || 0),
+            operators_count: Number(teamAccess.operators_count || 0),
+            pending_invites_count: Number(teamAccess.pending_invites_count || 0),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'business_id' }
+        ),
+      ]);
+
+      if (notificationWrite.error) {
+        setError(`Unable to save notification settings: ${notificationWrite.error.message}`);
+        return;
+      }
+      if (securityWrite.error) {
+        setError(`Unable to save security settings: ${securityWrite.error.message}`);
+        return;
+      }
+      if (teamWrite.error) {
+        setError(`Unable to save team access settings: ${teamWrite.error.message}`);
+        return;
+      }
+
       const next = {
         ...profile,
         categories: categoriesArray.join(', '),
       };
       setProfile(next);
       setOriginalProfile(next);
+      setOriginalNotifications(notifications);
+      setOriginalSecurity(security);
+      setOriginalTeamAccess(teamAccess);
       setStatusMessage('Settings saved successfully.');
     } catch {
       setError('Unexpected error while saving settings.');
     } finally {
       setSaving(false);
     }
-  }, [businessId, profile]);
+  }, [businessId, notifications, profile, security, teamAccess]);
 
   useEffect(() => {
     loadBusinessProfile();
@@ -341,6 +494,131 @@ export default function SettingsContent() {
 
         {error && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
         {statusMessage && <p className="mt-4 rounded-lg border border-[#66dba3]/30 bg-[#66dba3]/10 px-3 py-2 text-sm text-[#2ea66f]">{statusMessage}</p>}
+
+        {!loading && (
+          <>
+            <section className="mt-8 rounded-xl border border-zinc-200 bg-white p-5">
+              <h3 className="text-base font-semibold text-zinc-900">Notifications</h3>
+              <p className="mt-1 text-sm text-zinc-500">Choose which operational events should notify your team.</p>
+              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                {[
+                  {
+                    key: 'booking_reminders',
+                    title: 'Booking reminders',
+                    description: 'Send reminders 2 hours before appointments.',
+                  },
+                  {
+                    key: 'payment_alerts',
+                    title: 'Payment alerts',
+                    description: 'Notify when invoices are paid or overdue.',
+                  },
+                  {
+                    key: 'weekly_digest',
+                    title: 'Weekly digest',
+                    description: 'Summary of performance every Monday morning.',
+                  },
+                  {
+                    key: 'outage_alerts',
+                    title: 'Integration outage alerts',
+                    description: 'Notify when channels disconnect.',
+                  },
+                ].map((item) => (
+                  <label key={item.key} className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={notifications[item.key as keyof NotificationSettings]}
+                      onChange={(event) =>
+                        setNotifications((prev) => ({
+                          ...prev,
+                          [item.key]: event.target.checked,
+                        }))
+                      }
+                      className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-[#795bf4] focus:ring-[#795bf4]"
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-zinc-900">{item.title}</span>
+                      <span className="block text-xs text-zinc-500">{item.description}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="rounded-xl border border-zinc-200 bg-white p-5">
+                <h3 className="text-base font-semibold text-zinc-900">Security</h3>
+                <p className="mt-1 text-sm text-zinc-500">Manage authentication and session policies.</p>
+                <div className="mt-4 space-y-3">
+                  <label className="flex items-center gap-2 text-sm text-zinc-700">
+                    <input
+                      type="checkbox"
+                      checked={security.two_factor_enabled}
+                      onChange={(event) => setSecurity((prev) => ({ ...prev, two_factor_enabled: event.target.checked }))}
+                      className="h-4 w-4 rounded border-zinc-300 text-[#795bf4] focus:ring-[#795bf4]"
+                    />
+                    Two-factor auth enabled
+                  </label>
+                  <label className="space-y-1.5 block">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Active sessions</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={security.active_sessions}
+                      onChange={(event) => setSecurity((prev) => ({ ...prev, active_sessions: Number(event.target.value || 0) }))}
+                      className="h-10 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 outline-none transition focus:border-[#795bf4]"
+                    />
+                  </label>
+                  <label className="space-y-1.5 block">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Password last changed</span>
+                    <input
+                      type="date"
+                      value={security.password_changed_at}
+                      onChange={(event) => setSecurity((prev) => ({ ...prev, password_changed_at: event.target.value }))}
+                      className="h-10 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 outline-none transition focus:border-[#795bf4]"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-zinc-200 bg-white p-5">
+                <h3 className="text-base font-semibold text-zinc-900">Team Access</h3>
+                <p className="mt-1 text-sm text-zinc-500">Current roles and workspace permissions.</p>
+                <div className="mt-4 grid grid-cols-1 gap-3">
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Admins</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={teamAccess.admins_count}
+                      onChange={(event) => setTeamAccess((prev) => ({ ...prev, admins_count: Number(event.target.value || 0) }))}
+                      className="h-10 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 outline-none transition focus:border-[#795bf4]"
+                    />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Operators</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={teamAccess.operators_count}
+                      onChange={(event) => setTeamAccess((prev) => ({ ...prev, operators_count: Number(event.target.value || 0) }))}
+                      className="h-10 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 outline-none transition focus:border-[#795bf4]"
+                    />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Pending invites</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={teamAccess.pending_invites_count}
+                      onChange={(event) => setTeamAccess((prev) => ({ ...prev, pending_invites_count: Number(event.target.value || 0) }))}
+                      className="h-10 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 outline-none transition focus:border-[#795bf4]"
+                    />
+                  </label>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </div>
   );
