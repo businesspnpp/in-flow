@@ -1,198 +1,293 @@
 import Link from 'next/link';
-import { ArrowRight, CalendarCheck2, CreditCard, MessageSquareMore, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, Calendar, CreditCard, MessageSquare, Shield, Sparkles, Star, Zap, BarChart3, Users2 } from 'lucide-react';
 
-const featureCards = [
+const brands = ['WhatsApp', 'Instagram', 'Messenger', 'TikTok', 'Google', 'Shopify'];
+
+const metricStats = [
+  { value: '99.9%', label: 'Uptime SLA promised' },
+  { value: '5+', label: 'Native channels sync' },
+  { value: '14m', label: 'Average onboarding' },
+];
+
+const features = [
   {
-    title: 'Unified Inbox',
-    body: 'Handle WhatsApp, Instagram, Facebook, TikTok, and email conversations from one focused workspace.',
-    Icon: MessageSquareMore,
+    tag: 'Omnichannel',
+    title: 'Unified Customer Workspace',
+    description: 'Consolidate distributed messages across WhatsApp, Instagram, and SMS into a single high-throughput desktop queue built for speed.',
+    Icon: MessageSquare,
   },
   {
-    title: 'In-Chat Tools',
-    body: 'Generate invoices, quotes, bookings, payment links, and promos without leaving the conversation.',
+    tag: 'Automation',
+    title: 'Contextual In-Chat Actions',
+    description: 'Generate itemized quotes, push secure payment triggers, and update service parameters directly inside the active chat timeline.',
     Icon: Sparkles,
   },
   {
-    title: 'Bookings & Payments',
-    body: 'Lock in appointments, send reminders, and collect money through fast actions your team can actually use.',
-    Icon: CalendarCheck2,
+    tag: 'Transactions',
+    title: 'Automated Deposits & Ledgers',
+    description: 'Lock down physical calendar appointments and secure upfront billing simultaneously. Zero application hopping for your operators.',
+    Icon: CreditCard,
   },
   {
-    title: 'Review Growth',
-    body: 'Track Google review follow-ups and keep your best customers moving through a repeatable retention flow.',
+    tag: 'Reputation',
+    title: 'Closed-Loop Feedback Cycles',
+    description: 'Trigger targeted Google and Trustpilot review requests instantly upon successful transactional thresholds to scale social proof.',
     Icon: Star,
   },
 ];
 
-const statCards = [
-  { label: 'Channels connected', value: '5+' },
-  { label: 'Tools in chat', value: '8' },
-  { label: 'Setup time', value: '< 15 min' },
-];
-
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#fafafa] text-zinc-900">
-      <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/dock-icon-2.png" alt="dock icon" className="h-11 w-11" />
-            <span className="text-3xl font-semibold leading-none tracking-tight text-zinc-900">dock</span>
+    <div className="min-h-screen bg-[#fff] font-sans antialiased text-zinc-900 selection:bg-indigo-500 selection:text-white">
+      
+      {/* Global Banner Announcement */}
+      <div className="bg-zinc-950 px-4 py-2 text-center text-xs font-medium tracking-wide text-zinc-300 border-b border-zinc-800">
+        Introducing Dock Enterprise Sync — Multi-location routing for distributed operations. <span className="text-white underline ml-1 cursor-pointer hover:text-indigo-400 transition-colors">Read announcement</span>
+      </div>
+
+      {/* Premium Sticky Navigation */}
+      <header className="sticky top-0 z-50 border-b border-zinc-100 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-950 shadow-sm">
+              <span className="text-sm font-black text-white tracking-tighter">D</span>
+            </div>
+            <span className="text-xl font-bold tracking-tight text-zinc-950">dock</span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
-            <Link href="/pricing" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">
-              Pricing
-            </Link>
-            <Link href="/login" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-900">
-              Sign in
-            </Link>
+            <Link href="/features" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Features</Link>
+            <Link href="/solutions" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Solutions</Link>
+            <Link href="/pricing" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Pricing</Link>
+            <span className="h-4 w-px bg-zinc-200" />
+            <Link href="/login" className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-950">Sign in</Link>
             <Link
               href="/login?mode=signup"
-              className="rounded-lg bg-[#795bf4] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#6847ef]"
+              className="inline-flex h-9 items-center justify-center rounded-lg bg-zinc-950 px-4 text-[13px] font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.98] shadow-sm"
             >
-              Start free
+              Get Started Free
             </Link>
           </nav>
         </div>
       </header>
 
       <main>
-        <section className="mx-auto grid w-full max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-24">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#66dba3] bg-[#66dba3]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#66dba3]">
-              Customer conversations, bookings, payments
-            </div>
-            <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.92] tracking-tight text-zinc-950 md:text-7xl">
-              Run your customer operations from one dock.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-zinc-500 md:text-xl">
-              Dock gives small businesses one place to manage chats, automate replies, send invoices, confirm bookings, and keep customers moving.
-            </p>
+        {/* Premium Enterprise Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-zinc-50/50 via-white to-white py-20 lg:py-32 border-b border-zinc-100">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
+              
+              {/* Left Column Text Block */}
+              <div className="lg:col-span-7 space-y-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold tracking-wide text-zinc-700 shadow-sm">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Operations Control Suite
+                </div>
+                
+                <h1 className="text-4xl font-bold tracking-tight text-zinc-950 sm:text-6xl lg:leading-[1.08]">
+                  The operational layer for high-velocity customer teams.
+                </h1>
+                
+                <p className="max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
+                  Consolidate real-time communications, programmatic workflows, payments, and client bookings into a secure, single-pane infrastructure framework built for scale.
+                </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/login?mode=signup"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#795bf4] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]"
-              >
-                Start free
-                <ArrowRight size={16} strokeWidth={2.5} />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 py-3.5 text-sm font-bold text-zinc-900 transition-colors hover:bg-zinc-50"
-              >
-                View pricing
-              </Link>
-            </div>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    href="/login?mode=signup"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-6 text-sm font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.98] shadow-md shadow-zinc-950/10"
+                  >
+                    Deploy Workspace Free
+                    <ArrowRight size={15} />
+                  </Link>
+                  <Link
+                    href="/pricing"
+                    className="inline-flex h-12 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-50 hover:text-zinc-950"
+                  >
+                    Request Demo Stack
+                  </Link>
+                </div>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
-              {statCards.map((card) => (
-                <div key={card.label} className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-                  <p className="text-2xl font-black tracking-tight text-zinc-950">{card.value}</p>
-                  <p className="mt-1 text-sm font-medium text-zinc-500">{card.label}</p>
+                {/* Micro Brand Validation */}
+                <div className="pt-6 border-t border-zinc-100">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Native Platform Syncing</p>
+                  <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-zinc-500">
+                    {brands.map((brand) => (
+                      <span key={brand} className="hover:text-zinc-950 transition-colors cursor-default">{brand}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column App Display Block (Zendesk & Intercom Aesthetic) */}
+              <div className="lg:col-span-5 relative">
+                <div className="absolute inset-0 -m-4 rounded-[40px] bg-gradient-to-tr from-zinc-200/40 via-indigo-50/10 to-zinc-100/40 blur-xl" />
+                <div className="relative rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl shadow-zinc-200/80">
+                  
+                  {/* Console Interface Mirror */}
+                  <div className="rounded-[10px] border border-zinc-100 bg-zinc-950 p-5 text-white">
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-zinc-700" />
+                        <span className="text-[11px] font-mono tracking-wider text-zinc-400 uppercase">Live Queue Overview</span>
+                      </div>
+                      <span className="rounded bg-indigo-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-indigo-400 uppercase border border-indigo-500/20">Active Node</span>
+                    </div>
+
+                    <div className="mt-5 space-y-3">
+                      <div className="rounded-lg bg-zinc-900 p-3.5 border border-zinc-800">
+                        <p className="text-[11px] font-bold text-zinc-400">INBOUND EVENT — WHATSAPP BUSINESS API</p>
+                        <p className="mt-1 text-sm font-medium text-white">Confirm availability window: July 2nd, AM slot</p>
+                        <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
+                          <span>User ID: usr_9084x</span>
+                          <span className="text-emerald-400 font-semibold">Matched Intent</span>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-3 grid-cols-2">
+                        <div className="rounded-lg bg-zinc-900 p-3 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer">
+                          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
+                            <Calendar size={13} />
+                            <span>Dispatch Ledger</span>
+                          </div>
+                          <p className="mt-1.5 text-[11px] text-zinc-400 leading-normal">Commit calendar allocations directly into message buffer.</p>
+                        </div>
+                        <div className="rounded-lg bg-zinc-900 p-3 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer">
+                          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
+                            <CreditCard size={13} />
+                            <span>Secure Checkout</span>
+                          </div>
+                          <p className="mt-1.5 text-[11px] text-zinc-400 leading-normal">Generate contextual tokenized Stripe routing hooks.</p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg bg-zinc-900/40 p-3 border border-dashed border-zinc-800 text-center">
+                        <span className="text-[11px] text-zinc-500">Operator metrics: 4.8m resolution mean runtime</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Dynamic Metric Counter Section */}
+        <section className="bg-zinc-50/50 border-b border-zinc-100 py-10">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="grid gap-8 sm:grid-cols-3">
+              {metricStats.map((stat) => (
+                <div key={stat.label} className="flex flex-col sm:items-center sm:text-center">
+                  <span className="text-3xl font-bold tracking-tight text-zinc-950">{stat.value}</span>
+                  <span className="mt-1 text-xs font-medium text-zinc-500 uppercase tracking-wider">{stat.label}</span>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          <div className="rounded-[32px] border border-zinc-200 bg-white p-5 shadow-[0_20px_60px_rgba(24,24,27,0.08)]">
-            <div className="rounded-[24px] border border-zinc-100 bg-zinc-50 p-5">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-bold text-zinc-950">Live customer workspace</p>
-                  <p className="mt-1 text-xs text-zinc-500">Chats, tools, and payments in one place.</p>
-                </div>
-                <div className="rounded-full bg-[#66dba3]/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#66dba3]">
-                  dock
-                </div>
-              </div>
+        {/* Feature Matrix Grid Section */}
+        <section className="py-24 lg:py-32 bg-white">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-2xl space-y-4 mb-20">
+              <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase">Core Capabilities</span>
+              <h2 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">Engineered for high volume. Configured for efficiency.</h2>
+              <p className="text-zinc-600 leading-relaxed">
+                Stop wiring disparate notification webhooks together. Dock encapsulates your primary customer actions into native systems architecture.
+              </p>
+            </div>
 
-              <div className="mt-5 space-y-3">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div className="flex items-start justify-between gap-3">
+            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+              {features.map(({ tag, title, description, Icon }) => (
+                <div key={title} className="group relative flex flex-col justify-between space-y-4 rounded-xl transition-all">
+                  <div className="space-y-4">
+                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-50 text-zinc-900 border border-zinc-100 shadow-sm group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
+                      <Icon size={16} strokeWidth={2} />
+                    </div>
                     <div>
-                      <p className="text-sm font-semibold text-zinc-950">Customer wants a booking tomorrow</p>
-                      <p className="mt-1 text-xs text-zinc-500">WhatsApp lead detected. Suggested response ready.</p>
+                      <span className="text-[10px] font-bold tracking-widest uppercase text-indigo-600 block mb-1">{tag}</span>
+                      <h3 className="text-base font-bold tracking-tight text-zinc-950">{title}</h3>
                     </div>
-                    <div className="rounded-full bg-[#66dba3]/12 px-2.5 py-1 text-[10px] font-semibold text-[#66dba3]">
-                      New lead
-                    </div>
+                    <p className="text-sm leading-relaxed text-zinc-500 font-normal">{description}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-                    <div className="flex items-center gap-2 text-[#66dba3]">
-                      <CalendarCheck2 size={16} />
-                      <span className="text-sm font-semibold">BookedIt</span>
-                    </div>
-                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">Confirm appointment slots and send them into the conversation instantly.</p>
-                  </div>
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-                    <div className="flex items-center gap-2 text-[#66dba3]">
-                      <CreditCard size={16} />
-                      <span className="text-sm font-semibold">PayNow</span>
-                    </div>
-                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">Drop a secure payment request without switching apps or losing context.</p>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[#66dba3] bg-[#66dba3]/10 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#66dba3]">Why teams switch</p>
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-700">
-                    One inbox, fewer missed leads, faster replies, cleaner bookings, and direct payment actions your team can use from day one.
-                  </p>
-                </div>
+        {/* Enterprise Security / Infrastructure Section */}
+        <section className="bg-zinc-50 py-20 border-t border-b border-zinc-200/60">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="grid gap-12 lg:grid-cols-3">
+              <div className="space-y-3">
+                <div className="text-zinc-950"><Shield size={20} className="text-zinc-900" /></div>
+                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">Bank-Grade Compliance</h4>
+                <p className="text-xs leading-relaxed text-zinc-500">Full end-to-end payload encryption across all messaging endpoints matching standard SOC2 protocol structures.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="text-zinc-950"><Zap size={20} className="text-zinc-900" /></div>
+                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">High-Throughput Engines</h4>
+                <p className="text-xs leading-relaxed text-zinc-500"> sub-100ms pipeline execution ensures instant syncing between incoming communication nodes and web view interfaces.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="text-zinc-950"><Users2 size={20} className="text-zinc-900" /></div>
+                <h4 className="text-sm font-bold text-zinc-950 tracking-tight">Granular Team Control</h4>
+                <p className="text-xs leading-relaxed text-zinc-500">Control system states with fine-grained agent parameter provisioning, advanced audit logging, and automated routing rules.</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-6 pb-20">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {featureCards.map(({ title, body, Icon }) => (
-              <div key={title} className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#66dba3]/12 text-[#66dba3]">
-                  <Icon size={20} strokeWidth={2.25} />
-                </div>
-                <h2 className="mt-4 text-lg font-bold tracking-tight text-zinc-950">{title}</h2>
-                <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-500">{body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-7xl px-6 pb-24">
-          <div className="rounded-[32px] border border-zinc-900 bg-zinc-950 px-8 py-10 text-white shadow-[10px_10px_0px_0px_rgba(24,24,27,1)] md:px-12">
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-2xl">
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#c7bbff]">Ready to launch</p>
-                <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">Start from the landing page, move into pricing, then sign in when you are ready.</h2>
-                <p className="mt-4 text-sm font-medium leading-relaxed text-zinc-400 md:text-base">
-                  Browse pricing, review the product, and use the login page only when you choose to create an account or sign in.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
+        {/* Sophisticated Corporate Closing Call To Action */}
+        <section className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="relative overflow-hidden rounded-2xl bg-zinc-950 px-8 py-16 text-white shadow-xl md:px-16 md:py-24">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(55,48,163,0.15),transparent_45%)]" />
+            
+            <div className="relative max-w-2xl space-y-6">
+              <span className="text-xs font-bold tracking-widest text-indigo-400 uppercase">Onboarding Architecture</span>
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl lg:leading-[1.1]">
+                Scale operations without expanding overhead.
+              </h2>
+              <p className="max-w-xl text-sm md:text-base leading-relaxed text-zinc-400">
+                Instantiate a single sandbox test block, match it against your actual chat flows, evaluate conversion matrices, and launch to your team when completely satisfied.
+              </p>
+              
+              <div className="pt-4 flex flex-wrap gap-4">
                 <Link
-                  href="/pricing"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10"
+                  href="/login?mode=signup"
+                  className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-5 text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-100 active:scale-[0.98]"
                 >
-                  Pricing
+                  Create Production Account
                 </Link>
                 <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]"
+                  href="/pricing"
+                  className="inline-flex h-11 items-center justify-center rounded-lg border border-zinc-800 bg-transparent px-5 text-sm font-semibold text-zinc-300 transition-all hover:bg-zinc-900 hover:text-white"
                 >
-                  Sign in
-                  <ArrowRight size={16} strokeWidth={2.5} />
+                  View Corporate Tier Structure
                 </Link>
               </div>
             </div>
           </div>
         </section>
       </main>
+
+      {/* Clean Premium Minimalist Footer */}
+      <footer className="border-t border-zinc-100 bg-white py-12 text-xs text-zinc-500">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-bold tracking-tight text-zinc-950">dock</span>
+            <span>© 2026 Dock Systems Inc. All rights reserved.</span>
+          </div>
+          <div className="flex gap-6 font-medium text-zinc-600">
+            <Link href="/privacy" className="hover:text-zinc-950 transition-colors">Privacy Architecture</Link>
+            <Link href="/terms" className="hover:text-zinc-950 transition-colors">Terms of Protocol</Link>
+            <Link href="/security" className="hover:text-zinc-950 transition-colors">Security Audit Logs</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
