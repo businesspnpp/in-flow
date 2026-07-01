@@ -56,44 +56,74 @@ const bookings = [
 
 const orders = [
   {
-    id: 'ORD-2041',
+    id: '1',
     customer: 'Marcus Vance',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80',
+    channel: 'WhatsApp',
+    channelColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    service: 'Lash Extension Kit',
+    subText: 'Order # 2041',
+    dateTime: 'May 15, 2023 @ 4:00 PM',
+    status: 'Shipped',
     amount: 'R8,750',
-    stage: 'Packed',
-    eta: 'Today 17:00',
-    payment: 'Paid',
+    paymentStatus: 'Paid',
+    actions: ['Track', 'Message'],
   },
   {
-    id: 'ORD-2042',
+    id: '2',
     customer: 'Zanele Khumalo',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80',
+    channel: 'Instagram',
+    channelColor: 'bg-pink-50 text-pink-700 border-pink-200',
+    service: 'Bridal Package Order',
+    subText: 'Order # 2042',
+    dateTime: 'May 16, 2023 @ 9:15 AM',
+    status: 'Awaiting Payment',
     amount: 'R12,500',
-    stage: 'Awaiting payment',
-    eta: 'Waiting',
-    payment: 'Pending',
+    paymentStatus: 'Unpaid',
+    actions: ['Remind', 'Message'],
   },
   {
-    id: 'ORD-2043',
+    id: '3',
     customer: 'Chloe Jenkins',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
+    channel: 'Email',
+    channelColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    service: 'Professional Makeup Set',
+    subText: 'Order # 2043',
+    dateTime: 'May 16, 2023 @ 2:00 PM',
+    status: 'Out for Delivery',
     amount: 'R1,180',
-    stage: 'Out for delivery',
-    eta: 'Today 16:30',
-    payment: 'Paid',
+    paymentStatus: 'Paid',
+    actions: ['Track', 'Message'],
   },
   {
-    id: 'ORD-2044',
+    id: '4',
     customer: 'James Okafor',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
+    channel: 'TikTok',
+    channelColor: 'bg-zinc-900 text-white border-zinc-950',
+    service: 'Premium Barber Kit',
+    subText: 'Order # 2044',
+    dateTime: 'May 16, 2023 @ 3:30 PM',
+    status: 'Processing',
     amount: 'R3,400',
-    stage: 'Processing',
-    eta: 'Tomorrow 10:00',
-    payment: 'Paid',
+    paymentStatus: 'Paid',
+    actions: ['Pack', 'Message'],
   },
   {
-    id: 'ORD-2045',
+    id: '5',
     customer: 'Amina Diop',
+    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&q=80',
+    channel: 'Email',
+    channelColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    service: 'Weekly Refill Bundle',
+    subText: 'Order # 2045',
+    dateTime: 'May 16, 2023 @ 5:10 PM',
+    status: 'Awaiting Payment',
     amount: 'R980',
-    stage: 'Awaiting payment',
-    eta: 'Today 15:15',
-    payment: 'Pending',
+    paymentStatus: 'Unpaid',
+    actions: ['Remind', 'Message'],
   },
 ];
 
@@ -113,15 +143,14 @@ function statusClass(status: string) {
 }
 
 function stageClass(stage: string) {
-  if (stage === 'Out for delivery') return 'bg-[#66dba3]/15 text-[#2ea66f] border-[#66dba3]/30';
-  if (stage === 'Awaiting payment') return 'bg-[#795bf4]/10 text-[#5a3fe0] border-[#795bf4]/25';
+  if (stage === 'Shipped' || stage === 'Out for Delivery') return 'bg-indigo-50 text-indigo-700 border-indigo-200';
+  if (stage === 'Awaiting Payment') return 'bg-amber-50 text-amber-700 border-amber-200';
+  if (stage === 'Processing') return 'bg-zinc-100 text-zinc-700 border-zinc-300';
   return 'bg-zinc-100 text-zinc-600 border-zinc-200';
 }
 
 function paymentClass(payment: string) {
-  return payment === 'Paid'
-    ? 'bg-[#66dba3]/15 text-[#2ea66f] border-[#66dba3]/30'
-    : 'bg-amber-50 text-amber-700 border-amber-200';
+  return payment === 'Unpaid' ? 'text-red-600' : 'text-emerald-700';
 }
 
 function toneRing(tone: (typeof bookingKpis)[number]['tone']) {
@@ -314,32 +343,70 @@ export default function BookingsOrdersContent() {
             </div>
 
             <div className="mt-4 overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-              <table className="w-full min-w-[900px] border-collapse text-left text-xs text-zinc-600">
+              <table className="w-full min-w-[980px] border-collapse text-left text-xs text-zinc-600">
                 <thead className="border-b border-zinc-200 bg-zinc-50 font-semibold text-zinc-500">
                   <tr>
-                    <th className="px-4 py-3">Order</th>
-                    <th className="px-4 py-3">Customer</th>
-                    <th className="px-4 py-3">Amount</th>
-                    <th className="px-4 py-3">Stage</th>
+                    <th className="px-5 py-3">Customer</th>
+                    <th className="px-4 py-3">Channel</th>
+                    <th className="px-4 py-3">Service/Item</th>
+                    <th className="px-4 py-3">Date & Time</th>
+                    <th className="px-4 py-3">Status</th>
                     <th className="px-4 py-3">Payment</th>
+                    <th className="px-5 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200">
                   {visibleOrders.map((order) => (
                     <tr key={order.id} className="transition-colors hover:bg-zinc-50/50">
-                      <td className="whitespace-nowrap px-4 py-4 font-mono font-semibold text-zinc-900">{order.id}</td>
-                      <td className="whitespace-nowrap px-4 py-4 text-zinc-700">{order.customer}</td>
-                      <td className="whitespace-nowrap px-4 py-4 font-semibold text-zinc-900">{order.amount}</td>
-                      <td className="whitespace-nowrap px-4 py-4">
-                        <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${stageClass(order.stage)}`}>
-                          {order.stage}
-                        </span>
-                        <p className="mt-0.5 text-[11px] text-zinc-400">ETA: {order.eta}</p>
+                      <td className="whitespace-nowrap px-5 py-4 font-semibold text-zinc-900">
+                        <div className="flex items-center gap-3">
+                          <img src={order.avatar} alt={order.customer} className="h-8 w-8 rounded-full object-cover ring-1 ring-zinc-200" />
+                          <span>{order.customer}</span>
+                        </div>
                       </td>
+
                       <td className="whitespace-nowrap px-4 py-4">
-                        <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${paymentClass(order.payment)}`}>
-                          {order.payment}
+                        <span className={`inline-flex items-center rounded border px-2 py-0.5 text-[10px] font-medium ${order.channelColor}`}>
+                          {order.channel}
                         </span>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <div className="font-medium text-zinc-900">{order.service}</div>
+                        <div className="mt-0.5 text-[11px] text-zinc-400">{order.subText}</div>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-zinc-500">
+                        {order.dateTime.split(' @ ').map((part, index) => (
+                          <span key={`${order.id}-${part}-${index}`} className="block first:font-medium first:text-zinc-800 last:mt-0.5 last:text-[11px] last:text-zinc-400">
+                            {part}
+                          </span>
+                        ))}
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${stageClass(order.status)}`}>
+                          {order.status}
+                        </span>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <div className="font-bold text-zinc-900">{order.amount}</div>
+                        <div className={`mt-0.5 text-[10px] font-medium ${paymentClass(order.paymentStatus)}`}>({order.paymentStatus})</div>
+                      </td>
+
+                      <td className="whitespace-nowrap px-5 py-4 text-right">
+                        <div className="inline-flex w-24 flex-col gap-1">
+                          {order.actions.map((action, actionIdx) => (
+                            <button
+                              key={`${order.id}-${action}-${actionIdx}`}
+                              type="button"
+                              className="rounded border border-zinc-200 bg-white px-2 py-1 text-center text-[11px] font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50"
+                            >
+                              {action}
+                            </button>
+                          ))}
+                        </div>
                       </td>
                     </tr>
                   ))}
