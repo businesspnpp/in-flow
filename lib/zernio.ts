@@ -81,19 +81,35 @@ export async function listZernioProfiles() {
 }
 
 export async function createZernioProfile(name: string, description?: string) {
-  const response = await zernioRequest<{ profile?: ZernioProfile; message?: string }>('profiles', {
-    method: 'POST',
-    body: {
-      name,
-      description,
-    },
-  });
+  try {
+    const response = await zernioRequest<{ profile?: ZernioProfile; message?: string }>('profiles', {
+      method: 'POST',
+      body: {
+        name,
+        description,
+      },
+    });
 
-  if (!response.profile?._id) {
-    throw new Error('Zernio did not return a profile id.');
+    if (!response.profile?._id) {
+      throw new Error('Zernio did not return a profile id.');
+    }
+
+    return response.profile;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    if (!/already exists/i.test(message)) {
+      throw error;
+    }
+
+    const existingProfiles = await listZernioProfiles();
+    const existingProfile = existingProfiles.find((profile) => profile.name === name);
+
+    if (!existingProfile?._id) {
+      throw error;
+    }
+
+    return existingProfile;
   }
-
-  return response.profile;
 }
 
 export async function getZernioConnectUrl(platform: string, profileId: string, redirectUrl: string) {

@@ -20,6 +20,12 @@ function getServerSupabase() {
   return createClient(supabaseUrl, serviceRoleKey);
 }
 
+function buildProfileName(businessName: string, businessId: string, platform: string) {
+  const cleanBusinessName = businessName.trim() || 'inFlow Business';
+  const shortBusinessId = businessId.replace(/-/g, '').slice(0, 8);
+  return `${cleanBusinessName} - ${platform} - ${shortBusinessId}`;
+}
+
 export async function GET(request: NextRequest) {
   const businessId = request.nextUrl.searchParams.get('business_id');
   const platformResult = ZernioPlatformSchema.safeParse(request.nextUrl.searchParams.get('platform'));
@@ -54,7 +60,7 @@ export async function GET(request: NextRequest) {
 
     if (!profileId) {
       const createdProfile = await createZernioProfile(
-        business.business_name,
+        buildProfileName(business.business_name, business.id, platform),
         `inFlow workspace profile for business ${business.id}`
       );
       profileId = createdProfile._id;
