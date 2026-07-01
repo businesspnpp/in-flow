@@ -312,7 +312,7 @@ export default function PremiumPricingPage() {
         <div className="grid grid-cols-1 gap-6 items-stretch md:grid-cols-2 lg:grid-cols-[1.05fr_1.05fr_1.2fr_1.2fr] lg:gap-0">
           {tiers.map((tier, index) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
-            const cardSpacing = index === tiers.length - 1 ? 'lg:ml-6' : '';
+            const cardSpacing = index === tiers.length - 1 ? 'lg:ml-6' : index > 0 ? 'lg:-ml-[2px]' : '';
             
             return (
               <div
