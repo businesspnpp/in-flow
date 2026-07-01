@@ -309,14 +309,15 @@ export default function PremiumPricingPage() {
 
       {/* Primary Tier Blueprint Grid */}
       <section className="w-full max-w-[88rem] mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 gap-6 items-stretch md:grid-cols-2 lg:grid-cols-[1.05fr_1.05fr_1.2fr_1.2fr] lg:gap-6">
-          {tiers.map((tier) => {
+        <div className="grid grid-cols-1 gap-6 items-stretch md:grid-cols-2 lg:grid-cols-[1.05fr_1.05fr_1.2fr_1.2fr] lg:gap-0">
+          {tiers.map((tier, index) => {
             const price = tier.monthly === 0 ? 0 : annual ? Math.round(tier.monthly * 0.85) : tier.monthly;
+            const cardSpacing = index === tiers.length - 1 ? 'lg:ml-6' : '';
             
             return (
               <div
                 key={tier.name}
-                className={`flex flex-col min-w-0 p-8 border-2 transition-all duration-200 relative ${
+                className={`flex flex-col min-w-0 p-8 border-2 transition-all duration-200 relative ${cardSpacing} ${
                   tier.highlighted 
                     ? 'border-[#795bf4] bg-[#795bf4]/8 shadow-[6px_6px_0px_0px_rgba(121,91,244,0.78)]' 
                     : tier.darkVariant
