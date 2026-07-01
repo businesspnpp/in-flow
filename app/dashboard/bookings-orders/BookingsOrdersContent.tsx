@@ -67,7 +67,7 @@ const orders = [
     status: 'Shipped',
     amount: 'R8,750',
     paymentStatus: 'Paid',
-    actions: ['Track', 'Message'],
+    actions: ['Track', 'Reschedule', 'Message'],
   },
   {
     id: '2',
@@ -109,7 +109,7 @@ const orders = [
     status: 'Processing',
     amount: 'R3,400',
     paymentStatus: 'Paid',
-    actions: ['Pack', 'Message'],
+    actions: ['Pack', 'Reschedule', 'Message'],
   },
   {
     id: '5',
