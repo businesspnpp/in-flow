@@ -625,13 +625,13 @@ export default function PremiumPricingPage() {
 
       {/* Industrial High-Contrast Bottom Conversion Callout */}
       <section className="w-full max-w-7xl mx-auto px-6 pb-24">
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-10 md:p-16 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)] relative overflow-hidden">
-          <div className="absolute left-0 bottom-0 translate-y-6 -translate-x-6 w-32 h-32 bg-white/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="rounded-xl border border-[#6e54d9] bg-[#8d73f6] p-10 md:p-16 text-center shadow-[0_1px_3px_rgba(0,0,0,0.12)] relative overflow-hidden">
+          <div className="absolute left-0 bottom-0 translate-y-6 -translate-x-6 w-32 h-32 bg-white/25 rounded-full blur-2xl pointer-events-none" />
           
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-950 max-w-2xl mx-auto leading-none">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white max-w-2xl mx-auto leading-none">
             Consolidate your customer interactions today.
           </h2>
-          <p className="text-base text-zinc-900 font-semibold mt-4 max-w-md mx-auto leading-relaxed">
+          <p className="text-base text-white/95 font-semibold mt-4 max-w-md mx-auto leading-relaxed">
             Initialize your permanent Free dashboard tier instantly. Elevate and pivot configurations as message routing scale intensifies.
           </p>
           
