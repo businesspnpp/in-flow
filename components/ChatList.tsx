@@ -5,8 +5,9 @@ import { MessageCircle, Search } from "lucide-react";
 interface ChatListProps {
   activeChat: Chat | null;
   onSelectChat: (chat: Chat) => void;
+  showLiveBadge?: boolean;
 }
-export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
+export default function ChatList({ activeChat, onSelectChat, showLiveBadge = false }: ChatListProps) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
@@ -121,6 +122,11 @@ export default function ChatList({ activeChat, onSelectChat }: ChatListProps) {
                   {" "}
                   {chat.name ?? chat.id}{" "}
                 </span>{" "}
+                {showLiveBadge && (
+                  <span className="rounded-full border border-[#66dba3]/30 bg-[#66dba3]/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#2ea66f]">
+                    Live
+                  </span>
+                )}
                 <span className="text-[10px] text-zinc-500 ml-2 flex-shrink-0">
                   {" "}
                   {timeAgo(chat.updated_at)}{" "}

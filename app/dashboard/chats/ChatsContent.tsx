@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase, type Chat as SupabaseChat } from '@/lib/supabase';
+import ChatList from '@/components/ChatList';
+import ChatWindow from '@/components/ChatWindow';
 import { isMissingTableError } from '@/lib/inflow-client';
 import {
   ArrowRight, ArrowUpRight, CalendarCheck, CheckCheck, ChevronDown, ChevronLeft, ChevronRight,
@@ -27,6 +29,9 @@ type MobileScreen = 'list' | 'thread' | 'profile';
 type MobileListTab = 'inbox' | 'directory';
 type ActivityType = 'note' | 'booking' | 'payment' | 'tag';
 type ActivityItem = { id: string; type: ActivityType; label: string; time: string; };
+type ConversationSource = 'mock' | 'live';
+type InboxConversation = MockConversation & { source: ConversationSource; };
+type InboxMode = 'mixed' | 'live';
 
 /* ================================================================== */
 /* Brand glyphs (lucide has no brand icons)                            */
@@ -74,6 +79,7 @@ const DIR_CHANNEL_ICON: Record<DirChannel, (p?: { size?: number }) => JSX.Elemen
 function InboxChannelIcon({ channel }: { channel: string }) {
   if (channel === 'WhatsApp') return <WhatsAppIcon size={14} />;
   if (channel === 'Instagram') return <InstagramIcon size={14} />;
+  if (channel === 'Live Chat') return <MessageSquare size={12} className="text-[#2ea66f]" />;
   if (channel === 'Email') return <Mail size={12} className="text-[#795bf4]" />;
   if (channel === 'SMS') return <MessageSquare size={12} className="text-slate-600" />;
   if (channel === 'Facebook Business') {
@@ -86,8 +92,8 @@ function InboxChannelIcon({ channel }: { channel: string }) {
 /* Mock data — Inbox (chat list + thread)                              */
 /* ================================================================== */
 
-const CHANNEL_COLORS: Record<string, string> = { WhatsApp: 'bg-emerald-600', Instagram: 'bg-zinc-700', Email: 'bg-blue-600', SMS: 'bg-slate-600', 'Facebook Business': 'bg-blue-700' };
-const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-[#66dba3]', Instagram: 'bg-[#66dba3]', Email: 'bg-[#66dba3]', SMS: 'bg-[#66dba3]', 'Facebook Business': 'bg-[#66dba3]' };
+const CHANNEL_COLORS: Record<string, string> = { WhatsApp: 'bg-emerald-600', Instagram: 'bg-zinc-700', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-blue-600', SMS: 'bg-slate-600', 'Facebook Business': 'bg-blue-700' };
+const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-[#66dba3]', Instagram: 'bg-[#66dba3]', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-[#66dba3]', SMS: 'bg-[#66dba3]', 'Facebook Business': 'bg-[#66dba3]' };
 const TOOL_ACTIONS = [
   { label: 'Invoice',  Icon: FileText,        text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
   { label: 'BookedIt', Icon: CalendarCheck,   text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
@@ -116,6 +122,52 @@ const INIT_MSGS: Record<string, Message[]> = MOCK_CONVERSATIONS.reduce((acc, con
   acc[conv.id] = conv.messages.map((m, i) => ({ id: `${conv.id}_m_${i + 1}`, sender: m.sender, body: m.text, created_at: new Date(Date.now() - (conv.messages.length - i) * 60_000).toISOString() }));
   return acc;
 }, {} as Record<string, Message[]>);
+
+function conversationInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+function formatRelativeTime(iso: string) {
+  const diffMs = Math.max(0, Date.now() - new Date(iso).getTime());
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return 'Now';
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  return `${Math.floor(hours / 24)}d`;
+}
+
+function mapLiveChat(chat: SupabaseChat): InboxConversation {
+  const customerName = chat.name?.trim() || chat.id;
+  return {
+    id: chat.id,
+    customerName,
+    channel: 'Live Chat',
+    avatarColor: conversationInitials(customerName),
+    lastMessageTime: formatRelativeTime(chat.updated_at),
+    unreadCount: 0,
+    statusTag: 'Live',
+    statusColor: 'border-[#66dba3]/30 text-[#2ea66f] bg-[#66dba3]/10',
+    messages: [
+      {
+        sender: 'customer',
+        time: new Date(chat.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: chat.last_message ?? 'Live conversation synced from Supabase.',
+      },
+    ],
+    context: {
+      totalSpent: 'R 0,00',
+      orderVolume: 0,
+      loyalty: 'Live Sync',
+      intent: 'Live conversation',
+    },
+    source: 'live',
+  };
+}
 
 /* ================================================================== */
 /* Mock data — Customer directory                                      */
@@ -277,10 +329,13 @@ export default function ChatsContent() {
   // mobile navigation state (drill-down: list -> thread -> profile)
   const [mobileScreen, setMobileScreen] = useState<MobileScreen>('list');
   const [mobileListTab, setMobileListTab] = useState<MobileListTab>('inbox');
+  const [inboxMode, setInboxMode] = useState<InboxMode>('mixed');
 
   // inbox / thread
   const [activeContact, setActiveContact] = useState<string | null>(null);
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
+  const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
+  const [activeLiveChat, setActiveLiveChat] = useState<SupabaseChat | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -300,8 +355,34 @@ export default function ChatsContent() {
   const [customNotes, setCustomNotes] = useState<Record<string, ActivityItem[]>>({});
   const [noteDraft, setNoteDraft] = useState('');
 
-  const selected = MOCK_CONVERSATIONS.find(c => c.id === activeContact);
-  const curMsgs = useMemo(() => activeContact ? (msgsByContact[activeContact] ?? []) : [], [activeContact, msgsByContact]);
+  const allConversations = useMemo<InboxConversation[]>(() => {
+    const live = liveChats.map(mapLiveChat);
+    const mock = MOCK_CONVERSATIONS.map((conversation) => ({ ...conversation, source: 'mock' as const }));
+    return [...live, ...mock];
+  }, [liveChats]);
+
+  const selected = allConversations.find(c => c.id === activeContact);
+  const isLiveConversation = selected?.source === 'live';
+  const selectedLiveChat = useMemo(
+    () => liveChats.find((chat) => chat.id === activeContact) ?? activeLiveChat,
+    [activeContact, activeLiveChat, liveChats]
+  );
+  const canSendLiveChat = useMemo(
+    () => Boolean(selectedLiveChat && /^\+?\d{7,}$/.test(selectedLiveChat.id)),
+    [selectedLiveChat]
+  );
+  const curMsgs = useMemo(() => {
+    if (!activeContact) return [];
+    const existing = msgsByContact[activeContact];
+    if (existing) return existing;
+    if (!selected) return [];
+    return selected.messages.map((message, index) => ({
+      id: `${selected.id}-fallback-${index}`,
+      sender: message.sender,
+      body: message.text,
+      created_at: new Date().toISOString(),
+    }));
+  }, [activeContact, msgsByContact, selected]);
   const aiIntent = useMemo<'booking' | 'invoice' | 'quote' | 'promo' | 'none'>(() => {
     const ei = aiExtraction?.extraction?.detectedIntent;
     if (ei === 'booking' || ei === 'invoice' || ei === 'quote' || ei === 'promo') return ei as any;
@@ -322,6 +403,50 @@ export default function ChatsContent() {
   }, [ltv]);
 
   useEffect(() => {
+    let active = true;
+
+    async function fetchLiveChats() {
+      const { data } = await supabase
+        .from('chats')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (active && data) {
+        setLiveChats(data as SupabaseChat[]);
+      }
+    }
+
+    fetchLiveChats();
+
+    const channel = supabase
+      .channel('dashboard-live-chats')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chats' }, () => {
+        fetchLiveChats();
+      })
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeLiveChat) return;
+    const next = liveChats.find((chat) => chat.id === activeLiveChat.id) ?? null;
+    if (next) setActiveLiveChat(next);
+  }, [activeLiveChat, liveChats]);
+
+  useEffect(() => {
+    if (inboxMode !== 'live' || liveChats.length === 0) return;
+    if (selected?.source === 'live' && selectedLiveChat) return;
+
+    const nextLiveChat = selectedLiveChat ?? liveChats[0];
+    setActiveLiveChat(nextLiveChat);
+    setActiveContact(nextLiveChat.id);
+  }, [inboxMode, liveChats, selected?.source, selectedLiveChat]);
+
+  useEffect(() => {
     if (!activeContact || !selected || invMissing) { setTxns([]); return; }
     setTxLoading(true);
     (async () => {
@@ -339,12 +464,64 @@ export default function ChatsContent() {
     if (!activeContact) return;
     setMsgsByContact(prev => prev[activeContact] ? prev : { ...prev, [activeContact]: [] });
   }, [activeContact]);
+
+  useEffect(() => {
+    if (!activeContact || selected?.source !== 'live') return;
+
+    let active = true;
+
+    const fetchLiveMessages = async () => {
+      const { data } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('chat_id', activeContact)
+        .order('created_at', { ascending: true });
+
+      if (!active || !data) return;
+
+      setMsgsByContact(prev => ({
+        ...prev,
+        [activeContact]: (data as Array<{ id: string; sender: 'business' | 'customer'; body: string; created_at: string }>),
+      }));
+    };
+
+    fetchLiveMessages();
+
+    const channel = supabase
+      .channel(`dashboard-live-messages-${activeContact}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'messages', filter: `chat_id=eq.${activeContact}` },
+        () => {
+          fetchLiveMessages();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+  }, [activeContact, selected?.source]);
+
   useEffect(() => () => { if (replyTimer.current) window.clearTimeout(replyTimer.current); }, []);
 
   function togglePanel(key: PanelKey) { setPanels(prev => ({ ...prev, [key]: !prev[key] })); }
 
   function selectChat(id: string) {
+    const match = allConversations.find((conversation) => conversation.id === id);
     setActiveContact(id);
+    if (match?.source === 'live') {
+      const liveMatch = liveChats.find((chat) => chat.id === id) ?? null;
+      setActiveLiveChat(liveMatch);
+    }
+    setPanels(prev => ({ ...prev, thread: true, context: true }));
+    setMobileScreen('thread');
+  }
+  function selectLiveChat(chat: SupabaseChat) {
+    setInboxMode('live');
+    setActiveLiveChat(chat);
+    setActiveContact(chat.id);
     setPanels(prev => ({ ...prev, thread: true, context: true }));
     setMobileScreen('thread');
   }
@@ -380,10 +557,16 @@ export default function ChatsContent() {
   }
   function handleSend() {
     if (!activeContact) return;
+    if (selected?.source === 'live') return;
     const t = input.trim(); if (!t) return;
     appendMsg(t, 'business', activeContact); setInput(''); scheduleReply(t, activeContact);
   }
-  function handleTool(text: string) { if (activeContact) { appendMsg(text, 'business', activeContact); scheduleReply(text, activeContact); } }
+  function handleTool(text: string) {
+    if (activeContact && selected?.source !== 'live') {
+      appendMsg(text, 'business', activeContact);
+      scheduleReply(text, activeContact);
+    }
+  }
   async function handleAi() {
     if (!activeContact || curMsgs.length === 0) return;
     setAiLoading(true); setAiExtraction(null);
@@ -397,9 +580,10 @@ export default function ChatsContent() {
     } catch (e) { console.error(e); } finally { setAiLoading(false); }
   }
 
-  const filteredChats = MOCK_CONVERSATIONS.filter(c =>
+  const filteredChats = allConversations.filter(c =>
     c.customerName.toLowerCase().includes(listSearch.toLowerCase()) ||
-    c.messages.some(m => m.text.toLowerCase().includes(listSearch.toLowerCase()))
+    c.messages.some(m => m.text.toLowerCase().includes(listSearch.toLowerCase())) ||
+    c.channel.toLowerCase().includes(listSearch.toLowerCase())
   );
   const filteredCustomers = DIR_CUSTOMERS.filter(c =>
     c.name.toLowerCase().includes(directorySearch.toLowerCase()) || c.contact.toLowerCase().includes(directorySearch.toLowerCase())
@@ -415,6 +599,44 @@ export default function ChatsContent() {
   /* ================================================================ */
 
   function renderInboxList(mobile = false) {
+    const viewSwitch = liveChats.length > 0 ? (
+      <div className="mb-2.5 flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => setInboxMode('mixed')}
+          className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${inboxMode === 'mixed' ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}
+        >
+          Mixed Inbox
+        </button>
+        <button
+          type="button"
+          onClick={() => setInboxMode('live')}
+          className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${inboxMode === 'live' ? 'bg-[#2ea66f] text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}
+        >
+          Live Inbox
+        </button>
+      </div>
+    ) : null;
+
+    if (inboxMode === 'live' && liveChats.length > 0) {
+      return (
+        <div className="flex h-full min-h-0 flex-col bg-white">
+          <div className={`px-4 ${mobile ? 'pt-3 pb-2' : 'pt-4 pb-3'}`}>
+            {!mobile && (
+              <div className="mb-3">
+                <h2 className="text-sm font-bold tracking-tight text-zinc-900">Live Inbox</h2>
+                <p className="mt-0.5 text-[11px] text-zinc-500">Real Supabase conversations for supported channels.</p>
+              </div>
+            )}
+            {viewSwitch}
+          </div>
+          <div className="min-h-0 flex-1">
+            <ChatList activeChat={selectedLiveChat} onSelectChat={selectLiveChat} showLiveBadge />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <>
         <div className={`px-4 ${mobile ? 'pt-3 pb-2' : 'pt-4 pb-3'}`}>
@@ -422,7 +644,7 @@ export default function ChatsContent() {
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h2 className="text-sm font-bold tracking-tight text-zinc-900">Inbox</h2>
-                <p className="text-[11px] text-zinc-500 mt-0.5">{MOCK_CONVERSATIONS.length} conversations</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{allConversations.length} conversations</p>
               </div>
               <div className="flex items-center gap-1">
                 <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-[#795bf4]/10 hover:text-[#795bf4] transition"><Hash size={14} /></button>
@@ -434,6 +656,7 @@ export default function ChatsContent() {
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input value={listSearch} onChange={e => setListSearch(e.target.value)} placeholder="Search conversations…" className="w-full h-9 rounded-lg border border-zinc-200 bg-zinc-50 pl-8 pr-3 text-xs text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-[#795bf4] focus:bg-white transition" />
           </div>
+          {viewSwitch}
           <div className="flex items-center justify-between gap-2 mt-2.5">
             <div className="flex gap-1.5">
               {['All', 'Unread', 'Mine'].map(f => (
@@ -441,7 +664,7 @@ export default function ChatsContent() {
               ))}
             </div>
             {mobile && (
-              <span className="text-[10px] text-zinc-400 flex-shrink-0">{MOCK_CONVERSATIONS.length} chats</span>
+              <span className="text-[10px] text-zinc-400 flex-shrink-0">{allConversations.length} chats</span>
             )}
           </div>
         </div>
@@ -757,6 +980,21 @@ export default function ChatsContent() {
         </div>
       );
     }
+
+    if (selectedLiveChat && isLiveConversation) {
+      return (
+        <ChatWindow
+          activeChat={selectedLiveChat}
+          canSend={canSendLiveChat}
+          readOnlyReason={
+            canSendLiveChat
+              ? 'Sending is available for this live conversation.'
+              : 'This live conversation is view-only here because the existing sender is WhatsApp-only.'
+          }
+        />
+      );
+    }
+
     return (
       <div className="h-full flex flex-col">
         <div className="flex-shrink-0 flex items-center gap-2 px-3 sm:px-4 py-3 border-b border-zinc-200 bg-white">
@@ -794,7 +1032,7 @@ export default function ChatsContent() {
           <div className="flex gap-2 whitespace-nowrap">
             {TOOL_ACTIONS.map(tool => {
               const TI = tool.Icon;
-              return <button key={tool.label} onClick={() => handleTool(tool.text)} className="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-[#795bf4]/10 hover:border-[#795bf4]/20 hover:text-[#795bf4] active:bg-[#795bf4]/15 transition-colors"><TI size={13} />{tool.label}</button>;
+              return <button key={tool.label} onClick={() => handleTool(tool.text)} disabled={isLiveConversation} className="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-[#795bf4]/10 hover:border-[#795bf4]/20 hover:text-[#795bf4] active:bg-[#795bf4]/15 transition-colors disabled:cursor-not-allowed disabled:opacity-40"><TI size={13} />{tool.label}</button>;
             })}
           </div>
         </div>
@@ -815,11 +1053,14 @@ export default function ChatsContent() {
           <div ref={bottomRef} />
         </div>
         <div className="flex-shrink-0 border-t border-zinc-200 bg-white px-3 sm:px-4 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+          {isLiveConversation && (
+            <p className="mb-2 text-[11px] text-zinc-500">This conversation is live data from Supabase and is shown read-only in this mixed demo inbox.</p>
+          )}
           <div className="flex items-center gap-2 rounded-full bg-zinc-100 border border-zinc-200 px-4 py-2 focus-within:border-[#795bf4] focus-within:bg-white transition-colors">
-            <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0"><Paperclip size={16} /></button>
-            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} placeholder="Type a message…" className="flex-1 bg-transparent text-sm text-zinc-800 outline-none placeholder:text-zinc-400 min-w-0" />
-            <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0"><Smile size={16} /></button>
-            <button onClick={handleSend} disabled={!input.trim()} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#795bf4] text-white transition hover:bg-[#6847ef] disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"><ArrowRight size={15} /></button>
+            <button disabled={isLiveConversation} className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0 disabled:cursor-not-allowed disabled:opacity-40"><Paperclip size={16} /></button>
+            <input value={input} disabled={isLiveConversation} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} placeholder={isLiveConversation ? 'Live conversations are read-only here for now' : 'Type a message…'} className="flex-1 bg-transparent text-sm text-zinc-800 outline-none placeholder:text-zinc-400 min-w-0 disabled:cursor-not-allowed" />
+            <button disabled={isLiveConversation} className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0 disabled:cursor-not-allowed disabled:opacity-40"><Smile size={16} /></button>
+            <button onClick={handleSend} disabled={isLiveConversation || !input.trim()} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#795bf4] text-white transition hover:bg-[#6847ef] disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"><ArrowRight size={15} /></button>
           </div>
         </div>
       </div>

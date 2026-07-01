@@ -110,6 +110,7 @@ type ChannelStatus = {
   whatsapp: boolean;
   instagram: boolean;
   facebook: boolean;
+  tiktok: boolean;
 };
 
 type IntegrationCard = {
@@ -125,6 +126,11 @@ type IntegrationCard = {
   isReal?: boolean; // backed by actual OAuth logic, vs. mock display-only card
 };
 
+type ChannelConfigDetails = {
+  status: string;
+  metadata?: Record<string, unknown> | null;
+};
+
 export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -132,30 +138,50 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
   const [activeChannel, setActiveChannel] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [channelDetails, setChannelDetails] = useState<Record<string, ChannelConfigDetails>>({});
   const [channelStatus, setChannelStatus] = useState<ChannelStatus>({
     whatsapp: Boolean(business.whatsapp_phone_number_id),
     instagram: false,
     facebook: false,
+    tiktok: false,
   });
 
   useEffect(() => {
     async function fetchChannelConfigs() {
       const { data } = await supabase
         .from('channel_configs')
-        .select('channel, status')
+        .select('channel, status, metadata')
         .eq('business_id', business.id);
 
       if (data) {
         const updated: Partial<ChannelStatus> = {};
-        data.forEach((row: { channel: string; status: string }) => {
+        const details: Record<string, ChannelConfigDetails> = {};
+        data.forEach((row: { channel: string; status: string; metadata?: Record<string, unknown> | null }) => {
           if (row.channel === 'instagram') updated.instagram = row.status === 'connected';
           if (row.channel === 'facebook') updated.facebook = row.status === 'connected';
+          if (row.channel === 'tiktok') updated.tiktok = row.status === 'connected';
+          details[row.channel] = {
+            status: row.status,
+            metadata: row.metadata ?? null,
+          };
         });
         setChannelStatus(prev => ({ ...prev, ...updated }));
+        setChannelDetails(details);
       }
     }
     fetchChannelConfigs();
   }, [business.id]);
+
+  const tiktokMetadata = channelDetails.tiktok?.metadata ?? null;
+  const tiktokCreator = typeof tiktokMetadata?.creator === 'object' && tiktokMetadata.creator !== null
+    ? (tiktokMetadata.creator as Record<string, unknown>)
+    : null;
+  const tiktokDisplayName =
+    (typeof tiktokMetadata?.display_name === 'string' && tiktokMetadata.display_name) ||
+    (typeof tiktokCreator?.nickname === 'string' && tiktokCreator.nickname) ||
+    '';
+  const tiktokUsername = typeof tiktokMetadata?.username === 'string' ? tiktokMetadata.username.replace(/^@/, '') : '';
+  const tiktokVerified = tiktokCreator?.isVerified === true;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -311,10 +337,16 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     window.location.href = url;
   };
 
+  const handleTikTokConnect = () => {
+    setError('');
+    setSuccess('');
+    setLoading('tiktok');
+    window.location.href = `/api/tiktok/connect?business_id=${encodeURIComponent(business.id)}`;
+  };
+
     /* ---------------- CONNECTED GRID ----------------
-      Real channels (Facebook, WhatsApp, Instagram) use the actual Meta OAuth handlers above,
-      same as the original implementation. TikTok and Gmail remain display-only mock cards
-      since there's no backend for them yet. Google Business Profile is also display-only for now. */
+      Real channels (Facebook, WhatsApp, Instagram, TikTok) use the actual connection handlers above.
+      Gmail remains display-only and Google Business Profile is still display-only for now. */
   const connectedCards: IntegrationCard[] = [
     {
       id: 'facebook',
@@ -332,11 +364,11 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       name: 'TikTok',
       Icon: TikTokIcon,
       description: 'Sync direct customer messages and track community comment engagement directly inside your inbox.',
-      isConnected: true,
+      isConnected: channelStatus.tiktok,
       mappedFields: 45,
       syncFrequency: '20m',
-      onConnect: null,
-      isReal: false,
+      onConnect: handleTikTokConnect,
+      isReal: true,
     },
     {
       id: 'google-business-profile',
@@ -486,6 +518,16 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
                         <div>
                           <h4 className="text-base font-bold text-zinc-900 leading-tight">{card.name}</h4>
                           <p className="text-sm text-zinc-500 leading-snug mt-0.5 max-w-[200px]">{card.description}</p>
+                          {card.id === 'tiktok' && channelStatus.tiktok && (tiktokDisplayName || tiktokUsername) && (
+                            <div className="mt-2 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2">
+                              <p className="text-[11px] font-semibold text-zinc-900">
+                                {tiktokDisplayName || 'Connected creator'}
+                                {tiktokVerified && <span className="ml-1 text-[#2ea66f]">Verified</span>}
+                              </p>
+                              {tiktokUsername && <p className="text-[11px] text-zinc-500">@{tiktokUsername}</p>}
+                              <p className="mt-1 text-[10px] text-zinc-400">Connected through Zernio. TikTok inbox sync is not exposed by the provider.</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       {card.hasIssue && <AlertTriangle className="w-6 h-6 text-orange-500 shrink-0" />}

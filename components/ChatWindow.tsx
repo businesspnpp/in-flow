@@ -6,8 +6,14 @@ import { ChatMessageSchema } from "@/lib/validation";
 import { Send, MessageSquare, AlertCircle } from "lucide-react";
 interface ChatWindowProps {
   activeChat: Chat | null;
+  canSend?: boolean;
+  readOnlyReason?: string;
 }
-export default function ChatWindow({ activeChat }: ChatWindowProps) {
+export default function ChatWindow({
+  activeChat,
+  canSend = true,
+  readOnlyReason = "Replying is unavailable for this live conversation.",
+}: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -52,8 +58,12 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  
+  function formatContactLabel(id: string) {
+    return /^\+?\d{7,}$/.test(id) ? `+${id.replace(/^\+/, "")}` : id;
+  }
   async function sendMessage() {
-    if (!input.trim() || !activeChat || sending) return;
+    if (!input.trim() || !activeChat || sending || !canSend) return;
     setError("");
     try {
       const sanitizedBody = sanitizeInput(input.trim(), 4096);
@@ -156,7 +166,7 @@ export default function ChatWindow({ activeChat }: ChatWindowProps) {
             {activeChat.name ?? activeChat.id}{" "}
           </p>{" "}
           <p className="text-[11px] text-zinc-500 truncate max-w-[180px]">
-            +{activeChat.id}
+            {formatContactLabel(activeChat.id)}
           </p>{" "}
         </div>{" "}
       </div>{" "}
