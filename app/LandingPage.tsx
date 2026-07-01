@@ -53,7 +53,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login?mode=signup"
-              className="rounded-full bg-[#795bf4] px-5 py-2.5 text-[14px] font-bold text-white shadow-sm transition-all hover:bg-[#6847ef] hover:shadow"
+              className="rounded-lg bg-[#795bf4] px-5 py-2.5 text-[14px] font-bold text-white transition-colors hover:bg-[#6847ef]"
             >
               Try for free
             </Link>
@@ -63,9 +63,9 @@ export default function LandingPage() {
 
       <main>
         <section className="relative overflow-hidden bg-[#795bf4] text-white">
-          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-12 lg:items-center lg:py-32">
-            <div className="space-y-6 lg:col-span-7">
-              <span className="rounded-full border border-[#66dba3]/20 bg-[#66dba3]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#66dba3]">
+          <div className="mx-auto grid max-w-7xl gap-8 px-6 py-24 lg:grid-cols-12 lg:items-center lg:py-28">
+            <div className="space-y-5 lg:col-span-7">
+              <span className="rounded-lg border border-[#66dba3]/30 bg-[#66dba3]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#66dba3]">
                 AI-POWERED CUSTOMER OPS PLATFORM
               </span>
               <h1 className="text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">Run your customer operations from one dock.</h1>
@@ -74,7 +74,7 @@ export default function LandingPage() {
               </p>
 
               <div className="pt-4">
-                <div className="flex max-w-md flex-col gap-3 rounded-2xl bg-white p-1.5 shadow-xl sm:flex-row">
+                <div className="flex max-w-md flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-2 shadow-[0_1px_3px_rgba(0,0,0,0.08)] sm:flex-row">
                   <input
                     type="email"
                     placeholder="Enter work email"
@@ -82,7 +82,7 @@ export default function LandingPage() {
                   />
                   <Link
                     href="/login?mode=signup"
-                    className="whitespace-nowrap rounded-xl bg-[#66dba3] px-6 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-[#55c490]"
+                    className="whitespace-nowrap rounded-lg bg-[#66dba3] px-6 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-[#55c490]"
                   >
                     Try for free
                   </Link>
@@ -92,22 +92,21 @@ export default function LandingPage() {
             </div>
 
             <div className="relative flex justify-center lg:col-span-5">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#66dba3]/20 to-transparent blur-3xl" />
-              <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-md">
-                <div className="space-y-4 rounded-2xl bg-white p-5 text-zinc-900 shadow-xl">
+              <div className="relative w-full max-w-md rounded-xl border border-zinc-200 bg-zinc-50 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+                <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 text-zinc-900 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                   <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#66dba3]" />
+                      <div className="h-2.5 w-2.5 rounded-sm bg-[#66dba3]" />
                       <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">dock workspace</span>
                     </div>
                     <span className="text-xs font-medium text-zinc-400">Active</span>
                   </div>
                   <div className="space-y-3 text-sm">
-                    <div className="max-w-[85%] rounded-2xl border border-zinc-100 bg-zinc-50 p-3.5">
+                    <div className="max-w-[85%] rounded-lg border border-zinc-200 bg-zinc-50 p-3.5">
                       <p className="mb-0.5 text-[11px] font-bold uppercase tracking-tight text-zinc-400">dock assistant</p>
                       <p className="leading-relaxed text-zinc-700">Your customer asked for tomorrow at 2 PM. Should I confirm and send the deposit link?</p>
                     </div>
-                    <div className="ml-auto max-w-[85%] rounded-2xl border border-[#795bf4]/10 bg-[#795bf4]/10 p-3.5 text-right">
+                    <div className="ml-auto max-w-[85%] rounded-lg border border-[#795bf4]/20 bg-[#795bf4]/10 p-3.5 text-right">
                       <p className="mb-0.5 text-[11px] font-bold uppercase tracking-tight text-[#795bf4]">Ava</p>
                       <p className="leading-relaxed text-zinc-800">Yes please. Send the quote and payment link so we can lock it in.</p>
                     </div>
@@ -134,9 +133,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-            <div className="space-y-6">
+        <section className="mx-auto max-w-7xl px-6 py-24 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <div className="space-y-5">
               <h2 className="text-4xl font-black leading-[1.05] tracking-tight text-zinc-950 md:text-5xl lg:text-6xl">
                 AI that gets better with every customer interaction.
               </h2>
@@ -155,13 +154,13 @@ export default function LandingPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-3 rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+              <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                 <span className="block text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                   Every message becomes a learning signal
                 </span>
-                <div className="flex gap-3 rounded-xl border border-zinc-100 bg-zinc-50 p-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple-100 text-[#795bf4]">
-                    <MessageSquare size={16} />
+                <div className="flex gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+                    <MessageSquare size={16} strokeWidth={1.5} />
                   </div>
                   <div className="text-sm">
                     <p className="font-bold text-zinc-900">&quot;Can you invoice and reserve me for Friday?&quot;</p>
@@ -170,9 +169,9 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+              <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                 <span className="block text-[11px] font-extrabold uppercase tracking-wider text-[#66dba3]">Dock turns signals into actions</span>
-                <div className="rounded-xl border border-[#66dba3]/20 bg-[#66dba3]/5 p-4">
+                <div className="rounded-lg border border-[#66dba3]/25 bg-[#66dba3]/10 p-4">
                   <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Action identified</p>
                   <p className="mt-0.5 text-sm font-bold text-zinc-900">Send invoice + confirm booking</p>
                   <div className="mt-3 flex items-center justify-between border-t border-zinc-200/60 pt-3 text-xs text-zinc-500">
@@ -185,20 +184,22 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="border-y border-zinc-200/60 bg-zinc-50 py-20">
+        <section className="border-y border-zinc-200 bg-zinc-50 py-24">
           <div className="mx-auto max-w-7xl px-6">
             <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
               <div className="lg:col-span-7">
-                <div className="max-w-xl rounded-2xl border border-zinc-200 bg-white p-6 shadow-md">
+                <div className="max-w-xl rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Sparkles size={16} className="text-[#66dba3]" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+                        <Sparkles size={16} strokeWidth={1.5} />
+                      </div>
                       <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Live customer resolution</span>
                     </div>
-                    <span className="rounded-full bg-[#66dba3]/10 px-2.5 py-0.5 text-xs font-bold text-[#55c490]">Success</span>
+                    <span className="rounded-lg bg-[#66dba3]/10 px-2.5 py-0.5 text-xs font-bold text-[#55c490]">Success</span>
                   </div>
                   <p className="text-sm font-bold text-zinc-900">&quot;Can I pay now and lock this time slot?&quot;</p>
-                  <p className="mt-2.5 rounded-xl border border-zinc-100 bg-zinc-50 p-3.5 text-sm leading-relaxed text-zinc-600">
+                  <p className="mt-2.5 rounded-lg border border-zinc-200 bg-zinc-50 p-3.5 text-sm leading-relaxed text-zinc-600">
                     <strong>dock:</strong> Yes. I sent your payment link and held Friday at 2 PM for the next 30 minutes.
                   </p>
                 </div>
@@ -229,9 +230,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-r from-zinc-900 to-zinc-950 p-8 text-white shadow-xl md:p-12">
-            <div className="absolute -bottom-16 -right-16 h-96 w-96 rounded-full bg-[#795bf4]/10 blur-3xl" />
+        <section className="mx-auto max-w-7xl px-6 py-24">
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-900 p-8 text-white shadow-[0_1px_3px_rgba(0,0,0,0.08)] md:p-10">
             <div className="relative z-10 max-w-xl space-y-4">
               <span className="text-xs font-bold uppercase tracking-widest text-[#66dba3]">dock spotlight 2026</span>
               <h3 className="text-3xl font-black leading-tight tracking-tight md:text-4xl">
@@ -243,16 +243,16 @@ export default function LandingPage() {
               <div className="pt-2">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-zinc-100"
+                  className="flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-zinc-100"
                 >
-                  Watch now <ArrowRight size={14} />
+                  Watch now <ArrowRight size={14} strokeWidth={1.5} />
                 </Link>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl space-y-12 px-6 py-16 lg:py-24">
+        <section className="mx-auto max-w-7xl space-y-10 px-6 py-20 lg:py-24">
           <div className="max-w-3xl space-y-4">
             <h2 className="text-3xl font-black leading-[1.1] tracking-tight text-zinc-950 md:text-5xl">
               Self-improving operations across Dock-Streams and every customer channel
@@ -262,11 +262,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="flex flex-col justify-between rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-sm transition-all hover:border-zinc-300">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-[#795bf4]">
-                  <MessageSquare size={22} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+                  <MessageSquare size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Build Dock-Streams workflows</h3>
                 <p className="text-sm leading-relaxed text-zinc-500">
@@ -280,10 +280,10 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-sm transition-all hover:border-zinc-300">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#66dba3]/10 text-[#55c490]">
-                  <Sparkles size={22} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+                  <Sparkles size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Equip every teammate</h3>
                 <p className="text-sm leading-relaxed text-zinc-500">
@@ -299,10 +299,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-[48px] bg-[#66dba3] py-24 text-zinc-950">
+        <section className="relative overflow-hidden rounded-xl border border-zinc-200 bg-[#66dba3] py-24 text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <div className="relative z-10 mx-auto max-w-7xl px-6">
             <div className="max-w-3xl space-y-6">
-              <span className="rounded-full border border-zinc-900/20 bg-white/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-zinc-900">
+              <span className="rounded-lg border border-zinc-900/20 bg-white/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-zinc-900">
                 dock workflows
               </span>
               <h2 className="text-4xl font-black leading-[1.05] tracking-tight md:text-6xl">AI workflows that improve on any channel.</h2>
@@ -310,16 +310,16 @@ export default function LandingPage() {
                 Every reply, booking, and payment teaches Dock what good outcomes look like so your team gets faster over time.
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Link href="/login?mode=signup" className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
+                <Link href="/login?mode=signup" className="rounded-lg bg-zinc-950 px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
                   Request a demo
                 </Link>
-                <Link href="/pricing" className="rounded-xl border border-zinc-900 bg-white/70 px-6 py-3.5 text-sm font-bold text-zinc-900 transition-colors hover:bg-white">
+                <Link href="/pricing" className="rounded-lg border border-zinc-900 bg-white/70 px-6 py-3.5 text-sm font-bold text-zinc-900 transition-colors hover:bg-white">
                   Learn more
                 </Link>
               </div>
             </div>
 
-            <div className="mt-24 grid gap-8 border-t border-zinc-900/20 pt-16 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-20 grid gap-6 border-t border-zinc-900/20 pt-12 sm:grid-cols-2 lg:grid-cols-5">
               <div className="space-y-2">
                 <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
                   01
@@ -377,8 +377,8 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div className="flex flex-col justify-between space-y-6 rounded-3xl border border-zinc-200/60 bg-zinc-50 p-8">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="flex flex-col justify-between space-y-6 rounded-xl border border-zinc-200 bg-zinc-50 p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                 <div className="space-y-3">
                   <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Frontline Teams</h3>
                   <p className="text-sm leading-relaxed text-zinc-500">
@@ -386,16 +386,16 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-4 pt-2">
-                  <Link href="/login?mode=signup" className="rounded-xl bg-[#795bf4] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#6847ef]">
+                  <Link href="/login?mode=signup" className="rounded-lg bg-[#795bf4] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#6847ef]">
                     Try for free
                   </Link>
-                  <Link href="/dashboard/tools" className="rounded-xl border border-zinc-200 bg-white px-5 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50">
+                  <Link href="/dashboard/tools" className="rounded-lg border border-zinc-200 bg-white px-5 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50">
                     Explore tools
                   </Link>
                 </div>
               </div>
 
-              <div className="flex flex-col justify-between space-y-6 rounded-3xl border border-zinc-200/60 bg-zinc-50 p-8">
+              <div className="flex flex-col justify-between space-y-6 rounded-xl border border-zinc-200 bg-zinc-50 p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                 <div className="space-y-3">
                   <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Ops & Leadership</h3>
                   <p className="text-sm leading-relaxed text-zinc-500">
@@ -403,10 +403,10 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-4 pt-2">
-                  <Link href="/pricing" className="rounded-xl bg-[#795bf4] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#6847ef]">
+                  <Link href="/pricing" className="rounded-lg bg-[#795bf4] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#6847ef]">
                     View pricing
                   </Link>
-                  <Link href="/dashboard" className="rounded-xl border border-zinc-200 bg-white px-5 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50">
+                  <Link href="/dashboard" className="rounded-lg border border-zinc-200 bg-white px-5 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50">
                     Learn more
                   </Link>
                 </div>
@@ -432,13 +432,13 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex justify-center lg:col-span-5">
-              <div className="flex h-80 w-64 flex-col justify-between rounded-2xl border border-zinc-700 bg-zinc-800 p-6 shadow-2xl">
-                <div className="h-6 w-16 animate-pulse rounded bg-zinc-700" />
+              <div className="flex h-80 w-64 flex-col justify-between rounded-xl border border-zinc-700 bg-zinc-800 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
+                <div className="h-6 w-16 rounded bg-zinc-700" />
                 <div className="space-y-2">
                   <div className="h-4 w-full rounded bg-zinc-700" />
                   <div className="h-4 w-3/4 rounded bg-zinc-700" />
                 </div>
-                <div className="flex h-10 w-full items-center justify-center rounded-xl bg-[#795bf4] text-xs font-bold">Dock 2026</div>
+                <div className="flex h-10 w-full items-center justify-center rounded-lg bg-[#795bf4] text-xs font-bold">Dock 2026</div>
               </div>
             </div>
           </div>
@@ -450,15 +450,15 @@ export default function LandingPage() {
             <p className="font-medium text-zinc-500">From local businesses to multi-location brands, Dock scales with your workflow.</p>
           </div>
 
-          <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 rounded-[32px] border border-zinc-200/80 bg-zinc-50 p-8 text-left shadow-sm md:flex-row md:p-12">
+          <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 rounded-xl border border-zinc-200 bg-zinc-50 p-8 text-left shadow-[0_1px_3px_rgba(0,0,0,0.08)] md:flex-row md:p-12">
             <div className="shrink-0 rounded-lg bg-zinc-950 px-4 py-2 text-xs font-black uppercase tracking-widest text-white">NOVA STUDIO</div>
             <div className="space-y-4">
               <blockquote className="text-xl font-medium leading-relaxed text-zinc-800">
                 &quot;We replaced five separate tools with Dock. Replies are faster, bookings are cleaner, and we collect deposits right in chat.&quot;
               </blockquote>
               <div className="flex items-center gap-3 pt-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 font-bold text-[#795bf4]">
-                  <User size={18} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 font-bold text-purple-600">
+                  <User size={18} strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-zinc-950">Tariq Mensah</p>
@@ -492,7 +492,7 @@ export default function LandingPage() {
             <p className="text-sm font-medium leading-relaxed text-zinc-500">
               Learn from tactical playbooks, growth examples, and workflow guides built for customer-facing teams.
             </p>
-            <div className="space-y-2 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
               <p className="text-5xl font-black tracking-tight text-[#795bf4]">51.5%</p>
               <p className="text-sm font-bold text-zinc-800">average automation rate</p>
               <p className="text-xs leading-relaxed text-zinc-400">Verified benchmarks from active teams within 30 days of setup.</p>
@@ -500,27 +500,27 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:col-span-8">
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-2">
                 <span className="block text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">FEATURED</span>
                 <h4 className="text-lg font-bold leading-snug text-zinc-950">How high-performing teams run customer ops in one place</h4>
               </div>
               <Link href="/dashboard" className="mt-6 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
-                Learn more <ArrowRight size={12} />
+                Learn more <ArrowRight size={12} strokeWidth={1.5} />
               </Link>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-2">
                 <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#795bf4]">REPORT</span>
                 <h4 className="text-lg font-bold leading-snug text-zinc-950">Customer Ops Trends 2026: Faster paths from Streams to payment</h4>
               </div>
               <Link href="/pricing" className="mt-6 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
-                Learn more <ArrowRight size={12} />
+                Learn more <ArrowRight size={12} strokeWidth={1.5} />
               </Link>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-2">
                 <div className="flex items-center gap-1 text-xl font-black text-[#55c490]">
                   6% <span className="text-xs font-normal font-bold text-zinc-400">Increase</span>
@@ -528,11 +528,11 @@ export default function LandingPage() {
                 <h4 className="text-base font-bold text-zinc-800">Quarter-over-quarter improvements in handled conversations</h4>
               </div>
               <Link href="/dashboard/chats" className="mt-4 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
-                Learn more <ArrowRight size={12} />
+                Learn more <ArrowRight size={12} strokeWidth={1.5} />
               </Link>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-2">
                 <div className="flex items-center gap-1 text-xl font-black text-[#55c490]">
                   2x <span className="text-xs font-normal font-bold text-zinc-400">Growth</span>
@@ -540,17 +540,17 @@ export default function LandingPage() {
                 <h4 className="text-base font-bold text-zinc-800">Increase in successful booking confirmations from conversation flows</h4>
               </div>
               <Link href="/dashboard/tools" className="mt-4 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
-                Learn more <ArrowRight size={12} />
+                Learn more <ArrowRight size={12} strokeWidth={1.5} />
               </Link>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300 sm:col-span-2">
+            <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300 sm:col-span-2">
               <div className="space-y-2">
                 <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#795bf4]">GUIDE</span>
                 <h4 className="text-lg font-bold text-zinc-950">The Dock playbook for modern customer operations</h4>
               </div>
               <Link href="/dashboard" className="mt-4 inline-flex items-center gap-0.5 text-xs font-bold text-[#795bf4] hover:underline">
-                Learn more <ArrowRight size={12} />
+                Learn more <ArrowRight size={12} strokeWidth={1.5} />
               </Link>
             </div>
           </div>
@@ -563,10 +563,10 @@ export default function LandingPage() {
               Choose the plan that fits your current volume, then scale as your conversation and conversion goals expand.
             </p>
             <div className="flex justify-center gap-4 pt-4">
-              <Link href="/pricing" className="rounded-xl bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+              <Link href="/pricing" className="rounded-lg bg-[#795bf4] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
                 See plans and pricing
               </Link>
-              <Link href="/login?mode=signup" className="rounded-xl border border-zinc-200 bg-white px-6 py-3 text-sm font-bold text-zinc-700 transition-colors hover:bg-zinc-50">
+              <Link href="/login?mode=signup" className="rounded-lg border border-zinc-200 bg-white px-6 py-3 text-sm font-bold text-zinc-700 transition-colors hover:bg-zinc-50">
                 Calculate your ROI
               </Link>
             </div>
@@ -577,10 +577,10 @@ export default function LandingPage() {
           <div className="relative z-10 mx-auto max-w-4xl space-y-6 px-6">
             <h2 className="text-4xl font-black tracking-tight md:text-6xl">Launch your first Dock stream today</h2>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <Link href="/login?mode=signup" className="rounded-xl bg-[#66dba3] px-8 py-4 text-sm font-bold text-zinc-950 shadow-lg transition-colors hover:bg-[#55c490]">
+              <Link href="/login?mode=signup" className="rounded-lg bg-[#66dba3] px-8 py-4 text-sm font-bold text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#55c490]">
                 Try for free
               </Link>
-              <Link href="/pricing" className="rounded-xl border border-zinc-700 bg-zinc-800 px-8 py-4 text-sm font-bold text-white transition-colors hover:bg-zinc-700">
+              <Link href="/pricing" className="rounded-lg border border-zinc-700 bg-zinc-800 px-8 py-4 text-sm font-bold text-white transition-colors hover:bg-zinc-700">
                 Get a demo
               </Link>
             </div>
