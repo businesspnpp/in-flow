@@ -60,30 +60,74 @@ export default function SettingsContent() {
         return;
       }
 
-      const { data, error: businessError } = await supabase
+      let businessRow: any = null;
+
+      const { data: byId, error: byIdError } = await supabase
         .from('businesses')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (businessError || !data) {
-        setError('No business profile was found for this account.');
-        return;
+      if (!byIdError && byId) {
+        businessRow = byId;
+      }
+
+      // Backward compatibility: older rows may not have used auth.user.id as businesses.id.
+      if (!businessRow && user.email) {
+        const { data: byEmail, error: byEmailError } = await supabase
+          .from('businesses')
+          .select('*')
+          .eq('email', user.email)
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .maybeSingle();
+
+        if (!byEmailError && byEmail) {
+          businessRow = byEmail;
+        }
+      }
+
+      // First-time bootstrap: create a minimal business profile so settings can be edited immediately.
+      if (!businessRow) {
+        const fallbackName = user.email
+          ? `${user.email.split('@')[0]} Business`
+          : 'My Business';
+
+        const { data: inserted, error: insertError } = await supabase
+          .from('businesses')
+          .insert({
+            id: user.id,
+            business_name: fallbackName,
+            categories: ['Other'],
+            address: 'Not set',
+            email: user.email ?? 'unknown@local.invalid',
+            whatsapp_number: '',
+            updated_at: new Date().toISOString(),
+          })
+          .select('*')
+          .single();
+
+        if (insertError || !inserted) {
+          setError(`Unable to create business profile automatically: ${insertError?.message ?? 'unknown error'}`);
+          return;
+        }
+
+        businessRow = inserted;
       }
 
       const mapped: SettingsProfile = {
-        business_name: data.business_name ?? '',
-        owner_name: data.owner_name ?? '',
-        email: data.email ?? '',
-        address: data.address ?? '',
-        whatsapp_number: data.whatsapp_number ?? '',
-        categories: Array.isArray(data.categories) ? data.categories.join(', ') : '',
-        timezone: data.timezone ?? 'Africa/Johannesburg',
-        currency: data.currency ?? 'ZAR',
-        booking_buffer_minutes: Number(data.booking_buffer_minutes ?? 15),
+        business_name: businessRow.business_name ?? '',
+        owner_name: businessRow.owner_name ?? '',
+        email: businessRow.email ?? '',
+        address: businessRow.address ?? '',
+        whatsapp_number: businessRow.whatsapp_number ?? '',
+        categories: Array.isArray(businessRow.categories) ? businessRow.categories.join(', ') : '',
+        timezone: businessRow.timezone ?? 'Africa/Johannesburg',
+        currency: businessRow.currency ?? 'ZAR',
+        booking_buffer_minutes: Number(businessRow.booking_buffer_minutes ?? 15),
       };
 
-      setBusinessId(data.id);
+      setBusinessId(businessRow.id);
       setProfile(mapped);
       setOriginalProfile(mapped);
     } catch {
