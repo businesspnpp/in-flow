@@ -2,6 +2,7 @@
 
 import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContext';
+import { readClientCache, writeClientCache } from '@/lib/clientCache';
 import { supabase } from '@/lib/supabase';
 
 type SettingsProfile = {
@@ -35,6 +36,17 @@ type TeamAccessSettings = {
   operators_count: number;
   pending_invites_count: number;
 };
+
+type SettingsCachePayload = {
+  businessId: string;
+  profile: SettingsProfile;
+  notifications: NotificationSettings;
+  security: SecuritySettings;
+  teamAccess: TeamAccessSettings;
+};
+
+const SETTINGS_CACHE_TTL_MS = 1000 * 60 * 10;
+const DASHBOARD_HOME_CACHE_KEY = 'inflow:dashboard-home';
 
 const initialProfile: SettingsProfile = {
   business_name: '',
@@ -86,6 +98,23 @@ export default function SettingsContent() {
   const [teamAccess, setTeamAccess] = useState<TeamAccessSettings>(initialTeamAccess);
   const [originalTeamAccess, setOriginalTeamAccess] = useState<TeamAccessSettings>(initialTeamAccess);
 
+  const buildSettingsCacheKey = useCallback((userId: string) => `inflow:settings:${userId}`, []);
+
+  const persistSettingsCache = useCallback(
+    (userId: string, payload: SettingsCachePayload) => {
+      writeClientCache(buildSettingsCacheKey(userId), payload, SETTINGS_CACHE_TTL_MS);
+      writeClientCache(
+        DASHBOARD_HOME_CACHE_KEY,
+        {
+          ownerName: payload.profile.owner_name,
+          logoUrl: payload.profile.logo_url,
+        },
+        SETTINGS_CACHE_TTL_MS
+      );
+    },
+    [buildSettingsCacheKey]
+  );
+
   const hasUnsavedChanges = useMemo(
     () =>
       JSON.stringify(profile) !== JSON.stringify(originalProfile) ||
@@ -118,6 +147,20 @@ export default function SettingsContent() {
       if (userError || !user) {
         setError('Unable to load account session. Please sign in again.');
         return;
+      }
+
+      const cached = readClientCache<SettingsCachePayload>(buildSettingsCacheKey(user.id));
+      if (cached) {
+        setBusinessId(cached.businessId);
+        setProfile(cached.profile);
+        setOriginalProfile(cached.profile);
+        setNotifications(cached.notifications);
+        setOriginalNotifications(cached.notifications);
+        setSecurity(cached.security);
+        setOriginalSecurity(cached.security);
+        setTeamAccess(cached.teamAccess);
+        setOriginalTeamAccess(cached.teamAccess);
+        setLoading(false);
       }
 
       let businessRow: any = null;
@@ -237,12 +280,20 @@ export default function SettingsContent() {
       };
       setTeamAccess(loadedTeam);
       setOriginalTeamAccess(loadedTeam);
+
+      persistSettingsCache(user.id, {
+        businessId: businessRow.id,
+        profile: mapped,
+        notifications: loadedNotifications,
+        security: loadedSecurity,
+        teamAccess: loadedTeam,
+      });
     } catch {
       setError('Unexpected error while loading business settings.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [buildSettingsCacheKey, persistSettingsCache]);
 
   const handleSave = useCallback(async () => {
     if (!businessId) {
@@ -358,13 +409,27 @@ export default function SettingsContent() {
       setOriginalNotifications(notifications);
       setOriginalSecurity(security);
       setOriginalTeamAccess(teamAccess);
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        persistSettingsCache(user.id, {
+          businessId,
+          profile: next,
+          notifications,
+          security,
+          teamAccess,
+        });
+      }
+
       setStatusMessage('Settings saved successfully.');
     } catch {
       setError('Unexpected error while saving settings.');
     } finally {
       setSaving(false);
     }
-  }, [businessId, notifications, profile, security, teamAccess]);
+  }, [businessId, notifications, persistSettingsCache, profile, security, teamAccess]);
 
   const handleLogoUpload = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -409,6 +474,23 @@ export default function SettingsContent() {
 
         setProfile((prev) => ({ ...prev, logo_url: logoUrl }));
         setOriginalProfile((prev) => ({ ...prev, logo_url: logoUrl }));
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          persistSettingsCache(user.id, {
+            businessId,
+            profile: {
+              ...profile,
+              logo_url: logoUrl,
+            },
+            notifications,
+            security,
+            teamAccess,
+          });
+        }
+
         setStatusMessage('Logo updated successfully.');
       } catch {
         setError('Unexpected error while uploading logo.');
@@ -417,7 +499,7 @@ export default function SettingsContent() {
         event.target.value = '';
       }
     },
-    [businessId]
+    [businessId, notifications, persistSettingsCache, profile, security, teamAccess]
   );
 
   useEffect(() => {

@@ -2,11 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { Calendar, Mail, RotateCcw } from 'lucide-react';
+import { readClientCache, writeClientCache } from '@/lib/clientCache';
 import { supabase } from '@/lib/supabase';
 
 type IconProps = { size?: number };
 type Channel = 'whatsapp' | 'instagram' | 'tiktok' | 'email';
 type Tone = 'blue' | 'orange' | 'rose';
+
+type DashboardHomeCachePayload = {
+  ownerName: string;
+  logoUrl: string;
+};
+
+const DASHBOARD_HOME_CACHE_KEY = 'inflow:dashboard-home';
+const DASHBOARD_HOME_CACHE_TTL_MS = 1000 * 60 * 10;
 
 function WhatsAppIcon({ size = 16 }: IconProps) {
   return (
@@ -114,6 +123,12 @@ export default function DashboardHomeContent() {
   useEffect(() => {
     let active = true;
 
+    const cached = readClientCache<DashboardHomeCachePayload>(DASHBOARD_HOME_CACHE_KEY);
+    if (cached && active) {
+      setOwnerName(cached.ownerName || '');
+      setLogoUrl(cached.logoUrl || '');
+    }
+
     const loadOwnerName = async () => {
       try {
         const {
@@ -123,6 +138,7 @@ export default function DashboardHomeContent() {
         if (!user) return;
 
         let resolvedName = '';
+        let resolvedLogo = '';
 
         const { data: byId } = await supabase
           .from('businesses')
@@ -134,6 +150,9 @@ export default function DashboardHomeContent() {
           resolvedName = byId.owner_name.trim();
         }
         const resolvedLogoById = typeof byId?.logo_url === 'string' ? byId.logo_url.trim() : '';
+        if (resolvedLogoById) {
+          resolvedLogo = resolvedLogoById;
+        }
         if (active && resolvedLogoById) {
           setLogoUrl(resolvedLogoById);
         }
@@ -153,6 +172,7 @@ export default function DashboardHomeContent() {
 
           const resolvedLogoByEmail = typeof byEmail?.logo_url === 'string' ? byEmail.logo_url.trim() : '';
           if (active && !resolvedLogoById && resolvedLogoByEmail) {
+            resolvedLogo = resolvedLogoByEmail;
             setLogoUrl(resolvedLogoByEmail);
           }
         }
@@ -161,7 +181,20 @@ export default function DashboardHomeContent() {
           resolvedName = user.email.split('@')[0];
         }
 
-        if (active) setOwnerName(resolvedName);
+        if (active) {
+          const fallbackLogo = cached?.logoUrl || '';
+          const nextLogo = resolvedLogo || fallbackLogo;
+          setOwnerName(resolvedName);
+          setLogoUrl(nextLogo);
+          writeClientCache(
+            DASHBOARD_HOME_CACHE_KEY,
+            {
+              ownerName: resolvedName,
+              logoUrl: nextLogo,
+            },
+            DASHBOARD_HOME_CACHE_TTL_MS
+          );
+        }
       } catch {
         if (active) setOwnerName('');
       }
