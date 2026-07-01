@@ -5,10 +5,7 @@ import {
   MessageSquare,
   Sparkles,
   User,
-  Shield,
   HelpCircle,
-  Layers,
-  Phone,
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -302,69 +299,69 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-t-[48px] bg-zinc-950 py-24 text-white">
+        <section className="relative overflow-hidden rounded-[48px] bg-[#66dba3] py-24 text-zinc-950">
           <div className="relative z-10 mx-auto max-w-7xl px-6">
             <div className="max-w-3xl space-y-6">
-              <span className="rounded-full border border-[#66dba3]/20 bg-[#66dba3]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#66dba3]">
-                dock intelligence <span className="ml-1 rounded bg-white px-1.5 py-0.5 text-[10px] font-black text-zinc-950">NEW</span>
+              <span className="rounded-full border border-zinc-900/20 bg-white/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-zinc-900">
+                dock workflows
               </span>
               <h2 className="text-4xl font-black leading-[1.05] tracking-tight md:text-6xl">AI workflows that improve on any channel.</h2>
-              <p className="text-lg leading-relaxed text-zinc-400">
+              <p className="text-lg leading-relaxed text-zinc-800">
                 Every reply, booking, and payment teaches Dock what good outcomes look like so your team gets faster over time.
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Link href="/login?mode=signup" className="rounded-xl bg-[#795bf4] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#6847ef]">
+                <Link href="/login?mode=signup" className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
                   Request a demo
                 </Link>
-                <Link href="/pricing" className="rounded-xl border border-zinc-800 bg-zinc-900 px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-zinc-800">
+                <Link href="/pricing" className="rounded-xl border border-zinc-900 bg-white/70 px-6 py-3.5 text-sm font-bold text-zinc-900 transition-colors hover:bg-white">
                   Learn more
                 </Link>
               </div>
             </div>
 
-            <div className="mt-24 grid gap-8 border-t border-zinc-800 pt-16 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-24 grid gap-8 border-t border-zinc-900/20 pt-16 sm:grid-cols-2 lg:grid-cols-5">
               <div className="space-y-2">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400">
-                  <Layers size={14} />
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
+                  01
                 </div>
-                <h4 className="text-sm font-bold text-white">Built for modern service teams</h4>
-                <p className="text-xs leading-relaxed text-zinc-400">
+                <h4 className="text-sm font-bold text-zinc-950">Built for modern service teams</h4>
+                <p className="text-xs leading-relaxed text-zinc-800">
                   Keep AI and human actions in one operational surface for cleaner handoffs and consistent outcomes.
                 </p>
               </div>
               <div className="space-y-2">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400">
-                  <MessageSquare size={14} />
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
+                  02
                 </div>
-                <h4 className="text-sm font-bold text-white">Handle volume without chaos</h4>
-                <p className="text-xs leading-relaxed text-zinc-400">
+                <h4 className="text-sm font-bold text-zinc-950">Handle volume without chaos</h4>
+                <p className="text-xs leading-relaxed text-zinc-800">
                   Auto-resolve repetitive customer requests while preserving the context your team needs for higher-value work.
                 </p>
               </div>
               <div className="space-y-2">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400">
-                  <Sparkles size={14} />
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
+                  03
                 </div>
-                <h4 className="text-sm font-bold text-white">Launch in minutes</h4>
-                <p className="text-xs leading-relaxed text-zinc-400">
+                <h4 className="text-sm font-bold text-zinc-950">Launch in minutes</h4>
+                <p className="text-xs leading-relaxed text-zinc-800">
                   Start with ready-to-run templates and adapt quickly as your process evolves.
                 </p>
               </div>
               <div className="space-y-2">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400">
-                  <Shield size={14} />
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
+                  04
                 </div>
-                <h4 className="text-sm font-bold text-white">Scale with confidence</h4>
-                <p className="text-xs leading-relaxed text-zinc-400">
+                <h4 className="text-sm font-bold text-zinc-950">Scale with confidence</h4>
+                <p className="text-xs leading-relaxed text-zinc-800">
                   Keep controls, approvals, and visibility as conversation volume grows.
                 </p>
               </div>
               <div className="space-y-2">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400">
-                  <Phone size={14} />
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-900/20 bg-white/50 text-xs font-black text-zinc-900">
+                  05
                 </div>
-                <h4 className="text-sm font-bold text-white">Expand beyond text channels</h4>
-                <p className="text-xs leading-relaxed text-zinc-400">
+                <h4 className="text-sm font-bold text-zinc-950">Expand beyond text channels</h4>
+                <p className="text-xs leading-relaxed text-zinc-800">
                   Extend your playbooks to voice and callback workflows when your team is ready.
                 </p>
               </div>
@@ -576,7 +573,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-b-[48px] bg-zinc-900 py-24 text-center text-white">
+        <section className="relative overflow-hidden bg-zinc-900 py-24 text-center text-white">
           <div className="relative z-10 mx-auto max-w-4xl space-y-6 px-6">
             <h2 className="text-4xl font-black tracking-tight md:text-6xl">Launch your first Dock workflow today</h2>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
