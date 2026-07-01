@@ -100,6 +100,10 @@ export default function LandingPage() {
               <div className="relative w-full max-w-md rounded-xl border border-zinc-200 bg-zinc-50 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                 <div className="mb-4 flex items-center justify-between border-b border-zinc-200 pb-3 px-2">
                   <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-zinc-200" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-zinc-200" />
+                    </div>
                     <span className="text-xs font-semibold text-zinc-500">Live Workspace Dashboard</span>
                   </div>
                   <span className="rounded-lg border border-zinc-200 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-700">
@@ -111,7 +115,7 @@ export default function LandingPage() {
                   <div className="rounded-lg border border-zinc-200 bg-white p-3.5">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5 text-xs font-bold text-zinc-700">
-                        <Inbox size={13} strokeWidth={1.5} className="text-zinc-600" /> WhatsApp Lead • Inbound
+                        <Inbox size={13} strokeWidth={1.5} className="text-[#795bf4]" /> WhatsApp Lead • Inbound
                       </span>
                       <span className="text-[10px] text-zinc-400">Just now</span>
                     </div>
@@ -122,30 +126,30 @@ export default function LandingPage() {
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="rounded-lg border border-zinc-200 bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                      <div className="flex items-center gap-2 text-zinc-700">
+                      <div className="flex items-center gap-2 text-[#43af7b]">
                         <CalendarCheck2 size={14} strokeWidth={1.5} />
                         <span className="text-xs font-bold">BookedIt Native</span>
                       </div>
                       <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500">Confirm slot and project onto chat stream automatically.</p>
-                      <button className="mt-2 w-full rounded-md border border-zinc-200 bg-zinc-50 py-1 text-[11px] font-bold text-zinc-700 transition-colors hover:bg-zinc-100">
+                      <button className="mt-2 w-full rounded-md border border-[#66dba3]/25 bg-[#66dba3]/10 py-1 text-[11px] font-bold text-[#43af7b] transition-colors hover:bg-[#66dba3]/20">
                         Propose Time
                       </button>
                     </div>
 
                     <div className="rounded-lg border border-zinc-200 bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                      <div className="flex items-center gap-2 text-zinc-700">
+                      <div className="flex items-center gap-2 text-[#795bf4]">
                         <CreditCard size={14} strokeWidth={1.5} />
                         <span className="text-xs font-bold">PayNow Engine</span>
                       </div>
                       <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500">Generate instantly protected billing tokens inside conversation feed.</p>
-                      <button className="mt-2 w-full rounded-md border border-zinc-200 bg-zinc-50 py-1 text-[11px] font-bold text-zinc-700 transition-colors hover:bg-zinc-100">
+                      <button className="mt-2 w-full rounded-md border border-[#795bf4]/20 bg-[#795bf4]/10 py-1 text-[11px] font-bold text-[#795bf4] transition-colors hover:bg-[#795bf4]/15">
                         Request Payment
                       </button>
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-zinc-200 bg-white p-3.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">System Integration Feed</p>
+                  <div className="rounded-lg border border-[#66dba3]/30 bg-[#66dba3]/10 p-3.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#43af7b]">System Integration Feed</p>
                     <p className="mt-1 text-xs font-medium text-zinc-700">
                       One core workspace. No platform jumping, zero lost conversions, clean automated triggers.
                     </p>
