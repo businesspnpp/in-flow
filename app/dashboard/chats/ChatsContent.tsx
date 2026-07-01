@@ -82,18 +82,34 @@ function InboxChannelIcon({ channel }: { channel: string }) {
   if (channel === 'Live Chat') return <MessageSquare size={12} className="text-[#2ea66f]" />;
   if (channel === 'Email') return <Mail size={12} className="text-[#795bf4]" />;
   if (channel === 'SMS') return <MessageSquare size={12} className="text-slate-600" />;
-  if (channel === 'Facebook Business') {
+  if (channel === 'Facebook' || channel === 'Facebook Business') {
     return <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">f</span>;
   }
+  if (channel === 'TikTok') return <TikTokIcon size={14} />;
   return <MessageSquare size={12} className="text-zinc-500" />;
+}
+
+function getLiveChannelLabel(chatId: string) {
+  const prefix = chatId.split(':')[0]?.toLowerCase();
+  if (prefix === 'whatsapp') return 'WhatsApp';
+  if (prefix === 'instagram') return 'Instagram';
+  if (prefix === 'facebook') return 'Facebook';
+  if (prefix === 'tiktok') return 'TikTok';
+  return 'Live Chat';
+}
+
+function normalizeLiveMessage(message: string | null | undefined) {
+  if (!message) return 'Live conversation synced from Supabase.';
+  const cleaned = message.replace(/^\[(WHATSAPP|INSTAGRAM|FACEBOOK|TIKTOK|LIVE CHAT)\]\s*/i, '').trim();
+  return cleaned || message;
 }
 
 /* ================================================================== */
 /* Mock data — Inbox (chat list + thread)                              */
 /* ================================================================== */
 
-const CHANNEL_COLORS: Record<string, string> = { WhatsApp: 'bg-emerald-600', Instagram: 'bg-zinc-700', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-blue-600', SMS: 'bg-slate-600', 'Facebook Business': 'bg-blue-700' };
-const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-[#66dba3]', Instagram: 'bg-[#66dba3]', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-[#66dba3]', SMS: 'bg-[#66dba3]', 'Facebook Business': 'bg-[#66dba3]' };
+const CHANNEL_COLORS: Record<string, string> = { WhatsApp: 'bg-emerald-600', Instagram: 'bg-zinc-700', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-blue-600', SMS: 'bg-slate-600', 'Facebook Business': 'bg-blue-700', Facebook: 'bg-blue-700', TikTok: 'bg-zinc-900' };
+const CHANNEL_DOT: Record<string, string> = { WhatsApp: 'bg-[#66dba3]', Instagram: 'bg-[#66dba3]', 'Live Chat': 'bg-[#2ea66f]', Email: 'bg-[#66dba3]', SMS: 'bg-[#66dba3]', 'Facebook Business': 'bg-[#66dba3]', Facebook: 'bg-[#66dba3]', TikTok: 'bg-[#66dba3]' };
 const TOOL_ACTIONS = [
   { label: 'Invoice',  Icon: FileText,        text: '📄 Invoice Generated: #INV-2026-001 — Total: R250.00. Click to view.' },
   { label: 'BookedIt', Icon: CalendarCheck,   text: '📅 Consultation Confirmed: Tuesday at 16:00. Looking forward to speaking with you!' },
@@ -142,11 +158,12 @@ function formatRelativeTime(iso: string) {
 }
 
 function mapLiveChat(chat: SupabaseChat): InboxConversation {
-  const customerName = chat.name?.trim() || chat.id;
+  const customerName = chat.name?.trim() || chat.id.split(':').slice(1).join(':') || chat.id;
+  const channel = getLiveChannelLabel(chat.id);
   return {
     id: chat.id,
     customerName,
-    channel: 'Live Chat',
+    channel,
     avatarColor: conversationInitials(customerName),
     lastMessageTime: formatRelativeTime(chat.updated_at),
     unreadCount: 0,
@@ -156,7 +173,7 @@ function mapLiveChat(chat: SupabaseChat): InboxConversation {
       {
         sender: 'customer',
         time: new Date(chat.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        text: chat.last_message ?? 'Live conversation synced from Supabase.',
+        text: normalizeLiveMessage(chat.last_message),
       },
     ],
     context: {
