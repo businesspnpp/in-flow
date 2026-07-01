@@ -536,7 +536,7 @@ export default function PremiumPricingPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto border-2 border-zinc-900 bg-white shadow-[6px_6px_0px_0px_rgba(24,24,27,1)]">
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <table className="w-full min-w-[760px] border-collapse table-fixed">
             <colgroup>
               <col className="w-[36%]" />
@@ -546,7 +546,7 @@ export default function PremiumPricingPage() {
               <col className="w-[16%]" />
             </colgroup>
             <thead>
-              <tr className="border-b-2 border-zinc-900">
+              <tr className="border-b border-zinc-200">
                 <th className="text-left text-xs font-black uppercase tracking-wider text-zinc-400 py-5 pl-6 bg-zinc-50/50">Core Matrices</th>
                 {tiers.map((tier) => (
                   <th key={tier.name} className="text-center py-5 px-3 bg-zinc-50/50">
@@ -595,7 +595,7 @@ export default function PremiumPricingPage() {
             return (
               <div 
                 key={item.q} 
-                className="bg-white border-2 border-zinc-900 transition-all shadow-[4px_4px_0px_0px_rgba(24,24,27,1)]"
+                className="bg-white rounded-xl border border-zinc-200 transition-all shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
               >
                 <button
                   onClick={() => setOpenFaq(open ? null : idx)}
@@ -605,7 +605,7 @@ export default function PremiumPricingPage() {
                   <ChevronDown
                     size={20}
                     className={`text-zinc-500 shrink-0 transform transition-transform duration-200 ${open ? 'rotate-180 text-[#795bf4]' : ''}`}
-                    strokeWidth={2.5}
+                    strokeWidth={1.5}
                   />
                 </button>
                 <div 
@@ -625,7 +625,7 @@ export default function PremiumPricingPage() {
 
       {/* Industrial High-Contrast Bottom Conversion Callout */}
       <section className="w-full max-w-7xl mx-auto px-6 pb-24">
-        <div className="border-4 border-zinc-900 bg-[#8d73f6] p-10 md:p-16 text-center shadow-[10px_10px_0px_0px_rgba(24,24,27,1)] relative overflow-hidden">
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-10 md:p-16 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)] relative overflow-hidden">
           <div className="absolute left-0 bottom-0 translate-y-6 -translate-x-6 w-32 h-32 bg-white/20 rounded-full blur-2xl pointer-events-none" />
           
           <h2 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-950 max-w-2xl mx-auto leading-none">
@@ -638,13 +638,13 @@ export default function PremiumPricingPage() {
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
               href="/login?mode=signup"
-              className="w-full sm:w-auto px-8 py-4 bg-[#795bf4] text-white text-sm font-black tracking-tight hover:bg-[#6847ef] transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-lg bg-[#795bf4] text-white text-sm font-black tracking-tight hover:bg-[#6847ef] transition-colors flex items-center justify-center gap-2"
             >
-              Deploy Free Architecture <ArrowRight size={16} strokeWidth={2.5} />
+              Deploy Free Architecture <ArrowRight size={16} strokeWidth={1.5} />
             </Link>
             <a
               href="#"
-              className="w-full sm:w-auto px-6 py-4 bg-white text-zinc-950 border-2 border-zinc-900 text-sm font-bold hover:bg-zinc-50 transition-colors"
+              className="w-full sm:w-auto px-6 py-4 rounded-lg bg-white text-zinc-950 border border-zinc-200 text-sm font-bold hover:bg-zinc-100 transition-colors"
             >
               Speak to Product Engineers
             </a>
@@ -653,7 +653,7 @@ export default function PremiumPricingPage() {
       </section>
 
       {/* Refined Terminal Footer */}
-      <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-white">
+      <footer className="w-full px-6 py-12 border-t border-zinc-200 bg-zinc-50">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <img src="/dock-icon-2.png" alt="Dock icon" className="w-9 h-9" />
