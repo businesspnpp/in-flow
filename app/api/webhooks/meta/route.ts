@@ -88,6 +88,7 @@ async function persistInbound(event: NormalizedInbound) {
     {
       id: chatId,
       name: event.senderName || event.senderId,
+      channel: event.channel,
       last_message: unifiedMessage,
       updated_at: new Date().toISOString(),
     },
@@ -100,6 +101,7 @@ async function persistInbound(event: NormalizedInbound) {
 
   const { error: messageError } = await supabase.from('messages').insert({
     chat_id: chatId,
+    channel: event.channel,
     sender: 'customer',
     body: unifiedMessage,
   });

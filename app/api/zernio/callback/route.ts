@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { getZernioTikTokCreatorInfo, listZernioAccounts } from '@/lib/zernio';
+import { ensureZernioInboxWebhook, getZernioTikTokCreatorInfo, listZernioAccounts } from '@/lib/zernio';
 
-const ZernioPlatformSchema = z.enum(['facebook', 'instagram', 'whatsapp', 'tiktok']);
+const ZernioPlatformSchema = z.enum(['facebook', 'instagram', 'whatsapp', 'telegram', 'tiktok']);
 
 type ChannelConfigRow = {
   metadata?: Record<string, unknown> | null;
@@ -75,6 +75,17 @@ export async function GET(request: NextRequest) {
       },
       { onConflict: 'business_id,channel' }
     );
+
+    if (['facebook', 'instagram', 'whatsapp', 'telegram'].includes(connectedPlatform)) {
+      const webhookUrl = `${request.nextUrl.origin}/api/zernio/webhook?business_id=${encodeURIComponent(businessId)}`;
+      await ensureZernioInboxWebhook({
+        name: `inFlow inbox ${connectedPlatform}`,
+        url: webhookUrl,
+        secret: process.env.ZERNIO_WEBHOOK_SECRET || undefined,
+      }).catch((error) => {
+        console.error('[zernio/callback] webhook setup failed:', error);
+      });
+    }
 
     return NextResponse.redirect(`${dashboardUrl}?oauth=success&channel=${connectedPlatform}`);
   } catch (error) {

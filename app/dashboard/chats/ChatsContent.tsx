@@ -167,7 +167,9 @@ function formatRelativeTime(iso: string) {
 
 function mapLiveChat(chat: SupabaseChat): InboxConversation {
   const customerName = chat.name?.trim() || chat.id.split(':').slice(1).join(':') || chat.id;
-  const channel = getLiveChannelLabel(chat.id);
+  const channel = chat.channel?.trim()
+    ? chat.channel.trim().charAt(0).toUpperCase() + chat.channel.trim().slice(1)
+    : getLiveChannelLabel(chat.id);
   return {
     id: chat.id,
     customerName,

@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { createZernioProfile, getZernioConnectUrl } from '@/lib/zernio';
 
-const ZernioPlatformSchema = z.enum(['facebook', 'instagram', 'whatsapp', 'tiktok']);
+const ZernioPlatformSchema = z.enum(['facebook', 'instagram', 'whatsapp', 'telegram', 'tiktok']);
 
 type ChannelConfigRow = {
   metadata?: Record<string, unknown> | null;

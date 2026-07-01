@@ -25,6 +25,19 @@ type ZernioConnectUrlResponse = {
   state?: string;
 };
 
+type ZernioWebhook = {
+  _id: string;
+  name?: string;
+  url?: string;
+  events?: string[];
+  isActive?: boolean;
+};
+
+type ZernioCreateWebhookResponse = {
+  success?: boolean;
+  webhook?: ZernioWebhook;
+};
+
 type ZernioTikTokCreatorInfo = {
   creator?: {
     nickname?: string;
@@ -145,5 +158,52 @@ export async function getZernioTikTokCreatorInfo(accountId: string) {
 export async function deleteZernioAccount(accountId: string) {
   return zernioRequest<void>(`accounts/${accountId}`, {
     method: 'DELETE',
+  });
+}
+
+export async function listZernioWebhooks() {
+  const response = await zernioRequest<{ webhooks?: ZernioWebhook[] }>('webhooks/settings');
+  return response.webhooks ?? [];
+}
+
+export async function createZernioWebhookSettings(options: {
+  name: string;
+  url: string;
+  events: string[];
+  secret?: string;
+  isActive?: boolean;
+}) {
+  const response = await zernioRequest<ZernioCreateWebhookResponse>('webhooks/settings', {
+    method: 'POST',
+    body: {
+      name: options.name,
+      url: options.url,
+      events: options.events,
+      secret: options.secret,
+      isActive: options.isActive ?? true,
+    },
+  });
+
+  if (!response.webhook?._id) {
+    throw new Error('Zernio did not return a webhook id.');
+  }
+
+  return response.webhook;
+}
+
+export async function ensureZernioInboxWebhook(options: { name: string; url: string; secret?: string }) {
+  const events = ['message.received', 'conversation.started'];
+  const existing = await listZernioWebhooks();
+
+  if (existing.some((webhook) => webhook.url === options.url)) {
+    return existing.find((webhook) => webhook.url === options.url) ?? null;
+  }
+
+  return createZernioWebhookSettings({
+    name: options.name,
+    url: options.url,
+    events,
+    secret: options.secret,
+    isActive: true,
   });
 }

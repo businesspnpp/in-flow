@@ -28,11 +28,13 @@ function normalizeId(value: string): string {
 
 async function handleChatRecord(chatId: string, name: string, messageText: string) {
   const supabase = getSupabase();
+  const channel = chatId.includes(':') ? chatId.split(':')[0] : null;
 
   const { error: upsertError } = await supabase.from('chats').upsert(
     {
       id: chatId,
       name: name || chatId,
+      channel,
       last_message: messageText,
       updated_at: new Date().toISOString(),
     },
@@ -46,6 +48,7 @@ async function handleChatRecord(chatId: string, name: string, messageText: strin
 
   const { error: insertError } = await supabase.from('messages').insert({
     chat_id: chatId,
+    channel,
     sender: 'customer',
     body: messageText,
   });

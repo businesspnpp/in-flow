@@ -66,6 +66,15 @@ function TikTokIcon({ size = 22 }: { size?: number }) {
   );
 }
 
+function TelegramIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="12" fill="#229ED9" />
+      <path d="M17.7 6.8 6.8 11.1c-.7.3-.7 1.3 0 1.6l2.7 1 1 3c.1.4.6.5.9.2l1.6-1.5 2.9 2.1c.3.2.7.1.8-.3l2.1-9.8c.2-.7-.4-1.3-1.1-1z" fill="white" />
+    </svg>
+  );
+}
+
 function SmsIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -110,6 +119,7 @@ type ChannelStatus = {
   whatsapp: boolean;
   instagram: boolean;
   facebook: boolean;
+  telegram: boolean;
   tiktok: boolean;
 };
 
@@ -131,7 +141,7 @@ type ChannelConfigDetails = {
   metadata?: Record<string, unknown> | null;
 };
 
-type ZernioPlatform = 'facebook' | 'instagram' | 'whatsapp' | 'tiktok';
+type ZernioPlatform = 'facebook' | 'instagram' | 'whatsapp' | 'telegram' | 'tiktok';
 
 export default function LinkAppsTool({ business, onUpdated }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
@@ -146,6 +156,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
     whatsapp: false,
     instagram: false,
     facebook: false,
+    telegram: false,
     tiktok: false,
   });
 
@@ -163,6 +174,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
           if (row.channel === 'whatsapp') updated.whatsapp = row.status === 'connected';
           if (row.channel === 'instagram') updated.instagram = row.status === 'connected';
           if (row.channel === 'facebook') updated.facebook = row.status === 'connected';
+          if (row.channel === 'telegram') updated.telegram = row.status === 'connected';
           if (row.channel === 'tiktok') updated.tiktok = row.status === 'connected';
           details[row.channel] = {
             status: row.status,
@@ -224,6 +236,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   const handleFacebookConnect = () => startZernioConnect('facebook');
   const handleInstagramConnect = () => startZernioConnect('instagram');
   const handleWhatsAppConnect = () => startZernioConnect('whatsapp');
+  const handleTelegramConnect = () => startZernioConnect('telegram');
 
   const handleTikTokConnect = () => {
     setError('');
@@ -233,7 +246,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
   };
 
   /* ---------------- CONNECTED GRID ----------------
-    Real channels (Facebook, WhatsApp, Instagram, TikTok) use the actual connection handlers above.
+    Real channels (Facebook, WhatsApp, Instagram, Telegram, TikTok) use the actual connection handlers above.
     Gmail remains display-only and Google Business Profile is still display-only for now. */
   const connectedCards: IntegrationCard[] = [
     {
@@ -251,7 +264,7 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       id: 'tiktok',
       name: 'TikTok',
       Icon: TikTokIcon,
-      description: 'Sync direct customer messages and track community comment engagement directly inside your inbox.',
+      description: 'Connected for creator identity and comment workflows, but not inbox sync.',
       isConnected: channelStatus.tiktok,
       mappedFields: 45,
       syncFrequency: '20m',
@@ -287,6 +300,17 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
       mappedFields: 45,
       syncFrequency: '20m',
       onConnect: handleInstagramConnect,
+      isReal: true,
+    },
+    {
+      id: 'telegram',
+      name: 'Telegram',
+      Icon: TelegramIcon,
+      description: 'Sync Telegram chats into the inbox so replies and live updates stay in one place.',
+      isConnected: channelStatus.telegram,
+      mappedFields: 45,
+      syncFrequency: '20m',
+      onConnect: handleTelegramConnect,
       isReal: true,
     },
     {
@@ -338,7 +362,13 @@ export default function LinkAppsTool({ business, onUpdated }: Props) {
         return [
           'TikTok is connected through Zernio and stores creator metadata here.',
           'Reconnect from this panel if the account changes or permissions expire.',
-          'TikTok inbox sync is not exposed by the provider, so this is identity-only.',
+          'TikTok inbox sync is not supported, so this connection is identity-only.',
+        ];
+      case 'telegram':
+        return [
+          'Telegram messages are routed through Zernio inbox webhooks.',
+          'Use this panel to reconnect if the bot token or permissions change.',
+          'Telegram supports live inbox sync and reply workflows.',
         ];
       case 'gmail':
         return [
