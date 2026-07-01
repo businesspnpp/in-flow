@@ -174,7 +174,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
           {sidebarExpanded ? (
             <img src="/dock-logo-2.png" alt="Dock logo" className="h-7 w-auto pl-1 transition-opacity duration-200" />
           ) : (
-            <img src="/dock-icon-2.png" alt="Dock icon" className="h-7 w-7 mx-auto transition-opacity duration-200" />
+            <img src="/dock-icon-3.png" alt="Dock icon" className="h-7 w-7 mx-auto transition-opacity duration-200" />
           )}
         </div>
 

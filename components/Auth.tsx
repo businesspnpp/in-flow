@@ -220,7 +220,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
       <header className="w-full border-b border-zinc-200 bg-white">
         <div className="w-full px-6 md:px-10 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/dock-icon-2.png" alt="Dock icon" className="w-12 h-12" />
+            <img src="/dock-icon-3.png" alt="Dock icon" className="w-12 h-12" />
             <span className="text-lg font-semibold text-zinc-900 tracking-tight">Dock</span>
           </div>
 
