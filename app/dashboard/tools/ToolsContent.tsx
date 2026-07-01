@@ -23,10 +23,10 @@ type ToolId = 'invoice' | 'booked' | 'quote' | 'menu' | 'pin' | 'paynow' | 'revi
 const ALL_TOOLS: { id: ToolId; label: string; Icon: LucideIcon; color: string; desc: string }[] = [
   { id: 'invoice',  label: 'Invoice',  Icon: FileText,      color: 'bg-violet-600', desc: 'Generate and send an invoice' },
   { id: 'booked',   label: 'Booked',   Icon: CalendarCheck, color: 'bg-emerald-600', desc: 'Schedule an appointment' },
-  { id: 'quote',    label: 'Quote',    Icon: Calculator,    color: 'bg-amber-600',  desc: 'Send a price estimate' },
+  { id: 'quote',    label: 'Quote',    Icon: Calculator,    color: 'bg-[#795bf4]',  desc: 'Send a price estimate' },
   { id: 'menu',     label: 'Menu',     Icon: ShoppingBag,   color: 'bg-rose-600',   desc: 'Share your product menu' },
   { id: 'pin',      label: 'Pin',      Icon: MapPin,        color: 'bg-sky-600',    desc: 'Send a location pin' },
-  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,    color: 'bg-blue-600',   desc: 'Send a secure payment link' },
+  { id: 'paynow',   label: 'PayNow',   Icon: CreditCard,    color: 'bg-[#795bf4]',   desc: 'Send a secure payment link' },
   { id: 'review',   label: 'Review',   Icon: Star,          color: 'bg-yellow-600', desc: 'Request a Google review' },
   { id: 'promo',    label: 'Promo',    Icon: Megaphone,     color: 'bg-pink-600',   desc: 'Send a promo or voucher' },
   { id: 'settings', label: 'Settings', Icon: Settings,      color: 'bg-zinc-600',   desc: 'Channel and account settings' },
@@ -62,7 +62,7 @@ export default function ToolsContent() {
             setActiveToolId(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="h-10 border border-[#FB5801] bg-[#FB5801] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#e24d00]"
+          className="h-10 border border-[#795bf4] bg-[#795bf4] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#6847ef]"
         >
           + Create Tool
         </button>
@@ -108,7 +108,7 @@ export default function ToolsContent() {
                 <div className="flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide flex flex-row items-center gap-1 px-2 py-2">
                   {ALL_TOOLS.map(({ id, Icon, label }) => (
                     <button key={id} onClick={() => setActiveToolId(id)}
-                      className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] transition-colors border ${activeToolId === id ? 'text-amber-700 bg-amber-600/10 border-amber-600/20' : 'text-zinc-500 border-transparent hover:text-zinc-700 hover:bg-zinc-100'}`}>
+                      className={`flex-shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] transition-colors border ${activeToolId === id ? 'text-[#795bf4] bg-[#795bf4]/12 border-[#795bf4]/20' : 'text-zinc-500 border-transparent hover:text-zinc-700 hover:bg-zinc-100'}`}>
                       <Icon size={16} />
                       <span className="text-[9px] font-semibold uppercase tracking-wide">{label}</span>
                     </button>
@@ -158,14 +158,14 @@ export default function ToolsContent() {
                 {ALL_TOOLS.map(({ id, Icon, label, color, desc }) => {
                   const isOpen = activeToolId === id;
                   return (
-                    <div key={id} className={`border ${isOpen ? 'border-amber-600/30' : 'border-zinc-200'} bg-white overflow-hidden`}>
+                    <div key={id} className={`border ${isOpen ? 'border-[#795bf4]/30' : 'border-zinc-200'} bg-white overflow-hidden`}>
                       <button onClick={() => setActiveToolId(isOpen ? null : id)}
                         className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors ${isOpen ? 'bg-zinc-100' : 'hover:bg-zinc-100'}`}>
                         <div className={`relative flex-shrink-0 h-9 w-9 ${color} flex items-center justify-center`}>
                           <Icon size={16} className="text-white" strokeWidth={2.25} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-amber-700' : 'text-zinc-800'}`}>{label}</p>
+                          <p className={`text-sm font-semibold transition-colors ${isOpen ? 'text-[#795bf4]' : 'text-zinc-800'}`}>{label}</p>
                           <p className="text-[10px] text-zinc-400 mt-0.5">{desc}</p>
                         </div>
                         <svg className={`flex-shrink-0 transition-transform duration-200 text-zinc-400 ${isOpen ? 'rotate-90' : ''}`} width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -180,7 +180,7 @@ export default function ToolsContent() {
                 })}
               </div>
               <div className="mt-3 flex items-start gap-2.5 px-4">
-                <span className="text-amber-500 text-xs mt-0.5">
+                <span className="text-[#795bf4] text-xs mt-0.5">
                   <Sparkles size={12} />
                 </span>
                 <p className="text-xs text-zinc-400">Open a conversation in Chats first — actions will send directly into that chat.</p>

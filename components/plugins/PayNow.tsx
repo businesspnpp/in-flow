@@ -64,7 +64,7 @@ export default function PayNow({ activeChat, aiPrefill }: PayNowProps) {
       <button
         onClick={sendPaymentLink}
         disabled={!activeChat || !amount || sending}
-        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
+        className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
       >
         <Send size={13} />
         Send Payment Request

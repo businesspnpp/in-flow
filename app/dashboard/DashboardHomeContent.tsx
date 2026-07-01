@@ -98,8 +98,8 @@ const customerActions: Array<{ id: string; label: string; tone: Tone }> = [
 ];
 
 const toneClasses: Record<Tone, string> = {
-  blue: 'bg-blue-600 text-white hover:bg-blue-700',
-  orange: 'bg-orange-500 text-white hover:bg-orange-600',
+  blue: 'bg-[#795bf4] text-white hover:bg-[#6847ef]',
+  orange: 'bg-[#795bf4] text-white hover:bg-[#6847ef]',
   rose: 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100',
 };
 
@@ -175,7 +175,7 @@ export default function DashboardHomeContent() {
                 <span className="text-sm leading-snug text-orange-600">Issue (Conflict detected with Google Calendar)</span>
               </div>
             </div>
-            <button type="button" className="mt-3 text-sm font-semibold text-blue-600 hover:underline">
+            <button type="button" className="mt-3 text-sm font-semibold text-[#795bf4] hover:underline">
               View Full Calendar
             </button>
             <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3">
@@ -202,11 +202,11 @@ export default function DashboardHomeContent() {
             </div>
             <button
               type="button"
-              className="mt-auto rounded-lg bg-zinc-900 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+              className="mt-auto rounded-lg bg-[#795bf4] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#6847ef]"
             >
               Create Workflow
             </button>
-            <button type="button" className="mt-3 text-left text-sm font-semibold text-blue-600 hover:underline">
+            <button type="button" className="mt-3 text-left text-sm font-semibold text-[#795bf4] hover:underline">
               View Workflow Performance
             </button>
           </div>

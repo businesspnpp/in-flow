@@ -265,7 +265,7 @@ export default function BookedIt({
         {" "}
         <CalendarCheck
           size={15}
-          className="text-amber-600"
+          className="text-[#795bf4]"
           strokeWidth={2.25}
         />{" "}
         <h3 className="text-sm font-semibold text-zinc-900">BookedIt</h3>{" "}
@@ -286,7 +286,7 @@ export default function BookedIt({
           <button
             key={tile.iso}
             onClick={() => setSelectedDate(tile.iso)}
-            className={`border px-2 py-2.5 text-center transition-colors ${selectedDate === tile.iso ? "border-amber-600 bg-amber-50 text-amber-700" : "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-400"}`}
+            className={`border px-2 py-2.5 text-center transition-colors ${selectedDate === tile.iso ? "border-[#795bf4] bg-[#795bf4]/10 text-[#795bf4]" : "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-400"}`}
           >
             {" "}
             <div className="text-[10px] uppercase tracking-wide">
@@ -364,13 +364,13 @@ export default function BookedIt({
             ))}{" "}
           </div>{" "}
           {/* Draft ranges */}{" "}
-          <div className="border border-amber-200 bg-amber-50 p-5">
+          <div className="border border-[#795bf4]/20 bg-[#795bf4]/10 p-5">
             {" "}
-            <p className="text-[10px] uppercase tracking-wide text-amber-700 font-semibold mb-2">
+            <p className="text-[10px] uppercase tracking-wide text-[#795bf4] font-semibold mb-2">
               Ranges to send
             </p>{" "}
             {draftRanges.length === 0 && (
-              <p className="text-xs text-amber-700">
+              <p className="text-xs text-[#795bf4]">
                 Add one or more ranges before sending.
               </p>
             )}{" "}
@@ -401,7 +401,7 @@ export default function BookedIt({
         disabled={
           !selectedDate || !activeChat || sending || draftRanges.length === 0
         }
-        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
+        className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
       >
         {" "}
         <Send size={13} strokeWidth={2.25} /> Send Booking{" "}

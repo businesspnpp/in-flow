@@ -16,7 +16,7 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <link rel="icon" href="/dock-icon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/dock-icon-2.png" type="image/png" />
       </head>
       <body className="min-h-screen overflow-x-hidden bg-zinc-50">
         {children}

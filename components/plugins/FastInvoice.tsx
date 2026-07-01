@@ -261,7 +261,7 @@ export default function FastInvoice({
         {" "}
         <FileText
           size={15}
-          className="text-amber-600"
+          className="text-[#795bf4]"
           strokeWidth={2.25}
         />{" "}
         <h3 className="text-sm font-semibold text-zinc-900">Fast Invoice</h3>{" "}
@@ -303,7 +303,7 @@ export default function FastInvoice({
                   {state?.checked ? (
                     <CheckSquare
                       size={15}
-                      className="text-amber-600 flex-shrink-0"
+                      className="text-[#795bf4] flex-shrink-0"
                       strokeWidth={2.25}
                     />
                   ) : (
@@ -378,7 +378,7 @@ export default function FastInvoice({
       <button
         onClick={() => setShowConfirm(true)}
         disabled={!activeChat || selectedRows.length === 0}
-        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
+        className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
       >
         {" "}
         <Send size={13} strokeWidth={2.25} /> Review & Send Invoice{" "}
@@ -421,7 +421,7 @@ export default function FastInvoice({
             <button
               onClick={sendInvoice}
               disabled={sending}
-              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 text-sm font-semibold disabled:opacity-40 transition-colors"
+              className="flex-1 bg-[#795bf4] hover:bg-[#6847ef] text-white py-2.5 text-sm font-semibold disabled:opacity-40 transition-colors"
             >
               {" "}
               {sending ? "Sending..." : "Confirm & Send"}{" "}

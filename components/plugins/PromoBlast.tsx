@@ -89,7 +89,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
   return (
     <div className="if-card-soft flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
-        <Megaphone size={16} className="text-amber-600" />
+        <Megaphone size={16} className="text-[#795bf4]" />
         <h3 className="text-sm font-semibold text-zinc-800">PromoBlast</h3>
         {aiPrefill && (
           <span className="ml-auto text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 font-medium border border-zinc-300">
@@ -219,7 +219,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
 
           {/* Failsafe note */}
           <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 px-3 py-2">
-            <span className="text-amber-600 text-xs mt-0.5 flex-shrink-0">✓</span>
+            <span className="text-[#795bf4] text-xs mt-0.5 flex-shrink-0">✓</span>
             <p className="text-xs text-amber-800">
               This text sends immediately — the voucher code stays visible even if an image fails to load on a slow connection.
             </p>
@@ -228,7 +228,7 @@ export default function PromoBlast({ activeChat, aiPrefill }: PromoBlastProps) {
           <button
             onClick={handleSend}
             disabled={sending || sent}
-            className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
+            className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 transition-colors"
           >
             {sent ? (
               <><CheckCircle size={14} /> Sent</>

@@ -250,13 +250,13 @@ function MobileListTabs({ active, onChange }: { active: MobileListTab; onChange:
     <div className="flex-shrink-0 flex items-center gap-1.5 px-4 pt-3 pb-2 bg-white border-b border-zinc-200">
       <button
         onClick={() => onChange('inbox')}
-        className={`flex items-center gap-1.5 flex-1 justify-center rounded-lg py-1.5 text-xs font-semibold transition ${active === 'inbox' ? 'bg-blue-600 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600'}`}
+        className={`flex items-center gap-1.5 flex-1 justify-center rounded-lg py-1.5 text-xs font-semibold transition ${active === 'inbox' ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 text-zinc-600'}`}
       >
         <Inbox size={13} /> Inbox
       </button>
       <button
         onClick={() => onChange('directory')}
-        className={`flex items-center gap-1.5 flex-1 justify-center rounded-lg py-1.5 text-xs font-semibold transition ${active === 'directory' ? 'bg-blue-600 text-white shadow-sm' : 'bg-zinc-100 text-zinc-600'}`}
+        className={`flex items-center gap-1.5 flex-1 justify-center rounded-lg py-1.5 text-xs font-semibold transition ${active === 'directory' ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 text-zinc-600'}`}
       >
         <Users size={13} /> Customers
       </button>
@@ -425,19 +425,19 @@ export default function ChatsContent() {
                 <p className="text-[11px] text-zinc-500 mt-0.5">{MOCK_CONVERSATIONS.length} conversations</p>
               </div>
               <div className="flex items-center gap-1">
-                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Hash size={14} /></button>
-                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-blue-50 hover:text-blue-600 transition"><Users size={14} /></button>
+                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-[#795bf4]/10 hover:text-[#795bf4] transition"><Hash size={14} /></button>
+                <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-[#795bf4]/10 hover:text-[#795bf4] transition"><Users size={14} /></button>
               </div>
             </div>
           )}
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
-            <input value={listSearch} onChange={e => setListSearch(e.target.value)} placeholder="Search conversations…" className="w-full h-9 rounded-lg border border-zinc-200 bg-zinc-50 pl-8 pr-3 text-xs text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 focus:bg-white transition" />
+            <input value={listSearch} onChange={e => setListSearch(e.target.value)} placeholder="Search conversations…" className="w-full h-9 rounded-lg border border-zinc-200 bg-zinc-50 pl-8 pr-3 text-xs text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-[#795bf4] focus:bg-white transition" />
           </div>
           <div className="flex items-center justify-between gap-2 mt-2.5">
             <div className="flex gap-1.5">
               {['All', 'Unread', 'Mine'].map(f => (
-                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${f === 'All' ? 'bg-blue-600 text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}>{f}</button>
+                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${f === 'All' ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}>{f}</button>
               ))}
             </div>
             {mobile && (
@@ -447,7 +447,7 @@ export default function ChatsContent() {
         </div>
         <div className="divide-y divide-zinc-100">
           {filteredChats.map(contact => (
-            <button key={contact.id} onClick={() => selectChat(contact.id)} className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-blue-50/60 active:bg-blue-50 ${activeContact === contact.id ? 'bg-blue-50/80' : ''}`}>
+            <button key={contact.id} onClick={() => selectChat(contact.id)} className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[#795bf4]/8 active:bg-[#795bf4]/10 ${activeContact === contact.id ? 'bg-[#795bf4]/10' : ''}`}>
               <div className="relative flex-shrink-0">
                 <div className={`h-9 w-9 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shadow-sm ${CHANNEL_COLORS[contact.channel] || 'bg-zinc-600'}`}>{contact.avatarColor}</div>
                 <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${CHANNEL_DOT[contact.channel] || 'bg-zinc-400'}`} />
@@ -463,7 +463,7 @@ export default function ChatsContent() {
                 <p className="text-[11px] text-zinc-500 truncate leading-snug">{contact.messages[0]?.text || ''}</p>
                 {contact.statusTag && <span className={`mt-1 inline-block rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${contact.statusColor}`}>{contact.statusTag}</span>}
               </div>
-              {contact.unreadCount > 0 && <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">{contact.unreadCount}</span>}
+              {contact.unreadCount > 0 && <span className="flex-shrink-0 mt-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#795bf4] px-1 text-[10px] font-bold text-white">{contact.unreadCount}</span>}
             </button>
           ))}
         </div>
@@ -488,8 +488,8 @@ export default function ChatsContent() {
             </div>
           </div>
           <div className="flex gap-1.5 mt-2.5">
-            <button className="flex items-center gap-1 rounded-lg bg-orange-500 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-orange-600 transition"><Download size={11} /> Export</button>
-            <button className="flex items-center gap-1 rounded-lg bg-blue-600 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-blue-700 transition"><UserPlus size={11} /> Add Customer</button>
+            <button className="flex items-center gap-1 rounded-lg border border-[#795bf4]/20 bg-[#795bf4]/10 px-2.5 py-1 text-[10px] font-semibold text-[#795bf4] hover:bg-[#795bf4]/15 transition"><Download size={11} /> Export</button>
+            <button className="flex items-center gap-1 rounded-lg bg-[#795bf4] px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-[#6847ef] transition"><UserPlus size={11} /> Add Customer</button>
           </div>
         </div>
 
@@ -497,9 +497,9 @@ export default function ChatsContent() {
         <div className="border-b border-zinc-200 overflow-x-auto scrollbar-none">
           <nav className="flex gap-4 whitespace-nowrap">
             {DIR_TABS.map(tab => (
-              <button key={tab} onClick={() => setActiveDirTab(tab)} className={`relative pb-2 text-[11px] font-medium transition-colors ${activeDirTab === tab ? 'text-blue-700' : 'text-zinc-500 hover:text-zinc-700'}`}>
+              <button key={tab} onClick={() => setActiveDirTab(tab)} className={`relative pb-2 text-[11px] font-medium transition-colors ${activeDirTab === tab ? 'text-[#795bf4]' : 'text-zinc-500 hover:text-zinc-700'}`}>
                 {tab}
-                {activeDirTab === tab && <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+                {activeDirTab === tab && <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[#795bf4] rounded-full" />}
               </button>
             ))}
           </nav>
@@ -513,7 +513,7 @@ export default function ChatsContent() {
               value={directorySearch}
               onChange={e => setDirectorySearch(e.target.value)}
               placeholder={activeDirTab === 'Google Reviews' ? 'Search review leads' : 'Search'}
-              className="w-full h-8 rounded-lg border border-zinc-200 bg-white pl-7 pr-2 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition"
+              className="w-full h-8 rounded-lg border border-zinc-200 bg-white pl-7 pr-2 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-[#795bf4] transition"
             />
           </div>
           <button className="h-8 w-8 flex items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 transition"><Filter size={12} /></button>
@@ -539,7 +539,7 @@ export default function ChatsContent() {
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
                   {filteredCustomers.map(c => (
-                    <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-blue-50/50 active:bg-blue-50 transition-colors">
+                    <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-[#795bf4]/8 active:bg-[#795bf4]/10 transition-colors">
                       <td className="py-2 pl-3 pr-2"><div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div></td>
                       <td className="py-2 px-2 font-medium text-zinc-900">{c.name}</td>
                       <td className="py-2 px-2 text-zinc-500 max-w-[120px] truncate">{c.contact}</td>
@@ -574,7 +574,7 @@ export default function ChatsContent() {
               <h4 className="text-[11px] font-semibold text-zinc-900 mb-1">Segment & Tag</h4>
               <div className="relative mb-2 mt-2">
                 <Tag size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-                <input placeholder="Tag customer..." className="w-full h-7 rounded-lg border border-zinc-200 bg-zinc-50 pl-7 pr-2 text-[10px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 transition" />
+                <input placeholder="Tag customer..." className="w-full h-7 rounded-lg border border-zinc-200 bg-zinc-50 pl-7 pr-2 text-[10px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-[#795bf4] transition" />
               </div>
               <div className="space-y-1.5">
                 {SEGMENTS.map(seg => (
@@ -609,7 +609,7 @@ export default function ChatsContent() {
                 <button
                   key={filter.id}
                   onClick={() => setDirChannelFilter(filter.id)}
-                  className={`h-7 rounded-lg px-2.5 text-[10px] font-semibold transition ${dirChannelFilter === filter.id ? 'bg-blue-600 text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
+                  className={`h-7 rounded-lg px-2.5 text-[10px] font-semibold transition ${dirChannelFilter === filter.id ? 'bg-[#795bf4] text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
                 >
                   {filter.label}
                 </button>
@@ -630,7 +630,7 @@ export default function ChatsContent() {
                   {filteredByChannel.map(c => {
                     const relatedChat = MOCK_CONVERSATIONS.find(chat => chat.customerName.toLowerCase().includes(c.name.toLowerCase()));
                     return (
-                      <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-blue-50/50 active:bg-blue-50 transition-colors">
+                      <tr key={c.id} onClick={() => selectCustomerRow(c.id)} className="cursor-pointer hover:bg-[#795bf4]/8 active:bg-[#795bf4]/10 transition-colors">
                         <td className="py-2 pl-3 pr-2">
                           <div className="flex items-center gap-2">
                             <div className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white ${c.avatarColor}`}>{c.initials}</div>
@@ -679,7 +679,7 @@ export default function ChatsContent() {
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
                   {filteredReviewLeads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-blue-50/40 transition-colors">
+                    <tr key={lead.id} className="hover:bg-[#795bf4]/8 transition-colors">
                       <td className="py-2 pl-3 pr-2 font-medium text-zinc-900">{lead.name}</td>
                       <td className="py-2 px-2 text-zinc-700">{lead.rating === 0 ? 'Pending' : `${lead.rating} / 5`}</td>
                       <td className="py-2 px-2">
@@ -771,7 +771,7 @@ export default function ChatsContent() {
             <div className="flex items-center gap-1.5"><span className={`h-1.5 w-1.5 rounded-full ${CHANNEL_DOT[selected?.channel || 'SMS'] || 'bg-zinc-400'}`} /><p className="text-xs text-zinc-500">{selected?.channel}</p></div>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={handleAi} disabled={aiLoading} className={`flex items-center gap-1.5 h-8 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition-colors border ${aiLoading ? 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse cursor-wait' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200'}`}>
+            <button onClick={handleAi} disabled={aiLoading} className={`flex items-center gap-1.5 h-8 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition-colors border ${aiLoading ? 'bg-[#795bf4]/10 text-[#795bf4] border-[#795bf4]/20 animate-pulse cursor-wait' : 'bg-[#795bf4]/10 text-[#795bf4] hover:bg-[#795bf4]/15 border-[#795bf4]/20'}`}>
               <Sparkles size={13} /><span className="hidden sm:inline">{aiLoading ? 'Reading…' : 'AI Assist'}</span>
             </button>
             <button className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition"><Phone size={15} /></button>
@@ -784,17 +784,17 @@ export default function ChatsContent() {
           </div>
         </div>
         {aiExtraction?.tool && (
-          <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-blue-50 border-b border-blue-100">
-            <Sparkles size={13} className="text-blue-700 flex-shrink-0" />
-            <p className="text-xs text-blue-800 flex-1">AI detected a <span className="font-semibold capitalize">{aiExtraction.tool}</span> request{aiExtraction.confidence >= 0.8 ? ' — form pre-filled, review and send.' : ' — check the pre-fill before sending.'}</p>
-            <button onClick={() => router.push('/dashboard/tools')} className="flex-shrink-0 rounded-lg text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-1 hover:bg-blue-200 transition">Open tool →</button>
+          <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 bg-[#795bf4]/10 border-b border-[#795bf4]/15">
+            <Sparkles size={13} className="text-[#795bf4] flex-shrink-0" />
+            <p className="text-xs text-[#5a3fe0] flex-1">AI detected a <span className="font-semibold capitalize">{aiExtraction.tool}</span> request{aiExtraction.confidence >= 0.8 ? ' — form pre-filled, review and send.' : ' — check the pre-fill before sending.'}</p>
+            <button onClick={() => router.push('/dashboard/tools')} className="flex-shrink-0 rounded-lg text-[10px] font-semibold text-[#795bf4] bg-[#795bf4]/12 px-2 py-1 hover:bg-[#795bf4]/18 transition">Open tool →</button>
           </div>
         )}
         <div className="flex-shrink-0 border-b border-zinc-200 bg-white overflow-x-auto scrollbar-none px-3 sm:px-4 py-2">
           <div className="flex gap-2 whitespace-nowrap">
             {TOOL_ACTIONS.map(tool => {
               const TI = tool.Icon;
-              return <button key={tool.label} onClick={() => handleTool(tool.text)} className="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 active:bg-blue-100 transition-colors"><TI size={13} />{tool.label}</button>;
+              return <button key={tool.label} onClick={() => handleTool(tool.text)} className="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-[#795bf4]/10 hover:border-[#795bf4]/20 hover:text-[#795bf4] active:bg-[#795bf4]/15 transition-colors"><TI size={13} />{tool.label}</button>;
             })}
           </div>
         </div>
@@ -804,10 +804,10 @@ export default function ChatsContent() {
             <div key={msg.id} className={`flex gap-2 ${msg.sender === 'business' ? 'justify-end' : 'justify-start'}`}>
               {msg.sender === 'customer' && <div className={`h-7 w-7 rounded-full flex-shrink-0 self-end flex items-center justify-center text-[10px] font-bold text-white ${CHANNEL_COLORS[selected?.channel || 'SMS'] || 'bg-zinc-600'}`}>{selected?.avatarColor}</div>}
               <div className={`max-w-[85%] sm:max-w-[75%] flex flex-col gap-1 ${msg.sender === 'business' ? 'items-end' : 'items-start'}`}>
-                <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.sender === 'business' ? 'bg-blue-600 text-white font-medium rounded-br-md' : 'bg-white text-zinc-800 border border-zinc-200 rounded-bl-md'}`}>{msg.body}</div>
+                <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.sender === 'business' ? 'bg-[#795bf4] text-white font-medium rounded-br-md' : 'bg-white text-zinc-800 border border-zinc-200 rounded-bl-md'}`}>{msg.body}</div>
                 <div className={`flex items-center gap-1 ${msg.sender === 'business' ? 'flex-row-reverse' : ''}`}>
                   <span className="text-[10px] text-zinc-400">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                  {msg.sender === 'business' && <CheckCheck size={12} className="text-blue-600" />}
+                  {msg.sender === 'business' && <CheckCheck size={12} className="text-[#795bf4]" />}
                 </div>
               </div>
             </div>
@@ -815,11 +815,11 @@ export default function ChatsContent() {
           <div ref={bottomRef} />
         </div>
         <div className="flex-shrink-0 border-t border-zinc-200 bg-white px-3 sm:px-4 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
-          <div className="flex items-center gap-2 rounded-full bg-zinc-100 border border-zinc-200 px-4 py-2 focus-within:border-blue-400 focus-within:bg-white transition-colors">
+          <div className="flex items-center gap-2 rounded-full bg-zinc-100 border border-zinc-200 px-4 py-2 focus-within:border-[#795bf4] focus-within:bg-white transition-colors">
             <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0"><Paperclip size={16} /></button>
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} placeholder="Type a message…" className="flex-1 bg-transparent text-sm text-zinc-800 outline-none placeholder:text-zinc-400 min-w-0" />
             <button className="text-zinc-400 hover:text-zinc-500 transition flex-shrink-0"><Smile size={16} /></button>
-            <button onClick={handleSend} disabled={!input.trim()} className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"><ArrowRight size={15} /></button>
+            <button onClick={handleSend} disabled={!input.trim()} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#795bf4] text-white transition hover:bg-[#6847ef] disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"><ArrowRight size={15} /></button>
           </div>
         </div>
       </div>
@@ -852,7 +852,7 @@ export default function ChatsContent() {
             </div>
             <div className="mt-4 pt-4 border-t border-zinc-200">
               <div className="flex items-center justify-between mb-1.5"><p className="text-[11px] text-zinc-500">Loyalty tier</p><p className="text-[11px] text-zinc-800 font-medium">{loyalty.tier}</p></div>
-              <div className="h-1.5 w-full rounded-full bg-zinc-200 overflow-hidden"><div className="h-full rounded-full bg-blue-500 transition-all duration-500" style={{ width: `${Math.max(3, loyalty.progress)}%` }} /></div>
+              <div className="h-1.5 w-full rounded-full bg-zinc-200 overflow-hidden"><div className="h-full rounded-full bg-[#795bf4] transition-all duration-500" style={{ width: `${Math.max(3, loyalty.progress)}%` }} /></div>
               <p className="text-[10px] text-zinc-500 mt-2">Next: {loyalty.nextTier}{ltv < 2500 ? ` — R${Math.max(0, loyalty.target - ltv).toFixed(2)} to go` : ''}</p>
             </div>
           </section>
@@ -879,7 +879,7 @@ export default function ChatsContent() {
               <div className="space-y-2">
                 {(['booked', 'invoice'] as const).map(tool => {
                   const isMatch = (tool === 'booked' && aiIntent === 'booking') || (tool === 'invoice' && aiIntent === 'invoice');
-                  return <button key={tool} onClick={() => router.push('/dashboard/tools')} className={`w-full px-3 py-2 text-left rounded-lg border transition-colors ${isMatch ? 'border-blue-300 bg-blue-50' : 'border-zinc-200 bg-zinc-50 hover:border-zinc-300'}`}><p className="text-[12px] text-zinc-900 font-medium">{tool === 'booked' ? 'Open BookedIt' : 'Open FastInvoice'}</p><p className="text-[10px] text-zinc-500 mt-0.5">{tool === 'booked' ? 'Suggested when booking intent is dominant.' : 'Suggested when invoice intent is dominant.'}</p></button>;
+                  return <button key={tool} onClick={() => router.push('/dashboard/tools')} className={`w-full px-3 py-2 text-left rounded-lg border transition-colors ${isMatch ? 'border-[#795bf4]/30 bg-[#795bf4]/10' : 'border-zinc-200 bg-zinc-50 hover:border-zinc-300'}`}><p className="text-[12px] text-zinc-900 font-medium">{tool === 'booked' ? 'Open BookedIt' : 'Open FastInvoice'}</p><p className="text-[10px] text-zinc-500 mt-0.5">{tool === 'booked' ? 'Suggested when booking intent is dominant.' : 'Suggested when invoice intent is dominant.'}</p></button>;
                 })}
               </div>
             </div>
@@ -895,9 +895,9 @@ export default function ChatsContent() {
                 onChange={e => setNoteDraft(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') addNote(); }}
                 placeholder="Add a private note about this customer…"
-                className="flex-1 h-8 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-blue-400 focus:bg-white transition"
+                className="flex-1 h-8 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 text-[11px] text-zinc-700 placeholder:text-zinc-400 outline-none focus:border-[#795bf4] focus:bg-white transition"
               />
-              <button onClick={addNote} disabled={!noteDraft.trim()} className="h-8 w-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed transition"><Plus size={14} /></button>
+              <button onClick={addNote} disabled={!noteDraft.trim()} className="h-8 w-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-[#795bf4] text-white hover:bg-[#6847ef] disabled:opacity-30 disabled:cursor-not-allowed transition"><Plus size={14} /></button>
             </div>
             <div className="space-y-2.5">
               {(() => {

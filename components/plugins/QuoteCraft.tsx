@@ -259,7 +259,7 @@ export default function QuoteCraft({
         {" "}
         <Calculator
           size={18}
-          className="text-amber-600"
+          className="text-[#795bf4]"
           strokeWidth={2.25}
         />{" "}
         <h3 className="text-sm font-semibold text-zinc-900">QuoteCraft</h3>{" "}
@@ -290,7 +290,7 @@ export default function QuoteCraft({
                 {state?.checked ? (
                   <CheckSquare
                     size={18}
-                    className="text-amber-600"
+                    className="text-[#795bf4]"
                     strokeWidth={2.25}
                   />
                 ) : (
@@ -355,7 +355,7 @@ export default function QuoteCraft({
         <div className="flex items-center justify-between mt-2">
           {" "}
           <span className="text-zinc-500">Total</span>{" "}
-          <span className="font-semibold text-amber-600">
+          <span className="font-semibold text-[#795bf4]">
             R{subtotal.toFixed(2)}
           </span>{" "}
         </div>{" "}
@@ -363,7 +363,7 @@ export default function QuoteCraft({
       <button
         onClick={() => setShowConfirm(true)}
         disabled={!activeChat || selectedRows.length === 0}
-        className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
+        className="flex items-center justify-center gap-2 bg-[#795bf4] hover:bg-[#6847ef] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5.5 transition-colors"
       >
         {" "}
         <Send size={18} strokeWidth={2.25} /> Review and confirm quote{" "}
@@ -405,7 +405,7 @@ export default function QuoteCraft({
             <button
               onClick={sendQuote}
               disabled={sending}
-              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 text-sm font-semibold disabled:opacity-40 transition-colors"
+              className="flex-1 bg-[#795bf4] hover:bg-[#6847ef] text-white py-2.5 text-sm font-semibold disabled:opacity-40 transition-colors"
             >
               {" "}
               {sending ? "Sending..." : "Confirm and dispatch"}{" "}

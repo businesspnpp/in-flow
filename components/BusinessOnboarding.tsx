@@ -101,7 +101,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
     <div className="flex items-center justify-center min-h-screen bg-zinc-50 px-4 py-8">
       <div className="if-card w-full max-w-3xl p-8">
         <div className="mb-8 border-b border-zinc-200 pb-6">
-          <p className="text-xs uppercase tracking-widest text-amber-600 font-semibold">Welcome to Dock</p>
+          <p className="text-xs uppercase tracking-widest text-[#795bf4] font-semibold">Welcome to Dock</p>
           <h1 className="mt-4 text-3xl font-bold text-zinc-900">Set up your business account</h1>
           <p className="mt-3 text-sm text-zinc-600">
             Create your business profile. You will link your communication channels inside the main dashboard.
@@ -147,7 +147,7 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
                 <p className="text-sm font-medium text-zinc-900">Categories</p>
                 <p className="text-xs text-zinc-500">Select up to 2 categories that match your business.</p>
               </div>
-              <span className="text-xs text-amber-600 font-medium">{selectedCategories.length}/2 selected</span>
+              <span className="text-xs text-[#795bf4] font-medium">{selectedCategories.length}/2 selected</span>
             </div>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {CATEGORY_OPTIONS.map(category => (
@@ -157,8 +157,8 @@ export default function BusinessOnboarding({ onCompleted }: BusinessOnboardingPr
                   onClick={() => toggleCategory(category)}
                   className={`border px-4 py-3 text-left text-sm transition-all duration-200 ${
                     selectedCategories.includes(category)
-                      ? 'border-amber-600 bg-amber-50 text-amber-900 font-medium'
-                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-amber-300 hover:bg-amber-50'
+                      ? 'border-[#795bf4] bg-[#795bf4]/10 text-[#5a3fe0] font-medium'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-[#795bf4]/30 hover:bg-[#795bf4]/10'
                   }`}
                 >
                   {category}

@@ -141,7 +141,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
     return (
       <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 border-2 border-amber-500 border-t-transparent animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#795bf4] border-t-transparent animate-spin" />
           <p className="text-xs text-zinc-500">Loading Dock...</p>
         </div>
       </div>
@@ -194,7 +194,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
                   sidebarExpanded ? 'px-3 gap-3 justify-start' : 'justify-center'
                 } ${
                   isActive
-                    ? 'bg-[#FB5801] text-white'
+                    ? 'bg-[#795bf4] text-white'
                     : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -238,7 +238,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
                       value={searchValue}
                       onChange={(event) => setSearchValue(event.target.value)}
                       placeholder={searchPlaceholder}
-                      className="h-9 w-full rounded-lg border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm text-zinc-700 placeholder:text-zinc-400 outline-none transition focus:border-blue-400 focus:bg-white"
+                      className="h-9 w-full rounded-lg border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm text-zinc-700 placeholder:text-zinc-400 outline-none transition focus:border-[#795bf4] focus:bg-white"
                     />
                   </div>
                 ) : (
@@ -272,7 +272,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
                 onClick={() => router.push(path)}
                 className={`flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-md transition-colors ${
                   isActive
-                    ? 'text-amber-700 bg-amber-600/10'
+                    ? 'text-[#795bf4] bg-[#795bf4]/12'
                     : 'text-zinc-400 hover:text-zinc-500'
                 }`}
               >

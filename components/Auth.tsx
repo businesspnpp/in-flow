@@ -354,7 +354,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
           {user ? (
             <div className="bg-white border-2 border-zinc-900 shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] p-6 sm:p-8 max-w-md mx-auto w-full space-y-6">
               <div>
-                <span className="text-[10px] font-mono font-bold tracking-widest text-amber-800 bg-amber-400/30 border border-amber-300 px-2 py-0.5 uppercase">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#5a3fe0] bg-[#795bf4]/12 border border-[#795bf4]/20 px-2 py-0.5 uppercase">
                   Logged In
                 </span>
                 <h2 className="text-xl font-black tracking-tight text-zinc-900 mt-3">Welcome back</h2>
@@ -507,7 +507,7 @@ export default function Auth({ onSignedIn, onSignedOut }: AuthProps) {
                 <button
                   onClick={mode === 'signin' ? handleSignIn : handleSignUp}
                   disabled={loading}
-                  className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
+                  className="w-full bg-[#795bf4] hover:bg-[#6847ef] text-white py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
                 >
                   {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In to Account' : 'Create My Account'}
                   <ArrowRight size={14} strokeWidth={2.5} />

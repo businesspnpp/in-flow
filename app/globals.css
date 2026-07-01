@@ -23,7 +23,8 @@ body {
   --if-border: #e4e4e7;
   --if-ink: #18181b;
   --if-muted: #71717a;
-  --if-accent: #d97706;
+  --if-accent: #795bf4;
+  --if-accent-hover: #6847ef;
 }
 
 .if-card {
@@ -45,7 +46,7 @@ body {
 }
 
 .if-btn-primary:hover {
-  background: #b45309;
+  background: var(--if-accent-hover);
 }
 
 .if-btn-muted {
@@ -125,7 +126,7 @@ textarea::placeholder {
 }
 
 ::selection {
-  background-color: #D97706;
+  background-color: #795bf4;
   color: white;
 }
 
