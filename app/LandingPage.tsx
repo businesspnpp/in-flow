@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import {
   ArrowRight,
+  CalendarCheck2,
   ChevronDown,
+  CreditCard,
   GitBranch,
   Cog,
   Building2,
+  Inbox,
   ShieldCheck,
 } from 'lucide-react';
 
@@ -95,23 +98,57 @@ export default function LandingPage() {
 
             <div className="relative flex justify-center lg:col-span-5">
               <div className="relative w-full max-w-md rounded-xl border border-zinc-200 bg-zinc-50 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 text-zinc-900 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2.5 w-2.5 rounded-sm bg-[#66dba3]" />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">dock workspace</span>
-                    </div>
-                    <span className="text-xs font-medium text-zinc-400">Active</span>
+                <div className="mb-4 flex items-center justify-between border-b border-zinc-200 pb-3 px-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-zinc-500">Live Workspace Dashboard</span>
                   </div>
-                  <div className="space-y-3 text-sm">
-                    <div className="max-w-[85%] rounded-lg border border-zinc-200 bg-zinc-50 p-3.5">
-                      <p className="mb-0.5 text-[11px] font-bold uppercase tracking-tight text-zinc-400">dock assistant</p>
-                      <p className="leading-relaxed text-zinc-700">Your customer asked for tomorrow at 2 PM. Should I confirm and send the deposit link?</p>
+                  <span className="rounded-lg border border-zinc-200 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-700">
+                    active dock
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-zinc-200 bg-white p-3.5">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-zinc-700">
+                        <Inbox size={13} strokeWidth={1.5} className="text-zinc-600" /> WhatsApp Lead • Inbound
+                      </span>
+                      <span className="text-[10px] text-zinc-400">Just now</span>
                     </div>
-                    <div className="ml-auto max-w-[85%] rounded-lg border border-[#795bf4]/20 bg-[#795bf4]/10 p-3.5 text-right">
-                      <p className="mb-0.5 text-[11px] font-bold uppercase tracking-tight text-[#795bf4]">Ava</p>
-                      <p className="leading-relaxed text-zinc-800">Yes please. Send the quote and payment link so we can lock it in.</p>
+                    <p className="mt-2 text-xs font-medium text-zinc-600">
+                      &ldquo;Hi, I need to book an urgent alignment service and lock in tomorrow morning.&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg border border-zinc-200 bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+                      <div className="flex items-center gap-2 text-zinc-700">
+                        <CalendarCheck2 size={14} strokeWidth={1.5} />
+                        <span className="text-xs font-bold">BookedIt Native</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500">Confirm slot and project onto chat stream automatically.</p>
+                      <button className="mt-2 w-full rounded-md border border-zinc-200 bg-zinc-50 py-1 text-[11px] font-bold text-zinc-700 transition-colors hover:bg-zinc-100">
+                        Propose Time
+                      </button>
                     </div>
+
+                    <div className="rounded-lg border border-zinc-200 bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+                      <div className="flex items-center gap-2 text-zinc-700">
+                        <CreditCard size={14} strokeWidth={1.5} />
+                        <span className="text-xs font-bold">PayNow Engine</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500">Generate instantly protected billing tokens inside conversation feed.</p>
+                      <button className="mt-2 w-full rounded-md border border-zinc-200 bg-zinc-50 py-1 text-[11px] font-bold text-zinc-700 transition-colors hover:bg-zinc-100">
+                        Request Payment
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-zinc-200 bg-white p-3.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">System Integration Feed</p>
+                    <p className="mt-1 text-xs font-medium text-zinc-700">
+                      One core workspace. No platform jumping, zero lost conversions, clean automated triggers.
+                    </p>
                   </div>
                 </div>
               </div>
