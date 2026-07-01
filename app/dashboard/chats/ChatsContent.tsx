@@ -104,6 +104,14 @@ function normalizeLiveMessage(message: string | null | undefined) {
   return cleaned || message;
 }
 
+function getLiveChatChannel(chatId: string) {
+  return chatId.includes(':') ? chatId.split(':')[0].toLowerCase() : '';
+}
+
+function getLiveChatRecipient(chatId: string) {
+  return chatId.includes(':') ? chatId.split(':').slice(1).join(':') || chatId : chatId;
+}
+
 /* ================================================================== */
 /* Mock data — Inbox (chat list + thread)                              */
 /* ================================================================== */
@@ -385,7 +393,12 @@ export default function ChatsContent() {
     [activeContact, activeLiveChat, liveChats]
   );
   const canSendLiveChat = useMemo(
-    () => Boolean(selectedLiveChat && /^\+?\d{7,}$/.test(selectedLiveChat.id)),
+    () => {
+      if (!selectedLiveChat) return false;
+      const channel = getLiveChatChannel(selectedLiveChat.id);
+      const recipient = getLiveChatRecipient(selectedLiveChat.id);
+      return channel === 'whatsapp' && /^\+?\d{7,}$/.test(recipient);
+    },
     [selectedLiveChat]
   );
   const curMsgs = useMemo(() => {
@@ -1005,8 +1018,8 @@ export default function ChatsContent() {
           canSend={canSendLiveChat}
           readOnlyReason={
             canSendLiveChat
-              ? 'Sending is available for this live conversation.'
-              : 'This live conversation is view-only here because the existing sender is WhatsApp-only.'
+              ? 'Sending is available for this live WhatsApp conversation.'
+              : 'This live conversation is view-only here because sending is not supported for this channel in the demo.'
           }
         />
       );

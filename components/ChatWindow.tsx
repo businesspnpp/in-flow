@@ -21,6 +21,14 @@ function formatContactLabel(id: string) {
   return /^\+?\d{7,}$/.test(rawId) ? `+${rawId.replace(/^\+/, "")}` : rawId;
 }
 
+function getRecipientId(id: string) {
+  return id.includes(":") ? id.split(":").slice(1).join(":") || id : id;
+}
+
+function getChatChannel(id: string) {
+  return id.includes(":") ? id.split(":")[0].toLowerCase() : '';
+}
+
 export default function ChatWindow({
   activeChat,
   canSend = true,
@@ -79,6 +87,14 @@ export default function ChatWindow({
       }
 
       const { body, chat_id } = validationResult.data;
+      const recipientId = getRecipientId(chat_id);
+      const channel = getChatChannel(chat_id);
+
+      if (channel && channel !== 'whatsapp') {
+        setError('Outgoing replies are only supported for WhatsApp live conversations in this demo.');
+        return;
+      }
+
       setInput("");
       setSending(true);
 
@@ -92,7 +108,7 @@ export default function ChatWindow({
           },
           body: JSON.stringify({
             messaging_product: "whatsapp",
-            to: chat_id,
+            to: recipientId,
             type: "text",
             text: { body },
           }),
