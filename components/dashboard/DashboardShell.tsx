@@ -155,19 +155,19 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
           sidebarExpanded ? 'w-60' : 'w-16'
         }`}
       >
-        <div className="flex items-center justify-between px-3 py-3 border-b border-[#16233f]">
+        <div className="flex items-center justify-between gap-3 px-3 py-4 border-b border-[#16233f]">
           {sidebarExpanded ? (
-            <img src="/dock-logo-2.png" alt="Dock logo" className="h-8 w-auto" />
+            <img src="/dock-logo-2.png" alt="Dock logo" className="h-7 w-auto" />
           ) : (
-            <img src="/dock-icon-2.png" alt="Dock icon" className="h-8 w-8 mx-auto" />
+            <img src="/dock-icon-2.png" alt="Dock icon" className="h-7 w-7 mx-auto" />
           )}
           <button
             type="button"
             onClick={() => setSidebarExpanded((prev) => !prev)}
-            className="h-9 w-9 flex items-center justify-center rounded-md text-white/90 hover:bg-white/10 hover:text-white transition-colors"
+            className="h-10 w-10 flex items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/85 hover:bg-white/10 hover:text-white transition-colors"
             aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            {sidebarExpanded ? <PanelLeftClose size={18} strokeWidth={2.5} /> : <PanelLeftOpen size={18} strokeWidth={2.5} />}
+            {sidebarExpanded ? <PanelLeftClose size={16} strokeWidth={1.9} /> : <PanelLeftOpen size={16} strokeWidth={1.9} />}
           </button>
         </div>
 
