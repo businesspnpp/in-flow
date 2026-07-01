@@ -2,10 +2,10 @@ import Link from 'next/link';
 import {
   ArrowRight,
   ChevronDown,
-  MessageSquare,
-  Sparkles,
-  User,
-  HelpCircle,
+  GitBranch,
+  Cog,
+  Building2,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -14,7 +14,7 @@ export default function LandingPage() {
       <div className="bg-[#795bf4] px-4 py-2.5 text-center text-xs font-medium tracking-wide text-white">
         Dock Growth Sessions 2026: Join live workshops to launch faster conversations, bookings, and payments.
         <Link href="/login?mode=signup" className="ml-1 inline-flex items-center gap-0.5 font-bold underline hover:text-zinc-100">
-          Start now <ArrowRight size={12} />
+          Start now <ArrowRight size={12} strokeWidth={1.5} />
         </Link>
       </div>
 
@@ -27,16 +27,16 @@ export default function LandingPage() {
             </Link>
             <nav className="hidden items-center gap-8 text-[14px] font-semibold text-zinc-600 lg:flex">
               <Link href="/dashboard" className="flex items-center gap-1 hover:text-zinc-900">
-                Platform <ChevronDown size={14} />
+                Platform <ChevronDown size={14} strokeWidth={1.5} />
               </Link>
               <Link href="/dashboard/tools" className="flex items-center gap-1 hover:text-zinc-900">
-                Products <ChevronDown size={14} />
+                Products <ChevronDown size={14} strokeWidth={1.5} />
               </Link>
               <Link href="/dashboard/chats" className="flex items-center gap-1 hover:text-zinc-900">
-                Solutions <ChevronDown size={14} />
+                Solutions <ChevronDown size={14} strokeWidth={1.5} />
               </Link>
               <Link href="/privacy" className="flex items-center gap-1 hover:text-zinc-900">
-                Resources <ChevronDown size={14} />
+                Resources <ChevronDown size={14} strokeWidth={1.5} />
               </Link>
               <Link href="/pricing" className="hover:text-zinc-900">
                 Pricing
@@ -159,8 +159,8 @@ export default function LandingPage() {
                   Every message becomes a learning signal
                 </span>
                 <div className="flex gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-                    <MessageSquare size={16} strokeWidth={1.5} />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700">
+                    <GitBranch size={16} strokeWidth={1.5} />
                   </div>
                   <div className="text-sm">
                     <p className="font-bold text-zinc-900">&quot;Can you invoice and reserve me for Friday?&quot;</p>
@@ -191,8 +191,8 @@ export default function LandingPage() {
                 <div className="max-w-xl rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-                        <Sparkles size={16} strokeWidth={1.5} />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700">
+                        <Cog size={16} strokeWidth={1.5} />
                       </div>
                       <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Live customer resolution</span>
                     </div>
@@ -265,9 +265,9 @@ export default function LandingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-                  <MessageSquare size={22} strokeWidth={1.5} />
-                </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700">
+                    <GitBranch size={22} strokeWidth={1.5} />
+                  </div>
                 <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Build Dock-Streams workflows</h3>
                 <p className="text-sm leading-relaxed text-zinc-500">
                   Automate repeatable responses, route urgent messages, and keep every customer stream moving with clear next actions.
@@ -282,8 +282,8 @@ export default function LandingPage() {
 
             <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-colors hover:border-zinc-300">
               <div className="space-y-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-                  <Sparkles size={22} strokeWidth={1.5} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700">
+                  <Cog size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-2xl font-bold tracking-tight text-zinc-950">Equip every teammate</h3>
                 <p className="text-sm leading-relaxed text-zinc-500">
@@ -457,8 +457,8 @@ export default function LandingPage() {
                 &quot;We replaced five separate tools with Dock. Replies are faster, bookings are cleaner, and we collect deposits right in chat.&quot;
               </blockquote>
               <div className="flex items-center gap-3 pt-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 font-bold text-purple-600">
-                  <User size={18} strokeWidth={1.5} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white font-bold text-zinc-700">
+                  <Building2 size={18} strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-zinc-950">Tariq Mensah</p>
@@ -586,8 +586,11 @@ export default function LandingPage() {
             </div>
             <div className="space-y-1 pt-4 text-xs text-zinc-400">
               <p>Need deeper rollout details for your team?</p>
-              <Link href="/privacy" className="flex items-center justify-center gap-0.5 font-bold text-[#66dba3] hover:underline">
-                View FAQs <HelpCircle size={12} />
+              <Link href="/privacy" className="flex items-center justify-center gap-2 font-bold text-[#66dba3] hover:underline">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md border border-zinc-500/60 bg-zinc-800 text-zinc-300">
+                  <ShieldCheck size={12} strokeWidth={1.5} />
+                </span>
+                View FAQs
               </Link>
             </div>
           </div>
