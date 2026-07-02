@@ -76,15 +76,39 @@ export async function GET(request: NextRequest) {
       { onConflict: 'business_id,channel' }
     );
 
+    let webhookSetupFailed = false;
+    let webhookSetupError = '';
+
     if (['facebook', 'instagram', 'whatsapp', 'telegram'].includes(connectedPlatform)) {
       const webhookUrl = `${request.nextUrl.origin}/api/zernio/webhook?business_id=${encodeURIComponent(businessId)}`;
-      await ensureZernioInboxWebhook({
-        name: `inFlow inbox ${connectedPlatform}`,
-        url: webhookUrl,
-        secret: process.env.ZERNIO_WEBHOOK_SECRET || undefined,
-      }).catch((error) => {
+      try {
+        await ensureZernioInboxWebhook({
+          name: `inFlow inbox ${connectedPlatform}`,
+          url: webhookUrl,
+          secret: process.env.ZERNIO_WEBHOOK_SECRET || undefined,
+        });
+        console.log('[zernio/callback] Webhook registered successfully for', connectedPlatform, '->', webhookUrl);
+      } catch (error) {
+        webhookSetupFailed = true;
+        webhookSetupError = error instanceof Error ? error.message : 'Webhook registration failed';
         console.error('[zernio/callback] webhook setup failed:', error);
-      });
+      }
+    }
+
+    if (webhookSetupFailed) {
+      // The account/profile connected fine, but without a working inbound webhook
+      // no live messages will ever arrive. Surface that clearly instead of
+      // reporting success, since "connected" was previously misleading.
+      await supabase.from('channel_configs').update({
+        status: 'connected_no_webhook',
+        updated_at: new Date().toISOString(),
+      }).eq('business_id', businessId).eq('channel', connectedPlatform);
+
+      return NextResponse.redirect(
+        `${dashboardUrl}?oauth=partial&channel=${connectedPlatform}&error=${encodeURIComponent(
+          `Account connected, but inbox webhook setup failed: ${webhookSetupError}. Live messages will not be received until this is fixed.`
+        )}`
+      );
     }
 
     return NextResponse.redirect(`${dashboardUrl}?oauth=success&channel=${connectedPlatform}`);
