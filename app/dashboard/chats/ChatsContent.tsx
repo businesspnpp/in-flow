@@ -122,19 +122,20 @@ function normalizeParticipantKey(chat: SupabaseChat) {
 
 type LiveMessageMeta = { chat_id: string; sender: 'business' | 'customer'; created_at: string };
 
-function deriveUnreadByChatId(messages: LiveMessageMeta[]) {
+function deriveConversationUnread(messages: LiveMessageMeta[], readAt: string | null) {
   const sorted = [...messages].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  const unreadByChatId: Record<string, number> = {};
 
-  for (const msg of sorted) {
-    if (msg.sender === 'business') {
-      unreadByChatId[msg.chat_id] = 0;
-      continue;
-    }
-    unreadByChatId[msg.chat_id] = (unreadByChatId[msg.chat_id] ?? 0) + 1;
+  if (readAt) {
+    const readMs = new Date(readAt).getTime();
+    return sorted.filter((msg) => msg.sender === 'customer' && new Date(msg.created_at).getTime() > readMs).length;
   }
 
-  return unreadByChatId;
+  let lastBusinessIndex = -1;
+  for (let i = 0; i < sorted.length; i += 1) {
+    if (sorted[i].sender === 'business') lastBusinessIndex = i;
+  }
+
+  return sorted.slice(lastBusinessIndex + 1).filter((msg) => msg.sender === 'customer').length;
 }
 
 /* ================================================================== */
@@ -391,7 +392,8 @@ export default function ChatsContent() {
   const [activeContact, setActiveContact] = useState<string | null>(null);
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
   const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
-  const [liveUnreadByChatId, setLiveUnreadByChatId] = useState<Record<string, number>>({});
+  const [liveMessageMetaByChatId, setLiveMessageMetaByChatId] = useState<Record<string, LiveMessageMeta[]>>({});
+  const [liveReadAtByConversationId, setLiveReadAtByConversationId] = useState<Record<string, string>>({});
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
@@ -434,11 +436,12 @@ export default function ChatsContent() {
         const sorted = [...chats].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
         const primary = sorted[0];
         const mapped = mapLiveChat(primary);
-        const unreadCount = sorted.reduce((sum, chat) => {
-          const fromDb = Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : 0;
-          const local = liveUnreadByChatId[chat.id] ?? 0;
-          return sum + Math.max(fromDb, local);
-        }, 0);
+        const chatIds = sorted.map((chat) => chat.id);
+        const timeline = chatIds.flatMap((id) => liveMessageMetaByChatId[id] ?? []);
+        const readAt = liveReadAtByConversationId[primary.id] ?? null;
+        const fromTimeline = deriveConversationUnread(timeline, readAt);
+        const fromDb = sorted.reduce((sum, chat) => sum + (Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : 0), 0);
+        const unreadCount = timeline.length > 0 ? fromTimeline : fromDb;
         return {
           ...mapped,
           unreadCount,
@@ -451,7 +454,7 @@ export default function ChatsContent() {
       });
 
     return grouped;
-  }, [liveChats, liveUnreadByChatId]);
+  }, [liveChats, liveMessageMetaByChatId, liveReadAtByConversationId]);
 
   const liveGroupChatIdsByConversationId = useMemo<Record<string, string[]>>(() => {
     const buckets = new Map<string, SupabaseChat[]>();
@@ -534,7 +537,7 @@ export default function ChatsContent() {
       if (active && data) {
         const chats = data as SupabaseChat[];
         const chatIds = chats.map((chat) => chat.id);
-        let derivedUnread: Record<string, number> = {};
+        let messageMetaByChatId: Record<string, LiveMessageMeta[]> = {};
 
         if (chatIds.length > 0) {
           const { data: msgData } = await supabase
@@ -543,21 +546,17 @@ export default function ChatsContent() {
             .in('chat_id', chatIds)
             .order('created_at', { ascending: true });
 
-          derivedUnread = deriveUnreadByChatId((msgData ?? []) as LiveMessageMeta[]);
+          for (const message of (msgData ?? []) as LiveMessageMeta[]) {
+            const list = messageMetaByChatId[message.chat_id] ?? [];
+            list.push(message);
+            messageMetaByChatId[message.chat_id] = list;
+          }
         }
 
         if (!active) return;
 
         setLiveChats(chats);
-        setLiveUnreadByChatId((prev) => {
-          const next: Record<string, number> = {};
-          for (const chat of chats) {
-            const fromDb = Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : null;
-            const fromDerived = derivedUnread[chat.id] ?? 0;
-            next[chat.id] = Math.max(fromDb ?? 0, fromDerived, prev[chat.id] ?? 0);
-          }
-          return next;
-        });
+        setLiveMessageMetaByChatId(messageMetaByChatId);
       }
     }
 
@@ -660,35 +659,41 @@ export default function ChatsContent() {
 
   useEffect(() => {
     if (!activeContact || selected?.source !== 'live') return;
-    const ids = liveGroupChatIdsByConversationId[activeContact] ?? [activeContact];
-    setLiveUnreadByChatId((prev) => {
-      const next = { ...prev };
-      for (const id of ids) next[id] = 0;
-      return next;
-    });
+    setLiveReadAtByConversationId((prev) => ({
+      ...prev,
+      [activeContact]: new Date().toISOString(),
+    }));
   }, [activeContact, selected?.source, liveGroupChatIdsByConversationId]);
 
   useEffect(() => {
     const channel = supabase
-      .channel('dashboard-live-unread')
+      .channel('dashboard-live-message-meta')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          const row = payload.new as { chat_id?: string; sender?: string };
+          const row = payload.new as LiveMessageMeta;
           const chatId = row.chat_id ?? '';
-          if (!chatId || row.sender !== 'customer') return;
+          if (!chatId) return;
+
+          setLiveMessageMetaByChatId((prev) => {
+            const list = prev[chatId] ?? [];
+            return {
+              ...prev,
+              [chatId]: [...list, { chat_id: chatId, sender: row.sender, created_at: row.created_at }],
+            };
+          });
 
           const activeLiveChatIds = selected?.source === 'live' && activeContact
             ? (liveGroupChatIdsByConversationId[activeContact] ?? [activeContact])
             : [];
 
-          if (activeLiveChatIds.includes(chatId)) return;
-
-          setLiveUnreadByChatId((prev) => ({
-            ...prev,
-            [chatId]: (prev[chatId] ?? 0) + 1,
-          }));
+          if (activeLiveChatIds.includes(chatId)) {
+            setLiveReadAtByConversationId((prev) => ({
+              ...prev,
+              [activeContact as string]: new Date().toISOString(),
+            }));
+          }
         }
       )
       .subscribe();
