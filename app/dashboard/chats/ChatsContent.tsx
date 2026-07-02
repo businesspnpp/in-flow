@@ -122,6 +122,19 @@ function normalizeParticipantKey(chat: SupabaseChat) {
 
 type LiveMessageMeta = { id: string; chat_id: string; sender: 'business' | 'customer'; created_at: string };
 
+// `last_read_at` is a persisted column on `chats` that may not yet be declared
+// on the generated SupabaseChat type. Read it defensively so this compiles
+// whether or not lib/supabase.ts has been regenerated.
+function getPersistedReadAt(chat: SupabaseChat): string | null {
+  return (chat as unknown as { last_read_at?: string | null }).last_read_at ?? null;
+}
+
+function latestIso(a: string | null, b: string | null): string | null {
+  if (!a) return b;
+  if (!b) return a;
+  return new Date(a).getTime() >= new Date(b).getTime() ? a : b;
+}
+
 function deriveConversationUnread(messages: LiveMessageMeta[], readAt: string | null) {
   const sorted = [...messages].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
@@ -196,16 +209,15 @@ function mapLiveChat(chat: SupabaseChat): InboxConversation {
   const channel = chat.channel?.trim()
     ? chat.channel.trim().charAt(0).toUpperCase() + chat.channel.trim().slice(1)
     : getLiveChannelLabel(chat.id);
-  const unreadCount = Number.isFinite(chat.unread_count)
-    ? Math.max(0, Number(chat.unread_count))
-    : 0;
   return {
     id: chat.id,
     customerName,
     channel,
     avatarColor: conversationInitials(customerName),
     lastMessageTime: formatRelativeTime(chat.updated_at),
-    unreadCount,
+    // Placeholder — the real value is computed and overwritten in
+    // groupedLiveConversations from the message timeline + last_read_at.
+    unreadCount: 0,
     statusTag: 'Live',
     statusColor: 'border-[#66dba3]/30 text-[#2ea66f] bg-[#66dba3]/10',
     messages: [
@@ -393,7 +405,9 @@ export default function ChatsContent() {
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
   const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
   const [liveMessageMetaByChatId, setLiveMessageMetaByChatId] = useState<Record<string, LiveMessageMeta[]>>({});
-  const [liveReadAtByConversationKey, setLiveReadAtByConversationKey] = useState<Record<string, string>>({});
+  // Optimistic local overrides so the UI updates instantly on read; the source
+  // of truth is the persisted `last_read_at` column on `chats`, merged in below.
+  const [localReadOverrideByConversationKey, setLocalReadOverrideByConversationKey] = useState<Record<string, string>>({});
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
@@ -413,6 +427,43 @@ export default function ChatsContent() {
   // customer notes (internal record-keeping, separate from the live chat thread)
   const [customNotes, setCustomNotes] = useState<Record<string, ActivityItem[]>>({});
   const [noteDraft, setNoteDraft] = useState('');
+
+  // Persisted `last_read_at`, grouped by conversation key. Multiple `chats`
+  // rows can belong to one grouped conversation, so we take the most recent
+  // read timestamp across the group as the group's read watermark.
+  const persistedReadAtByConversationKey = useMemo<Record<string, string | null>>(() => {
+    const buckets = new Map<string, SupabaseChat[]>();
+    for (const chat of liveChats) {
+      const key = normalizeParticipantKey(chat);
+      const list = buckets.get(key) ?? [];
+      list.push(chat);
+      buckets.set(key, list);
+    }
+    const map: Record<string, string | null> = {};
+    for (const [key, chats] of buckets.entries()) {
+      map[key] = chats.reduce<string | null>((latest, chat) => latestIso(latest, getPersistedReadAt(chat)), null);
+    }
+    return map;
+  }, [liveChats]);
+
+  // Effective read-at = whichever is more recent of the persisted DB value
+  // and any optimistic local override (e.g. just clicked into the thread,
+  // DB write still in flight).
+  const effectiveReadAtByConversationKey = useMemo<Record<string, string>>(() => {
+    const keys = new Set([
+      ...Object.keys(persistedReadAtByConversationKey),
+      ...Object.keys(localReadOverrideByConversationKey),
+    ]);
+    const map: Record<string, string> = {};
+    for (const key of keys) {
+      const combined = latestIso(
+        persistedReadAtByConversationKey[key] ?? null,
+        localReadOverrideByConversationKey[key] ?? null
+      );
+      if (combined) map[key] = combined;
+    }
+    return map;
+  }, [persistedReadAtByConversationKey, localReadOverrideByConversationKey]);
 
   const groupedLiveConversations = useMemo<InboxConversation[]>(() => {
     const buckets = new Map<string, { chats: SupabaseChat[]; newestAt: number }>();
@@ -438,10 +489,8 @@ export default function ChatsContent() {
         const mapped = mapLiveChat(primary);
         const chatIds = sorted.map((chat) => chat.id);
         const timeline = chatIds.flatMap((id) => liveMessageMetaByChatId[id] ?? []);
-        const readAt = liveReadAtByConversationKey[conversationKey] ?? null;
-        const fromTimeline = deriveConversationUnread(timeline, readAt);
-        const fromDb = sorted.reduce((sum, chat) => sum + (Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : 0), 0);
-        const unreadCount = timeline.length > 0 ? fromTimeline : fromDb;
+        const readAt = effectiveReadAtByConversationKey[conversationKey] ?? null;
+        const unreadCount = deriveConversationUnread(timeline, readAt);
         return {
           ...mapped,
           unreadCount,
@@ -454,7 +503,7 @@ export default function ChatsContent() {
       });
 
     return grouped;
-  }, [liveChats, liveMessageMetaByChatId, liveReadAtByConversationKey]);
+  }, [liveChats, liveMessageMetaByChatId, effectiveReadAtByConversationKey]);
 
   const liveConversationKeyByConversationId = useMemo<Record<string, string>>(() => {
     const buckets = new Map<string, SupabaseChat[]>();
@@ -677,11 +726,26 @@ export default function ChatsContent() {
   useEffect(() => {
     if (!activeContact || selected?.source !== 'live') return;
     const key = liveConversationKeyByConversationId[activeContact] ?? activeContact;
-    setLiveReadAtByConversationKey((prev) => ({
+    const now = new Date().toISOString();
+
+    // Instant UI feedback — don't wait on the round-trip to clear the badge.
+    setLocalReadOverrideByConversationKey((prev) => ({
       ...prev,
-      [key]: new Date().toISOString(),
+      [key]: now,
     }));
-  }, [activeContact, liveConversationKeyByConversationId, selected?.source]);
+
+    // Persist across refreshes / tabs / devices. Apply to every chat row in
+    // this grouped conversation, since a grouped conversation can span more
+    // than one `chats` row (e.g. same customer across matching identifiers).
+    const chatIds = liveGroupChatIdsByConversationId[activeContact] ?? [activeContact];
+    supabase
+      .from('chats')
+      .update({ last_read_at: now })
+      .in('id', chatIds)
+      .then(({ error }) => {
+        if (error) console.error('Failed to persist last_read_at', error);
+      });
+  }, [activeContact, liveConversationKeyByConversationId, liveGroupChatIdsByConversationId, selected?.source]);
 
   useEffect(() => {
     const channel = supabase
@@ -710,10 +774,18 @@ export default function ChatsContent() {
           if (activeLiveChatIds.includes(chatId)) {
             const key = (activeContact && liveConversationKeyByConversationId[activeContact]) || activeContact;
             if (!key) return;
-            setLiveReadAtByConversationKey((prev) => ({
+            const now = new Date().toISOString();
+            setLocalReadOverrideByConversationKey((prev) => ({
               ...prev,
-              [key]: new Date().toISOString(),
+              [key]: now,
             }));
+            supabase
+              .from('chats')
+              .update({ last_read_at: now })
+              .in('id', activeLiveChatIds)
+              .then(({ error }) => {
+                if (error) console.error('Failed to persist last_read_at', error);
+              });
           }
         }
       )
