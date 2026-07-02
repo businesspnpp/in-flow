@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase Admin Client for token verification
 function getSupabaseAdmin() {
-  const url = process.env.SUPABASE_URL;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
@@ -25,7 +25,10 @@ export async function getSessionFromRequest(request: NextRequest) {
   // Check for token in HttpOnly cookie first (most secure)
   const cookieToken = request.cookies.get('supabase-auth')?.value;
 
-  // Fallback to Authorization header (for API clients)
+  // Fallback to Authorization header (for API clients / client-side fetches
+  // using the Supabase JS SDK session, which is how this app currently
+  // authenticates — there is no code path that sets the 'supabase-auth'
+  // cookie, so in practice this header is the one that matters today)
   const authHeader = request.headers.get('authorization');
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
@@ -36,12 +39,16 @@ export async function getSessionFromRequest(request: NextRequest) {
   }
 
   try {
-    // Verify the JWT token using Supabase admin client
+    // Verify the JWT access token using the Supabase admin client.
+    // IMPORTANT: this must be auth.getUser(token) — which validates a JWT
+    // access token and returns the user it belongs to — NOT
+    // auth.admin.getUserById(token), which expects a raw user UUID and will
+    // always fail (or return the wrong thing) when given a JWT.
     const supabase = getSupabaseAdmin();
     const {
       data: { user },
       error,
-    } = await supabase.auth.admin.getUserById(token);
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) {
       return null;
