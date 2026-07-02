@@ -116,8 +116,25 @@ function normalizeParticipantKey(chat: SupabaseChat) {
   const channel = (chat.channel || getLiveChatChannel(chat.id) || 'live').toLowerCase();
   const recipient = getLiveChatRecipient(chat.id).replace(/\s+/g, '').toLowerCase();
   const name = (chat.name || '').replace(/\s+/g, '').toLowerCase();
-  const identity = recipient || name || chat.id.toLowerCase();
+  const identity = name || recipient || chat.id.toLowerCase();
   return `${channel}:${identity}`;
+}
+
+type LiveMessageMeta = { chat_id: string; sender: 'business' | 'customer'; created_at: string };
+
+function deriveUnreadByChatId(messages: LiveMessageMeta[]) {
+  const sorted = [...messages].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  const unreadByChatId: Record<string, number> = {};
+
+  for (const msg of sorted) {
+    if (msg.sender === 'business') {
+      unreadByChatId[msg.chat_id] = 0;
+      continue;
+    }
+    unreadByChatId[msg.chat_id] = (unreadByChatId[msg.chat_id] ?? 0) + 1;
+  }
+
+  return unreadByChatId;
 }
 
 /* ================================================================== */
@@ -516,12 +533,28 @@ export default function ChatsContent() {
 
       if (active && data) {
         const chats = data as SupabaseChat[];
+        const chatIds = chats.map((chat) => chat.id);
+        let derivedUnread: Record<string, number> = {};
+
+        if (chatIds.length > 0) {
+          const { data: msgData } = await supabase
+            .from('messages')
+            .select('chat_id,sender,created_at')
+            .in('chat_id', chatIds)
+            .order('created_at', { ascending: true });
+
+          derivedUnread = deriveUnreadByChatId((msgData ?? []) as LiveMessageMeta[]);
+        }
+
+        if (!active) return;
+
         setLiveChats(chats);
         setLiveUnreadByChatId((prev) => {
           const next: Record<string, number> = {};
           for (const chat of chats) {
             const fromDb = Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : null;
-            next[chat.id] = fromDb ?? (prev[chat.id] ?? 0);
+            const fromDerived = derivedUnread[chat.id] ?? 0;
+            next[chat.id] = Math.max(fromDb ?? 0, fromDerived, prev[chat.id] ?? 0);
           }
           return next;
         });
