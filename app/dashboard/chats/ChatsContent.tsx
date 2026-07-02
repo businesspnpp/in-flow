@@ -510,7 +510,21 @@ export default function ChatsContent() {
     let active = true;
 
     async function syncInbox() {
-      const response = await fetch('/api/zernio/sync', { method: 'POST' });
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        console.error('Failed to sync Zernio inbox: no active Supabase session');
+        return;
+      }
+
+      const response = await fetch('/api/zernio/sync', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
       if (!response.ok && active) {
         console.error('Failed to sync Zernio inbox');
       }
