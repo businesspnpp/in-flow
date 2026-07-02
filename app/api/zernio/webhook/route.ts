@@ -39,9 +39,29 @@ function firstString(...values: Array<unknown>) {
   return '';
 }
 
+// Some providers use different platform labels than our internal channel names.
+// Map known aliases here instead of dropping anything we don't recognize.
+const CHANNEL_ALIASES: Record<string, string> = {
+  whatsapp: 'whatsapp',
+  facebook: 'facebook',
+  messenger: 'facebook',
+  facebook_page: 'facebook',
+  fb: 'facebook',
+  instagram: 'instagram',
+  ig: 'instagram',
+  telegram: 'telegram',
+  tiktok: 'tiktok',
+};
+
 function normalizeChannel(value: unknown) {
-  const channel = typeof value === 'string' ? value.toLowerCase() : '';
-  if (['whatsapp', 'facebook', 'instagram', 'telegram'].includes(channel)) return channel;
+  const raw = typeof value === 'string' ? value.toLowerCase().trim() : '';
+  if (CHANNEL_ALIASES[raw]) return CHANNEL_ALIASES[raw];
+  // Unknown-but-present platform string: don't silently drop it, pass it through
+  // so the message still lands somewhere and we can see the real label in logs.
+  if (raw) {
+    console.warn('[zernio/webhook] Unrecognized channel/platform value, passing through:', raw);
+    return raw;
+  }
   return '';
 }
 
@@ -122,6 +142,14 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
   const accountId = firstString(event.account?.id, event.account?.accountId);
 
   if (!businessId || !channel || !senderId || !messageText) {
+    console.warn('[zernio/webhook] Skipped inbound event, missing required field(s):', {
+      businessId: Boolean(businessId),
+      channel: channel || null,
+      senderId: senderId || null,
+      hasMessageText: Boolean(messageText),
+      eventType: event.event,
+      rawEventKeys: Object.keys(event),
+    });
     return;
   }
 
@@ -188,13 +216,27 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  if (eventType === 'message.received') {
+  // Zernio's event naming isn't fully confirmed on our end yet, so instead of
+  // matching one exact string ('message.received'), we treat ANY event that
+  // actually carries message content as an inbound message. We still log the
+  // raw eventType every time so we can see exactly what Zernio sends and
+  // tighten this back up once confirmed.
+  console.log('[zernio/webhook] Received event:', eventType || '(no event field)', 'businessId:', businessId);
+
+  const looksLikeInboundMessage =
+    Boolean(payload.message) &&
+    !firstString(payload.message?.direction).toLowerCase().includes('outgoing') &&
+    !firstString(payload.message?.direction).toLowerCase().includes('out');
+
+  if (looksLikeInboundMessage) {
     try {
       await persistInbound(businessId, payload);
     } catch (error) {
       console.error('[zernio/webhook] persist failed:', error);
       return NextResponse.json({ error: 'Failed to persist message' }, { status: 500 });
     }
+  } else {
+    console.log('[zernio/webhook] Event did not look like an inbound message, skipping persist. eventType:', eventType);
   }
 
   return NextResponse.json({ status: 'ok' }, { status: 200 });
