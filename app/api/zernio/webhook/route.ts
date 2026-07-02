@@ -112,6 +112,7 @@ function resolveSenderName(event: ZernioWebhookEvent) {
 
 function resolveMessageText(event: ZernioWebhookEvent) {
   return firstString(
+    event.message?.message, // confirmed field name per Zernio's inbox message shape
     event.message?.text,
     event.message?.body,
     event.message?.content,
@@ -216,11 +217,10 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Zernio's event naming isn't fully confirmed on our end yet, so instead of
-  // matching one exact string ('message.received'), we treat ANY event that
-  // actually carries message content as an inbound message. We still log the
-  // raw eventType every time so we can see exactly what Zernio sends and
-  // tighten this back up once confirmed.
+  // Confirmed from lib/zernio.ts: ensureZernioInboxWebhook registers exactly
+  // ['message.received', 'conversation.started']. We still fall back to a
+  // shape check (payload actually has message content) as a safety net in
+  // case Zernio adds/renames events later.
   console.log('[zernio/webhook] Received event:', eventType || '(no event field)', 'businessId:', businessId);
 
   const looksLikeInboundMessage =
