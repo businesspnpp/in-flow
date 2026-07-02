@@ -22,6 +22,7 @@ export type Chat = {
   id: string;
   name: string | null;
   channel?: string | null;
+  unread_count?: number | null;
   last_message: string | null;
   updated_at: string;
 };

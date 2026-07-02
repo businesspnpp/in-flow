@@ -170,13 +170,16 @@ function mapLiveChat(chat: SupabaseChat): InboxConversation {
   const channel = chat.channel?.trim()
     ? chat.channel.trim().charAt(0).toUpperCase() + chat.channel.trim().slice(1)
     : getLiveChannelLabel(chat.id);
+  const unreadCount = Number.isFinite(chat.unread_count)
+    ? Math.max(0, Number(chat.unread_count))
+    : 0;
   return {
     id: chat.id,
     customerName,
     channel,
     avatarColor: conversationInitials(customerName),
     lastMessageTime: formatRelativeTime(chat.updated_at),
-    unreadCount: 0,
+    unreadCount,
     statusTag: 'Live',
     statusColor: 'border-[#66dba3]/30 text-[#2ea66f] bg-[#66dba3]/10',
     messages: [

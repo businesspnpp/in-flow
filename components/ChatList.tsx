@@ -70,6 +70,11 @@ function normalizeMessageBody(body: string | null | undefined) {
   return cleaned || body;
 }
 
+function getUnreadCount(chat: Chat) {
+  if (!Number.isFinite(chat.unread_count)) return 0;
+  return Math.max(0, Number(chat.unread_count));
+}
+
 export default function ChatList({ activeChat, onSelectChat, showLiveBadge = false }: ChatListProps) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [search, setSearch] = useState("");
@@ -169,6 +174,7 @@ export default function ChatList({ activeChat, onSelectChat, showLiveBadge = fal
         {filtered.map((chat) => {
           const channelInfo = getChannelInfo(chat.id);
           const preview = normalizeMessageBody(chat.last_message);
+          const unreadCount = getUnreadCount(chat);
           return (
             <button
               key={chat.id}
@@ -189,7 +195,14 @@ export default function ChatList({ activeChat, onSelectChat, showLiveBadge = fal
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-zinc-500 ml-2 flex-shrink-0">{timeAgo(chat.updated_at)}</span>
+                  <div className="ml-2 flex flex-shrink-0 items-center gap-1.5">
+                    {unreadCount > 0 && (
+                      <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#795bf4] px-1 text-[10px] font-bold text-white">
+                        {unreadCount}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-zinc-500">{timeAgo(chat.updated_at)}</span>
+                  </div>
                 </div>
                 <p className="text-xs text-zinc-500 truncate mt-0.5">{preview}</p>
               </div>
