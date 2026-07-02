@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { getSupabase, hasSupabaseConfig } from '@/lib/supabase';
 import { LoginSchema, SignUpSchema, type LoginInput, type SignUpInput } from '@/lib/validation';
 import { sanitizeEmail } from '@/lib/sanitize';
 import { LogOut, Mail, Lock, HelpCircle, ArrowRight } from 'lucide-react';
@@ -74,21 +74,51 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
 
   useEffect(() => {
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        onSignedIn();
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        onSignedOut?.();
+    let active = true;
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    async function bootstrapAuth() {
+      if (!hasSupabaseConfig) {
+        if (active) setUser(null);
+        return;
       }
-    });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) setUser(session.user);
-    });
+      try {
+        const client = getSupabase();
 
-    return () => subscription?.subscription.unsubscribe();
+        const { data } = client.auth.onAuthStateChange((event, session) => {
+          if (!active) return;
+
+          if (session?.user) {
+            setUser(session.user);
+            onSignedIn();
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            onSignedOut?.();
+          }
+        });
+
+        subscription = data.subscription;
+
+        const { data: sessionData } = await client.auth.getSession();
+        if (!active) return;
+
+        if (sessionData.session?.user) {
+          setUser(sessionData.session.user);
+        }
+      } catch {
+        if (active) {
+          setUser(null);
+        }
+      }
+    }
+
+    bootstrapAuth();
+
+    return () => {
+      active = false;
+      subscription?.unsubscribe();
+    };
   }, [onSignedIn, onSignedOut]);
 
   useEffect(() => {
@@ -109,6 +139,8 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
     setValidationErrors({});
 
     try {
+      const client = getSupabase();
+
       const validationResult = SignUpSchema.safeParse({
         email: sanitizeEmail(email),
         password,
@@ -129,7 +161,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
         (process.env.NEXT_PUBLIC_APP_URL as string) ||
         (typeof window !== 'undefined' ? window.location.origin : undefined);
 
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await client.auth.signUp({
         email: validationResult.data.email,
         password: validationResult.data.password,
         options: { emailRedirectTo: redirectUrl },
@@ -157,6 +189,8 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
     setValidationErrors({});
 
     try {
+      const client = getSupabase();
+
       const validationResult = LoginSchema.safeParse({
         email: sanitizeEmail(email),
         password,
@@ -172,7 +206,7 @@ export default function Auth({ onSignedIn, onSignedOut, initialMode = 'signin' }
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await client.auth.signInWithPassword({
         email: validationResult.data.email,
         password: validationResult.data.password,
       });

@@ -3,20 +3,45 @@
 import Auth from '@/components/Auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabase, hasSupabaseConfig } from '@/lib/supabase';
 
 export default function LoginClient({ initialMode }: { initialMode: 'signin' | 'signup' }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        router.push('/dashboard');
-      } else {
-        setChecking(false);
+    let active = true;
+
+    async function bootstrapAuth() {
+      if (!hasSupabaseConfig) {
+        if (active) setChecking(false);
+        return;
       }
-    });
+
+      try {
+        const client = getSupabase();
+        const { data: { session } } = await client.auth.getSession();
+
+        if (!active) return;
+
+        if (session?.user) {
+          router.push('/dashboard');
+          return;
+        }
+
+        setChecking(false);
+      } catch {
+        if (active) {
+          setChecking(false);
+        }
+      }
+    }
+
+    bootstrapAuth();
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
   if (checking) {

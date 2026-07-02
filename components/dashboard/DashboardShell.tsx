@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getSupabase, hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { Search } from 'lucide-react';
 import { useDashboardHeader } from '@/components/dashboard/DashboardHeaderContext';
 import {
@@ -47,20 +47,38 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    async function verifyAuth() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    let active = true;
 
-      if (!session) {
-        router.replace('/login');
+    async function verifyAuth() {
+      if (!hasSupabaseConfig) {
+        setCheckingSession(false);
         return;
       }
 
-      setCheckingSession(false);
+      try {
+        const client = getSupabase();
+        const {
+          data: { session },
+        } = await client.auth.getSession();
+
+        if (!active) return;
+
+        if (!session) {
+          router.replace('/login');
+          return;
+        }
+
+        setCheckingSession(false);
+      } catch {
+        router.replace('/login');
+      }
     }
 
     verifyAuth();
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
   const activeItem = useMemo(() => {
