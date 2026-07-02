@@ -86,8 +86,23 @@ export default function ChatList({ activeChat, onSelectChat, showLiveBadge = fal
   }, []);
 
   useEffect(() => {
+    // Use a unique topic per mount instead of a hardcoded name. If ChatList
+    // is ever mounted twice at once (e.g. a "Live Inbox" view alongside the
+    // normal chat list), reusing the same topic name causes Supabase to
+    // throw "cannot add postgres_changes callbacks ... after subscribe()"
+    // when the second instance tries to attach listeners.
+    const topic = `chats-realtime-${Math.random().toString(36).slice(2)}`;
+
+    // Defensive cleanup: if a channel with this exact topic somehow already
+    // exists (e.g. a previous instance's cleanup didn't finish yet), remove
+    // it before creating a new one.
+    const existing = supabase.getChannels().find((c) => c.topic === `realtime:${topic}`);
+    if (existing) {
+      supabase.removeChannel(existing);
+    }
+
     const channel = supabase
-      .channel("chats-realtime")
+      .channel(topic)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "chats" },
