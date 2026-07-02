@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase, type Chat as SupabaseChat } from '@/lib/supabase';
-import ChatList from '@/components/ChatList';
 import ChatWindow from '@/components/ChatWindow';
 import { isMissingTableError } from '@/lib/inflow-client';
 import {
@@ -32,6 +31,7 @@ type ActivityItem = { id: string; type: ActivityType; label: string; time: strin
 type ConversationSource = 'mock' | 'live';
 type InboxConversation = MockConversation & { source: ConversationSource; };
 type InboxMode = 'mixed' | 'live';
+type InboxFilter = 'all' | 'unread' | 'read';
 
 /* ================================================================== */
 /* Brand glyphs (lucide has no brand icons)                            */
@@ -110,6 +110,14 @@ function getLiveChatChannel(chatId: string) {
 
 function getLiveChatRecipient(chatId: string) {
   return chatId.includes(':') ? chatId.split(':').slice(1).join(':') || chatId : chatId;
+}
+
+function normalizeParticipantKey(chat: SupabaseChat) {
+  const channel = (chat.channel || getLiveChatChannel(chat.id) || 'live').toLowerCase();
+  const recipient = getLiveChatRecipient(chat.id).replace(/\s+/g, '').toLowerCase();
+  const name = (chat.name || '').replace(/\s+/g, '').toLowerCase();
+  const identity = recipient || name || chat.id.toLowerCase();
+  return `${channel}:${identity}`;
 }
 
 /* ================================================================== */
@@ -360,11 +368,13 @@ export default function ChatsContent() {
   const [mobileScreen, setMobileScreen] = useState<MobileScreen>('list');
   const [mobileListTab, setMobileListTab] = useState<MobileListTab>('inbox');
   const [inboxMode, setInboxMode] = useState<InboxMode>('mixed');
+  const [inboxFilter, setInboxFilter] = useState<InboxFilter>('all');
 
   // inbox / thread
   const [activeContact, setActiveContact] = useState<string | null>(null);
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
   const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
+  const [liveUnreadByChatId, setLiveUnreadByChatId] = useState<Record<string, number>>({});
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
@@ -385,11 +395,69 @@ export default function ChatsContent() {
   const [customNotes, setCustomNotes] = useState<Record<string, ActivityItem[]>>({});
   const [noteDraft, setNoteDraft] = useState('');
 
+  const groupedLiveConversations = useMemo<InboxConversation[]>(() => {
+    const buckets = new Map<string, { chats: SupabaseChat[]; newestAt: number }>();
+
+    for (const chat of liveChats) {
+      const key = normalizeParticipantKey(chat);
+      const existing = buckets.get(key);
+      const updatedAt = new Date(chat.updated_at).getTime();
+      if (!existing) {
+        buckets.set(key, { chats: [chat], newestAt: updatedAt });
+        continue;
+      }
+      existing.chats.push(chat);
+      if (updatedAt > existing.newestAt) {
+        existing.newestAt = updatedAt;
+      }
+    }
+
+    const grouped = Array.from(buckets.values())
+      .map(({ chats }) => {
+        const sorted = [...chats].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+        const primary = sorted[0];
+        const mapped = mapLiveChat(primary);
+        const unreadCount = sorted.reduce((sum, chat) => {
+          const fromDb = Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : 0;
+          const local = liveUnreadByChatId[chat.id] ?? 0;
+          return sum + Math.max(fromDb, local);
+        }, 0);
+        return {
+          ...mapped,
+          unreadCount,
+        };
+      })
+      .sort((a, b) => {
+        const aTime = liveChats.find((chat) => chat.id === a.id)?.updated_at ?? '';
+        const bTime = liveChats.find((chat) => chat.id === b.id)?.updated_at ?? '';
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+      });
+
+    return grouped;
+  }, [liveChats, liveUnreadByChatId]);
+
+  const liveGroupChatIdsByConversationId = useMemo<Record<string, string[]>>(() => {
+    const buckets = new Map<string, SupabaseChat[]>();
+    for (const chat of liveChats) {
+      const key = normalizeParticipantKey(chat);
+      const list = buckets.get(key) ?? [];
+      list.push(chat);
+      buckets.set(key, list);
+    }
+    const map: Record<string, string[]> = {};
+    for (const chats of buckets.values()) {
+      const sorted = [...chats].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+      const primary = sorted[0];
+      map[primary.id] = sorted.map((chat) => chat.id);
+    }
+    return map;
+  }, [liveChats]);
+
   const allConversations = useMemo<InboxConversation[]>(() => {
-    const live = liveChats.map(mapLiveChat);
+    const live = groupedLiveConversations;
     const mock = MOCK_CONVERSATIONS.map((conversation) => ({ ...conversation, source: 'mock' as const }));
     return [...live, ...mock];
-  }, [liveChats]);
+  }, [groupedLiveConversations]);
 
   const selected = allConversations.find(c => c.id === activeContact);
   const isLiveConversation = selected?.source === 'live';
@@ -447,7 +515,16 @@ export default function ChatsContent() {
         .order('updated_at', { ascending: false });
 
       if (active && data) {
-        setLiveChats(data as SupabaseChat[]);
+        const chats = data as SupabaseChat[];
+        setLiveChats(chats);
+        setLiveUnreadByChatId((prev) => {
+          const next: Record<string, number> = {};
+          for (const chat of chats) {
+            const fromDb = Number.isFinite(chat.unread_count) ? Math.max(0, Number(chat.unread_count)) : null;
+            next[chat.id] = fromDb ?? (prev[chat.id] ?? 0);
+          }
+          return next;
+        });
       }
     }
 
@@ -549,6 +626,46 @@ export default function ChatsContent() {
   }, [inboxMode, liveChats, selected?.source, selectedLiveChat]);
 
   useEffect(() => {
+    if (!activeContact || selected?.source !== 'live') return;
+    const ids = liveGroupChatIdsByConversationId[activeContact] ?? [activeContact];
+    setLiveUnreadByChatId((prev) => {
+      const next = { ...prev };
+      for (const id of ids) next[id] = 0;
+      return next;
+    });
+  }, [activeContact, selected?.source, liveGroupChatIdsByConversationId]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-live-unread')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const row = payload.new as { chat_id?: string; sender?: string };
+          const chatId = row.chat_id ?? '';
+          if (!chatId || row.sender !== 'customer') return;
+
+          const activeLiveChatIds = selected?.source === 'live' && activeContact
+            ? (liveGroupChatIdsByConversationId[activeContact] ?? [activeContact])
+            : [];
+
+          if (activeLiveChatIds.includes(chatId)) return;
+
+          setLiveUnreadByChatId((prev) => ({
+            ...prev,
+            [chatId]: (prev[chatId] ?? 0) + 1,
+          }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeContact, liveGroupChatIdsByConversationId, selected?.source]);
+
+  useEffect(() => {
     if (!activeContact || !selected || invMissing) { setTxns([]); return; }
     setTxLoading(true);
     (async () => {
@@ -573,10 +690,11 @@ export default function ChatsContent() {
     let active = true;
 
     const fetchLiveMessages = async () => {
+      const chatIds = liveGroupChatIdsByConversationId[activeContact] ?? [activeContact];
       const { data } = await supabase
         .from('messages')
         .select('*')
-        .eq('chat_id', activeContact)
+        .in('chat_id', chatIds)
         .order('created_at', { ascending: true });
 
       if (!active || !data) return;
@@ -593,8 +711,11 @@ export default function ChatsContent() {
       .channel(`dashboard-live-messages-${activeContact}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'messages', filter: `chat_id=eq.${activeContact}` },
-        () => {
+        { event: '*', schema: 'public', table: 'messages' },
+        (payload) => {
+          const row = payload.new as { chat_id?: string };
+          const chatIds = liveGroupChatIdsByConversationId[activeContact] ?? [activeContact];
+          if (!row.chat_id || !chatIds.includes(row.chat_id)) return;
           fetchLiveMessages();
         }
       )
@@ -604,7 +725,7 @@ export default function ChatsContent() {
       active = false;
       supabase.removeChannel(channel);
     };
-  }, [activeContact, selected?.source]);
+  }, [activeContact, liveGroupChatIdsByConversationId, selected?.source]);
 
   useEffect(() => () => { if (replyTimer.current) window.clearTimeout(replyTimer.current); }, []);
 
@@ -612,12 +733,6 @@ export default function ChatsContent() {
 
   function selectChat(id: string) {
     setActiveContact(id);
-    setPanels(prev => ({ ...prev, thread: true, context: true }));
-    setMobileScreen('thread');
-  }
-  function selectLiveChat(chat: SupabaseChat) {
-    setInboxMode('live');
-    setActiveContact(chat.id);
     setPanels(prev => ({ ...prev, thread: true, context: true }));
     setMobileScreen('thread');
   }
@@ -676,11 +791,20 @@ export default function ChatsContent() {
     } catch (e) { console.error(e); } finally { setAiLoading(false); }
   }
 
-  const filteredChats = allConversations.filter(c =>
-    c.customerName.toLowerCase().includes(listSearch.toLowerCase()) ||
-    c.messages.some(m => m.text.toLowerCase().includes(listSearch.toLowerCase())) ||
-    c.channel.toLowerCase().includes(listSearch.toLowerCase())
-  );
+  const filteredChats = useMemo(() => {
+    const base = inboxMode === 'live' ? groupedLiveConversations : allConversations;
+    return base
+      .filter(c =>
+        c.customerName.toLowerCase().includes(listSearch.toLowerCase()) ||
+        c.messages.some(m => m.text.toLowerCase().includes(listSearch.toLowerCase())) ||
+        c.channel.toLowerCase().includes(listSearch.toLowerCase())
+      )
+      .filter((c) => {
+        if (inboxFilter === 'all') return true;
+        if (inboxFilter === 'unread') return c.unreadCount > 0;
+        return c.unreadCount === 0;
+      });
+  }, [allConversations, groupedLiveConversations, inboxFilter, inboxMode, listSearch]);
   const filteredCustomers = DIR_CUSTOMERS.filter(c =>
     c.name.toLowerCase().includes(directorySearch.toLowerCase()) || c.contact.toLowerCase().includes(directorySearch.toLowerCase())
   );
@@ -714,33 +838,14 @@ export default function ChatsContent() {
       </div>
     ) : null;
 
-    if (inboxMode === 'live' && liveChats.length > 0) {
-      return (
-        <div className="flex h-full min-h-0 flex-col bg-white">
-          <div className={`px-4 ${mobile ? 'pt-3 pb-2' : 'pt-4 pb-3'}`}>
-            {!mobile && (
-              <div className="mb-3">
-                <h2 className="text-sm font-bold tracking-tight text-zinc-900">Live Inbox</h2>
-                <p className="mt-0.5 text-[11px] text-zinc-500">Real Supabase conversations for supported channels.</p>
-              </div>
-            )}
-            {viewSwitch}
-          </div>
-          <div className="min-h-0 flex-1">
-            <ChatList activeChat={selectedLiveChat} onSelectChat={selectLiveChat} showLiveBadge />
-          </div>
-        </div>
-      );
-    }
-
     return (
       <>
         <div className={`px-4 ${mobile ? 'pt-3 pb-2' : 'pt-4 pb-3'}`}>
           {!mobile && (
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="text-sm font-bold tracking-tight text-zinc-900">Inbox</h2>
-                <p className="text-[11px] text-zinc-500 mt-0.5">{allConversations.length} conversations</p>
+                <h2 className="text-sm font-bold tracking-tight text-zinc-900">{inboxMode === 'live' ? 'Live Inbox' : 'Inbox'}</h2>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{(inboxMode === 'live' ? groupedLiveConversations.length : allConversations.length)} conversations</p>
               </div>
               <div className="flex items-center gap-1">
                 <button className="h-7 w-7 flex items-center justify-center rounded-lg text-zinc-500 hover:bg-[#795bf4]/10 hover:text-[#795bf4] transition"><Hash size={14} /></button>
@@ -755,12 +860,22 @@ export default function ChatsContent() {
           {viewSwitch}
           <div className="flex items-center justify-between gap-2 mt-2.5">
             <div className="flex gap-1.5">
-              {['All', 'Unread', 'Mine'].map(f => (
-                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${f === 'All' ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}>{f}</button>
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'unread', label: 'Unread' },
+                { id: 'read', label: 'Read' },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setInboxFilter(f.id as InboxFilter)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-semibold transition ${inboxFilter === f.id ? 'bg-[#795bf4] text-white shadow-sm' : 'bg-zinc-100 border border-zinc-200 text-zinc-500 hover:text-zinc-800'}`}
+                >
+                  {f.label}
+                </button>
               ))}
             </div>
             {mobile && (
-              <span className="text-[10px] text-zinc-400 flex-shrink-0">{allConversations.length} chats</span>
+              <span className="text-[10px] text-zinc-400 flex-shrink-0">{filteredChats.length} chats</span>
             )}
           </div>
         </div>
