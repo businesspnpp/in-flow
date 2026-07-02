@@ -160,7 +160,7 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
   const body = `[${channel.toUpperCase()}] ${sanitizeText(messageText)}`;
   const name = senderName ? sanitizeText(senderName) : senderId;
 
-  await supabase.from('chats').upsert(
+  const { error: chatError } = await supabase.from('chats').upsert(
     {
       id: chatId,
       name,
@@ -173,13 +173,23 @@ async function persistInbound(businessId: string, event: ZernioWebhookEvent) {
     { onConflict: 'id' }
   );
 
-  await supabase.from('messages').insert({
+  if (chatError) {
+    console.error('[zernio/webhook] Failed to upsert chat:', chatError.message, chatError.details, chatError.hint);
+    throw new Error(`chats upsert failed: ${chatError.message}`);
+  }
+
+  const { error: messageError } = await supabase.from('messages').insert({
     chat_id: chatId,
     channel,
     provider_message_id: firstString(event.message?.id, event.id),
     sender: 'customer',
     body,
   });
+
+  if (messageError) {
+    console.error('[zernio/webhook] Failed to insert message:', messageError.message, messageError.details, messageError.hint);
+    throw new Error(`messages insert failed: ${messageError.message}`);
+  }
 }
 
 export async function POST(request: NextRequest) {
