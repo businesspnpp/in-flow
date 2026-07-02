@@ -362,7 +362,6 @@ export default function ChatsContent() {
   const [activeContact, setActiveContact] = useState<string | null>(null);
   const [msgsByContact, setMsgsByContact] = useState<Record<string, Message[]>>(INIT_MSGS);
   const [liveChats, setLiveChats] = useState<SupabaseChat[]>([]);
-  const [activeLiveChat, setActiveLiveChat] = useState<SupabaseChat | null>(null);
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [listSearch, setListSearch] = useState('');
@@ -392,8 +391,8 @@ export default function ChatsContent() {
   const selected = allConversations.find(c => c.id === activeContact);
   const isLiveConversation = selected?.source === 'live';
   const selectedLiveChat = useMemo(
-    () => liveChats.find((chat) => chat.id === activeContact) ?? activeLiveChat,
-    [activeContact, activeLiveChat, liveChats]
+    () => liveChats.find((chat) => chat.id === activeContact) ?? null,
+    [activeContact, liveChats]
   );
   const canSendLiveChat = useMemo(
     () => {
@@ -525,17 +524,10 @@ export default function ChatsContent() {
   }, [businessId]);
 
   useEffect(() => {
-    if (!activeLiveChat) return;
-    const next = liveChats.find((chat) => chat.id === activeLiveChat.id) ?? null;
-    if (next) setActiveLiveChat(next);
-  }, [activeLiveChat, liveChats]);
-
-  useEffect(() => {
     if (inboxMode !== 'live' || liveChats.length === 0) return;
     if (selected?.source === 'live' && selectedLiveChat) return;
 
     const nextLiveChat = selectedLiveChat ?? liveChats[0];
-    setActiveLiveChat(nextLiveChat);
     setActiveContact(nextLiveChat.id);
   }, [inboxMode, liveChats, selected?.source, selectedLiveChat]);
 
@@ -602,18 +594,12 @@ export default function ChatsContent() {
   function togglePanel(key: PanelKey) { setPanels(prev => ({ ...prev, [key]: !prev[key] })); }
 
   function selectChat(id: string) {
-    const match = allConversations.find((conversation) => conversation.id === id);
     setActiveContact(id);
-    if (match?.source === 'live') {
-      const liveMatch = liveChats.find((chat) => chat.id === id) ?? null;
-      setActiveLiveChat(liveMatch);
-    }
     setPanels(prev => ({ ...prev, thread: true, context: true }));
     setMobileScreen('thread');
   }
   function selectLiveChat(chat: SupabaseChat) {
     setInboxMode('live');
-    setActiveLiveChat(chat);
     setActiveContact(chat.id);
     setPanels(prev => ({ ...prev, thread: true, context: true }));
     setMobileScreen('thread');
