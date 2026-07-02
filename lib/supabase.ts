@@ -2,6 +2,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
 
 const client: SupabaseClient | null =
   supabaseUrl && supabaseAnonKey
@@ -20,6 +21,7 @@ export function getSupabase() {
 export type Chat = {
   id: string;
   name: string | null;
+  channel?: string | null;
   last_message: string | null;
   updated_at: string;
 };
@@ -27,6 +29,7 @@ export type Chat = {
 export type Message = {
   id: string;
   chat_id: string;
+  channel?: string | null;
   sender: 'customer' | 'business';
   body: string;
   created_at: string;
@@ -35,9 +38,14 @@ export type Message = {
 export type Business = {
   id: string;
   business_name: string;
+  owner_name?: string | null;
+  logo_url?: string | null;
   categories: string[];
   address: string;
   email: string;
+  timezone?: string | null;
+  currency?: string | null;
+  booking_buffer_minutes?: number | null;
   whatsapp_number?: string | null;
   whatsapp_verified?: boolean;
   whatsapp_waba_id?: string | null;

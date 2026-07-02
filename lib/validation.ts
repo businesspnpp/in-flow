@@ -116,6 +116,7 @@ export type BusinessOnboardingInput = z.infer<typeof BusinessOnboardingSchema>;
 // ────────────────────────────────────────────────────────────────────────────
 
 export const WhatsAppWebhookSchema = z.object({
+  object: z.string().optional(),
   entry: z
     .array(
       z.object({
@@ -162,7 +163,49 @@ export const WhatsAppWebhookSchema = z.object({
     .optional(),
 });
 
+export const FacebookWebhookSchema = z.object({
+  object: z.literal('page'),
+  entry: z.array(
+    z.object({
+      messaging: z.array(
+        z.object({
+          sender: z.object({ id: z.string().min(1, 'Sender ID is required') }),
+          recipient: z.object({ id: z.string().min(1, 'Recipient ID is required') }).optional(),
+          timestamp: z.string().min(1, 'Timestamp is required'),
+          message: z
+            .object({ text: z.string().max(4096, 'Message body is too long').optional() })
+            .optional(),
+        })
+      ),
+    })
+  ),
+});
+
+export const InstagramWebhookSchema = z.object({
+  object: z.literal('instagram'),
+  entry: z.array(
+    z.object({
+      changes: z.array(
+        z.object({
+          value: z.object({
+            messages: z.array(
+              z.object({
+                id: z.string().min(1, 'Message ID is required'),
+                from: z.string().min(1, 'Sender ID is required'),
+                text: z.string().max(4096, 'Message body is too long').optional(),
+                timestamp: z.string().min(1, 'Timestamp is required'),
+              })
+            ),
+          }),
+        })
+      ),
+    })
+  ),
+});
+
 export type WhatsAppWebhookInput = z.infer<typeof WhatsAppWebhookSchema>;
+export type FacebookWebhookInput = z.infer<typeof FacebookWebhookSchema>;
+export type InstagramWebhookInput = z.infer<typeof InstagramWebhookSchema>;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Utility Functions

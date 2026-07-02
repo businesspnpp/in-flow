@@ -17,47 +17,104 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  --if-bg: #fafafa;
+  --if-surface: #ffffff;
+  --if-border: #e4e4e7;
+  --if-ink: #18181b;
+  --if-muted: #71717a;
+  --if-accent: #795bf4;
+  --if-accent-hover: #6847ef;
+  --if-positive: #66dba3;
+  --if-positive-ink: #66dba3;
+}
+
+.if-card {
+  background: var(--if-surface);
+  border: 2px solid var(--if-ink);
+  box-shadow: 8px 8px 0 0 rgba(24, 24, 27, 1);
+}
+
+.if-card-soft {
+  background: var(--if-surface);
+  border: 1px solid var(--if-border);
+}
+
+.if-btn-primary {
+  background: var(--if-accent);
+  color: #fff;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease;
+}
+
+.if-btn-primary:hover {
+  background: var(--if-accent-hover);
+}
+
+.if-btn-muted {
+  background: #f4f4f5;
+  border: 1px solid var(--if-border);
+  color: #3f3f46;
+}
+
+.if-input {
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  color: var(--if-ink);
+  outline: none;
+}
+
+.if-input:focus {
+  border-color: var(--if-ink);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAFAFA;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #D4D4D8;
-  border-radius: 4px;
-  border: 2px solid #FAFAFA;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #A1A1AA;
 }
 
-/* Utility: hide scrollbars visually but keep scrolling functional */
 .scrollbar-none {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .scrollbar-none::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
 }
 
-/* Utility: enable touch momentum scrolling on iOS */
+.scrollbar-hide,
+.scrollbar-hide * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar,
+.scrollbar-hide *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .touch-scroll {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Clean minimal button styles */
 button {
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-/* Input styles */
 input,
 textarea,
 select {
@@ -70,13 +127,12 @@ textarea::placeholder {
   color: #A1A1AA;
 }
 
-/* Selection color */
 ::selection {
-  background-color: #D97706;
+  background-color: #795bf4;
   color: white;
 }
 
-/* Ensure no accidental horizontal overflow on root */
-html, body {
+html,
+body {
   overflow-x: hidden;
 }

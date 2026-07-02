@@ -1,0 +1,121 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
+import { ensureZernioInboxWebhook, getZernioTikTokCreatorInfo, listZernioAccounts } from '@/lib/zernio';
+
+const ZernioPlatformSchema = z.enum(['facebook', 'instagram', 'whatsapp', 'telegram', 'tiktok']);
+
+type ChannelConfigRow = {
+  metadata?: Record<string, unknown> | null;
+};
+
+function getServerSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Supabase server configuration is missing');
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey);
+}
+
+export async function GET(request: NextRequest) {
+  const businessId = request.nextUrl.searchParams.get('business_id') ?? '';
+  const connectedPlatformResult = ZernioPlatformSchema.safeParse(request.nextUrl.searchParams.get('connected'));
+  const profileId = request.nextUrl.searchParams.get('profileId') ?? '';
+  const accountId = request.nextUrl.searchParams.get('accountId') ?? '';
+  const username = request.nextUrl.searchParams.get('username') ?? '';
+  const oauthError = request.nextUrl.searchParams.get('error');
+  const dashboardUrl = `${request.nextUrl.origin}/dashboard`;
+
+  if (oauthError || !businessId || !connectedPlatformResult.success || !profileId) {
+    const message = oauthError || 'Connection did not complete successfully.';
+    const channel = connectedPlatformResult.success ? connectedPlatformResult.data : 'unknown';
+    return NextResponse.redirect(
+      `${dashboardUrl}?oauth=error&channel=${encodeURIComponent(channel)}&error=${encodeURIComponent(message)}`
+    );
+  }
+
+  const connectedPlatform = connectedPlatformResult.data;
+
+  try {
+    const supabase = getServerSupabase();
+    const { data: configRow } = await supabase
+      .from('channel_configs')
+      .select('metadata')
+      .eq('business_id', businessId)
+      .eq('channel', connectedPlatform)
+      .maybeSingle();
+
+    const existingMetadata = (configRow as ChannelConfigRow | null)?.metadata ?? {};
+    const accounts = await listZernioAccounts(profileId, connectedPlatform);
+    const account = accounts.find((item) => item._id === accountId) ?? accounts[0] ?? null;
+
+    const creator = (connectedPlatform === 'tiktok' && account?._id
+      ? (await getZernioTikTokCreatorInfo(account._id).catch(() => null))?.creator ?? null
+      : null) as { nickname?: string } | null;
+
+    await supabase.from('channel_configs').upsert(
+      {
+        business_id: businessId,
+        channel: connectedPlatform,
+        status: 'connected',
+        metadata: {
+          ...existingMetadata,
+          zernio_profile_id: profileId,
+          zernio_account_id: account?._id ?? accountId,
+          username: account?.username ?? username,
+          display_name: account?.displayName ?? creator?.nickname ?? account?.username ?? username,
+          profile_url: account?.profileUrl ?? null,
+          inbox_supported: connectedPlatform !== 'tiktok',
+          creator: connectedPlatform === 'tiktok' ? creator : null,
+        },
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'business_id,channel' }
+    );
+
+    let webhookSetupFailed = false;
+    let webhookSetupError = '';
+
+    if (['facebook', 'instagram', 'whatsapp', 'telegram'].includes(connectedPlatform)) {
+      const webhookUrl = `${request.nextUrl.origin}/api/zernio/webhook?business_id=${encodeURIComponent(businessId)}`;
+      try {
+        await ensureZernioInboxWebhook({
+          name: `inFlow inbox ${connectedPlatform}`,
+          url: webhookUrl,
+          secret: process.env.ZERNIO_WEBHOOK_SECRET || undefined,
+        });
+        console.log('[zernio/callback] Webhook registered successfully for', connectedPlatform, '->', webhookUrl);
+      } catch (error) {
+        webhookSetupFailed = true;
+        webhookSetupError = error instanceof Error ? error.message : 'Webhook registration failed';
+        console.error('[zernio/callback] webhook setup failed:', error);
+      }
+    }
+
+    if (webhookSetupFailed) {
+      // The account/profile connected fine, but without a working inbound webhook
+      // no live messages will ever arrive. Surface that clearly instead of
+      // reporting success, since "connected" was previously misleading.
+      await supabase.from('channel_configs').update({
+        status: 'connected_no_webhook',
+        updated_at: new Date().toISOString(),
+      }).eq('business_id', businessId).eq('channel', connectedPlatform);
+
+      return NextResponse.redirect(
+        `${dashboardUrl}?oauth=partial&channel=${connectedPlatform}&error=${encodeURIComponent(
+          `Account connected, but inbox webhook setup failed: ${webhookSetupError}. Live messages will not be received until this is fixed.`
+        )}`
+      );
+    }
+
+    return NextResponse.redirect(`${dashboardUrl}?oauth=success&channel=${connectedPlatform}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Connection failed.';
+    return NextResponse.redirect(
+      `${dashboardUrl}?oauth=error&channel=${connectedPlatform}&error=${encodeURIComponent(message)}`
+    );
+  }
+}
